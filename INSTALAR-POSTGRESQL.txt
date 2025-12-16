@@ -1,0 +1,197 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                ║
+║                  🚨 POSTGRES NÃO ESTÁ INSTALADO 🚨                             ║
+║                                                                                ║
+║              Precisa instalar PostgreSQL para o sistema funcionar              ║
+║                                                                                ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+
+🔧 COMO INSTALAR POSTGRESQL NO WINDOWS
+═══════════════════════════════════════════════════════════════════════════════
+
+OPÇÃO 1: Download do Site Oficial (RECOMENDADO)
+───────────────────────────────────────────────
+
+1. Acesse: https://www.postgresql.org/download/windows/
+2. Clique em "Download the installer"
+3. Escolha a versão mais recente (ex: PostgreSQL 16 ou 17)
+4. Execute o instalador (.exe)
+
+DURANTE A INSTALAÇÃO:
+   ✓ Aceite termos e condições
+   ✓ Escolha o diretório de instalação (padrão: C:\Program Files\PostgreSQL\*)
+   ✓ Escolha componentes (deixe TODOS selecionados)
+   ✓ Configure a porta: 5432 (PADRÃO - não mude)
+   ✓ Configure a senha do usuário "postgres": postgres
+   ✓ Port: 5432
+   ✓ Locale: Portuguese, Brazil
+
+IMPORTANTE: Anote a senha do usuário "postgres" que você vai definir!
+
+5. Clique em "Install" e aguarde a instalação
+6. Marque a opção "Launch Stack Builder" ao final (opcional)
+7. Clique "Finish"
+
+VERIFICAR INSTALAÇÃO:
+   Abra PowerShell e execute:
+   psql --version
+   
+   Deve retornar algo como: "psql (PostgreSQL) 16.x"
+
+
+OPÇÃO 2: Usando Windows Package Manager (RÁPIDO)
+─────────────────────────────────────────────────
+
+Se você tem winget instalado:
+
+   winget install PostgreSQL.PostgreSQL
+
+Depois configure a senha do postgres como: postgres
+
+
+OPÇÃO 3: Usando Docker (ALTERNATIVA)
+────────────────────────────────────
+
+Se preferir usar Docker:
+
+   docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:latest
+
+Isso criará um container PostgreSQL rodando na porta 5432.
+
+
+🗄️ CRIAR BANCO DE DADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+Após instalar PostgreSQL:
+
+1. Abra PowerShell e execute:
+
+   psql -U postgres -h localhost
+
+   Isso vai pedir a senha. Digite: postgres
+
+2. Você verá o prompt: postgres=#
+
+3. Execute este comando para criar o banco:
+
+   CREATE DATABASE avoar_db;
+
+4. Verifique se foi criado:
+
+   \l
+
+   Deve listar "avoar_db" na lista de bancos
+
+5. Saia do psql:
+
+   \q
+
+
+📁 CRIAR TABELAS E DADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Vá para a pasta do projeto:
+
+   cd "C:\Users\liane\Documents\M\Avoar Site\sistema"
+
+2. Execute o script de schema:
+
+   psql -U postgres -d avoar_db -f lib/db/schema.sql
+
+3. Rode o seed para criar usuário admin:
+
+   npx ts-node lib/db/seed.ts
+
+   Você verá:
+   ✅ Usuário criado: admin@avoar.com.br
+   ✅ Senha: admin123456
+
+
+🧪 TESTAR CONEXÃO
+═══════════════════════════════════════════════════════════════════════════════
+
+Execute:
+
+   node sistema/lib/db/test-connection.ts
+
+Ou:
+
+   npx ts-node sistema/lib/db/test-connection.ts
+
+Deve retornar: ✅ Conexão com banco de dados bem-sucedida!
+
+
+🚀 REINICIAR O SISTEMA
+═══════════════════════════════════════════════════════════════════════════════
+
+Após instalar e configurar PostgreSQL:
+
+1. Parar servidores:
+   Get-Process node | Stop-Process -Force
+
+2. Reiniciar Next.js:
+   cd "C:\Users\liane\Documents\M\Avoar Site\sistema"
+   npm run dev -- -p 3001
+
+3. Aguardar 5 segundos
+
+4. Reiniciar servidor estático:
+   cd "C:\Users\liane\Documents\M\Avoar Site"
+   node servidor-estatico.js
+
+5. Acessar: http://localhost:3000/admin/login
+   Email: admin@avoar.com.br
+   Senha: admin123456
+
+
+⚠️ TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+Erro: "psql: comando não encontrado"
+Solução: 
+   - Adicionar PostgreSQL ao PATH:
+     C:\Program Files\PostgreSQL\16\bin
+   - Ou reiniciar PowerShell/Command Prompt após instalação
+
+Erro: "FATAL: password authentication failed"
+Solução:
+   - A senha que você digitou está errada
+   - Ou PostgreSQL não está rodando
+   - Verifique em Serviços do Windows se "postgresql-x64-16" está rodando
+
+Erro: "database 'avoar_db' does not exist"
+Solução:
+   - Banco ainda não foi criado
+   - Execute: psql -U postgres -h localhost
+   - Depois: CREATE DATABASE avoar_db;
+
+Erro: "Erro interno do servidor"
+Solução:
+   - PostgreSQL não está rodando
+   - Ou conexão falhou
+   - Verifique se o banco está acessível:
+     psql -U postgres -d avoar_db -c "SELECT 1"
+
+
+📋 RESUMO RÁPIDO
+═══════════════════════════════════════════════════════════════════════════════
+
+1. ✅ Baixar PostgreSQL do site oficial
+2. ✅ Instalar com senha "postgres" para o user "postgres"
+3. ✅ Criar banco: CREATE DATABASE avoar_db;
+4. ✅ Criar tabelas: psql -U postgres -d avoar_db -f lib/db/schema.sql
+5. ✅ Inserir dados: npx ts-node lib/db/seed.ts
+6. ✅ Reiniciar servidores
+7. ✅ Acessar: http://localhost:3000/admin/login
+8. ✅ Login: admin@avoar.com.br / admin123456
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Após instalar e configurar PostgreSQL, o login funcionará perfeitamente!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Precisa de ajuda? Siga os passos acima na ordem. Se tiver erro, me avise!
+
