@@ -71,7 +71,7 @@
                                 <li><a href="about.html">Sobre Nós</a></li>
                                 <li><a href="blog.html">Blog</a></li>
                                 <li><a href="contact.html">Contato</a></li>
-                                <li><a href="/admin/login">Login</a></li>
+                                <li><a href="#" id="login-link" data-login-url="/admin/login">Login</a></li>
                             </ul>
                         </div>
                     </div>
@@ -204,6 +204,24 @@
 </div>
 <!--End Site Container--> 
 
+<script>
+// Configurar URL do sistema administrativo
+// Em desenvolvimento: http://localhost:3000
+// Em produção: ajustar conforme necessário
+(function() {
+    var loginLink = document.getElementById('login-link');
+    if (loginLink) {
+        var baseUrl = loginLink.getAttribute('data-login-url');
+        // Se estiver em localhost, usar porta 3000 (Next.js padrão)
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            loginLink.href = 'http://localhost:3000' + baseUrl;
+        } else {
+            // Em produção, usar o mesmo domínio
+            loginLink.href = baseUrl;
+        }
+    }
+})();
+</script>
 <script src="js/jquery.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>

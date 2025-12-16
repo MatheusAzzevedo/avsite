@@ -50,7 +50,7 @@ npm start
 
 ## 🔄 Últimas Atualizações
 
-**Menu de Navegação**: Adicionado botão "Login" em todos os arquivos HTML do site estático, permitindo acesso direto à página de login administrativo (`/admin/login`) a partir do menu lateral de navegação.
+**Menu de Navegação**: Adicionado botão "Login" em todos os arquivos HTML do site estático com redirecionamento dinâmico. O script JavaScript detecta automaticamente se está em ambiente de desenvolvimento (localhost) ou produção e configura a URL correta para acessar a página de login administrativo (`/admin/login`) do sistema Next.js.
 
 ## 📚 Documentação Importante
 
