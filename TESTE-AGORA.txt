@@ -1,0 +1,289 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                ║
+║                    🎨 TESTE O CSS PADRÃO AVOAR AGORA! 🎨                       ║
+║                                                                                ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+
+✅ SERVIDORES RODANDO
+═══════════════════════════════════════════════════════════════════════════════
+
+Os servidores JÁ ESTÃO ATIVOS e prontos para teste:
+
+✓ Servidor Estático: http://localhost:3000 (Terminal 17)
+   → Serve páginas HTML estáticas do site Avoar
+   → Faz proxy para Next.js em requisições /admin/* e /api/*
+
+✓ Next.js: http://localhost:3001 (Terminal 16)
+   → Sistema administrativo com login, blog, excursões
+   → CSS padrão Avoar aplicado em todas as páginas
+
+
+🚀 ACESSE AGORA
+═══════════════════════════════════════════════════════════════════════════════
+
+Abra seu navegador e acesse:
+
+   👉 http://localhost:3000/admin/login 👈
+
+
+📋 O QUE VOCÊ DEVE VER
+═══════════════════════════════════════════════════════════════════════════════
+
+Visual Geral:
+   ✓ Fundo PRETO SÓLIDO (#000000) em toda a página
+   ✓ Título "Acesso ao Painel" em BRANCO centralizado
+   ✓ Subtítulo "Faça login para gerenciar o sistema" em CINZA
+   ✓ Círculos decorativos SUTIS animando no fundo (amarelos)
+   ✓ Footer "© 2025 Avoar..." em CINZA na parte inferior
+
+Formulário:
+   ✓ Container com GRADIENTE ESCURO
+   ✓ BORDA AMARELA (#FACC15) sutil ao redor do formulário
+   ✓ Efeito de GLASS/BLUR no fundo do formulário
+
+Campos de Entrada:
+   ✓ Label "Email" e "Senha" em CINZA CLARO
+   ✓ Campos com FUNDO ESCURO (quase preto)
+   ✓ BORDA AMARELA muito sutil
+   ✓ Placeholder "admin@avoar.com.br" em CINZA
+   ✓ Texto digitado aparece em BRANCO
+
+Botão:
+   ✓ Botão "ENTRAR" com fundo AMARELO (#FACC15)
+   ✓ Texto do botão em PRETO (contraste alto)
+   ✓ Texto em UPPERCASE (maiúsculas)
+   ✓ Espaçamento entre letras (letter-spacing)
+
+Credenciais de Teste:
+   ✓ Box com fundo MUITO ESCURO
+   ✓ Texto "Credenciais de Teste" em CINZA
+   ✓ Email e senha em código AMARELO com fundo preto
+
+
+🖱️ TESTE INTERAÇÕES
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Clique no campo "Email":
+   ✓ Borda fica AMARELA BRILHANTE (#FACC15)
+   ✓ Aparece SHADOW AMARELA sutil ao redor
+   ✓ Fundo do campo fica LEVEMENTE MAIS ESCURO
+
+2. Clique no campo "Senha":
+   ✓ Mesmas animações do campo Email
+   ✓ Texto digitado aparece como pontinhos (••••••)
+
+3. Passe o mouse sobre o botão "ENTRAR":
+   ✓ Botão fica LEVEMENTE MAIS CLARO (#F0D15C)
+   ✓ Botão SOBE 2 pixels (translateY(-2px))
+   ✓ Aparece SHADOW AMARELA sutil embaixo
+
+4. Observe o fundo:
+   ✓ Círculos decorativos PULSANDO suavemente
+   ✓ Opacidade alternando entre 3% e 8%
+   ✓ Animação lenta e hipnótica (2 segundos por ciclo)
+
+
+📱 TESTE RESPONSIVIDADE
+═══════════════════════════════════════════════════════════════════════════════
+
+Redimensione a janela do navegador (ou abra DevTools com F12):
+
+Desktop (>1024px):
+   ✓ Formulário centralizado
+   ✓ Largura máxima de 28rem (448px)
+   ✓ Círculos decorativos visíveis
+
+Tablet (768px - 1024px):
+   ✓ Formulário se ajusta
+   ✓ Padding reduzido
+   ✓ Tudo ainda legível
+
+Mobile (<768px):
+   ✓ Formulário ocupa toda largura (com padding)
+   ✓ Fontes mantêm tamanho legível
+   ✓ Botão ocupa largura total
+   ✓ Círculos decorativos adaptados
+
+
+🔍 DEBUG NO NAVEGADOR
+═══════════════════════════════════════════════════════════════════════════════
+
+Pressione F12 para abrir DevTools:
+
+1. Aba "Elements" (Inspecionar):
+   ✓ Clique com botão direito em qualquer elemento > Inspecionar
+   ✓ Veja o HTML: <div className="login-page">
+   ✓ Veja os estilos aplicados no painel direito
+
+2. Aba "Network" (Rede):
+   ✓ Recarregue a página (Ctrl+R ou F5)
+   ✓ Verifique se NÃO há erros 404 em CSS
+   ✓ Confirme que estes arquivos carregaram com status 200:
+      • globals.css
+      • admin.css
+      • login.css
+      • _next/static/css/...
+
+3. Aba "Sources" (Fontes):
+   ✓ Expanda "top" > "localhost:3000" > "_next" > "static" > "css"
+   ✓ Confirme presença de arquivos CSS compilados do Next.js
+
+4. Aba "Console":
+   ✓ NÃO deve haver erros em vermelho
+   ✓ Pode ter mensagens do Next.js (normal)
+
+
+✨ FONTES APLICADAS
+═══════════════════════════════════════════════════════════════════════════════
+
+Para verificar se as fontes Cairo e Montserrat estão carregadas:
+
+1. No DevTools, aba "Elements"
+2. Clique no título "Acesso ao Painel"
+3. No painel direito, veja "Computed" > "font-family"
+4. Deve mostrar: Montserrat, sans-serif
+
+Faça o mesmo para o texto "Faça login...":
+   → Deve mostrar: Cairo, sans-serif
+
+
+🎨 PALETA DE CORES APLICADA
+═══════════════════════════════════════════════════════════════════════════════
+
+Use o color picker do DevTools para confirmar:
+
+1. Clique com botão direito no fundo > Inspecionar
+2. Veja "background-color": rgb(0, 0, 0) → #000000 ✓
+
+3. Clique no botão "ENTRAR" > Inspecionar
+4. Veja "background-color": rgb(250, 204, 21) → #FACC15 ✓
+
+5. Clique na borda do formulário > Inspecionar
+6. Veja "border-color": rgba(250, 204, 21, 0.2) → amarelo translúcido ✓
+
+
+❌ SE ALGO NÃO ESTIVER CORRETO
+═══════════════════════════════════════════════════════════════════════════════
+
+Problema: Fundo BRANCO em vez de preto
+Solução:
+   1. Force reload: Ctrl+Shift+R (Windows) ou Cmd+Shift+R (Mac)
+   2. Limpe cache: DevTools > "Network" > marque "Disable cache"
+   3. Recarregue novamente
+
+Problema: CSS não carrega (erros 404)
+Solução:
+   1. Verifique se Next.js está rodando: http://localhost:3001
+   2. Verifique se servidor estático está rodando: http://localhost:3000
+   3. Reinicie ambos: Ver "REINICIAR SERVIDORES" abaixo
+
+Problema: Fontes erradas
+Solução:
+   1. Verifique internet (fontes vêm do Google Fonts)
+   2. Force reload: Ctrl+Shift+R
+   3. Veja se há erro no console do navegador
+
+
+🔄 REINICIAR SERVIDORES (SE NECESSÁRIO)
+═══════════════════════════════════════════════════════════════════════════════
+
+Windows (PowerShell):
+
+# Parar todos servidores Node.js
+Get-Process | Where-Object {$_.ProcessName -eq "node"} | Stop-Process -Force
+
+# Aguardar 2 segundos
+Start-Sleep -Seconds 2
+
+# Iniciar Next.js (Terminal 1)
+cd "C:\Users\liane\Documents\M\Avoar Site\sistema"
+npm run dev -- -p 3001
+
+# Aguardar 5 segundos
+
+# Iniciar servidor estático (Terminal 2 - nova janela)
+cd "C:\Users\liane\Documents\M\Avoar Site"
+node servidor-estatico.js
+
+OU use o script automático:
+   .\iniciar-servidores.bat
+
+
+📁 OUTRAS PÁGINAS PARA TESTAR
+═══════════════════════════════════════════════════════════════════════════════
+
+Site Estático (funcionando):
+   http://localhost:3000/               → Início (index-10.html)
+   http://localhost:3000/index-11.html  → Projeto Biologia Marinha
+   http://localhost:3000/about.html     → Sobre Nós
+   http://localhost:3000/blog.html      → Blog
+   http://localhost:3000/contact.html   → Contato
+   http://localhost:3000/portfolio.html → Excursões
+
+Sistema Next.js (via proxy):
+   http://localhost:3000/admin/login    → Login (CSS 100% aplicado)
+   
+   (Outras páginas admin requerem autenticação e banco de dados)
+
+
+📚 DOCUMENTAÇÃO COMPLETA
+═══════════════════════════════════════════════════════════════════════════════
+
+Se quiser entender como tudo funciona:
+
+CSS-PADRAO-AVOAR-APLICADO.txt
+   → Guia visual do padrão CSS
+   → Paleta de cores, fontes, classes
+   → Como verificar se está aplicado
+
+EXPLICACAO-CSS-AVOAR.md
+   → Explicação técnica DETALHADA
+   → Cada arquivo modificado explicado
+   → Fluxo de carregamento CSS
+   → Tabelas de classes e estilos
+   → Como o proxy funciona
+   → Debug e troubleshooting
+
+RESUMO-CORRECAO-CSS.txt
+   → Resumo executivo da tarefa
+   → Problema, solução, commits
+   → Checklist de verificação
+
+
+🎯 RESULTADO ESPERADO
+═══════════════════════════════════════════════════════════════════════════════
+
+Quando você acessar http://localhost:3000/admin/login
+
+Você verá uma página de login MODERNA, ELEGANTE e PROFISSIONAL com:
+
+   ✨ Design dark mode (fundo preto)
+   ✨ Formulário com efeito glass/blur
+   ✨ Cor principal amarela dourada (#FACC15)
+   ✨ Animações suaves e responsivas
+   ✨ Tipografia Cairo e Montserrat
+   ✨ Interações deliciosas (hover, focus)
+   ✨ Círculos decorativos hipnóticos
+
+Tudo seguindo o padrão AVOAR de design!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+👉 ACESSE AGORA: http://localhost:3000/admin/login 👈
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Data: 27 de Janeiro de 2025
+Versão: 0.5.2
+Status: ✅ PRONTO PARA TESTE
+
+Se estiver tudo certo, podemos partir para o próximo passo:
+   → Configurar banco de dados PostgreSQL
+   → Criar usuário admin
+   → Testar autenticação completa
+   → Explorar CRUD de blog e excursões
+
+═══════════════════════════════════════════════════════════════════════════════
+
