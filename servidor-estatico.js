@@ -57,6 +57,8 @@ function fileExists(filePath) {
 
 // Função para fazer proxy para Next.js
 function proxyToNextJS(req, res) {
+  console.log(`  ↪ Fazendo proxy para Next.js: ${req.url}`);
+  
   // Criar headers para o proxy
   const proxyHeaders = {
     ...req.headers,
@@ -82,6 +84,8 @@ function proxyToNextJS(req, res) {
   };
 
   const proxyReq = http.request(options, (proxyRes) => {
+    console.log(`  ✓ Next.js respondeu: ${proxyRes.statusCode}`);
+    
     // Adicionar headers de cache
     const headers = {
       ...proxyRes.headers,
@@ -95,7 +99,7 @@ function proxyToNextJS(req, res) {
   });
 
   proxyReq.on('error', (err) => {
-    console.error('Erro ao conectar com Next.js:', err.message);
+    console.error('  ✗ Erro ao conectar com Next.js:', err.message);
     res.writeHead(502, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(`
       <!DOCTYPE html>
@@ -138,8 +142,8 @@ const server = http.createServer((req, res) => {
   // Remover query string e normalizar URL
   let urlPath = req.url.split('?')[0];
   
-  // Proxy para Next.js se for rota /admin/* ou /api/*
-  if (urlPath.startsWith('/admin/') || urlPath.startsWith('/api/')) {
+  // Proxy para Next.js se for rota /admin/*, /api/*, ou /_next/* (assets do Next.js)
+  if (urlPath.startsWith('/admin') || urlPath.startsWith('/api') || urlPath.startsWith('/_next')) {
     proxyToNextJS(req, res);
     return;
   }
