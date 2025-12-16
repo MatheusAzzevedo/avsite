@@ -6,6 +6,7 @@ import { loginSchema } from '@/lib/validation';
 import { ROUTES, API_ENDPOINTS, MESSAGES } from '@/lib/constants';
 import { logger } from '@/lib/logger';
 import './login.css';
+import type { ReactNode } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -63,7 +64,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="login-page">
+    <>
+      <style>{`
+        html, body, #__next {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          background: #000000;
+        }
+      `}</style>
+      <div className="login-page">
       {/* Background gradient effect */}
       <div style={{
         position: 'absolute',
@@ -151,6 +162,7 @@ export default function LoginPage() {
       {/* Decorative Circles */}
       <div className="login-decorative login-decorative-1"></div>
       <div className="login-decorative login-decorative-2"></div>
-    </div>
+      </div>
+    </>
   );
 }

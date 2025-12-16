@@ -62,13 +62,15 @@ function proxyToNextJS(req, res) {
     ...req.headers,
     'x-forwarded-for': req.connection.remoteAddress,
     'x-forwarded-proto': 'http',
-    'x-forwarded-host': req.headers.host,
+    'x-forwarded-host': req.headers.host || 'localhost',
     'x-forwarded-port': PORT,
+    'x-real-ip': req.connection.remoteAddress,
     host: `localhost:${NEXTJS_PORT}`
   };
 
   // Remover headers que podem causar conflitos
   delete proxyHeaders['content-length'];
+  delete proxyHeaders['transfer-encoding'];
 
   const options = {
     hostname: 'localhost',
