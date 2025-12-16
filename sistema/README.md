@@ -1,25 +1,29 @@
 # Avoar Sistema
 
-Plataforma de gerenciamento de excursões ecológicas e blog educativo. Sistema administrativo completo com autenticação, CRUD de blog, gerenciamento de excursões e integração com pagamentos.
+Plataforma completa de gerenciamento de excursões ecológicas e blog educativo. Sistema administrativo com autenticação JWT, CRUD de blog com editor rich-text, gerenciamento de excursões, otimização de imagens e pronto para integrações de pagamento.
 
-## 🚀 Início Rápido
+## ⚡ Início Rápido (5 minutos)
 
 ```bash
-# Instalar dependências
-npm install
+# 1. Entrar na pasta do sistema
+cd sistema
 
-# Configurar banco de dados (executar schema.sql)
-# Ver SETUP.md para instruções
+# 2. Dependências já instaladas ✅ (552 packages)
+# Caso precise: npm install
 
-# Executar em desenvolvimento
+# 3. Configurar .env.local (Ver GUIA-RAPIDO-SETUP.md)
+
+# 4. Criar banco de dados PostgreSQL
+psql -U postgres -c "CREATE DATABASE avoar_db;"
+psql -U postgres -d avoar_db < lib/db/schema.sql
+
+# 5. Executar em desenvolvimento
 npm run dev
 
-# Build para produção
-npm run build
-
-# Iniciar produção
-npm start
+# 6. Acessar: http://localhost:3000
 ```
+
+**Para instruções detalhadas**: Ver `GUIA-RAPIDO-SETUP.md` ou `CONFIGURACAO-SETUP.md`
 
 ## 📁 Estrutura do Projeto
 
@@ -48,12 +52,40 @@ npm start
 - [x] Fase 4: Módulo Excursões (CRUD + Imagens)
 - [ ] Fase 5: Módulo Pagamento
 
-## 🔄 Últimas Atualizações
+## ✅ Status de Configuração
 
-**Menu de Navegação**: Adicionado botão "Login" em todos os arquivos HTML do site estático com redirecionamento dinâmico. O script JavaScript detecta automaticamente se está em ambiente de desenvolvimento (localhost) ou produção e configura a URL correta para acessar a página de login administrativo (`/admin/login`) do sistema Next.js.
+- ✅ **Dependências**: 552 packages instalados com sucesso
+- ✅ **TypeScript**: Configurado para type-safety completo
+- ✅ **Banco de Dados**: Schema SQL pronto com 4 tabelas + indices
+- ✅ **Autenticação**: JWT + bcryptjs configurados
+- ✅ **Validação**: Zod schemas centralizados
+- ✅ **UI**: Tailwind CSS + componentes responsivos
+- ✅ **API REST**: CRUD de Blog e Excursões
+- ✅ **Segurança**: Middleware, validação de entrada, headers de segurança
+- ✅ **Menu de Navegação**: Login acessível do site estático
+
+## 🔄 Últimas Atualizações (v0.4.0)
+
+**Menu de Navegação + Redirecionamento Dinâmico**: 
+- Botão "Login" adicionado em todos os 8 arquivos HTML
+- Script JavaScript detecta ambiente (desenvolvimento/produção)
+- Redireciona corretamente para `/admin/login` em localhost:3000
 
 ## 📚 Documentação Importante
 
-- `SETUP.md` - Guia passo a passo de configuração
-- `FASE-1-COMPLETA.md` - Detalhes da Fase 1 implementada
+### 🔧 Setup e Configuração
+- **`GUIA-RAPIDO-SETUP.md`** ⭐ - Guia de 5 minutos (COMECE AQUI!)
+- **`CONFIGURACAO-SETUP.md`** - Configuração completa e detalhada
+- **`CONFIGURACAO-PRODUCAO.md`** - Deploy e produção
+- `SETUP.md` - Guia original (Fase 1)
+
+### 📖 Documentação do Projeto
+- `CHANGELOG.md` - Histórico de versões (últimas 5)
+- `ESTRUTURA-PROJETO.md` - Arquitetura do projeto
+- `FASE-1-COMPLETA.md` - Detalhes da Fase 1
+- `FASE-2-COMPLETA.md` - Detalhes da Fase 2
 - `../Docs/Plano-Implementacao-Sistema.md` - Plano completo do projeto
+
+### 🛠️ Scripts Automáticos
+- `setup.bat` - Setup automático (Windows)
+- `setup.sh` - Setup automático (macOS/Linux)

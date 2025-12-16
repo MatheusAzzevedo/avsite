@@ -2,6 +2,25 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
+## [0.4.1] - 2025-01-27
+
+### Added
+- **Configuração Completa de Dependências**
+- `CONFIGURACAO-SETUP.md` - Guia completo de configuração
+- `CONFIGURACAO-PRODUCAO.md` - Guia de deployment e produção
+- `GUIA-RAPIDO-SETUP.md` - Guia de 5 minutos para começar
+- `setup.bat` - Script automático de setup para Windows
+- `setup.sh` - Script automático de setup para macOS/Linux
+- 552 packages npm instalados e auditados
+- Suporte para PostgreSQL com schema completo (4 tabelas + indices)
+- Sistema de validação com Zod para todas as entradas
+- Autenticação JWT com bcryptjs para senhas
+
+### Modified
+- README.md atualizado com informações de setup
+- `.env.local` criado com configurações de desenvolvimento
+- Documentação reorganizada e estruturada
+
 ## [0.4.0] - 2025-01-27
 
 ### Modified
