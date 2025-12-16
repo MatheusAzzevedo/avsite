@@ -1,0 +1,20 @@
+1. Preciso que tenha um login de administrador.
+
+2. Preciso de um controle simples de blog, escrever post, publicar, editar, apagar. Com canva de escrita
+para o artigo do blog.
+
+3. Preciso de uma pagina de checkout de pagamento padrão utiliznaod o design do site e preparado para receber
+a api de pagamento.
+
+4. Preciso que tenha uma pagina de configuração da API de Pagamento, para trocar a api se for necessário.
+
+5. Preciso que tenha uma pagina de configuração de "Excursçoes", essa pagina será responsável por controlar
+as informações que ficam na pagina de "Excursões" do site que é o arquivo portfpolio.html. Essa pagina
+tem uma listagem das excursçoes e filtro dinamico, ou seja, na pagina de configuração do admin, deve ter
+como adicionar, editar, excluir excursão, assim como ao adicionar e editar deve ter Título, subtítulo e 
+adicionar imagem.
+
+Esse item de excrusão, ele abre uma pagina unica exclusiva de cada excursão, com o padrão do portfolio-single.html
+para mais detalhes, então na pagina de configuração deve ter os campos de preenchimento para adicionar
+imagem e o texto que aparece no site na pagina de portfolio-single.html.
+

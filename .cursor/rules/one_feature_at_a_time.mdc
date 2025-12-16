@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Regra: Implementação de Funcionalidades
+
+Sempre implemente **uma funcionalidade por vez**. Se o prompt for grande ou envolver múltiplas funcionalidades, **divida em partes menores** e confirme o escopo de cada uma antes de gerar código. Deve-se sempre criar **um debug e log da funcionalidade com descrições otimizadas para detectar o erro**
+
+- Antes de iniciar, questione e esclareça o escopo se houver ambiguidade.  
+- Não misture múltiplas funcionalidades em uma única entrega.  
+- Se necessário, peça confirmação do usuário sobre qual funcionalidade priorizar.  
+- Documente cada entrega de forma clara e objetiva.
+

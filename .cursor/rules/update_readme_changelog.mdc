@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Regra: Atualização de README e Changelog
+
+**Sempre manter escrito as ultimas 5 versões de atualizações no change log**
+**O readme vai sempre receber um resumo das atualizações, no máximo 200 palavras""
+
+- Manter o arquivo enxuto e na estrutura `Data, Arquivos modificados [explicação]` isso para o changelog
+- Manter o arquivo enxuto e na estrutura `Arquivos modificados [explicação do que mudou]` isso para o readme.
+
+Isso garante que a documentação do projeto esteja sempre atualizada, facilitando o onboarding de novos desenvolvedores e o acompanhamento da evolução do sistema.
+

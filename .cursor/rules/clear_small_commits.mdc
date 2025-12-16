@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Regra: Commits por Tarefa
+
+Cada tarefa deve resultar em **um commit**. Utilize sempre o seguinte formato para a mensagem de commit:
+
+- Para novas funcionalidades: `feat: [ação]`
+- Para correções de bugs: `fix: [problema resolvido]`
+
+Exemplos:
+- `feat: adicionar autenticação de usuário`
+- `fix: corrigir erro de login com senha inválida`
+
+Isso garante rastreabilidade, clareza e facilita o entendimento do histórico do projeto.
+

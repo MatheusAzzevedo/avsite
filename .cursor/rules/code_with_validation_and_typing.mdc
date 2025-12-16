@@ -1,0 +1,27 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Regra: Validaçãod e Dados com TypeScript + Zod
+
+- AUtilize **TypeScript** e **Zod** para APENAS! Validar todos os dados de entrada, sejam eles provenientes de formulários, APIs ou outras fontes externas.
+- Sempre trate erros de validação exibindo mensagens claras e informativas para o usuário ou consumidor da API.
+- Não permita que dados não validados avancem no fluxo da aplicação.
+- Centralize os schemas de validação para facilitar manutenção e reuso.
+
+Exemplo:
+```ts
+import { z } from 'zod';
+
+const schema = z.object({
+  email: z.string().email(),
+  senha: z.string().min(8),
+});
+
+try {
+  schema.parse(dadosRecebidos);
+} catch (e) {
+  // Trate o erro e forneça mensagem clara
+}
+

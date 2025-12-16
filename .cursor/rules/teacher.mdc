@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Regra: Explicação por função e pagina criada
+
+Cada tarefa deve resultar em **uma explicação detalhada sobre as funções, APIS e arquivos criados**. Utilize sempre o seguinte formato para a mensagem de ensinamento:
+
+- Para funções, Apis e Arquivos: `Explicação da função [função]: conteúdo da Explicação`
+- Para funções, Apis e Arquivos: `Explicação da API [API]: conteúdo da Explicação`
+- Para funções, Apis e Arquivos: `Explicação do Arquivo [Arquivo]: conteúdo da Explicação`
+
+
+Isso garante o entendimento completo de como o sistema estará funcionando.
+
