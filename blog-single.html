@@ -333,9 +333,9 @@
     var loginLink = document.getElementById('login-link');
     if (loginLink) {
         var baseUrl = loginLink.getAttribute('data-login-url');
-        // Se estiver em localhost, usar porta 3000 (Next.js padrão)
+        // Se estiver em localhost, usar mesma porta (proxy para Next.js)
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            loginLink.href = 'http://localhost:3000' + baseUrl;
+            loginLink.href = baseUrl; // Usa proxy do servidor estático
         } else {
             // Em produção, usar o mesmo domínio
             loginLink.href = baseUrl;

@@ -1,0 +1,14 @@
+{
+  "name": "avoar-site-estatico",
+  "version": "1.0.0",
+  "description": "Servidor estático para o site Avoar",
+  "main": "servidor-estatico.js",
+  "scripts": {
+    "start": "node servidor-estatico.js",
+    "dev": "node servidor-estatico.js"
+  },
+  "keywords": ["static", "server", "html"],
+  "author": "",
+  "license": "ISC"
+}
+
