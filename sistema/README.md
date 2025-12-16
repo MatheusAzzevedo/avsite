@@ -2,6 +2,13 @@
 
 Plataforma completa de gerenciamento de excursões ecológicas e blog educativo. Sistema administrativo com autenticação JWT, CRUD de blog com editor rich-text, gerenciamento de excursões, otimização de imagens e pronto para integrações de pagamento.
 
+## ✨ Últimas Atualizações (v0.5.2)
+
+- **CSS Padrão Avoar Aplicado**: Todas as páginas do sistema agora seguem o padrão visual Avoar com fundo preto (#000000), texto branco, cor principal amarela (#FACC15), e fontes Cairo e Montserrat.
+- **Layout Corrigido**: Removido conflitos de CSS inline, simplificado layout root e admin.
+- **Documentação CSS**: Criado `CSS-PADRAO-AVOAR-APLICADO.txt` com guia completo do padrão de design.
+- **Servidor Estático + Proxy**: Servidor estático rodando na porta 3000 com proxy correto para Next.js na porta 3001, garantindo CSS carregado em todas as páginas.
+
 ## ⚡ Início Rápido (5 minutos)
 
 ```bash

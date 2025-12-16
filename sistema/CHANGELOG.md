@@ -2,6 +2,26 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
+## [0.5.2] - 2025-01-27
+
+### Fixed
+- **CSS Padrão Avoar Aplicado em Todas as Páginas**
+- `sistema/app/globals.css` - Fundo preto (#000000), texto branco, fontes Cairo e Montserrat
+- `sistema/app/layout.tsx` - Simplificado para carregar apenas globals.css
+- `sistema/app/admin/layout.tsx` - Wrapper com classe .admin-page
+- `sistema/app/admin/login/page.tsx` - Removido estilos inline conflitantes
+- Todas as páginas do sistema agora seguem o padrão visual Avoar
+- CSS carregando corretamente via proxy do servidor estático
+
+### Files Modified
+- `sistema/app/globals.css` - Base CSS com cores e fontes Avoar
+- `sistema/app/layout.tsx` - Layout root simplificado
+- `sistema/app/admin/layout.tsx` - Layout admin com classe wrapper
+- `sistema/app/admin/login/page.tsx` - Página de login limpa
+
+### Files Created
+- `CSS-PADRAO-AVOAR-APLICADO.txt` - Documentação completa do padrão CSS Avoar
+
 ## [0.4.1] - 2025-01-27
 
 ### Added
