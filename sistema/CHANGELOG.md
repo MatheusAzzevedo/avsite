@@ -2,6 +2,12 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
+## [0.4.0] - 2025-01-27
+
+### Modified
+- **Adicionado botão de Login no menu de navegação**
+- `index-10.html`, `index-11.html`, `about.html`, `blog.html`, `contact.html`, `portfolio.html`, `blog-single.html`, `portfolio-single.html` - Adicionado item "Login" no menu de navegação que redireciona para `/admin/login`
+
 ## [0.3.0] - 2025-12-14
 
 ### Added

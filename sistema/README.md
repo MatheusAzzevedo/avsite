@@ -48,6 +48,10 @@ npm start
 - [x] Fase 4: Módulo Excursões (CRUD + Imagens)
 - [ ] Fase 5: Módulo Pagamento
 
+## 🔄 Últimas Atualizações
+
+**Menu de Navegação**: Adicionado botão "Login" em todos os arquivos HTML do site estático, permitindo acesso direto à página de login administrativo (`/admin/login`) a partir do menu lateral de navegação.
+
 ## 📚 Documentação Importante
 
 - `SETUP.md` - Guia passo a passo de configuração
