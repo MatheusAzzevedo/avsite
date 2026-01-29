@@ -1,0 +1,188 @@
+// ===========================================
+// SCHEMA DO BANCO DE DADOS - AVORAR TURISMO
+// ===========================================
+// Utiliza PostgreSQL conforme requisito
+// NUNCA usar SQLite (regra do projeto)
+// ===========================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===========================================
+// MODELO DE USUÁRIO (ADMIN)
+// ===========================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(ADMIN)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  posts     Post[]
+  excursoes Excursao[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+}
+
+// ===========================================
+// MODELO DE POST DO BLOG
+// ===========================================
+
+model Post {
+  id         String     @id @default(uuid())
+  titulo     String
+  slug       String     @unique
+  autor      String
+  data       DateTime   @default(now())
+  categoria  String
+  status     PostStatus @default(RASCUNHO)
+  imagemCapa String?
+  resumo     String?
+  conteudo   String?    @db.Text
+  tags       String[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  // Relacionamentos
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id])
+
+  @@index([slug])
+  @@index([status])
+  @@index([categoria])
+  @@map("posts")
+}
+
+enum PostStatus {
+  PUBLICADO
+  RASCUNHO
+}
+
+// ===========================================
+// MODELO DE EXCURSÃO
+// ===========================================
+
+model Excursao {
+  id              String         @id @default(uuid())
+  titulo          String
+  slug            String         @unique
+  subtitulo       String?
+  preco           Decimal        @db.Decimal(10, 2)
+  duracao         String?
+  categoria       String
+  status          ExcursaoStatus @default(ATIVO)
+  imagemCapa      String?
+  imagemPrincipal String?
+  descricao       String?        @db.Text
+  inclusos        String?        @db.Text
+  recomendacoes   String?        @db.Text
+  local           String?
+  horario         String?
+  tags            String[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relacionamentos
+  authorId String?
+  author   User?             @relation(fields: [authorId], references: [id])
+  galeria  ExcursaoImagem[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([categoria])
+  @@map("excursoes")
+}
+
+enum ExcursaoStatus {
+  ATIVO
+  INATIVO
+}
+
+// ===========================================
+// MODELO DE IMAGENS DA GALERIA DE EXCURSÃO
+// ===========================================
+
+model ExcursaoImagem {
+  id         String   @id @default(uuid())
+  url        String
+  ordem      Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  // Relacionamentos
+  excursaoId String
+  excursao   Excursao @relation(fields: [excursaoId], references: [id], onDelete: Cascade)
+
+  @@map("excursao_imagens")
+}
+
+// ===========================================
+// MODELO DE CONFIGURAÇÃO DE PAGAMENTO
+// ===========================================
+
+model PaymentConfig {
+  id            String   @id @default(uuid())
+  gateway       String   @unique // asaas, mercadopago, stripe
+  active        Boolean  @default(false)
+  config        Json     // Configurações específicas do gateway (criptografadas em produção)
+  webhookUrl    String?
+  testMode      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("payment_configs")
+}
+
+// ===========================================
+// MODELO DE UPLOADS/IMAGENS
+// ===========================================
+
+model Upload {
+  id          String   @id @default(uuid())
+  filename    String
+  originalName String
+  mimetype    String
+  size        Int
+  url         String
+  path        String
+  createdAt   DateTime @default(now())
+
+  @@map("uploads")
+}
+
+// ===========================================
+// MODELO DE LOG DE ATIVIDADES
+// ===========================================
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  action      String   // create, update, delete, login, etc.
+  entity      String   // post, excursao, user, etc.
+  entityId    String?
+  description String?
+  userId      String?
+  userEmail   String?
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("activity_logs")
+}

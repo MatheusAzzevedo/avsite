@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Vosio Portfolio Template - Blog Post Details</title>
+<title id="pageTitle">Blog - Avorar Turismo</title>
 <!-- Stylesheets -->
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
@@ -21,6 +21,8 @@
     <div class="cursor"></div>
     <!-- Preloader -->
     <div class="preloader"></div>
+
+    <a href="https://wa.me/5531981132286" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
 
     <div class="menu-backdrop"></div>
         
@@ -45,11 +47,11 @@
                 </div>
                 
                 <!--Copyright Text-->
-                <div class="copyright">&copy; Avoar Turismo 2026</div>
+                <div class="copyright">&copy; Avorar Turismo 2026</div>
             </div>
 
             <!--Alt Logo Box-->
-            <div class="alt-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
+            <div class="alt-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avorar Turismo"></a></div>
             
             <!--Nav Bg Box-->
             <div class="nav-bg-box"></div>
@@ -62,7 +64,7 @@
                     <div class="bottom-bg"></div>
                     <div class="main-nav-box" data-scrollbar="">
                         <!--Logo Box-->
-                        <div class="main-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
+                        <div class="main-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avorar Turismo"></a></div>
                         <div class="main-nav">
                             <ul class="navigation">
                                 <li><a href="index-10.html">Início</a></li>
@@ -91,7 +93,8 @@
                     <div class="bread-crumb">
                         <ul class="clearfix">
                             <li><a href="index-10.html">Início</a></li>
-                            <li class="current">blog</li>
+                            <li><a href="blog.html">Blog</a></li>
+                            <li class="current" id="breadcrumbTitle">Carregando...</li>
                         </ul>
                     </div>
                 </div>
@@ -105,177 +108,75 @@
                         <!--Content Side-->
                         <div class="content-side col-lg-8 col-md-12 col-sm-12">
                             <div class="content-inner">
-                                <div class="blog-details">
-                                    <div class="image-box"><img src="images/resource/news-13.jpg" alt=""></div>
+                                <!-- Loading State -->
+                                <div id="loadingState" style="text-align: center; padding: 3rem;">
+                                    <p style="color: #888;">Carregando post...</p>
+                                </div>
+
+                                <!-- Post Content (hidden initially) -->
+                                <div class="blog-details" id="postContent" style="display: none;">
+                                    <div class="image-box">
+                                        <img id="postImage" src="images/resource/news-13.jpg" alt="">
+                                    </div>
                                     <div class="lower">
-                                        <h3>California abandons plan to tax text messages</h3>
-                                        <div class="info"><div class="cat i-block"><i class="far fa-folder"></i> books</div><div class="time i-block"><i class="far fa-clock"></i> 2 hours ago</div></div>
-                                        <div class="text-content text">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-                                            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
-                                            <blockquote>“It’s through mistakes that you actually can grow. You have to get bad in order to get good.”</blockquote>
-                                            <p>Enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus.</p>
-                                            <p>error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                                        <h3 id="postTitle">Título do Post</h3>
+                                        <div class="info">
+                                            <div class="cat i-block"><i class="far fa-folder"></i> <span id="postCategory">categoria</span></div>
+                                            <div class="time i-block"><i class="far fa-clock"></i> <span id="postDate">data</span></div>
+                                            <div class="author i-block"><i class="far fa-user"></i> <span id="postAuthor">autor</span></div>
+                                        </div>
+                                        <div class="text-content text" id="postBody">
+                                            <!-- Conteúdo do post será inserido aqui -->
                                         </div>
 
-                                        <div class="post-tags"><span class="ttl">Tags:</span> <a href="#">design</a>, &ensp; <a href="#">sport</a>, &ensp; <a href="#">politics</a>, &ensp; <a href="#">travel</a></div>
+                                        <div class="post-tags" id="postTags" style="display: none;">
+                                            <span class="ttl">Tags:</span>
+                                            <span id="tagsContainer"></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="post-author">
+
+                                <!-- Error State -->
+                                <div id="errorState" style="display: none; text-align: center; padding: 3rem;">
+                                    <h3 style="color: #888;">Post não encontrado</h3>
+                                    <p style="color: #666;">O post que você procura não existe ou foi removido.</p>
+                                    <a href="blog.html" style="color: #ff5c00; text-decoration: none;">
+                                        <i class="fas fa-arrow-left"></i> Voltar ao Blog
+                                    </a>
+                                </div>
+
+                                <!-- Author Box -->
+                                <div class="post-author" id="authorBox" style="display: none;">
                                     <div class="inner-box">
                                         <div class="inner">
                                             <div class="image"><img src="images/resource/author-1.jpg" alt=""></div>
-                                            <h5>About author</h5>
-                                            <div class="text">Enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</div>
+                                            <h5>Sobre o autor</h5>
+                                            <div class="text" id="authorName">Administrador da Avorar Turismo, apaixonado por viagens e aventuras.</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="post-comments">
-                                    <h4>3 Comments</h4>
-                                    <div class="comment">
-                                        <div class="inner">
-                                            <div class="image"><img src="images/resource/author-2.jpg" alt=""></div>
-                                            <div class="c-info"><i class="far fa-clock"></i> 2 days ago   /   by Graham</div>
-                                            <div class="text">Testing comment form</div>
-                                            <div class="link"><a href="#" class="theme-btn btn-reply">reply</a></div>
-                                        </div>
-                                    </div>
-                                    <div class="comment">
-                                        <div class="inner">
-                                            <div class="image"><img src="images/resource/author-3.jpg" alt=""></div>
-                                            <div class="c-info"><i class="far fa-clock"></i> 2 days ago   /   by Graham</div>
-                                            <div class="text">Comment on Hover</div>
-                                            <div class="link"><a href="#" class="theme-btn btn-reply">reply</a></div>
-                                        </div>
-                                    </div>
-                                    <div class="comment">
-                                        <div class="inner">
-                                            <div class="image"><img src="images/resource/author-4.jpg" alt=""></div>
-                                            <div class="c-info"><i class="far fa-clock"></i> 2 days ago   /   by Graham</div>
-                                            <div class="text">Third comment</div>
-                                            <div class="link"><a href="#" class="theme-btn btn-reply">reply</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="add-comment">
-                                    <h4>Leave comment</h4>
-                                    <div class="comment-form">
-                                        <form method="post" action="contact.html">
-                                            <div class="row clearfix">
-                                                <div class="inner-col col-lg-6 col-md-6 col-sm-12">
-                                                    <div class="form-group">
-                                                        <div class="field-label"><span class="icon fa fa-user"></span> Name</div>
-                                                        <div class="field-inner"><input type="text" name="fieldname" value="" placeholder="" required><i class="dot"></i></div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="field-label"><span class="icon far fa-envelope"></span> E-mail</div>
-                                                        <div class="field-inner"><input type="email" name="fieldname" value="" placeholder="" required><i class="dot"></i></div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="field-label"><span class="icon far fa-link"></span> Website</div>
-                                                        <div class="field-inner"><input type="text" name="fieldname" value="" placeholder="" required><i class="dot"></i></div>
-                                                    </div>
-                                                </div>
-                                                <div class="inner-col col-lg-6 col-md-6 col-sm-12">
-                                                    <div class="form-group">
-                                                        <div class="field-label">Comments</div>
-                                                        <div class="field-inner"><textarea name="fieldname" placeholder="" required></textarea><i class="dot"></i></div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button type="submit" class="theme-btn btn-style-two"><span>Post Comment</span></button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                         <!--Sidebar Side-->
                         <div class="sidebar-side col-lg-4 col-md-12 col-sm-12">
                             <div class="sidebar">
                                 <div class="sidebar-widget recent-post">
-                                    <div class="sidebar-title"><h5><span>latest posts</span></h5></div>
-                                    <div class="posts">
-
-                                        <div class="post">
-                                            <div class="inner">
-                                                <div class="image"><a href="#"><img src="images/resource/n-thumb-1.jpg" alt=""></a></div>
-                                                <div class="date"><span>18.09.2018</span></div>
-                                                <div class="text"><a href="#">Design solutions <br>for any media.</a></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="post">
-                                            <div class="inner">
-                                                <div class="image"><a href="#"><img src="images/resource/n-thumb-2.jpg" alt=""></a></div>
-                                                <div class="date"><span>18.09.2018</span></div>
-                                                <div class="text"><a href="#">Design solutions <br>for any media.</a></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="post">
-                                            <div class="inner">
-                                                <div class="image"><a href="#"><img src="images/resource/n-thumb-3.jpg" alt=""></a></div>
-                                                <div class="date"><span>18.09.2018</span></div>
-                                                <div class="text"><a href="#">Design solutions <br>for any media.</a></div>
-                                            </div>
-                                        </div>
-
+                                    <div class="sidebar-title"><h5><span>Posts Recentes</span></h5></div>
+                                    <div class="posts" id="recentPosts">
+                                        <!-- Posts recentes serão carregados dinamicamente -->
                                     </div>
                                 </div>
                                 <div class="sidebar-widget cat-widget">
-                                    <div class="sidebar-title"><h5><span>categories</span></h5></div>
+                                    <div class="sidebar-title"><h5><span>Categorias</span></h5></div>
                                     <div class="categories">
                                         <ul>
-                                            <li><a href="#">Business</a></li>
-                                            <li><a href="#">Marketing</a></li>
-                                            <li><a href="#">Creative</a></li>
-                                            <li><a href="#">Photography</a></li>
-                                            <li><a href="#">Creative</a></li>
-                                            <li><a href="#">Trading</a></li>
+                                            <li><a href="blog.html">Turismo</a></li>
+                                            <li><a href="blog.html">Aventura</a></li>
+                                            <li><a href="blog.html">Gastronomia</a></li>
+                                            <li><a href="blog.html">Cultura</a></li>
+                                            <li><a href="blog.html">Natureza</a></li>
                                         </ul>
-                                    </div>
-                                </div>
-                                <div class="sidebar-widget gallery-widget">
-                                    <div class="sidebar-title"><h5><span>instagram</span></h5></div>
-                                    <div class="images clearfix">
-                                        <div class="image">
-                                            <div class="image-box">
-                                                <img src="images/resource/g-thumb-1.jpg" alt="">
-                                                <a href="images/resource/image-1.jpg" class="lightbox-image overlink" data-fancybox="gallery"><i class="icon fab fa-instagram"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="image">
-                                            <div class="image-box">
-                                                <img src="images/resource/g-thumb-2.jpg" alt="">
-                                                <a href="images/resource/image-2.jpg" class="lightbox-image overlink" data-fancybox="gallery"><i class="icon fab fa-instagram"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="image">
-                                            <div class="image-box">
-                                                <img src="images/resource/g-thumb-3.jpg" alt="">
-                                                <a href="images/resource/image-3.jpg" class="lightbox-image overlink" data-fancybox="gallery"><i class="icon fab fa-instagram"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="image">
-                                            <div class="image-box">
-                                                <img src="images/resource/g-thumb-4.jpg" alt="">
-                                                <a href="images/resource/image-4.jpg" class="lightbox-image overlink" data-fancybox="gallery"><i class="icon fab fa-instagram"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="image">
-                                            <div class="image-box">
-                                                <img src="images/resource/g-thumb-5.jpg" alt="">
-                                                <a href="images/resource/image-5.jpg" class="lightbox-image overlink" data-fancybox="gallery"><i class="icon fab fa-instagram"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="image">
-                                            <div class="image-box">
-                                                <img src="images/resource/g-thumb-6.jpg" alt="">
-                                                <a href="images/resource/image-6.jpg" class="lightbox-image overlink" data-fancybox="gallery"><i class="icon fab fa-instagram"></i></a>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -284,38 +185,14 @@
                 </div>
             </div>
 
-            <!--Main Footer-->
-            <footer class="main-footer">
-                <button class="scroll-top scroll-to-target" data-target="html" id="scroll-to-top"><span class="icon fa fa-arrow-alt-circle-up"></span></button>
-                <div class="footer-inner">
-                    <div class="auto-container">
-                        <div class="footer-logo"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
-                        <div class="info">
-                            <div class="row clearfix">
-                                <!--Block-->
-                                <div class="info-block col-lg-6 col-md-6 col-sm-12">
-                                    <div class="i-title">Address</div>
-                                    <div class="text">121 King St, Melbourne <br>VIC 3000, Australia</div>
-                                </div>
-                                <!--Block-->
-                                <div class="info-block col-lg-6 col-md-6 col-sm-12">
-                                    <div class="i-title">Contact info</div>
-                                    <div class="text"><a href="tel:12345678900">123 456 789 00</a> <br> <a href="mailto:vosio@contact.com">vosio@contact.com</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="loc-info"><a href="#">Map & Directions</a></div>
-                    </div>
-                </div>
-            </footer>
-
         </div>
     </div>
 
 </div>
 <!--End Site Container--> 
 
-
+<!-- Script do gerenciador de dados -->
+<script src="js/api-client.js"></script>
 <script src="js/jquery.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -325,5 +202,150 @@
 <script src="js/cursor-script.js"></script>
 <script src="js/wow.js"></script>
 <script src="js/custom-script.js"></script>
+<script>
+/**
+ * Explicação da função [loadPost]
+ * Carrega um post específico baseado no slug da URL.
+ * Exibe mensagem de erro se o post não for encontrado.
+ */
+function loadPost() {
+    console.log('[Blog Single] Carregando post...');
+    
+    // Aguarda o DataManager estar disponível
+    if (typeof BlogManager === 'undefined') {
+        setTimeout(loadPost, 100);
+        return;
+    }
+
+    // Pega o slug da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
+
+    const loadingState = document.getElementById('loadingState');
+    const postContent = document.getElementById('postContent');
+    const errorState = document.getElementById('errorState');
+    const authorBox = document.getElementById('authorBox');
+
+    if (!slug) {
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+        return;
+    }
+
+    // Busca o post pelo slug
+    const post = BlogManager.getBySlug(slug);
+
+    if (!post || post.status !== 'publicado') {
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+        return;
+    }
+
+    // Preenche os dados do post
+    document.getElementById('pageTitle').textContent = `${post.titulo} - Avorar Turismo`;
+    document.getElementById('breadcrumbTitle').textContent = post.titulo;
+    document.getElementById('postTitle').textContent = post.titulo;
+    document.getElementById('postCategory').textContent = capitalizeFirst(post.categoria);
+    document.getElementById('postDate').textContent = formatDate(post.data);
+    document.getElementById('postAuthor').textContent = post.autor;
+    document.getElementById('postBody').innerHTML = post.conteudo;
+
+    // Imagem
+    if (post.imagemCapa) {
+        document.getElementById('postImage').src = post.imagemCapa;
+        document.getElementById('postImage').alt = post.titulo;
+    }
+
+    // Tags
+    if (post.tags && post.tags.length > 0) {
+        document.getElementById('postTags').style.display = 'block';
+        document.getElementById('tagsContainer').innerHTML = post.tags
+            .map(tag => `<a href="blog.html">${escapeHtml(tag)}</a>`)
+            .join(', &ensp; ');
+    }
+
+    // Exibe o conteúdo
+    loadingState.style.display = 'none';
+    postContent.style.display = 'block';
+    authorBox.style.display = 'block';
+
+    // Carrega posts recentes
+    loadRecentPosts(post.id);
+}
+
+/**
+ * Explicação da função [loadRecentPosts]
+ * Carrega os posts recentes para a sidebar.
+ * @param {string} excludeId - ID do post atual para excluir da lista
+ */
+function loadRecentPosts(excludeId) {
+    const posts = BlogManager.getAll(true)
+        .filter(p => p.id !== excludeId)
+        .slice(0, 3);
+
+    const container = document.getElementById('recentPosts');
+
+    if (posts.length === 0) {
+        container.innerHTML = '<p style="color: #888; text-align: center;">Nenhum outro post disponível</p>';
+        return;
+    }
+
+    container.innerHTML = posts.map(post => {
+        const image = post.imagemCapa || 'images/resource/n-thumb-1.jpg';
+        const date = formatDate(post.data);
+        
+        return `
+            <div class="post">
+                <div class="inner">
+                    <div class="image">
+                        <a href="blog-single.html?slug=${post.slug}">
+                            <img src="${image}" alt="${escapeHtml(post.titulo)}" onerror="this.src='images/resource/n-thumb-1.jpg'" style="width: 80px; height: 60px; object-fit: cover;">
+                        </a>
+                    </div>
+                    <div class="date"><span>${date}</span></div>
+                    <div class="text"><a href="blog-single.html?slug=${post.slug}">${escapeHtml(post.titulo)}</a></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Explicação da função [formatDate]
+ * Formata uma data para exibição.
+ */
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
+/**
+ * Explicação da função [capitalizeFirst]
+ * Capitaliza a primeira letra de uma string.
+ */
+function capitalizeFirst(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Explicação da função [escapeHtml]
+ * Escapa caracteres HTML para prevenir XSS.
+ */
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Carrega o post quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(loadPost, 200);
+});
+</script>
 </body>
 </html>

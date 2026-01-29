@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Post - Sistema Administrativo</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Avorar Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="blog.html" class="nav-link active">
+                        <i class="fas fa-blog"></i>
+                        Blog
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="excursoes.html" class="nav-link">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Excursões
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="checkout.html" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        Checkout
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="config-pagamento.html" class="nav-link">
+                        <i class="fas fa-credit-card"></i>
+                        Config. Pagamento
+                    </a>
+                </div>
+                <div class="nav-item" style="margin-top: 2rem;">
+                    <a href="#" class="nav-link" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sair
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <button id="sidebarToggle" class="btn btn-secondary btn-sm" style="margin-right: 1rem; display: none;">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle">Novo Post</h1>
+                </div>
+                <div class="user-menu">
+                    <span id="userName">Administrador</span>
+                    <div class="user-avatar">AD</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form id="postForm" onsubmit="savePost(event)">
+                        <!-- ID oculto para edição -->
+                        <input type="hidden" id="postId" value="">
+
+                        <!-- Título -->
+                        <div class="form-group">
+                            <label for="postTitle">Título do Post *</label>
+                            <input 
+                                type="text" 
+                                id="postTitle" 
+                                class="form-control" 
+                                placeholder="Digite o título do post..."
+                                required
+                            >
+                        </div>
+
+                        <!-- Autor e Data -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postAuthor">Autor *</label>
+                                <input 
+                                    type="text" 
+                                    id="postAuthor" 
+                                    class="form-control" 
+                                    value="Administrador"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="postDate">Data de Publicação *</label>
+                                <input 
+                                    type="date" 
+                                    id="postDate" 
+                                    class="form-control"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Categoria e Status -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postCategory">Categoria</label>
+                                <select id="postCategory" class="form-control">
+                                    <option value="turismo">Turismo</option>
+                                    <option value="aventura">Aventura</option>
+                                    <option value="gastronomia">Gastronomia</option>
+                                    <option value="cultura">Cultura</option>
+                                    <option value="natureza">Natureza</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="postStatus">Status</label>
+                                <select id="postStatus" class="form-control">
+                                    <option value="rascunho">Rascunho</option>
+                                    <option value="publicado">Publicado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Imagem de Capa -->
+                        <div class="form-group">
+                            <label>Imagem de Capa</label>
+                            <div class="file-upload" onclick="document.getElementById('postImage').click()">
+                                <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                                <p style="margin-bottom: 0.5rem; font-weight: 600;">Clique para fazer upload</p>
+                                <p style="color: var(--text-light); font-size: 0.875rem;">PNG, JPG ou WEBP (máx. 5MB)</p>
+                                <input 
+                                    type="file" 
+                                    id="postImage" 
+                                    accept="image/*"
+                                    onchange="handleImageUpload(this)"
+                                >
+                            </div>
+                            <div id="imagePreviewContainer" style="display: none; margin-top: 1rem; position: relative;">
+                                <img id="imagePreview" class="image-preview" alt="Preview" style="max-width: 100%; border-radius: var(--radius-md);">
+                                <button type="button" onclick="removeImage()" style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" id="postImageData" value="">
+                        </div>
+
+                        <!-- Resumo -->
+                        <div class="form-group">
+                            <label for="postExcerpt">Resumo (aparece na listagem)</label>
+                            <textarea 
+                                id="postExcerpt" 
+                                class="form-control" 
+                                rows="3"
+                                placeholder="Breve descrição do post para listagens..."
+                                maxlength="300"
+                            ></textarea>
+                            <small style="color: var(--text-light);">
+                                <span id="excerptCount">0</span>/300 caracteres
+                            </small>
+                        </div>
+
+                        <!-- Editor de Conteúdo -->
+                        <div class="form-group">
+                            <label>Conteúdo do Post *</label>
+                            <div class="editor-container">
+                                <div class="editor-toolbar">
+                                    <button type="button" onclick="formatText('bold')" title="Negrito (Ctrl+B)">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" onclick="formatText('italic')" title="Itálico (Ctrl+I)">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" onclick="formatText('underline')" title="Sublinhado (Ctrl+U)">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                    <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
+                                    <button type="button" onclick="formatText('justifyLeft')" title="Alinhar à esquerda">
+                                        <i class="fas fa-align-left"></i>
+                                    </button>
+                                    <button type="button" onclick="formatText('justifyCenter')" title="Centralizar">
+                                        <i class="fas fa-align-center"></i>
+                                    </button>
+                                    <button type="button" onclick="formatText('justifyRight')" title="Alinhar à direita">
+                                        <i class="fas fa-align-right"></i>
+                                    </button>
+                                    <button type="button" onclick="formatText('justifyFull')" title="Justificar">
+                                        <i class="fas fa-align-justify"></i>
+                                    </button>
+                                    <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
+                                    <button type="button" onclick="formatText('insertUnorderedList')" title="Lista com marcadores">
+                                        <i class="fas fa-list-ul"></i>
+                                    </button>
+                                    <button type="button" onclick="formatText('insertOrderedList')" title="Lista numerada">
+                                        <i class="fas fa-list-ol"></i>
+                                    </button>
+                                    <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
+                                    <button type="button" onclick="insertLink()" title="Inserir link">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                    <button type="button" onclick="formatText('removeFormat')" title="Remover formatação">
+                                        <i class="fas fa-remove-format"></i>
+                                    </button>
+                                    <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
+                                    <select onchange="formatHeading(this.value)" style="padding: 0.5rem; border: 1px solid var(--light-border); border-radius: var(--radius-sm); background: white; cursor: pointer;">
+                                        <option value="">Parágrafo</option>
+                                        <option value="h1">Título 1</option>
+                                        <option value="h2">Título 2</option>
+                                        <option value="h3">Título 3</option>
+                                        <option value="h4">Título 4</option>
+                                    </select>
+                                </div>
+                                <div 
+                                    id="postContent" 
+                                    class="editor-content" 
+                                    contenteditable="true"
+                                    placeholder="Comece a escrever seu post..."
+                                ></div>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="form-group">
+                            <label for="postTags">Tags (separadas por vírgula)</label>
+                            <input 
+                                type="text" 
+                                id="postTags" 
+                                class="form-control" 
+                                placeholder="turismo, aventura, rio de janeiro..."
+                            >
+                            <small style="color: var(--text-light);">
+                                As tags ajudam na busca e organização dos posts
+                            </small>
+                        </div>
+
+                        <!-- Ações -->
+                        <div class="form-actions">
+                            <a href="blog.html" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                                <i class="fas fa-save"></i> Salvar Rascunho
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> <span id="submitBtnText">Publicar Post</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script do gerenciador de dados -->
+    <script src="../js/api-client.js"></script>
+    <script src="js/admin-main.js"></script>
+    <script>
+        // Variáveis globais
+        let isEditing = false;
+        let currentPostId = null;
+
+        // Mostrar botão de toggle em mobile
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebarToggle').style.display = 'inline-block';
+        }
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebarToggle').style.display = 'inline-block';
+            } else {
+                document.getElementById('sidebarToggle').style.display = 'none';
+            }
+        });
+
+        /**
+         * Explicação da função [initEditor]
+         * Inicializa o editor, verificando se é edição ou criação.
+         * Carrega dados do post se for edição.
+         */
+        function initEditor() {
+            // Define data atual como padrão
+            document.getElementById('postDate').valueAsDate = new Date();
+
+            // Verifica se é edição
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('id');
+
+            if (postId) {
+                loadPostForEdit(postId);
+            }
+
+            // Contador de caracteres do resumo
+            document.getElementById('postExcerpt').addEventListener('input', updateExcerptCount);
+        }
+
+        /**
+         * Explicação da função [loadPostForEdit]
+         * Carrega os dados de um post existente para edição.
+         * @param {string} postId - ID do post a editar
+         */
+        function loadPostForEdit(postId) {
+            console.log('[Blog Editor] Carregando post para edição:', postId);
+            
+            const post = BlogManager.getById(postId);
+            
+            if (!post) {
+                showToast('Post não encontrado!', 'error');
+                setTimeout(() => {
+                    window.location.href = 'blog.html';
+                }, 1500);
+                return;
+            }
+
+            isEditing = true;
+            currentPostId = postId;
+
+            // Atualiza título da página
+            document.getElementById('pageTitle').textContent = 'Editar Post';
+            document.getElementById('submitBtnText').textContent = 'Salvar Alterações';
+
+            // Preenche os campos
+            document.getElementById('postId').value = post.id;
+            document.getElementById('postTitle').value = post.titulo;
+            document.getElementById('postAuthor').value = post.autor;
+            document.getElementById('postDate').value = post.data;
+            document.getElementById('postCategory').value = post.categoria;
+            document.getElementById('postStatus').value = post.status;
+            document.getElementById('postExcerpt').value = post.resumo || '';
+            document.getElementById('postContent').innerHTML = post.conteudo || '';
+            document.getElementById('postTags').value = Array.isArray(post.tags) ? post.tags.join(', ') : '';
+            
+            // Imagem de capa
+            if (post.imagemCapa) {
+                document.getElementById('postImageData').value = post.imagemCapa;
+                document.getElementById('imagePreview').src = post.imagemCapa;
+                document.getElementById('imagePreviewContainer').style.display = 'block';
+            }
+
+            updateExcerptCount();
+            console.log('[Blog Editor] Post carregado com sucesso');
+        }
+
+        /**
+         * Explicação da função [handleImageUpload]
+         * Processa o upload de imagem e converte para base64.
+         * @param {HTMLInputElement} input - Input de arquivo
+         */
+        function handleImageUpload(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Verifica tamanho (máx 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('A imagem deve ter no máximo 5MB', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById('postImageData').value = e.target.result;
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreviewContainer').style.display = 'block';
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        /**
+         * Explicação da função [removeImage]
+         * Remove a imagem de capa selecionada.
+         */
+        function removeImage() {
+            document.getElementById('postImageData').value = '';
+            document.getElementById('postImage').value = '';
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+        }
+
+        /**
+         * Explicação da função [updateExcerptCount]
+         * Atualiza o contador de caracteres do resumo.
+         */
+        function updateExcerptCount() {
+            const excerpt = document.getElementById('postExcerpt');
+            const count = document.getElementById('excerptCount');
+            count.textContent = excerpt.value.length;
+        }
+
+        // Funções do Editor de Texto Rico
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            document.getElementById('postContent').focus();
+        }
+
+        function formatHeading(tag) {
+            if (tag) {
+                document.execCommand('formatBlock', false, tag);
+            } else {
+                document.execCommand('formatBlock', false, 'p');
+            }
+            document.getElementById('postContent').focus();
+        }
+
+        function insertLink() {
+            const url = prompt('Digite a URL:');
+            if (url) {
+                document.execCommand('createLink', false, url);
+            }
+            document.getElementById('postContent').focus();
+        }
+
+        /**
+         * Explicação da função [getPostData]
+         * Coleta todos os dados do formulário.
+         * @returns {Object} Dados do post
+         */
+        function getPostData() {
+            const tagsString = document.getElementById('postTags').value;
+            const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+
+            return {
+                titulo: document.getElementById('postTitle').value.trim(),
+                autor: document.getElementById('postAuthor').value.trim(),
+                data: document.getElementById('postDate').value,
+                categoria: document.getElementById('postCategory').value,
+                status: document.getElementById('postStatus').value,
+                imagemCapa: document.getElementById('postImageData').value,
+                resumo: document.getElementById('postExcerpt').value.trim(),
+                conteudo: document.getElementById('postContent').innerHTML,
+                tags: tags
+            };
+        }
+
+        /**
+         * Explicação da função [validatePost]
+         * Valida os dados obrigatórios do post.
+         * @param {Object} postData - Dados do post
+         * @returns {boolean} Se é válido
+         */
+        function validatePost(postData) {
+            if (!postData.titulo) {
+                showToast('O título é obrigatório.', 'error');
+                document.getElementById('postTitle').focus();
+                return false;
+            }
+
+            if (!postData.autor) {
+                showToast('O autor é obrigatório.', 'error');
+                document.getElementById('postAuthor').focus();
+                return false;
+            }
+
+            if (!postData.data) {
+                showToast('A data é obrigatória.', 'error');
+                document.getElementById('postDate').focus();
+                return false;
+            }
+
+            const content = document.getElementById('postContent').textContent.trim();
+            if (!content) {
+                showToast('O conteúdo do post é obrigatório.', 'error');
+                document.getElementById('postContent').focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Explicação da função [savePost]
+         * Salva o post (cria novo ou atualiza existente).
+         * @param {Event} event - Evento do formulário
+         */
+        function savePost(event) {
+            event.preventDefault();
+            
+            const postData = getPostData();
+            
+            if (!validatePost(postData)) {
+                return;
+            }
+
+            let result;
+            
+            if (isEditing && currentPostId) {
+                // Atualiza post existente
+                result = BlogManager.update(currentPostId, postData);
+                
+                if (result) {
+                    showToast('Post atualizado com sucesso!', 'success');
+                } else {
+                    showToast('Erro ao atualizar post.', 'error');
+                    return;
+                }
+            } else {
+                // Cria novo post
+                result = BlogManager.create(postData);
+                
+                if (result) {
+                    showToast('Post criado com sucesso!', 'success');
+                } else {
+                    showToast('Erro ao criar post.', 'error');
+                    return;
+                }
+            }
+
+            console.log('[Blog Editor] Post salvo:', result);
+
+            // Redireciona para a lista
+            setTimeout(() => {
+                window.location.href = 'blog.html';
+            }, 1500);
+        }
+
+        /**
+         * Explicação da função [saveDraft]
+         * Salva o post como rascunho (não requer validação completa).
+         */
+        function saveDraft() {
+            const postData = getPostData();
+            postData.status = 'rascunho';
+            
+            // Apenas título é obrigatório para rascunho
+            if (!postData.titulo) {
+                showToast('Adicione pelo menos um título para salvar o rascunho.', 'error');
+                document.getElementById('postTitle').focus();
+                return;
+            }
+
+            let result;
+            
+            if (isEditing && currentPostId) {
+                result = BlogManager.update(currentPostId, postData);
+            } else {
+                result = BlogManager.create(postData);
+            }
+
+            if (result) {
+                showToast('Rascunho salvo com sucesso!', 'success');
+                
+                // Se era novo, atualiza para modo edição
+                if (!isEditing) {
+                    isEditing = true;
+                    currentPostId = result.id;
+                    document.getElementById('postId').value = result.id;
+                    document.getElementById('pageTitle').textContent = 'Editar Post';
+                    document.getElementById('submitBtnText').textContent = 'Salvar Alterações';
+                    
+                    // Atualiza URL sem recarregar
+                    window.history.replaceState({}, '', `blog-editor.html?id=${result.id}`);
+                }
+            } else {
+                showToast('Erro ao salvar rascunho.', 'error');
+            }
+        }
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key.toLowerCase()) {
+                    case 's':
+                        e.preventDefault();
+                        saveDraft();
+                        break;
+                    case 'b':
+                        if (document.activeElement.id === 'postContent') {
+                            e.preventDefault();
+                            formatText('bold');
+                        }
+                        break;
+                    case 'i':
+                        if (document.activeElement.id === 'postContent') {
+                            e.preventDefault();
+                            formatText('italic');
+                        }
+                        break;
+                    case 'u':
+                        if (document.activeElement.id === 'postContent') {
+                            e.preventDefault();
+                            formatText('underline');
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Inicializa o editor quando a página carrega
+        document.addEventListener('DOMContentLoaded', initEditor);
+    </script>
+</body>
+</html>

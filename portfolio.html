@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Vosio Portfolio Template - Our Portfolio</title>
+<title>Excursões - Avorar Turismo</title>
 <!-- Stylesheets -->
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
@@ -21,6 +21,8 @@
     <div class="cursor"></div>
     <!-- Preloader -->
     <div class="preloader"></div>
+
+    <a href="https://wa.me/5531981132286" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
 
     <div class="menu-backdrop"></div>
         
@@ -45,11 +47,11 @@
                 </div>
                 
                 <!--Copyright Text-->
-                <div class="copyright">&copy; Avoar Turismo 2026</div>
+                <div class="copyright">&copy; Avorar Turismo 2026</div>
             </div>
 
             <!--Alt Logo Box-->
-            <div class="alt-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
+            <div class="alt-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avorar Turismo"></a></div>
             
             <!--Nav Bg Box-->
             <div class="nav-bg-box"></div>
@@ -62,7 +64,7 @@
                     <div class="bottom-bg"></div>
                     <div class="main-nav-box" data-scrollbar="">
                         <!--Logo Box-->
-                        <div class="main-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
+                        <div class="main-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avorar Turismo"></a></div>
                         <div class="main-nav">
                             <ul class="navigation">
                                 <li><a href="index-10.html">Início</a></li>
@@ -107,214 +109,30 @@
 
                         <!--Filter-->
                         <div class="gallery-filters centered clearfix">
-                            <ul class="filter-tabs filter-btns clearfix">
-                                <li class="active filter" data-role="button" data-filter="all">Show All</li>
-                                <li class="filter" data-role="button" data-filter=".branding">Branding</li>
-                                <li class="filter" data-role="button" data-filter=".mockup">Mockups</li>
-                                <li class="filter" data-role="button" data-filter=".website">Websites</li>
-                                <li class="filter" data-role="button" data-filter=".application">Application</li>
-                                <li class="filter" data-role="button" data-filter=".motion">Motion</li>
+                            <ul class="filter-tabs filter-btns clearfix" id="filterTabs">
+                                <li class="active filter" data-role="button" data-filter="all" onclick="filterExcursoes('all')">Todas</li>
+                                <li class="filter" data-role="button" data-filter="natureza" onclick="filterExcursoes('natureza')">Natureza</li>
+                                <li class="filter" data-role="button" data-filter="cultura" onclick="filterExcursoes('cultura')">Cultura</li>
+                                <li class="filter" data-role="button" data-filter="aventura" onclick="filterExcursoes('aventura')">Aventura</li>
+                                <li class="filter" data-role="button" data-filter="marítimo" onclick="filterExcursoes('marítimo')">Marítimo</li>
                             </ul>
                         </div>
-                        <div class="filter-list row clearfix">
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all website application motion col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>interior</span></div>
-                                            <h5><a href="portfolio-single.html">Influenced by Power</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all mockup application col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>cultural</span></div>
-                                            <h5><a href="portfolio-single.html">Influenced by Power</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="filter-list row clearfix" id="excursoesGrid">
+                            <!-- Excursões serão carregadas dinamicamente -->
+                            <div class="col-12 text-center" id="loadingState" style="padding: 3rem;">
+                                <p style="color: #888;">Carregando excursões...</p>
                             </div>
+                        </div>
 
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all mockup website motion col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>interior</span></div>
-                                            <h5><a href="portfolio-single.html">Thoughtfully making Space</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all mockup application col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>flats</span></div>
-                                            <h5><a href="portfolio-single.html">Unique Solution</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all mockup application motion col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>wood</span></div>
-                                            <h5><a href="portfolio-single.html">Magnificent Assembled</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all branding website motion col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>exterior</span></div>
-                                            <h5><a href="portfolio-single.html">Innovation in Craft</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all branding mockup website col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>wood</span></div>
-                                            <h5><a href="portfolio-single.html">Well-simplified design</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all branding mockup motion col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>metal</span></div>
-                                            <h5><a href="portfolio-single.html">Design your dreams with us</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all branding application motion col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>exterior</span></div>
-                                            <h5><a href="portfolio-single.html">Level of evolution</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all mockup website application col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>aluminium</span></div>
-                                            <h5><a href="portfolio-single.html">You bet it looks so good </a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all website application motion col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>high buildings</span></div>
-                                            <h5><a href="portfolio-single.html">The Joy of Living</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--Portfolio Block-->
-                            <div class="portfolio-block mix all branding mockup col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                                <div class="inner-box">
-                                    <div class="image"><img src="images/background/Queda%20de%20agua.webp" alt=""></div>
-                                    <div class="overlay">
-                                        <div class="more-link"><a href="portfolio-single.html" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a></div>
-                                        <div class="inner">
-                                            <div class="cat"><span>interior</span></div>
-                                            <h5><a href="portfolio-single.html">The Joy of Living</a></h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                        <!-- Empty State -->
+                        <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
+                            <h3 style="color: #888;">Nenhuma excursão disponível</h3>
+                            <p style="color: #666;">Novas experiências em breve!</p>
                         </div>
                     </div>
                 </div>
             </section>
-
-
-            <!--Main Footer-->
-            <footer class="main-footer">
-                <button class="scroll-top scroll-to-target" data-target="html" id="scroll-to-top"><span class="icon fa fa-arrow-alt-circle-up"></span></button>
-                <div class="footer-inner">
-                    <div class="auto-container">
-                        <div class="footer-logo"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
-                        <div class="info">
-                            <div class="row clearfix">
-                                <!--Block-->
-                                <div class="info-block col-lg-6 col-md-6 col-sm-12">
-                                    <div class="i-title">Address</div>
-                                    <div class="text">121 King St, Melbourne <br>VIC 3000, Australia</div>
-                                </div>
-                                <!--Block-->
-                                <div class="info-block col-lg-6 col-md-6 col-sm-12">
-                                    <div class="i-title">Contact info</div>
-                                    <div class="text"><a href="tel:12345678900">123 456 789 00</a> <br> <a href="mailto:vosio@contact.com">vosio@contact.com</a></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="loc-info"><a href="#">Map & Directions</a></div>
-                    </div>
-                </div>
-            </footer>
 
         </div>
     </div>
@@ -322,7 +140,8 @@
 </div>
 <!--End Site Container--> 
 
-
+<!-- Script do cliente da API -->
+<script src="js/api-client.js"></script>
 <script src="js/jquery.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -333,5 +152,163 @@
 <script src="js/cursor-script.js"></script>
 <script src="js/wow.js"></script>
 <script src="js/custom-script.js"></script>
+<script>
+// Variáveis globais
+let allExcursoes = [];
+let currentFilter = 'all';
+
+/**
+ * Explicação da função [loadExcursoes]
+ * Carrega as excursões ativas da API e renderiza na página.
+ */
+async function loadExcursoes() {
+    console.log('[Portfolio] Carregando excursões da API...');
+    
+    // Aguarda o API Client estar disponível
+    if (typeof ExcursaoManager === 'undefined') {
+        setTimeout(loadExcursoes, 100);
+        return;
+    }
+
+    try {
+        allExcursoes = await ExcursaoManager.getAll(true); // true = apenas ativas
+        renderExcursoes(allExcursoes);
+    } catch (error) {
+        console.error('[Portfolio] Erro ao carregar excursões:', error);
+        document.getElementById('loadingState')?.remove();
+        document.getElementById('emptyState').style.display = 'block';
+    }
+}
+
+/**
+ * Explicação da função [renderExcursoes]
+ * Renderiza a lista de excursões na página.
+ * @param {Array} excursoes - Lista de excursões a renderizar
+ */
+function renderExcursoes(excursoes) {
+    const grid = document.getElementById('excursoesGrid');
+    const loadingState = document.getElementById('loadingState');
+    const emptyState = document.getElementById('emptyState');
+
+    // Remove loading
+    if (loadingState) {
+        loadingState.remove();
+    }
+
+    if (excursoes.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+
+    emptyState.style.display = 'none';
+
+    grid.innerHTML = excursoes.map(excursao => {
+        // Usa imagem padrão se não tiver
+        const image = excursao.imagemCapa || 'images/background/Queda de agua.webp';
+        const categoria = excursao.categoria || 'natureza';
+        const preco = ExcursaoManager.formatPrice(excursao.preco);
+        
+        return `
+            <!--Portfolio Block-->
+            <div class="portfolio-block mix all ${categoria} col-xl-4 col-lg-4 col-md-6 col-sm-12" data-categoria="${categoria}">
+                <div class="inner-box">
+                    <div class="image">
+                        <img src="${image}" alt="${escapeHtml(excursao.titulo)}" onerror="this.src='images/background/Queda de agua.webp'">
+                    </div>
+                    <div class="overlay">
+                        <div class="more-link">
+                            <a href="portfolio-single.html?slug=${excursao.slug}" class="theme-btn">
+                                <i class="fa-solid fa-bars-staggered"></i>
+                            </a>
+                        </div>
+                        <div class="inner">
+                            <div class="cat"><span>${capitalizeFirst(categoria)}</span></div>
+                            <h5><a href="portfolio-single.html?slug=${excursao.slug}">${escapeHtml(excursao.titulo)}</a></h5>
+                            <div class="price" style="color: #ff5c00; font-weight: bold; margin-top: 0.5rem;">${preco}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Explicação da função [filterExcursoes]
+ * Filtra as excursões por categoria.
+ * @param {string} categoria - Categoria para filtrar ('all' para todas)
+ */
+function filterExcursoes(categoria) {
+    currentFilter = categoria;
+
+    // Atualiza visual dos filtros
+    document.querySelectorAll('#filterTabs .filter').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.filter === categoria) {
+            tab.classList.add('active');
+        }
+    });
+
+    // Filtra excursões
+    let filtered = allExcursoes;
+    if (categoria !== 'all') {
+        filtered = allExcursoes.filter(e => e.categoria === categoria);
+    }
+
+    // Animação de fade
+    const items = document.querySelectorAll('.portfolio-block');
+    items.forEach(item => {
+        const itemCategoria = item.dataset.categoria;
+        if (categoria === 'all' || itemCategoria === categoria) {
+            item.style.display = 'block';
+            item.style.opacity = '1';
+        } else {
+            item.style.opacity = '0';
+            setTimeout(() => {
+                item.style.display = 'none';
+            }, 300);
+        }
+    });
+
+    // Atualiza empty state
+    const visibleItems = Array.from(items).filter(item => {
+        const itemCategoria = item.dataset.categoria;
+        return categoria === 'all' || itemCategoria === categoria;
+    });
+
+    const emptyState = document.getElementById('emptyState');
+    if (visibleItems.length === 0) {
+        emptyState.style.display = 'block';
+    } else {
+        emptyState.style.display = 'none';
+    }
+}
+
+/**
+ * Explicação da função [capitalizeFirst]
+ * Capitaliza a primeira letra de uma string.
+ */
+function capitalizeFirst(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Explicação da função [escapeHtml]
+ * Escapa caracteres HTML para prevenir XSS.
+ */
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Carrega as excursões quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(loadExcursoes, 200);
+});
+</script>
 </body>
 </html>

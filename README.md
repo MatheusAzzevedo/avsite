@@ -1,8 +1,62 @@
-# Avoar Site
+# Avorar Turismo - Sistema Completo
 
-Arquivos modificados [Resumo das últimas atualizações]
-- `about.html` [Reestruturação completa com hero moderno, timeline de processo, diferenciação clara de seções, prova social e CTA final otimizado]
-- `css/about-page.css` [Estilos dedicados para layout moderno com grid responsivo, hierarquia visual clara e microinterações]
-- `css/avoar-custom.css` [Utilitários globais para acessibilidade, estados de foco, animações suaves e otimizações de UX]
-- `css/style.css` [Paleta atualizada para `#ff5c00` em 100+ ocorrências, remoção visual de redes sociais e linhas do menu]
-- `contact.html` [Hero com CTAs diretos, cards de contato e banner de horário com ação]
+Sistema de site e administração para Avorar Turismo com backend em Node.js/Express, banco de dados PostgreSQL e frontend em HTML/CSS/JavaScript.
+
+## Arquivos Modificados [Resumo das Atualizações]
+
+### Backend (API Node.js)
+- `api/src/server.ts` [Servidor Express com rotas, middlewares e tratamento de erros]
+- `api/src/routes/*.ts` [APIs REST para excursões, posts, auth, uploads e pagamentos]
+- `api/prisma/schema.prisma` [Schema do banco PostgreSQL com modelos completos]
+- `api/prisma/seed.ts` [Script para popular banco com dados iniciais]
+
+### Cliente da API (Frontend)
+- `js/api-client.js` [Biblioteca JavaScript para consumir API - substitui localStorage]
+
+### Sistema Administrativo
+- `admin/login.html` [Login atualizado para autenticação via API JWT]
+- `admin/excursoes.html` [Listagem de excursões via API com CRUD completo]
+- `admin/excursao-editor.html` [Editor de excursões integrado com API]
+
+### Documentação
+- `api/API-DOCS.md` [Documentação completa da API pública para integrações]
+- `api/DEPLOY-RAILWAY.md` [Guia passo a passo para deploy no Railway]
+
+## Funcionalidades Implementadas
+
+1. **API REST Completa**: Backend Node.js + Express + Prisma + PostgreSQL
+2. **Autenticação JWT**: Sistema seguro de login/logout com tokens
+3. **CRUD Excursões**: Criar, editar, listar e excluir excursões
+4. **CRUD Posts**: Gerenciamento completo do blog
+5. **Upload de Imagens**: Sistema de upload com processamento via Sharp
+6. **Integração Externa**: API pública documentada para outros sistemas
+
+## Como Executar
+
+### Desenvolvimento Local
+
+```bash
+# Backend
+cd api
+npm install
+npm run prisma:generate
+npm run prisma:push
+npm run seed
+npm run dev
+
+# Frontend - servir arquivos estáticos
+# Use extensão Live Server do VSCode ou similar
+```
+
+### Credenciais Admin
+- **Email:** admin@avorar.com
+- **Senha:** admin123
+
+## Tecnologias
+
+- **Backend:** Node.js, Express, TypeScript, Prisma
+- **Banco:** PostgreSQL (Railway)
+- **Validação:** Zod
+- **Autenticação:** JWT (jsonwebtoken)
+- **Upload:** Multer + Sharp
+- **Frontend:** HTML5, CSS3, JavaScript Vanilla

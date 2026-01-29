@@ -329,7 +329,7 @@ p{
   margin: 0;
   line-height: 30px;
   padding: 16px 35px 14px;
-  color: #000000;
+  color: #ffffff;
   font-weight: 400;
   font-size: 18px;
   text-align: center;
@@ -388,7 +388,7 @@ p{
   margin: 0;
   line-height: 26px;
   padding: 16px 30px 14px;
-  color: #000000;
+  color: #ffffff;
   font-weight: 400;
   font-size: 15px;
   text-align: center;
@@ -492,6 +492,7 @@ p{
   background-position: center center;
   background-repeat: no-repeat;
   background-image: url(../images/icons/preloader.gif);
+  filter: hue-rotate(-95deg) saturate(1.2) brightness(1.1);
 }
 
 img {
@@ -1117,6 +1118,17 @@ form label.error{
 .main-header-bar .alt-logo-box img{
   width: 192px;
   max-width: none;
+}
+
+/* Logo Branca: fade out on scroll (páginas com scroll) */
+.main-header-bar .alt-logo-box{
+  transition: opacity 0.35s ease;
+  -moz-transition: opacity 0.35s ease;
+  -webkit-transition: opacity 0.35s ease;
+}
+.main-header-bar.fixed-header .alt-logo-box{
+  opacity: 0;
+  pointer-events: none;
 }
 
 .main-nav-outer{
@@ -5911,7 +5923,7 @@ form label.error{
   position: relative;
   font-family: 'Monument_Extended_Regular', sans-serif;
   font-weight: 400;
-  font-size: 60px;
+  font-size: 48px;
   color: #ffffff;
   text-transform: uppercase;
   line-height:1.1em;
@@ -5966,9 +5978,17 @@ form label.error{
   position: relative;
   font-family: 'Telegraf_UltraLight', sans-serif;
   font-weight: 400;
-  font-size: 20px;
+  font-size: 17px;
   padding-top: 25px;
-  line-height: 30px;
+  line-height: 26px;
+}
+
+.banner-ten .slide-item .slide-cta{
+  margin-top: 24px;
+}
+
+.banner-ten .slide-item .slide-cta .theme-btn{
+  display: inline-block;
 }
 
 .banner-ten .slide-item .bottom-content .count{
@@ -6624,4 +6644,34 @@ form label.error{
   .about-hero {
     padding-top: 110px;
   }
+}
+
+/* Botão flutuante WhatsApp - lateral esquerda, todas as páginas */
+.whatsapp-float {
+  position: fixed;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: #ff5c00;
+  color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(255, 92, 0, 0.2), 0 0 40px rgba(255, 92, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+
+.whatsapp-float:hover {
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 0 28px rgba(255, 92, 0, 0.25), 0 0 50px rgba(255, 92, 0, 0.25);
+}
+
+.whatsapp-float .fab {
+  font-size: 28px;
 }

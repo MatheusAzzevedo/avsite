@@ -1,18 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Vosio Portfolio Template - Project Details</title>
+<title id="pageTitle">Excursão - Avorar Turismo</title>
 <!-- Stylesheets -->
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
+<link href="css/avoar-custom.css" rel="stylesheet">
 <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
 <link rel="icon" href="images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <!-- Responsive -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <link href="css/responsive.css" rel="stylesheet">
 <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]--> 
+
+<style>
+    /* Estilos para a página de produto */
+    .product-page { background: #f8f9fa; padding: 0; }
+    .product-hero { background: #000; color: #fff; padding: 60px 0 40px; position: relative; overflow: hidden; }
+    .product-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255, 92, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%); z-index: 1; }
+    .product-hero .auto-container { position: relative; z-index: 2; }
+    .product-breadcrumb { margin-bottom: 20px; }
+    .product-breadcrumb a { color: #ff5c00; text-decoration: none; font-size: 14px; }
+    .product-breadcrumb span { color: #999; margin: 0 10px; }
+    .product-title { font-size: 3rem; font-weight: 700; margin-bottom: 15px; color: #ff5c00; }
+    .product-subtitle { font-size: 1.25rem; color: #ccc; margin-bottom: 30px; }
+    .product-meta { display: flex; gap: 30px; flex-wrap: wrap; }
+    .meta-item { display: flex; align-items: center; gap: 10px; }
+    .meta-item i { color: #ff5c00; font-size: 20px; }
+    .meta-item span { font-size: 14px; color: #ddd; }
+    .product-content { padding: 60px 0; }
+    .content-grid { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
+    .main-content { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .product-gallery { position: relative; margin-bottom: 30px; }
+    .main-image { width: 100%; height: 500px; object-fit: cover; }
+    .gallery-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 20px; }
+    .thumb { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; }
+    .thumb:hover, .thumb.active { border-color: #ff5c00; }
+    .product-info-tabs { border-top: 1px solid #e5e7eb; }
+    .tab-navigation { display: flex; border-bottom: 2px solid #e5e7eb; background: #f9fafb; }
+    .tab-btn { padding: 18px 30px; border: none; background: none; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.3s; font-size: 15px; }
+    .tab-btn:hover { color: #000; background: rgba(255, 92, 0, 0.05); }
+    .tab-btn.active { color: #000; border-bottom-color: #ff5c00; background: #fff; }
+    .tab-content-area { padding: 30px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .tab-panel h3 { font-size: 1.5rem; margin-bottom: 20px; color: #000; }
+    .tab-panel h4 { font-size: 1.125rem; margin: 25px 0 15px; color: #e55200; font-weight: 600; }
+    .tab-panel p { line-height: 1.8; color: #4b5563; margin-bottom: 15px; }
+    .tab-panel ul { list-style: none; padding: 0; margin: 15px 0; }
+    .tab-panel ul li { padding: 8px 0 8px 25px; position: relative; color: #4b5563; }
+    .tab-panel ul li::before { content: '>'; position: absolute; left: 0; color: #e55200; font-weight: bold; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; background: #f9fafb; border-radius: 8px; margin: 20px 0; }
+    .info-item h5 { font-size: 0.875rem; color: #6b7280; margin-bottom: 5px; font-weight: 500; }
+    .info-item p { font-size: 1rem; font-weight: 600; color: #000; margin: 0; }
+    .tags-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    .tag { background: rgba(255, 92, 0, 0.1); color: #e55200; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+    .purchase-card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: sticky; top: 20px; height: fit-content; }
+    .price-section { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e5e7eb; }
+    .price-label { font-size: 14px; color: #6b7280; margin-bottom: 5px; }
+    .price { font-size: 2.5rem; font-weight: 700; color: #ff5c00; margin-bottom: 5px; }
+    .price-note { font-size: 13px; color: #ff5c00; font-weight: 500; }
+    .quantity-section { margin-bottom: 25px; }
+    .quantity-label { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #000; }
+    .quantity-control { display: flex; align-items: center; gap: 15px; }
+    .qty-btn { width: 40px; height: 40px; border: 2px solid #e5e7eb; background: #fff; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; color: #000; transition: all 0.3s; }
+    .qty-btn:hover { border-color: #ff5c00; background: #ff5c00; color: #fff; }
+    .qty-input { width: 60px; height: 40px; text-align: center; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; font-weight: 600; }
+    .btn-add-cart { width: 100%; padding: 16px; background: #ff5c00; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-add-cart:hover { background: #e55200; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3); }
+    .btn-buy-now { width: 100%; padding: 16px; background: #000; color: #ff5c00; border: 2px solid #ff5c00; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-buy-now:hover { background: #ff5c00; color: #fff; }
+    .highlights { margin-top: 25px; padding-top: 25px; border-top: 2px solid #e5e7eb; }
+    .highlight-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+    .highlight-item i { color: #ff5c00; font-size: 20px; }
+    .highlight-item span { font-size: 14px; color: #4b5563; }
+    .loading-state { text-align: center; padding: 100px 20px; }
+    .error-state { text-align: center; padding: 100px 20px; }
+    @media (max-width: 992px) { .content-grid { grid-template-columns: 1fr; } .purchase-card { position: static; } .product-title { font-size: 2rem; } .info-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .tab-navigation { overflow-x: auto; } .tab-btn { white-space: nowrap; padding: 15px 20px; } .gallery-thumbs { grid-template-columns: repeat(2, 1fr); } .product-meta { flex-direction: column; gap: 15px; } }
+</style>
 
 </head>
 
@@ -22,20 +91,17 @@
     <!-- Preloader -->
     <div class="preloader"></div>
 
+    <a href="https://wa.me/5531981132286" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
+
     <div class="menu-backdrop"></div>
         
     <!-- Main Header Bar-->
     <header class="main-header-bar">
         <div class="line-one"></div>
         <div class="line-two"></div>
-        <!--Header-Upper-->
         <div class="header-bar-inner">
             <div class="outer-box clearfix">
-                
-                <!--Nav Toggler-->
                 <div class="nav-toggler"><button class="toggler-btn"><span class="bar bar-one"></span><span class="bar bar-two"></span><span class="bar bar-three"></span></button></div>
-                
-                <!--Social Links-->
                 <div class="social-links">
                     <ul class="clearfix">
                         <li><a href="#"><span class="fab fa-instagram"></span></a></li>
@@ -43,26 +109,17 @@
                         <li><a href="#"><span class="fab fa-facebook-square"></span></a></li>
                     </ul>
                 </div>
-                
-                <!--Copyright Text-->
-                <div class="copyright">&copy; Avoar Turismo 2026</div>
+                <div class="copyright">&copy; Avorar Turismo 2026</div>
             </div>
-
-            <!--Alt Logo Box-->
-            <div class="alt-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
-            
-            <!--Nav Bg Box-->
+            <div class="alt-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt=""></a></div>
             <div class="nav-bg-box"></div>
-            
-            <!--Main Nav Outer-->
             <div class="main-nav-outer">
                 <div class="nav-closer"><img src="images/icons/close-icon.png" alt=""></div>
                 <div class="outer-nav-box">
                     <div class="top-bg"></div>
                     <div class="bottom-bg"></div>
                     <div class="main-nav-box" data-scrollbar="">
-                        <!--Logo Box-->
-                        <div class="main-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
+                        <div class="main-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt=""></a></div>
                         <div class="main-nav">
                             <ul class="navigation">
                                 <li><a href="index-10.html">Início</a></li>
@@ -77,108 +134,187 @@
                 </div>
             </div>
         </div>
-        <!--End Header Upper-->
     </header>
-    <!--End Main Header -->
 
     <div class="scroll-container">
         <div class="main-content-container" id="scroll-container">
             <div class="body-bg-layer" style="background-image: url(images/background/body-bg-1.jpg);"></div>
-            <!-- Page Title -->
-            <section class="page-title" id="to-top-div">
-                <div class="auto-container">
-                    <h1><span>abstract company</span></h1>
-                    <div class="bread-crumb">
-                        <ul class="clearfix">
-                            <li><a href="index-10.html">Início</a></li>
-                            <li><a href="portfolio.html">projects</a></li>
-                            <li class="current">abstract company</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-            <!--End Banner Section -->
+            
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state">
+                <p style="color: #888;">Carregando excursão...</p>
+            </div>
 
+            <!-- Error State -->
+            <div id="errorState" class="error-state" style="display: none;">
+                <h3 style="color: #888;">Excursão não encontrada</h3>
+                <p style="color: #666;">A excursão que você procura não existe ou foi removida.</p>
+                <a href="portfolio.html" style="color: #ff5c00; text-decoration: none;">
+                    <i class="fas fa-arrow-left"></i> Voltar às Excursões
+                </a>
+            </div>
 
-            <!--Portfolio Single Section-->
-            <section class="project-details">
-                <div class="auto-container">
-
-                    <div class="upper-content">
-                        <div class="row clearfix">
-                            <!--Text Col-->
-                            <div class="text-col col-lg-5 col-md-12 col-sm-12">
-                                <div class="inner">
-                                    <h3>Abstract company branding design</h3>
-                                    <div class="scope">
-                                        <div class="ttl"><span>Scope</span><i class="fa fa-ellipsis-v"></i></div>
-                                        <ul>
-                                            <li>Brand Strategy</li>
-                                            <li>Identity Design</li>
-                                            <li>Website</li>
-                                            <li>Campaigns</li>
-                                        </ul>
-                                    </div>
-                                    <div class="text">Trends and common requests can be utilized to make valuable changes to the way an organization interacts with its team members.</div>
-                                </div>
-                            </div>
-
-                            <!--Image Col-->
-                            <div class="image-col col-lg-7 col-md-12 col-sm-12">
-                                <div class="inner">
-                                    <div class="image"><img src="images/resource/image-35.jpg" alt=""></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="images">
-                        <div class="image"><img src="images/resource/image-36.jpg" alt=""></div>
-                        <div class="image"><img src="images/resource/image-37.jpg" alt=""></div>
-                        <div class="image"><img src="images/resource/image-38.jpg" alt=""></div>
-                    </div>
-
-                    <div class="post-controls">
-                        <ul class="clearfix">
-                            <li><a href="#">Previous Project</a></li>
-                            <li><a href="#">Next Project</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-
-            <!--Main Footer-->
-            <footer class="main-footer">
-                <button class="scroll-top scroll-to-target" data-target="html" id="scroll-to-top"><span class="icon fa fa-arrow-alt-circle-up"></span></button>
-                <div class="footer-inner">
+            <!-- Product Content (hidden initially) -->
+            <div id="excursaoContent" style="display: none;">
+                <!-- Product Hero -->
+                <section class="product-hero">
                     <div class="auto-container">
-                        <div class="footer-logo"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
-                        <div class="info">
-                            <div class="row clearfix">
-                                <!--Block-->
-                                <div class="info-block col-lg-6 col-md-6 col-sm-12">
-                                    <div class="i-title">Address</div>
-                                    <div class="text">121 King St, Melbourne <br>VIC 3000, Australia</div>
+                        <div class="product-breadcrumb">
+                            <a href="index-10.html">Início</a>
+                            <span>/</span>
+                            <a href="portfolio.html">Excursões</a>
+                            <span>/</span>
+                            <span id="breadcrumbTitle">-</span>
+                        </div>
+                        <h1 class="product-title" id="excursaoTitulo">-</h1>
+                        <p class="product-subtitle" id="excursaoSubtitulo">-</p>
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span id="excursaoDuracao">-</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-tag"></i>
+                                <span id="excursaoCategoria">-</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="excursaoLocal">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Product Content -->
+                <section class="product-content">
+                    <div class="auto-container">
+                        <div class="content-grid">
+                            <!-- Main Content -->
+                            <div class="main-content">
+                                <!-- Gallery -->
+                                <div class="product-gallery">
+                                    <img src="images/background/Queda de agua.webp" alt="" class="main-image" id="mainImage">
+                                    <div class="gallery-thumbs" id="galleryThumbs">
+                                        <!-- Galeria será carregada dinamicamente -->
+                                    </div>
                                 </div>
-                                <!--Block-->
-                                <div class="info-block col-lg-6 col-md-6 col-sm-12">
-                                    <div class="i-title">Contact info</div>
-                                    <div class="text"><a href="tel:12345678900">123 456 789 00</a> <br> <a href="mailto:vosio@contact.com">vosio@contact.com</a></div>
+
+                                <!-- Tabs -->
+                                <div class="product-info-tabs">
+                                    <div class="tab-navigation">
+                                        <button class="tab-btn active" onclick="switchProductTab('description')">Descrição</button>
+                                        <button class="tab-btn" onclick="switchProductTab('includes')">O que está incluso</button>
+                                        <button class="tab-btn" onclick="switchProductTab('info')">Informações</button>
+                                    </div>
+
+                                    <div class="tab-content-area">
+                                        <!-- Descrição -->
+                                        <div id="tab-description" class="tab-panel active">
+                                            <h3>Sobre esta Excursão</h3>
+                                            <div id="excursaoDescricao">
+                                                <!-- Conteúdo será carregado dinamicamente -->
+                                            </div>
+                                        </div>
+
+                                        <!-- Inclusos -->
+                                        <div id="tab-includes" class="tab-panel">
+                                            <h3>O que está incluso</h3>
+                                            <div id="excursaoInclusos">
+                                                <!-- Conteúdo será carregado dinamicamente -->
+                                            </div>
+
+                                            <h4 style="margin-top: 30px;">Recomendações</h4>
+                                            <div id="excursaoRecomendacoes">
+                                                <!-- Conteúdo será carregado dinamicamente -->
+                                            </div>
+                                        </div>
+
+                                        <!-- Informações Adicionais -->
+                                        <div id="tab-info" class="tab-panel">
+                                            <h3>Informações Importantes</h3>
+                                            
+                                            <div class="info-grid">
+                                                <div class="info-item">
+                                                    <h5>Local de Saída</h5>
+                                                    <p id="infoLocal">-</p>
+                                                </div>
+                                                <div class="info-item">
+                                                    <h5>Horário</h5>
+                                                    <p id="infoHorario">-</p>
+                                                </div>
+                                                <div class="info-item">
+                                                    <h5>Duração</h5>
+                                                    <p id="infoDuracao">-</p>
+                                                </div>
+                                                <div class="info-item">
+                                                    <h5>Categoria</h5>
+                                                    <p id="infoCategoria">-</p>
+                                                </div>
+                                            </div>
+
+                                            <h4>Tags</h4>
+                                            <div class="tags-container" id="excursaoTags">
+                                                <!-- Tags serão carregadas dinamicamente -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Purchase Card -->
+                            <div class="purchase-card">
+                                <div class="price-section">
+                                    <div class="price-label">A partir de</div>
+                                    <div class="price" id="excursaoPreco">R$ 0,00</div>
+                                    <div class="price-note" id="precoPix">✓ Desconto de 3% no PIX</div>
+                                </div>
+
+                                <div class="quantity-section">
+                                    <div class="quantity-label">Quantidade</div>
+                                    <div class="quantity-control">
+                                        <button class="qty-btn" onclick="decreaseQty()">−</button>
+                                        <input type="number" id="quantity" class="qty-input" value="1" min="1" max="20" onchange="updateTotal()">
+                                        <button class="qty-btn" onclick="increaseQty()">+</button>
+                                    </div>
+                                </div>
+
+                                <button class="btn-add-cart" onclick="contactWhatsApp()">
+                                    <i class="fab fa-whatsapp"></i>
+                                    Reservar pelo WhatsApp
+                                </button>
+
+                                <button class="btn-buy-now" onclick="buyNow()">
+                                    <i class="fas fa-bolt"></i>
+                                    Comprar Agora
+                                </button>
+
+                                <div class="highlights">
+                                    <div class="highlight-item">
+                                        <i class="fas fa-shield-alt"></i>
+                                        <span>Pagamento 100% seguro</span>
+                                    </div>
+                                    <div class="highlight-item">
+                                        <i class="fas fa-undo"></i>
+                                        <span>Política de cancelamento</span>
+                                    </div>
+                                    <div class="highlight-item">
+                                        <i class="fas fa-headset"></i>
+                                        <span>Suporte dedicado</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="loc-info"><a href="#">Map & Directions</a></div>
                     </div>
-                </div>
-            </footer>
+                </section>
+            </div>
 
         </div>
     </div>
 
 </div>
-<!--End Site Container--> 
 
-
+<!-- Script do gerenciador de dados -->
+<script src="js/api-client.js"></script>
 <script src="js/jquery.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -188,5 +324,206 @@
 <script src="js/cursor-script.js"></script>
 <script src="js/wow.js"></script>
 <script src="js/custom-script.js"></script>
+
+<script>
+// Variável global para armazenar dados da excursão
+let currentExcursao = null;
+
+/**
+ * Explicação da função [loadExcursao]
+ * Carrega os dados de uma excursão específica baseado no slug da URL.
+ */
+function loadExcursao() {
+    console.log('[Portfolio Single] Carregando excursão...');
+    
+    // Aguarda o DataManager estar disponível
+    if (typeof ExcursaoManager === 'undefined') {
+        setTimeout(loadExcursao, 100);
+        return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
+
+    const loadingState = document.getElementById('loadingState');
+    const errorState = document.getElementById('errorState');
+    const excursaoContent = document.getElementById('excursaoContent');
+
+    if (!slug) {
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+        return;
+    }
+
+    // Busca a excursão pelo slug
+    const excursao = ExcursaoManager.getBySlug(slug);
+
+    if (!excursao || excursao.status !== 'ativo') {
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+        return;
+    }
+
+    currentExcursao = excursao;
+    renderExcursao(excursao);
+
+    // Exibe o conteúdo
+    loadingState.style.display = 'none';
+    excursaoContent.style.display = 'block';
+}
+
+/**
+ * Explicação da função [renderExcursao]
+ * Renderiza os dados da excursão na página.
+ */
+function renderExcursao(excursao) {
+    // Título da página
+    document.getElementById('pageTitle').textContent = `${excursao.titulo} - Avorar Turismo`;
+    
+    // Hero
+    document.getElementById('breadcrumbTitle').textContent = excursao.titulo;
+    document.getElementById('excursaoTitulo').textContent = excursao.titulo;
+    document.getElementById('excursaoSubtitulo').textContent = excursao.subtitulo || '';
+    document.getElementById('excursaoDuracao').textContent = excursao.duracao || 'Consulte';
+    document.getElementById('excursaoCategoria').textContent = capitalizeFirst(excursao.categoria);
+    document.getElementById('excursaoLocal').textContent = excursao.local || 'Angra dos Reis';
+
+    // Imagem principal
+    const mainImage = document.getElementById('mainImage');
+    if (excursao.imagemPrincipal) {
+        mainImage.src = excursao.imagemPrincipal;
+    } else if (excursao.imagemCapa) {
+        mainImage.src = excursao.imagemCapa;
+    }
+    mainImage.alt = excursao.titulo;
+
+    // Galeria
+    const galleryThumbs = document.getElementById('galleryThumbs');
+    let images = [];
+    if (excursao.imagemCapa) images.push(excursao.imagemCapa);
+    if (excursao.imagemPrincipal && excursao.imagemPrincipal !== excursao.imagemCapa) {
+        images.push(excursao.imagemPrincipal);
+    }
+    if (excursao.galeria && excursao.galeria.length > 0) {
+        images = images.concat(excursao.galeria);
+    }
+    
+    if (images.length > 0) {
+        galleryThumbs.innerHTML = images.slice(0, 4).map((img, index) => `
+            <img src="${img}" alt="Imagem ${index + 1}" class="thumb ${index === 0 ? 'active' : ''}" onclick="changeImage(this)">
+        `).join('');
+    } else {
+        galleryThumbs.style.display = 'none';
+    }
+
+    // Descrição
+    document.getElementById('excursaoDescricao').innerHTML = excursao.descricao || '<p>Descrição em breve.</p>';
+
+    // Inclusos e Recomendações
+    const inclusos = excursao.inclusos || '';
+    document.getElementById('excursaoInclusos').innerHTML = formatListContent(inclusos);
+    
+    const recomendacoes = excursao.recomendacoes || '';
+    document.getElementById('excursaoRecomendacoes').innerHTML = formatListContent(recomendacoes);
+
+    // Informações
+    document.getElementById('infoLocal').textContent = excursao.local || 'Centro de Angra dos Reis';
+    document.getElementById('infoHorario').textContent = excursao.horario || 'Consulte';
+    document.getElementById('infoDuracao').textContent = excursao.duracao || 'Consulte';
+    document.getElementById('infoCategoria').textContent = capitalizeFirst(excursao.categoria);
+
+    // Tags
+    const tagsContainer = document.getElementById('excursaoTags');
+    if (excursao.tags && excursao.tags.length > 0) {
+        tagsContainer.innerHTML = excursao.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
+    } else {
+        tagsContainer.innerHTML = '<span class="tag">' + capitalizeFirst(excursao.categoria) + '</span>';
+    }
+
+    // Preço
+    const precoFormatado = ExcursaoManager.formatPrice(excursao.preco);
+    document.getElementById('excursaoPreco').textContent = precoFormatado;
+    
+    const precoComDesconto = (excursao.preco * 0.97).toFixed(2);
+    document.getElementById('precoPix').textContent = `✓ Desconto de 3% no PIX: ${ExcursaoManager.formatPrice(parseFloat(precoComDesconto))}`;
+}
+
+/**
+ * Explicação da função [formatListContent]
+ * Formata conteúdo de lista para HTML.
+ */
+function formatListContent(content) {
+    if (!content) return '<p>-</p>';
+    
+    const lines = content.split('\n').filter(line => line.trim());
+    if (lines.length === 0) return '<p>-</p>';
+    
+    const listItems = lines.map(line => {
+        const cleanLine = line.replace(/^[-•*]\s*/, '');
+        return `<li><i class="fas fa-check-circle" style="color: #ff5c00; margin-right: 10px;"></i>${escapeHtml(cleanLine)}</li>`;
+    }).join('');
+    
+    return `<ul style="list-style: none; padding: 0;">${listItems}</ul>`;
+}
+
+// Funções auxiliares
+function changeImage(thumb) {
+    document.getElementById('mainImage').src = thumb.src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+}
+
+function switchProductTab(tabName) {
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+function increaseQty() {
+    let qty = document.getElementById('quantity');
+    let currentValue = parseInt(qty.value);
+    if (currentValue < 20) {
+        qty.value = currentValue + 1;
+    }
+}
+
+function decreaseQty() {
+    let qty = document.getElementById('quantity');
+    let currentValue = parseInt(qty.value);
+    if (currentValue > 1) {
+        qty.value = currentValue - 1;
+    }
+}
+
+function contactWhatsApp() {
+    if (!currentExcursao) return;
+    const qty = document.getElementById('quantity').value;
+    const msg = encodeURIComponent(`Olá! Tenho interesse na excursão "${currentExcursao.titulo}" para ${qty} pessoa(s). Gostaria de mais informações.`);
+    window.open(`https://wa.me/5531981132286?text=${msg}`, '_blank');
+}
+
+function buyNow() {
+    window.location.href = 'admin/checkout.html';
+}
+
+function capitalizeFirst(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Carrega a excursão quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(loadExcursao, 200);
+});
+</script>
+
 </body>
 </html>

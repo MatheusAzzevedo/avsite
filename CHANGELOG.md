@@ -1,6 +1,61 @@
 # Changelog
 
-2026-01-29, `about.html`; `css/about-page.css`; `css/avoar-custom.css` [Reestruturação da página Sobre Nós com UX/UI moderna: hero split-layout, timeline de processo, grid de diferenciais, prova social e CTA final otimizado]
-2026-01-29, `css/style.css`; `contact.html`; `about.html` [Paleta verde atualizada para `#ff5c00` em todo o site, remoção visual de redes sociais/linhas do menu e ajustes UX nas páginas]
-2026-01-29, `index-10.html`; `index-11.html`; `about.html`; `blog.html`; `blog-single.html`; `contact.html`; `portfolio.html`; `portfolio-single.html` [Logo branco aplicado no header, menu e rodapé]
-2025-12-16, `index-10.html`; `index-11.html`; `about.html`; `blog.html`; `contact.html`; `portfolio.html` [Commit inicial do site]
+## 2026-01-29 - Sistema Online com API e PostgreSQL
+
+### Arquivos Criados
+- `api/` [Pasta completa do backend Node.js/Express/TypeScript]
+  - `api/src/server.ts` [Servidor principal com Express]
+  - `api/src/routes/*.ts` [Rotas de auth, excursões, posts, uploads, pagamentos]
+  - `api/src/middleware/*.ts` [Middlewares de autenticação e validação]
+  - `api/src/schemas/*.ts` [Schemas Zod para validação de dados]
+  - `api/src/utils/*.ts` [Utilitários: logger, api-error, slug]
+  - `api/src/config/database.ts` [Configuração Prisma/PostgreSQL]
+  - `api/prisma/schema.prisma` [Schema do banco de dados]
+  - `api/prisma/seed.ts` [Dados iniciais do sistema]
+- `js/api-client.js` [Cliente JavaScript para consumir API]
+- `api/API-DOCS.md` [Documentação da API pública]
+- `api/DEPLOY-RAILWAY.md` [Guia de deploy no Railway]
+
+### Arquivos Modificados
+- `admin/login.html` [Autenticação via API JWT]
+- `admin/excursoes.html` [CRUD via API]
+- `admin/excursao-editor.html` [Editor via API]
+- `admin/js/admin-main.js` [Funções de auth atualizadas]
+- `portfolio.html` [Carregamento de excursões via API]
+- `README.md` [Documentação atualizada]
+
+---
+
+## 2026-01-28 - Sistema Administrativo Frontend
+
+### Arquivos Criados
+- `admin/css/admin-style.css` [Estilos do sistema administrativo]
+- `admin/js/admin-main.js` [JavaScript principal do admin]
+- `admin/dashboard.html` [Dashboard com estatísticas]
+- `admin/blog.html`, `admin/blog-editor.html` [CRUD de posts]
+- `admin/excursoes.html`, `admin/excursao-editor.html` [CRUD de excursões]
+- `admin/config-pagamento.html` [Configuração de gateways]
+- `js/data-manager.js` [Gerenciador de dados localStorage - substituído por api-client.js]
+
+---
+
+## 2026-01-27 - Páginas Dinâmicas do Site
+
+### Arquivos Modificados
+- `blog.html` [Listagem dinâmica de posts]
+- `blog-single.html` [Post individual dinâmico]
+- `portfolio.html` [Listagem de excursões dinâmica]
+- `portfolio-single.html` [Excursão individual dinâmica]
+
+---
+
+## 2026-01-26 - Estrutura Inicial
+
+### Arquivos Criados
+- Estrutura HTML/CSS do site
+- Páginas estáticas: about.html, contact.html
+- CSS personalizado: avoar-custom.css
+
+---
+
+**Mantidas apenas as últimas 5 versões conforme regra do projeto**
