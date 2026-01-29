@@ -5,7 +5,7 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 ## Arquivos Modificados [Resumo das Atualizações]
 
 ### Backend (API Node.js)
-- `api/src/server.ts` [Servidor Express com rotas, middlewares e tratamento de erros]
+- `api/src/server.ts` [Servidor Express com rotas, middlewares e tratamento de erros; rota GET / com resposta amigável]
 - `api/src/routes/*.ts` [APIs REST para excursões, posts, auth, uploads e pagamentos - agora com type safety completo]
 - `api/src/routes/auth.routes.ts` [Corrigida geração de tokens JWT com type casting seguro]
 - `api/src/routes/excursao.routes.ts` [Corrigido type casting de query parameters]

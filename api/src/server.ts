@@ -81,6 +81,21 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 // ROTAS
 // ===========================================
 
+// Rota raiz - resposta amigável ao acessar o domínio
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    name: 'Avorar Turismo API',
+    message: 'API do sistema Avorar Turismo. Use os endpoints abaixo.',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      public: '/api/public',
+      auth: '/api/auth',
+      docs: 'Consulte API-DOCS.md para documentação completa'
+    }
+  });
+});
+
 // Rota de health check
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ 

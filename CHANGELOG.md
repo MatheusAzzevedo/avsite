@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-01-29 - Rota raiz na API
+
+### Arquivos Modificados
+- `api/src/server.ts` [Adicionada rota GET / com resposta JSON amigável e links para endpoints]
+
+### Alterações
+- Ao acessar o domínio (ex: avoarturismo.up.railway.app) retorna JSON com nome da API, mensagem e endpoints disponíveis em vez de 404
+
+---
+
 ## 2026-01-29 - Correção de Erros TypeScript na API
 
 ### Arquivos Modificados
