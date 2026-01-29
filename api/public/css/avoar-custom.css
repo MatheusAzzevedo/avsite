@@ -1,0 +1,208 @@
+/* Avoar Turismo - Custom Enhancements */
+
+/* Typography improvements */
+.eyebrow {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff5c00;
+  font-family: 'Gotham_Medium', sans-serif;
+}
+
+/* Smooth focus states */
+*:focus-visible {
+  outline: 2px solid #ff5c00;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Better button hover states */
+.theme-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-btn:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.theme-btn:hover:before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Accessibility improvements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip to main content */
+.skip-to-main {
+  position: absolute;
+  top: -100px;
+  left: 20px;
+  background: #ff5c00;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'Gotham_Bold', sans-serif;
+  z-index: 100000;
+  transition: top 0.3s ease;
+}
+
+.skip-to-main:focus {
+  top: 20px;
+}
+
+/* Better loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Improved spacing utilities */
+.section-spacer-sm {
+  padding: 40px 0;
+}
+
+.section-spacer-md {
+  padding: 80px 0;
+}
+
+.section-spacer-lg {
+  padding: 120px 0;
+}
+
+/* Better container constraints */
+.content-width-narrow {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content-width-medium {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Modern card shadows */
+.card-shadow-soft {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-shadow-medium {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card-shadow-strong {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+/* Image optimization */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Smooth page transitions */
+.main-content-container {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Better link states */
+a {
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Improved readability */
+p, .text {
+  max-width: 75ch;
+}
+
+/* Dark mode optimized text */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Better contrast for secondary text */
+.text-secondary {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.text-tertiary {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Better focus indicators for keyboard navigation */
+.navigation a:focus-visible,
+.theme-btn:focus-visible {
+  outline: 3px solid #ff5c00;
+  outline-offset: 4px;
+}
+
+/* Improved mobile touch targets */
+@media (max-width: 767px) {
+  .theme-btn {
+    min-height: 48px;
+    padding: 14px 28px;
+  }
+  
+  .navigation a {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+}

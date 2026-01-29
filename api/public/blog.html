@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Blog - Avorar Turismo</title>
+<!-- Stylesheets -->
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+<link rel="icon" href="images/favicon.png" type="image/x-icon">
+<!-- Responsive -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link href="css/responsive.css" rel="stylesheet">
+<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]--> 
+
+</head>
+
+<body>
+  <div class="site-container">
+    <div class="cursor"></div>
+    <!-- Preloader -->
+    <div class="preloader"></div>
+
+    <a href="https://wa.me/5531981132286" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
+
+    <div class="menu-backdrop"></div>
+        
+    <!-- Main Header Bar-->
+    <header class="main-header-bar">
+        <div class="line-one"></div>
+        <div class="line-two"></div>
+        <!--Header-Upper-->
+        <div class="header-bar-inner">
+            <div class="outer-box clearfix">
+                
+                <!--Nav Toggler-->
+                <div class="nav-toggler"><button class="toggler-btn"><span class="bar bar-one"></span><span class="bar bar-two"></span><span class="bar bar-three"></span></button></div>
+                
+                <!--Social Links-->
+                <div class="social-links">
+                    <ul class="clearfix">
+                        <li><a href="#"><span class="fab fa-instagram"></span></a></li>
+                        <li><a href="#"><span class="fab fa-twitter-square"></span></a></li>
+                        <li><a href="#"><span class="fab fa-facebook-square"></span></a></li>
+                    </ul>
+                </div>
+                
+                <!--Copyright Text-->
+                <div class="copyright">&copy; Avorar Turismo 2026</div>
+            </div>
+
+            <!--Alt Logo Box-->
+            <div class="alt-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avorar Turismo"></a></div>
+            
+            <!--Nav Bg Box-->
+            <div class="nav-bg-box"></div>
+            
+            <!--Main Nav Outer-->
+            <div class="main-nav-outer">
+                <div class="nav-closer"><img src="images/icons/close-icon.png" alt=""></div>
+                <div class="outer-nav-box">
+                    <div class="top-bg"></div>
+                    <div class="bottom-bg"></div>
+                    <div class="main-nav-box" data-scrollbar="">
+                        <!--Logo Box-->
+                        <div class="main-logo-box"><a href="index-10.html"><img src="images/Logo Branca.png" alt="Avorar Turismo"></a></div>
+                        <div class="main-nav">
+                            <ul class="navigation">
+                                <li><a href="index-10.html">Início</a></li>
+                                <li><a href="index-11.html">Projeto Biologia Marinha</a></li>
+                                <li><a href="portfolio.html">Excursões</a></li>
+                                <li><a href="about.html">Sobre Nós</a></li>
+                                <li class="current"><a href="blog.html">Blog</a></li>
+                                <li><a href="contact.html">Contato</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End Header Upper-->
+    </header>
+    <!--End Main Header -->
+
+    <div class="scroll-container">
+        <div class="main-content-container" id="scroll-container">
+            <div class="body-bg-layer" style="background-image: url(images/background/body-bg-1.jpg);"></div>
+            <!-- Page Title -->
+            <section class="page-title" id="to-top-div">
+                <div class="auto-container">
+                    <h1><span>Blog</span></h1>
+                    <div class="bread-crumb">
+                        <ul class="clearfix">
+                            <li><a href="index-10.html">Início</a></li>
+                            <li class="current">Blog</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <!--End Banner Section -->
+
+
+            <!--News Section-->
+            <section class="news-section">
+                <div class="auto-container">
+
+                    <div class="news">
+                        <div class="row clearfix" id="blogGrid">
+                            <!-- Posts serão carregados dinamicamente -->
+                            <div class="col-12 text-center" id="loadingState" style="padding: 3rem;">
+                                <p style="color: #888;">Carregando posts...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensagem quando não há posts -->
+                    <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
+                        <h3 style="color: #888;">Nenhum post encontrado</h3>
+                        <p style="color: #666;">Novos conteúdos em breve!</p>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+</div>
+<!--End Site Container--> 
+
+<!-- Script do gerenciador de dados -->
+<script src="js/api-client.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.fancybox.js"></script>
+<script src="js/smooth-scrollbar.js"></script>
+<script src="js/owl.js"></script>
+<script src="js/cursor-script.js"></script>
+<script src="js/wow.js"></script>
+<script src="js/custom-script.js"></script>
+<script>
+/**
+ * Explicação da função [loadBlogPosts]
+ * Carrega os posts publicados do BlogManager e renderiza na página.
+ * Exibe apenas posts com status "publicado".
+ */
+function loadBlogPosts() {
+    console.log('[Blog] Carregando posts publicados...');
+    
+    // Aguarda o DataManager estar disponível
+    if (typeof BlogManager === 'undefined') {
+        setTimeout(loadBlogPosts, 100);
+        return;
+    }
+
+    const posts = BlogManager.getAll(true); // true = apenas publicados
+    const grid = document.getElementById('blogGrid');
+    const loadingState = document.getElementById('loadingState');
+    const emptyState = document.getElementById('emptyState');
+
+    // Remove loading
+    if (loadingState) {
+        loadingState.remove();
+    }
+
+    if (posts.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+
+    emptyState.style.display = 'none';
+
+    grid.innerHTML = posts.map(post => {
+        // Formata a data
+        const postDate = new Date(post.data);
+        const timeAgo = getTimeAgo(postDate);
+        
+        // Usa imagem padrão se não tiver
+        const image = post.imagemCapa || 'images/resource/news-1.jpg';
+        
+        return `
+            <!--Block-->
+            <div class="news-block col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                <div class="inner-box">
+                    <div class="image-box">
+                        <a href="blog-single.html?slug=${post.slug}">
+                            <img src="${image}" alt="${escapeHtml(post.titulo)}" onerror="this.src='images/resource/news-1.jpg'">
+                        </a>
+                    </div>
+                    <div class="lower">
+                        <h4><a href="blog-single.html?slug=${post.slug}">${escapeHtml(post.titulo)}</a></h4>
+                        <div class="info">
+                            <div class="cat i-block"><i class="far fa-folder"></i> ${escapeHtml(post.categoria)}</div>
+                            <div class="time i-block"><i class="far fa-clock"></i> ${timeAgo}</div>
+                        </div>
+                        <div class="link-box">
+                            <a href="blog-single.html?slug=${post.slug}" class="theme-btn">
+                                continuar lendo <i class="far fa-long-arrow-alt-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Explicação da função [getTimeAgo]
+ * Calcula o tempo decorrido desde uma data.
+ * @param {Date} date - Data para calcular
+ * @returns {string} Texto do tempo decorrido
+ */
+function getTimeAgo(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        if (diffHours === 0) {
+            return 'Agora';
+        }
+        return `${diffHours} hora${diffHours > 1 ? 's' : ''} atrás`;
+    }
+    
+    if (diffDays === 1) return 'Ontem';
+    if (diffDays < 7) return `${diffDays} dias atrás`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} semana${Math.floor(diffDays / 7) > 1 ? 's' : ''} atrás`;
+    
+    // Formata como data
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
+/**
+ * Explicação da função [escapeHtml]
+ * Escapa caracteres HTML para prevenir XSS.
+ */
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Carrega os posts quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    // Pequeno delay para garantir que o DataManager carregou
+    setTimeout(loadBlogPosts, 200);
+});
+</script>
+</body>
+</html>

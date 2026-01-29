@@ -1,0 +1,130 @@
+/**
+ * Formulário "Fale com um consultor" - usado em contact.html e about.html
+ */
+
+.consultant-form-section {
+  padding: 80px 0 100px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.consultant-form-section .consultant-form-card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: transparent;
+  border-radius: 16px;
+  padding: 48px 56px;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.consultant-form-section .form-title {
+  font-family: 'Gotham_Bold', 'Telegraf_UltraBold', sans-serif;
+  font-size: 24px;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.consultant-form-section .form-intro {
+  font-size: 15px;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.consultant-form-section .consultant-form .form-group {
+  margin-bottom: 20px;
+}
+
+.consultant-form-section .consultant-form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.consultant-form-section .consultant-form label .required {
+  color: rgba(255, 255, 255, 0.9);
+  margin-left: 2px;
+}
+
+.consultant-form-section .consultant-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .consultant-form-section .consultant-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.consultant-form-section .consultant-form input[type="text"],
+.consultant-form-section .consultant-form input[type="email"],
+.consultant-form-section .consultant-form input[type="tel"],
+.consultant-form-section .consultant-form textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.consultant-form-section .consultant-form input::placeholder,
+.consultant-form-section .consultant-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.consultant-form-section .consultant-form input:focus,
+.consultant-form-section .consultant-form textarea:focus {
+  outline: none;
+  border-color: #ff5c00;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.2);
+}
+
+.consultant-form-section .consultant-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.consultant-form-section .consultant-form .radio-group {
+  margin-top: 8px;
+}
+
+.consultant-form-section .consultant-form .radio-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.consultant-form-section .consultant-form .radio-option input {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  accent-color: #ff5c00;
+  cursor: pointer;
+}
+
+.consultant-form-section .consultant-form .radio-option span {
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.consultant-form-section .consultant-form .form-submit {
+  margin-top: 28px;
+  text-align: center;
+}
+
+.consultant-form-section .consultant-form .form-submit .theme-btn {
+  min-width: 220px;
+}

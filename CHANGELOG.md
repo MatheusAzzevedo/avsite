@@ -3,11 +3,13 @@
 ## 2026-01-29 - Site institucional na raiz da API
 
 ### Arquivos Modificados
-- `api/src/server.ts` [Configurado para servir site institucional (index-11.html) na raiz; adicionados serves estáticos para CSS, JS, imagens e fontes]
+- `api/src/server.ts` [Configurado para servir site institucional da pasta public/]
+- `api/public/` [Criada pasta com todos os arquivos do site: HTML, CSS, JS, imagens, fontes e admin]
 
 ### Alterações
-- GET / agora retorna o site institucional em HTML em vez de JSON
-- Configurados serves estáticos para `/css`, `/js`, `/images`, `/fonts` e `/admin` apontando para raiz do repositório
+- GET / retorna index-11.html (site institucional)
+- GET /*.html serve qualquer página HTML do site (about, blog, portfolio, etc.)
+- Arquivos estáticos servidos de api/public/ para funcionar no Railway
 - Endpoints da API continuam em `/api/*`
 
 ---

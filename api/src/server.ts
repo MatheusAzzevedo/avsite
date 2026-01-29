@@ -70,11 +70,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve arquivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-app.use('/css', express.static(path.join(__dirname, '../../css')));
-app.use('/js', express.static(path.join(__dirname, '../../js')));
-app.use('/images', express.static(path.join(__dirname, '../../images')));
-app.use('/fonts', express.static(path.join(__dirname, '../../fonts')));
-app.use('/admin', express.static(path.join(__dirname, '../../admin')));
+app.use('/css', express.static(path.join(__dirname, '../public/css')));
+app.use('/js', express.static(path.join(__dirname, '../public/js')));
+app.use('/images', express.static(path.join(__dirname, '../public/images')));
+app.use('/fonts', express.static(path.join(__dirname, '../public/fonts')));
+app.use('/admin', express.static(path.join(__dirname, '../public/admin')));
 
 // Log de requisições
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -88,7 +88,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 
 // Rota raiz - serve o site institucional
 app.get('/', (req: Request, res: Response) => {
-  const indexPath = path.join(__dirname, '../../index-11.html');
+  const indexPath = path.join(__dirname, '../public/index-11.html');
   res.sendFile(indexPath, (err) => {
     if (err) {
       logger.error(`Erro ao servir index: ${err.message}`);
@@ -126,19 +126,21 @@ app.use('/api/payment-config', paymentConfigRoutes);
 // TRATAMENTO DE ERROS
 // ===========================================
 
-// Rota não encontrada (fallback: raiz retorna info da API)
+// Serve outras páginas HTML do site
+app.get('/*.html', (req: Request, res: Response) => {
+  const htmlPath = path.join(__dirname, '../public', req.path);
+  res.sendFile(htmlPath, (err) => {
+    if (err) {
+      res.status(404).json({
+        error: 'Página não encontrada',
+        message: 'A página solicitada não existe'
+      });
+    }
+  });
+});
+
+// Rota não encontrada
 app.use((req: Request, res: Response) => {
-  if ((req.path === '/' || req.path === '') && req.method === 'GET') {
-    const indexPath = path.join(__dirname, '../../index-11.html');
-    return res.sendFile(indexPath, (err) => {
-      if (err) {
-        return res.status(404).json({
-          error: 'Rota não encontrada',
-          message: 'A rota solicitada não existe nesta API'
-        });
-      }
-    });
-  }
   res.status(404).json({
     error: 'Rota não encontrada',
     message: 'A rota solicitada não existe nesta API'

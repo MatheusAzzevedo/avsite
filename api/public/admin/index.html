@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Administrativo - Avorar Turismo</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .welcome-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+        
+        .welcome-box {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .welcome-header {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .welcome-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .welcome-header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        .welcome-content {
+            padding: 3rem 2rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 1rem;
+            background: var(--light-bg);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .feature-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 2rem;
+            background: var(--light-bg);
+            border-radius: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn-large {
+            padding: 1.25rem 3rem;
+            font-size: 1.25rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid var(--info-color);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 2rem 0;
+        }
+        
+        .info-box strong {
+            color: var(--info-color);
+        }
+        
+        @media (max-width: 768px) {
+            .welcome-header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-box">
+            <div class="welcome-header">
+                <h1><i class="fas fa-shield-alt"></i> Sistema Administrativo</h1>
+                <p>Avorar Turismo - Painel de Gestão Completo</p>
+            </div>
+            
+            <div class="welcome-content">
+                <h2 style="text-align: center; margin-bottom: 1rem; color: var(--text-dark);">
+                    Bem-vindo ao Sistema de Gestão
+                </h2>
+                <p style="text-align: center; color: var(--text-light); font-size: 1.1rem; margin-bottom: 2rem;">
+                    Gerencie seu site de turismo de forma fácil e profissional
+                </p>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-blog" style="color: #667eea;"></i>
+                        <h3>Gerenciar Blog</h3>
+                        <p>Crie, edite e publique posts com editor de texto rico e upload de imagens</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-map-marked-alt" style="color: #f093fb;"></i>
+                        <h3>Excursões</h3>
+                        <p>Cadastre e gerencie excursões com detalhes completos e galeria de fotos</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-shopping-cart" style="color: #4facfe;"></i>
+                        <h3>Checkout</h3>
+                        <p>Sistema de pagamento com cartão, PIX e boleto integrado</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-credit-card" style="color: #43e97b;"></i>
+                        <h3>Config. Pagamento</h3>
+                        <p>Configure APIs de 4 gateways diferentes de forma simples</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-chart-line" style="color: #fa709a;"></i>
+                        <h3>Dashboard</h3>
+                        <p>Acompanhe estatísticas e atividades em tempo real</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-mobile-alt" style="color: #30cfd0;"></i>
+                        <h3>Responsivo</h3>
+                        <p>Design adaptado para desktop, tablet e smartphone</p>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong><i class="fas fa-info-circle"></i> Demonstração</strong><br>
+                    Este é um protótipo funcional em HTML/CSS/JS puro. Use qualquer email e senha válidos para fazer login e explorar todas as funcionalidades do sistema.
+                </div>
+                
+                <div class="cta-section">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">Pronto para começar?</h3>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                        Acesse o sistema e comece a gerenciar seu conteúdo agora mesmo
+                    </p>
+                    <a href="login.html" class="btn btn-primary btn-large">
+                        <i class="fas fa-sign-in-alt"></i> Acessar Sistema
+                    </a>
+                </div>
+                
+                <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--light-border); text-align: center;">
+                    <h4 style="color: var(--text-dark); margin-bottom: 1rem;">Documentação Disponível</h4>
+                    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                        <a href="README.md" target="_blank" style="color: var(--primary-color); text-decoration: none;">
+                            <i class="fas fa-book"></i> README
+                        </a>
+                        <a href="GUIA-RAPIDO.md" target="_blank" style="color: var(--primary-color); text-decoration: none;">
+                            <i class="fas fa-rocket"></i> Guia Rápido
+                        </a>
+                        <a href="EXPLICACAO-TECNICA.md" target="_blank" style="color: var(--primary-color); text-decoration: none;">
+                            <i class="fas fa-code"></i> Documentação Técnica
+                        </a>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--light-border);">
+                    <p style="color: var(--text-light); font-size: 0.875rem;">
+                        <i class="fas fa-copyright"></i> 2026 Avorar Turismo - Sistema Administrativo<br>
+                        Desenvolvido com HTML, CSS e JavaScript
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
