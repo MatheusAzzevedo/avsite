@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-01-29 - Site institucional na raiz da API
+
+### Arquivos Modificados
+- `api/src/server.ts` [Configurado para servir site institucional (index-11.html) na raiz; adicionados serves estáticos para CSS, JS, imagens e fontes]
+
+### Alterações
+- GET / agora retorna o site institucional em HTML em vez de JSON
+- Configurados serves estáticos para `/css`, `/js`, `/images`, `/fonts` e `/admin` apontando para raiz do repositório
+- Endpoints da API continuam em `/api/*`
+
+---
+
 ## 2026-01-29 - Rota raiz na API
 
 ### Arquivos Modificados

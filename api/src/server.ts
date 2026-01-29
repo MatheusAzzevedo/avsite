@@ -68,8 +68,13 @@ app.use('/api/', limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve arquivos estáticos (uploads)
+// Serve arquivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/css', express.static(path.join(__dirname, '../../css')));
+app.use('/js', express.static(path.join(__dirname, '../../js')));
+app.use('/images', express.static(path.join(__dirname, '../../images')));
+app.use('/fonts', express.static(path.join(__dirname, '../../fonts')));
+app.use('/admin', express.static(path.join(__dirname, '../../admin')));
 
 // Log de requisições
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -81,17 +86,16 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 // ROTAS
 // ===========================================
 
-// Rota raiz - resposta amigável ao acessar o domínio
-app.get('/', (_req: Request, res: Response) => {
-  res.json({
-    name: 'Avorar Turismo API',
-    message: 'API do sistema Avorar Turismo. Use os endpoints abaixo.',
-    version: '1.0.0',
-    endpoints: {
-      health: '/api/health',
-      public: '/api/public',
-      auth: '/api/auth',
-      docs: 'Consulte API-DOCS.md para documentação completa'
+// Rota raiz - serve o site institucional
+app.get('/', (req: Request, res: Response) => {
+  const indexPath = path.join(__dirname, '../../index-11.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      logger.error(`Erro ao servir index: ${err.message}`);
+      res.status(500).json({
+        error: 'Erro ao carregar página',
+        message: 'Não foi possível carregar a página inicial'
+      });
     }
   });
 });
@@ -124,16 +128,14 @@ app.use('/api/payment-config', paymentConfigRoutes);
 
 // Rota não encontrada (fallback: raiz retorna info da API)
 app.use((req: Request, res: Response) => {
-  if (req.path === '/' || req.path === '') {
-    return res.json({
-      name: 'Avorar Turismo API',
-      message: 'API do sistema Avorar Turismo. Use os endpoints abaixo.',
-      version: '1.0.0',
-      endpoints: {
-        health: '/api/health',
-        public: '/api/public',
-        auth: '/api/auth',
-        docs: 'Consulte API-DOCS.md para documentação completa'
+  if ((req.path === '/' || req.path === '') && req.method === 'GET') {
+    const indexPath = path.join(__dirname, '../../index-11.html');
+    return res.sendFile(indexPath, (err) => {
+      if (err) {
+        return res.status(404).json({
+          error: 'Rota não encontrada',
+          message: 'A rota solicitada não existe nesta API'
+        });
       }
     });
   }
