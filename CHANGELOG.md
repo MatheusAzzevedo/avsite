@@ -3,10 +3,10 @@
 ## 2026-01-29 - Rota raiz na API
 
 ### Arquivos Modificados
-- `api/src/server.ts` [Adicionada rota GET / com resposta JSON amigável e links para endpoints]
+- `api/src/server.ts` [Rota GET / e fallback no 404 para path / com resposta JSON amigável]
 
 ### Alterações
-- Ao acessar o domínio (ex: avoarturismo.up.railway.app) retorna JSON com nome da API, mensagem e endpoints disponíveis em vez de 404
+- Ao acessar o domínio retorna JSON com nome da API e endpoints; fallback no handler 404 quando path é / garante resposta mesmo em deploy antigo
 
 ---
 

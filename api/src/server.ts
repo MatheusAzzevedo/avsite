@@ -122,9 +122,22 @@ app.use('/api/payment-config', paymentConfigRoutes);
 // TRATAMENTO DE ERROS
 // ===========================================
 
-// Rota não encontrada
-app.use((_req: Request, res: Response) => {
-  res.status(404).json({ 
+// Rota não encontrada (fallback: raiz retorna info da API)
+app.use((req: Request, res: Response) => {
+  if (req.path === '/' || req.path === '') {
+    return res.json({
+      name: 'Avorar Turismo API',
+      message: 'API do sistema Avorar Turismo. Use os endpoints abaixo.',
+      version: '1.0.0',
+      endpoints: {
+        health: '/api/health',
+        public: '/api/public',
+        auth: '/api/auth',
+        docs: 'Consulte API-DOCS.md para documentação completa'
+      }
+    });
+  }
+  res.status(404).json({
     error: 'Rota não encontrada',
     message: 'A rota solicitada não existe nesta API'
   });
