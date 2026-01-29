@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-01-29 - Correção de Erros TypeScript na API
+
+### Arquivos Modificados
+- `api/src/routes/auth.routes.ts` [Corrigido type casting do token JWT com expiresIn]
+- `api/src/routes/excursao.routes.ts` [Corrigido type casting de query parameters usando tipos Zod]
+- `api/src/routes/post.routes.ts` [Corrigido type casting de query parameters usando tipos Zod]
+
+### Alterações
+- Implementado type casting seguro de `ParsedQs` para tipos específicos do Zod
+- Resolvido erro de compilação com JWT SignOptions para expiresIn como string
+- Build TypeScript agora passa com sucesso sem erros
+
+---
+
 ## 2026-01-29 - Sistema Online com API e PostgreSQL
 
 ### Arquivos Criados
