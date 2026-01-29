@@ -13,7 +13,8 @@ import { validateBody, validateQuery } from '../middleware/validate.middleware';
 import { 
   createPostSchema, 
   updatePostSchema, 
-  filterPostSchema 
+  filterPostSchema,
+  FilterPostInput
 } from '../schemas/post.schema';
 import { slugify, generateUniqueSlug } from '../utils/slug';
 import { logger } from '../utils/logger';
@@ -31,13 +32,7 @@ router.get('/',
   validateQuery(filterPostSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { categoria, status, search, page, limit } = req.query as {
-        categoria?: string;
-        status?: 'PUBLICADO' | 'RASCUNHO';
-        search?: string;
-        page: number;
-        limit: number;
-      };
+      const { categoria, status, search, page, limit } = req.query as unknown as FilterPostInput;
 
       const skip = (page - 1) * limit;
 

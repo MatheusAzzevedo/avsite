@@ -13,7 +13,8 @@ import { validateBody, validateQuery } from '../middleware/validate.middleware';
 import { 
   createExcursaoSchema, 
   updateExcursaoSchema, 
-  filterExcursaoSchema 
+  filterExcursaoSchema,
+  FilterExcursaoInput
 } from '../schemas/excursao.schema';
 import { slugify, generateUniqueSlug } from '../utils/slug';
 import { logger } from '../utils/logger';
@@ -31,13 +32,7 @@ router.get('/',
   validateQuery(filterExcursaoSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { categoria, status, search, page, limit } = req.query as {
-        categoria?: string;
-        status?: 'ATIVO' | 'INATIVO';
-        search?: string;
-        page: number;
-        limit: number;
-      };
+      const { categoria, status, search, page, limit } = req.query as unknown as FilterExcursaoInput;
 
       const skip = (page - 1) * limit;
 

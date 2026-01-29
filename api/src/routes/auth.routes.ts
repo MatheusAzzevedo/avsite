@@ -55,6 +55,8 @@ router.post('/login',
         throw ApiError.internal('JWT_SECRET não configurado');
       }
 
+      // Necessário porque o tipo SignOptions do jsonwebtoken é restritivo com expiresIn como string
+      // @ts-ignore
       const token = jwt.sign(
         {
           id: user.id,
@@ -63,7 +65,7 @@ router.post('/login',
           role: user.role
         },
         jwtSecret,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' } as any
       );
 
       // Registra atividade
