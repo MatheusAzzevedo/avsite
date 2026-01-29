@@ -2,120 +2,79 @@
 
 Este guia explica como fazer o deploy da API Avorar no Railway.
 
-## Pré-requisitos
+## ⚠️ Passo 0: Definir Root Directory (obrigatório)
 
-1. Conta no [Railway](https://railway.app)
-2. Banco PostgreSQL já configurado no Railway (conforme fornecido)
+O repositório tem a API dentro da pasta **`api/`**. Se o Railway usar a raiz do repo, o build falha com:
 
-## Passo a Passo
-
-### 1. Preparar Repositório
-
-```bash
-# Na pasta do projeto
-cd avs/api
-
-# Instalar dependências localmente para teste
-npm install
-
-# Gerar cliente Prisma
-npm run prisma:generate
-
-# Testar localmente (opcional)
-npm run dev
+```
+✖ Railpack could not determine how to build the app.
 ```
 
-### 2. Criar Projeto no Railway
+**Solução:** definir o **Root Directory** do serviço **avsite** como **`api`**.
 
-1. Acesse [railway.app](https://railway.app)
-2. Clique em "New Project"
-3. Selecione "Deploy from GitHub repo"
-4. Conecte seu repositório GitHub
-5. Selecione a pasta `/api` como root directory
+1. Abra o projeto no Railway.
+2. Clique no serviço **avsite**.
+3. Vá em **Settings**.
+4. Em **Root Directory**, clique em **"Add Root Directory"** (ou **"Root Directory"**).
+5. Digite **`api`** e salve.
 
-### 3. Configurar Variáveis de Ambiente
+A partir daí, o build e o deploy passam a rodar dentro de `api/` (onde estão `package.json`, `Procfile`, etc.).
 
-No painel do Railway, vá em "Variables" e adicione:
+---
 
-```env
-# Obrigatório - URL do PostgreSQL (usar a interna quando no Railway)
-DATABASE_URL=postgresql://postgres:qTZACPiLyUXxLRTIqYTIknotpFbTGOcw@postgres-1ehm.railway.internal:5432/railway
+## 1. Conectar o banco (Database)
 
-# Servidor
-NODE_ENV=production
-PORT=3001
+1. Em **Variables** do **avsite**, clique em **"Trying to connect a database? Add Variable"**.
+2. Selecione o **psql-site** e confirme.
+3. O Railway cria a **`DATABASE_URL`** automaticamente. Não precisa preencher à mão.
 
-# Autenticação JWT
-JWT_SECRET=sua-chave-secreta-muito-forte-e-unica-aqui
-JWT_EXPIRES_IN=7d
+Consulte **`RAILWAY-VARIABLES.md`** para o resto das variáveis (`JWT_SECRET`, `CORS_ORIGINS`, etc.).
 
-# CORS - Adicione as URLs do seu site
-CORS_ORIGINS=https://seu-site.com,https://www.seu-site.com
+---
 
-# Upload
-MAX_FILE_SIZE=10485760
-ALLOWED_FILE_TYPES=image/jpeg,image/png,image/webp,image/gif
+## 2. Build e Start (automáticos)
 
-# URL da API (após deploy, pegue a URL gerada pelo Railway)
-API_BASE_URL=https://avorar-api.up.railway.app
-```
+Com o Root Directory = `api`:
 
-### 4. Configurar Build Settings
+- **Build (Railpack):** detecta Node, roda `npm install` → `postinstall` (prisma generate) → `npm run build`.
+- **Start (Procfile):** `npx prisma db push && npm start`.
 
-No Railway, configure:
+O `prisma db push` aplica o schema no PostgreSQL a cada deploy. Não é necessário rodar `prisma db push` manualmente antes do primeiro deploy.
 
-- **Root Directory:** `api`
-- **Build Command:** `npm install && npm run prisma:generate && npm run build`
-- **Start Command:** `npm start`
+---
 
-Ou use o arquivo `railway.json` já configurado.
+## 3. Seed (opcional, primeiro deploy)
 
-### 5. Executar Migrations
-
-Após o primeiro deploy, execute as migrations:
+Para criar o admin e dados iniciais:
 
 ```bash
-# Conecte ao shell do Railway
-railway run npm run prisma:push
-```
-
-Ou use o CLI do Railway:
-
-```bash
-# Instalar CLI
+# Instalar CLI (se ainda não tiver)
 npm i -g @railway/cli
 
-# Login
+# Login e linkar ao projeto
 railway login
-
-# Conectar ao projeto
 railway link
 
-# Executar migration
-railway run npx prisma db push
-```
-
-### 6. Popular Banco de Dados (Seed)
-
-```bash
+# Rodar seed
 railway run npm run seed
 ```
 
-Isso criará:
-- Usuário admin (admin@avorar.com / admin123)
-- Excursões de exemplo
-- Posts de exemplo
-- Configurações de pagamento
+Isso cria o usuário **admin@avorar.com** / **admin123**, excursões e posts de exemplo.
 
-### 7. Verificar Deploy
+---
 
-Após o deploy, acesse:
+## 4. Verificar o deploy
+
+Acesse:
 
 ```
-https://[sua-url-railway].up.railway.app/api/health
+https://avoarturismo.up.railway.app/api/health
 ```
 
-Deve retornar:
+(Substitua pela URL real do seu serviço se for diferente.)
+
+Resposta esperada:
+
 ```json
 {
   "status": "ok",
@@ -125,60 +84,32 @@ Deve retornar:
 }
 ```
 
-## Atualizando o Frontend
+---
 
-Após obter a URL do Railway, atualize o `api-client.js`:
+## 5. Resumo do fluxo
 
-```javascript
-const API_CONFIG = {
-  BASE_URL: window.location.hostname === 'localhost' 
-    ? 'http://localhost:3001/api'
-    : 'https://[sua-url-railway].up.railway.app/api',
-  // ...
-};
-```
+1. **Root Directory** = `api` (Settings do **avsite**).
+2. **Database:** "Add Variable" → **psql-site** (gera `DATABASE_URL`).
+3. **Variáveis:** `NODE_ENV`, `JWT_SECRET`, `CORS_ORIGINS`, `API_BASE_URL` — ver **`RAILWAY-VARIABLES.md`**.
+4. **Deploy** (ou redeploy) do **avsite**.
+5. (Opcional) `railway run npm run seed` para popular o banco.
 
-## Monitoramento
-
-- **Logs:** Railway > Projeto > Deployments > View Logs
-- **Métricas:** Railway > Projeto > Metrics
-- **Database:** Railway > PostgreSQL > Data
+---
 
 ## Troubleshooting
 
-### Erro de conexão com banco
+### "Railpack could not determine how to build the app"
 
-Verifique se está usando a URL interna do PostgreSQL:
-```
-postgresql://...@postgres-1ehm.railway.internal:5432/railway
-```
+- Confirme que **Root Directory** = **`api`** no serviço **avsite**.
+
+### Erro de conexão com o banco
+
+- Verifique se o **psql-site** foi conectado via **"Add Variable"** e se **`DATABASE_URL`** aparece nas variáveis.
 
 ### Erro de CORS
 
-Adicione a URL do seu site nas variáveis de ambiente:
-```
-CORS_ORIGINS=https://seu-site.com
-```
-
-### Erro de autenticação
-
-Verifique se o JWT_SECRET está configurado corretamente.
-
-### Uploads não funcionando
-
-Railway não persiste arquivos no filesystem entre deploys. Para produção, considere usar:
-- Cloudinary
-- AWS S3
-- Railway Volume (pago)
-
-## Custos
-
-O plano gratuito do Railway oferece:
-- 500 horas de execução/mês
-- 100 GB de bandwidth
-- 1 GB de storage PostgreSQL
-
-Para produção, considere o plano Pro ($5/mês por projeto).
+- Use **`https://`** em **`CORS_ORIGINS`**, por exemplo:  
+  `https://avoarturismo.up.railway.app`
 
 ---
 
