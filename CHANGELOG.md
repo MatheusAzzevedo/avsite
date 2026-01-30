@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-01-29 - Item Login no menu do site
+
+### Arquivos Modificados
+- `api/public/*.html` [Adicionado item "Login" no menu principal apontando para /admin/login.html]
+
+### Alterações
+- Menu do site passa a ter link "Login" que leva à página de login da área admin
+
+---
+
 ## 2026-01-29 - URLs amigáveis no site
 
 ### Arquivos Modificados
