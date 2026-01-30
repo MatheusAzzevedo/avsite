@@ -83,22 +83,54 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 });
 
 // ===========================================
-// ROTAS
+// ROTAS DO SITE (URLs amigáveis)
 // ===========================================
 
-// Rota raiz - serve o site institucional
-app.get('/', (req: Request, res: Response) => {
-  const indexPath = path.join(__dirname, '../public/index-11.html');
-  res.sendFile(indexPath, (err) => {
+const publicDir = path.join(__dirname, '../public');
+
+/** Mapa: URL amigável → arquivo HTML */
+const siteRoutes: Record<string, string> = {
+  '/': 'index-10.html',
+  '/inicio': 'index-10.html',
+  '/biologia-marinha': 'index-11.html',
+  '/sobre-nos': 'about.html',
+  '/blog': 'blog.html',
+  '/contato': 'contact.html',
+  '/excursoes': 'portfolio.html'
+};
+
+/** Serve uma página do site por path amigável */
+function serveSitePage(urlPath: string, res: Response): void {
+  const htmlFile = siteRoutes[urlPath];
+  if (!htmlFile) {
+    res.status(404).json({ error: 'Página não encontrada', message: 'A página solicitada não existe' });
+    return;
+  }
+  const filePath = path.join(publicDir, htmlFile);
+  res.sendFile(filePath, (err) => {
     if (err) {
-      logger.error(`Erro ao servir index: ${err.message}`);
-      res.status(500).json({
-        error: 'Erro ao carregar página',
-        message: 'Não foi possível carregar a página inicial'
-      });
+      logger.error(`Erro ao servir ${urlPath}: ${err.message}`);
+      res.status(500).json({ error: 'Erro ao carregar página', message: 'Não foi possível carregar a página' });
     }
   });
-});
+}
+
+// Rotas amigáveis do site
+app.get('/', (_req: Request, res: Response) => serveSitePage('/', res));
+app.get('/inicio', (_req: Request, res: Response) => serveSitePage('/inicio', res));
+app.get('/biologia-marinha', (_req: Request, res: Response) => serveSitePage('/biologia-marinha', res));
+app.get('/sobre-nos', (_req: Request, res: Response) => serveSitePage('/sobre-nos', res));
+app.get('/blog', (_req: Request, res: Response) => serveSitePage('/blog', res));
+app.get('/contato', (_req: Request, res: Response) => serveSitePage('/contato', res));
+app.get('/excursoes', (_req: Request, res: Response) => serveSitePage('/excursoes', res));
+
+// Redirect: URLs antigas (.html) → URLs amigáveis
+app.get('/index-10.html', (_req: Request, res: Response) => res.redirect(301, '/inicio'));
+app.get('/index-11.html', (_req: Request, res: Response) => res.redirect(301, '/biologia-marinha'));
+app.get('/about.html', (_req: Request, res: Response) => res.redirect(301, '/sobre-nos'));
+app.get('/blog.html', (_req: Request, res: Response) => res.redirect(301, '/blog'));
+app.get('/contact.html', (_req: Request, res: Response) => res.redirect(301, '/contato'));
+app.get('/portfolio.html', (_req: Request, res: Response) => res.redirect(301, '/excursoes'));
 
 // Rota de health check
 app.get('/api/health', (_req: Request, res: Response) => {
@@ -126,16 +158,15 @@ app.use('/api/payment-config', paymentConfigRoutes);
 // TRATAMENTO DE ERROS
 // ===========================================
 
-// Serve outras páginas HTML do site
-app.get('/*.html', (req: Request, res: Response) => {
-  const htmlPath = path.join(__dirname, '../public', req.path);
-  res.sendFile(htmlPath, (err) => {
-    if (err) {
-      res.status(404).json({
-        error: 'Página não encontrada',
-        message: 'A página solicitada não existe'
-      });
-    }
+// Páginas que permanecem com .html (blog post, excursão individual)
+app.get('/blog-single.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(publicDir, 'blog-single.html'), (err) => {
+    if (err) res.status(404).json({ error: 'Página não encontrada' });
+  });
+});
+app.get('/portfolio-single.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(publicDir, 'portfolio-single.html'), (err) => {
+    if (err) res.status(404).json({ error: 'Página não encontrada' });
   });
 });
 

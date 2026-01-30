@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-01-29 - URLs amigáveis no site
+
+### Arquivos Modificados
+- `api/src/server.ts` [Rotas amigáveis: /, /inicio, /biologia-marinha, /sobre-nos, /blog, /contato, /excursoes; redirects de .html para novas URLs]
+- `api/public/*.html` [Links internos atualizados para usar as novas URLs]
+
+### Alterações
+- / e /inicio → página inicial (index-10.html)
+- /biologia-marinha → Projeto Biologia Marinha (index-11.html)
+- /sobre-nos, /blog, /contato, /excursoes → about, blog, contact, portfolio
+- URLs antigas (.html) redirecionam com 301 para as novas
+
+---
+
 ## 2026-01-29 - Site institucional na raiz da API
 
 ### Arquivos Modificados
