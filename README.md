@@ -51,9 +51,10 @@ npm run dev
 # Use extensão Live Server do VSCode ou similar
 ```
 
-### Credenciais Admin
+### Credenciais de Teste
 - **Email:** admin@avorar.com
 - **Senha:** admin123
+- **Acesso:** /admin/login.html
 
 ## Tecnologias
 

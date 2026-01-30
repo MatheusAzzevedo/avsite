@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-01-29 - Credenciais de teste e configuração do seed
+
+### Arquivos Modificados
+- `api/railway.json` [Adicionado npm run seed ao startCommand para executar dados de teste no Railway]
+- `LOGIN-TEST.md` [Novo arquivo com guia de acesso e credenciais de teste]
+
+### Alterações
+- Railway agora executa `npx prisma db push && npm run seed && npm start`
+- Credenciais de teste criadas automaticamente no primeiro deploy
+- Guia de uso da área admin documentado
+
+---
+
 ## 2026-01-29 - Favicon Avoar no site
 
 ### Arquivos Modificados
