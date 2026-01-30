@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-01-29 - Favicon Avoar no site
+
+### Arquivos Modificados
+- `api/public/images/favicon-avoar.png` [Novo favicon Avoar]
+- `api/public/*.html` [Referências de favicon atualizadas para favicon-avoar.png]
+
+### Alterações
+- Favicon do site passa a usar a imagem Avoar em todas as páginas
+
+---
+
 ## 2026-01-29 - Item Login no menu do site
 
 ### Arquivos Modificados
