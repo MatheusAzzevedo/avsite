@@ -12,7 +12,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff5c00 0%, #ff7a33 100%);
             margin: 0;
             padding: 1rem;
         }
@@ -23,7 +23,7 @@
             padding: 2.5rem;
             width: 100%;
             max-width: 400px;
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             animation: slideUp 0.5s ease;
         }
 
@@ -46,12 +46,13 @@
         .login-logo {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff5c00 0%, #ff7a33 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 15px rgba(255, 92, 0, 0.3);
         }
 
         .login-logo i {
@@ -73,16 +74,18 @@
         .form-group input {
             width: 100%;
             padding: 0.875rem 1rem;
-            border: 2px solid var(--light-border);
+            border: 2px solid #e5e7eb;
             border-radius: var(--radius-md);
             font-size: 1rem;
             transition: var(--transition);
+            background-color: #fafafa;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: #ff5c00;
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(255, 92, 0, 0.1);
         }
 
         .remember-me {
@@ -100,7 +103,7 @@
         .btn-login {
             width: 100%;
             padding: 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff5c00 0%, #ff7a33 100%);
             color: white;
             border: none;
             border-radius: var(--radius-md);
@@ -116,7 +119,7 @@
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 25px rgba(255, 92, 0, 0.35);
         }
 
         .btn-login:disabled {

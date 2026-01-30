@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-01-29 - Ajustes de design na página de login do admin
+
+### Arquivos Modificados
+- `api/public/admin/login.html` [Atualizada paleta de cores: roxo → laranja (#ff5c00), melhorados campos e shadow]
+
+### Alterações
+- Gradiente de fundo: roxo → laranja (linear-gradient(135deg, #ff5c00 0%, #ff7a33 100%))
+- Logo: roxo → laranja com shadow
+- Botão: roxo → laranja com shadow no hover
+- Campos: adicionado background #fafafa e borders melhoradas
+- Focus: cores do roxo → laranja com opacidade rgba(255, 92, 0, 0.1)
+- Shadow geral: melhorado para dar mais profundidade
+
+---
+
 ## 2026-01-29 - Credenciais de teste e configuração do seed
 
 ### Arquivos Modificados
