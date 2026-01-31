@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-01-31 - Seção de depoimentos com carousel automático
+
+### Arquivos Modificados
+- `css/testimonials.css`, `api/public/css/testimonials.css` [Novo arquivo: estilos do carrossel de depoimentos]
+- `js/testimonials.js`, `api/public/js/testimonials.js` [Novo arquivo: classe JavaScript TestimonialsCarousel]
+- `about.html`, `api/public/about.html` [Adicionada seção de depoimentos com 27 avaliações de clientes]
+
+### Alterações
+- Nova seção "Experiências Reais" na página Sobre Nós com carousel automático
+- Badge do Google com rating 4.9⭐ e contagem de avaliações
+- Cada depoimento exibe 5 estrelas (todas as avaliações têm 5 estrelas)
+- Carousel rotaciona automaticamente a cada 8 segundos
+- Navegação manual via setas e dots de navegação (clicáveis)
+- Pausa automática ao passar o mouse, retoma ao sair
+- Design responsivo (desktop, tablet, mobile)
+- Avatar com iniciais do avaliador + nome + função
+
+---
+
+## 2026-01-31 - Ajustes de UX e identidade do site
+
+### Arquivos Modificados
+- `index-10.html`, `api/public/index-10.html` [Botão hero: "Saiba mais" → "Inscreva-se / Login" com link para admin/login]
+- `css/style.css`, `api/public/css/style.css` [Botão WhatsApp: verde (#25D366), posição inferior direita, flutuante desktop/mobile]
+- `index-11.html`, `api/public/index-11.html` [Adicionado botão WhatsApp flutuante; título da página "Avoar Turismo"]
+- `css/avoar-index-eleven.css`, `api/public/css/avoar-index-eleven.css` [Estilos do slide 3 com vídeo YouTube em fundo]
+- Todos os HTML do site (raiz, api/public, admin) [Título da aba do navegador padronizado para "Avoar Turismo"]
+
+### Alterações
+- CTA principal da home passa a "Inscreva-se / Login" apontando para a página de login
+- WhatsApp: cor verde oficial, fixo no canto inferior direito em todas as telas
+- Página Biologia Marinha: slide 3 (Angra dos Reis 2024) com vídeo YouTube em fundo e CSS para exibição correta
+- Título único "Avoar Turismo" na aba do navegador em todas as páginas
+
+---
+
 ## 2026-01-29 - Ajustes de design na página de login do admin
 
 ### Arquivos Modificados

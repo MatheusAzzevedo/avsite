@@ -6646,32 +6646,43 @@ form label.error{
   }
 }
 
-/* Botão flutuante WhatsApp - lateral esquerda, todas as páginas */
+/* Botão flutuante WhatsApp - inferior direita, verde, desktop e mobile */
 .whatsapp-float {
   position: fixed;
-  left: 24px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 24px;
+  bottom: 24px;
   z-index: 99998;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 56px;
   height: 56px;
-  background: #ff5c00;
+  background: #25D366;
   color: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 0 20px rgba(255, 92, 0, 0.2), 0 0 40px rgba(255, 92, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.35);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-decoration: none;
 }
 
 .whatsapp-float:hover {
   color: #ffffff;
-  transform: translateY(-50%) scale(1.05);
-  box-shadow: 0 0 28px rgba(255, 92, 0, 0.25), 0 0 50px rgba(255, 92, 0, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 6px 28px rgba(37, 211, 102, 0.45);
 }
 
 .whatsapp-float .fab {
   font-size: 28px;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float {
+    right: 20px;
+    bottom: 20px;
+    width: 52px;
+    height: 52px;
+  }
+  .whatsapp-float .fab {
+    font-size: 26px;
+  }
 }
