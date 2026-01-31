@@ -3,149 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avoar Turismo</title>
-    <link rel="stylesheet" href="css/admin-style.css">
+    <title>Avorar Admin - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #ff5c00 0%, #ff7a33 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 2rem;
+            /* Gradiente laranja: escuro à esquerda → claro à direita */
+            background: linear-gradient(
+                to right,
+                #7C2D12 0%,
+                #9A3412 35%,
+                #C2410C 65%,
+                #EA580C 100%
+            );
+            /* Glow sutil no canto superior direito */
+            background-image: 
+                radial-gradient(
+                    ellipse 80% 50% at 100% 0%,
+                    rgba(251, 146, 60, 0.4) 0%,
+                    transparent 50%
+                ),
+                linear-gradient(
+                    to right,
+                    #7C2D12 0%,
+                    #9A3412 35%,
+                    #C2410C 65%,
+                    #EA580C 100%
+                );
         }
 
-        .login-container {
-            background: white;
-            border-radius: 1rem;
-            padding: 3rem;
+        .login-wrapper {
             width: 100%;
-            max-width: 480px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            animation: slideUp 0.5s ease;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .login-header {
-            text-align: center;
+        .login-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
             margin-bottom: 2.5rem;
         }
 
-        .login-logo {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #ff5c00 0%, #ff7a33 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 8px 20px rgba(255, 92, 0, 0.35);
-        }
-
-        .login-logo i {
-            font-size: 3rem;
-            color: white;
-        }
-
-        .login-header h1 {
-            font-size: 2rem;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .login-header p {
-            color: #6b7280;
-            font-size: 1rem;
-            margin: 0;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.625rem;
-            font-weight: 600;
-            color: #1f2937;
-            font-size: 0.9rem;
-        }
-
-        .form-group input {
+        .login-form {
             width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            background-color: #f9fafb;
-            color: #1f2937;
-        }
-
-        .form-group input::placeholder {
-            color: #9ca3af;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #ff5c00;
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.1);
-        }
-
-        .remember-me {
             display: flex;
-            align-items: center;
-            gap: 0.625rem;
-            margin-bottom: 1.75rem;
+            flex-direction: column;
+            gap: 1.25rem;
         }
 
-        .remember-me input[type="checkbox"] {
-            width: 1.125rem;
-            height: 1.125rem;
-            cursor: pointer;
-            accent-color: #ff5c00;
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: #E8E8E8;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            transition: background 0.2s ease;
         }
 
-        .remember-me label {
-            font-weight: 500;
-            margin: 0;
-            font-size: 0.9rem;
-            cursor: pointer;
-            color: #4b5563;
+        .form-input::placeholder {
+            color: #888;
+        }
+
+        .form-input:focus {
+            outline: none;
+            background: #E0E0E0;
         }
 
         .btn-login {
             width: 100%;
-            padding: 1rem;
-            background: #ff5c00;
+            padding: 1rem 1.5rem;
+            /* Gradiente laranja no botão */
+            background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%);
             color: white;
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.625rem;
+            gap: 0.5rem;
         }
 
         .btn-login:hover {
-            background: #e65100;
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 92, 0, 0.4);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.5);
         }
 
         .btn-login:active {
@@ -153,7 +116,7 @@
         }
 
         .btn-login:disabled {
-            opacity: 0.6;
+            opacity: 0.7;
             cursor: not-allowed;
             transform: none;
         }
@@ -176,118 +139,126 @@
             display: none;
         }
 
+        .forgot-password {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .forgot-password a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
         .error-message {
-            background-color: #fee2e2;
+            width: 100%;
+            background-color: rgba(254, 226, 226, 0.95);
             color: #dc2626;
-            padding: 0.875rem 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
             display: none;
             font-size: 0.875rem;
-            border-left: 4px solid #dc2626;
-            line-height: 1.5;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .error-message.show {
             display: flex;
+        }
+
+        .remember-row {
+            display: flex;
             align-items: center;
-            gap: 0.625rem;
+            gap: 0.5rem;
+        }
+
+        .remember-row input[type="checkbox"] {
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: #EA580C;
+        }
+
+        .remember-row label {
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
         }
 
         .api-status {
-            text-align: center;
             margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
+            text-align: center;
         }
 
         .api-status span {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.8rem;
-            color: #6b7280;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .api-status .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background-color: #dc2626;
+            background-color: #fca5a5;
         }
 
         .api-status .status-dot.online {
-            background-color: #10b981;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            background-color: #86efac;
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <div class="login-logo">
-                <i class="fas fa-plane"></i>
-            </div>
-            <h1>Avorar Admin</h1>
-            <p>Sistema de Gerenciamento de Turismo</p>
-        </div>
+    <div class="login-wrapper">
+        <h1 class="login-title">Login</h1>
 
         <div id="errorMessage" class="error-message">
             <i class="fas fa-exclamation-circle"></i>
             <span id="errorText"></span>
         </div>
 
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    placeholder="admin@avorar.com"
-                    required
-                    autocomplete="email"
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    placeholder="••••••••"
-                    required
-                    autocomplete="current-password"
-                >
-            </div>
-
-            <div class="remember-me">
+        <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                class="form-input"
+                placeholder="Email"
+                required
+                autocomplete="email"
+            >
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="form-input"
+                placeholder="Senha"
+                required
+                autocomplete="current-password"
+            >
+            <div class="remember-row">
                 <input type="checkbox" id="remember" name="remember">
-                <label for="remember" style="font-weight: normal; margin: 0;">Lembrar-me</label>
+                <label for="remember">Lembrar-me</label>
             </div>
-
             <button type="submit" class="btn-login" id="loginBtn">
                 <div class="spinner"></div>
-                <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Entrar</span>
+                <span class="btn-text">Login</span>
             </button>
         </form>
+
+        <div class="forgot-password">
+            <a href="#" onclick="return false;">Esqueceu a senha ?</a>
+        </div>
 
         <div class="api-status">
             <span>
@@ -297,7 +268,6 @@
         </div>
     </div>
 
-    <!-- API Client -->
     <script src="../js/api-client.js"></script>
     <script>
         /**
@@ -306,41 +276,32 @@
          */
         async function handleLogin(event) {
             event.preventDefault();
-            
+
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const loginBtn = document.getElementById('loginBtn');
             const errorDiv = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
 
-            // Esconde erro anterior
             errorDiv.classList.remove('show');
-
-            // Mostra loading
             loginBtn.classList.add('loading');
             loginBtn.disabled = true;
 
             try {
                 console.log('[Login] Tentando login:', email);
-                
                 const response = await AuthManager.login(email, password);
 
                 if (response.success) {
                     console.log('[Login] Sucesso! Redirecionando...');
-                    
-                    // Redireciona para dashboard
                     window.location.href = 'dashboard.html';
                 } else {
                     throw new Error(response.error || 'Erro ao fazer login');
                 }
             } catch (error) {
                 console.error('[Login] Erro:', error);
-                
-                // Mostra erro
                 errorText.textContent = error.message || 'Email ou senha incorretos';
                 errorDiv.classList.add('show');
             } finally {
-                // Remove loading
                 loginBtn.classList.remove('loading');
                 loginBtn.disabled = false;
             }
@@ -371,25 +332,19 @@
             }
         }
 
-        // Verifica se já está logado
         document.addEventListener('DOMContentLoaded', function() {
-            // Verifica API
             checkApiStatus();
 
-            // Se já estiver autenticado, redireciona
             if (AuthManager.isAuthenticated()) {
-                // Verifica se token ainda é válido
                 AuthManager.verifyToken().then(valid => {
                     if (valid) {
                         window.location.href = 'dashboard.html';
                     } else {
-                        // Token inválido, limpa
                         AuthManager.logout();
                     }
                 });
             }
 
-            // Preenche email salvo
             const savedEmail = localStorage.getItem('avorar_saved_email');
             if (savedEmail) {
                 document.getElementById('email').value = savedEmail;
@@ -397,11 +352,10 @@
             }
         });
 
-        // Salva email se "lembrar-me" marcado
         document.getElementById('loginForm').addEventListener('submit', function() {
             const remember = document.getElementById('remember').checked;
             const email = document.getElementById('email').value;
-            
+
             if (remember) {
                 localStorage.setItem('avorar_saved_email', email);
             } else {

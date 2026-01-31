@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-01-31 - Reconstrução da página de login do admin
+
+### Arquivos Modificados
+- `admin/login.html`, `api/public/admin/login.html` [Layout minimalista: gradiente laranja no fundo, formulário centralizado sem card, campos cinza claro, botão com gradiente laranja, link Esqueceu a senha, mantida funcionalidade de login/API/lembrar-me]
+
+### Alterações
+- Design baseado no print 2: fundo em gradiente horizontal (laranja escuro → claro) com glow no canto superior direito
+- Removido card branco: formulário flutuante diretamente sobre o fundo
+- Título "Login" em maiúsculas, branco
+- Inputs Email e Senha com fundo cinza (#E8E8E8), bordas arredondadas
+- Botão Login com gradiente laranja (#FB923C → #EA580C → #C2410C)
+- Link "Esqueceu a senha ?" adicionado (visual apenas)
+- Funcionalidades preservadas: handleLogin, checkApiStatus, Lembrar-me, AuthManager
+
+---
+
 ## 2026-01-31 - Fundo normal, frases visíveis e remoção de duplicata de depoimentos
 
 ### Arquivos Modificados
