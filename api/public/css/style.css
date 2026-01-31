@@ -5854,6 +5854,7 @@ form label.error{
   height: 100%;
   background: rgba(0,0,0,0.0);
   z-index: 1;
+  pointer-events: none;
 }
 
 .banner-ten .slide-item .image-layer{
@@ -5866,6 +5867,7 @@ form label.error{
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 1;
+  pointer-events: none;
 }
 
 .banner-ten .slide-item .image-layer:before{
@@ -5877,6 +5879,7 @@ form label.error{
   height: 100%;
   background: rgba(0,0,0,0.50);
   z-index: 1;
+  pointer-events: none;
 }
 
 .banner-ten .slide-item .content-box{
@@ -5888,6 +5891,7 @@ form label.error{
   height: 100vh;
   min-height: 320px;
   z-index: 10;
+  pointer-events: auto;
 }
 
 .banner-ten .slide-item .content{
