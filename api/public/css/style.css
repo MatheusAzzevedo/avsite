@@ -168,6 +168,11 @@
 
  ***/
 
+/* Itens do menu ocultos (Excursões, Blog) - remover classe para exibir de novo */
+.menu-item-hidden {
+  display: none !important;
+}
+
 body {
   font-family: 'Cairo', sans-serif;
   font-size: 16px;

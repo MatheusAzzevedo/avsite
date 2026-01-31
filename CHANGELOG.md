@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-01-31 - Fundo normal, frases visíveis e remoção de duplicata de depoimentos
+
+### Arquivos Modificados
+- `css/testimonials.css`, `api/public/css/testimonials.css` [Fundo azul removido: .testimonials-section com background transparent e ::before desativado]
+- `about.html`, `api/public/about.html` [Removida primeira seção "about-testimonials-modern" (owl-carousel); mantida apenas a seção testimonials-section com Google 4.9 e carousel]
+- `js/testimonials.js`, `api/public/js/testimonials.js` [Inicialização e seletores escopados em .testimonials-section; render/update/updateDots usam apenas o carousel desta seção para as frases aparecerem]
+
+### Correções
+- **Fundo**: Seção de depoimentos segue o fundo normal da página (sem gradiente azul).
+- **Frases**: Script preenche apenas o carousel da seção que permaneceu; texto dos 27 depoimentos passa a aparecer.
+- **Duplicata**: Primeira seção de depoimentos removida; única seção exibida é a que contém o badge Google 4.9 e o carousel com rotação de 8 segundos.
+
+---
+
 ## 2026-01-31 - Otimização completa da seção de depoimentos
 
 ### Arquivos Modificados

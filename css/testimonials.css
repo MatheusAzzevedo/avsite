@@ -1,22 +1,15 @@
 /* Avoar Turismo - Seção de Depoimentos CORRIGIDA */
 
+/* Fundo igual ao restante da página (sem azul) */
 .testimonials-section {
-  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  background: transparent;
   padding: 100px 0;
   position: relative;
   overflow: hidden;
 }
 
 .testimonials-section::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(255, 92, 0, 0.05) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
+  display: none;
 }
 
 .testimonials-container {
@@ -53,7 +46,8 @@
   line-height: 1.2;
 }
 
-/* Google Rating Badge */
+/* Google Rating Badge - link clicável para página de avaliações no Google */
+a.google-rating-badge,
 .google-rating-badge {
   display: inline-flex;
   align-items: center;
@@ -65,11 +59,20 @@
   padding: 14px 32px;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
+a.google-rating-badge:hover,
 .google-rating-badge:hover {
   background: rgba(255, 92, 0, 0.15);
   border-color: rgba(255, 92, 0, 0.4);
+}
+
+.google-rating-count {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
 }
 
 .google-rating-badge-content {

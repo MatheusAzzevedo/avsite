@@ -91,7 +91,7 @@
     <!-- Preloader -->
     <div class="preloader"></div>
 
-    <a href="https://wa.me/5531981132286" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
+    <a href="https://wa.me/553125147884" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
 
     <div class="menu-backdrop"></div>
         
@@ -124,9 +124,9 @@
                             <ul class="navigation">
                                 <li><a href="/">Início</a></li>
                                 <li><a href="/biologia-marinha">Projeto Biologia Marinha</a></li>
-                                <li><a href="portfolio.html">Excursões</a></li>
+                                <li class="menu-item-hidden"><a href="portfolio.html">Excursões</a></li>
                                 <li><a href="/sobre-nos">Sobre Nós</a></li>
-                                <li><a href="blog.html">Blog</a></li>
+                                <li class="menu-item-hidden"><a href="blog.html">Blog</a></li>
                                 <li><a href="/contato">Contato</a></li>
                                 <li><a href="/admin/login.html">Login</a></li>
                             </ul>
@@ -501,7 +501,7 @@ function contactWhatsApp() {
     if (!currentExcursao) return;
     const qty = document.getElementById('quantity').value;
     const msg = encodeURIComponent(`Olá! Tenho interesse na excursão "${currentExcursao.titulo}" para ${qty} pessoa(s). Gostaria de mais informações.`);
-    window.open(`https://wa.me/5531981132286?text=${msg}`, '_blank');
+    window.open(`https://wa.me/553125147884?text=${msg}`, '_blank');
 }
 
 function buyNow() {

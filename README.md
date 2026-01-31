@@ -5,9 +5,9 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 ## Arquivos Modificados [Resumo das Atualizações]
 
 ### Última atualização (2026-01-31)
-- **css/testimonials.css / api/public/css/testimonials.css** [Refatorado: melhor UX com glassmorphism, animações, responsividade em 7+ breakpoints]
-- **about.html / api/public/about.html** [Carousel wrapper adicionado, integração com CSS otimizado]
-- **Depoimentos**: 27 avaliações com 5⭐, carousel 8seg, navegação setas/dots, Google 4.9⭐
+- **css/testimonials.css** [Fundo da seção sem azul: background transparent para seguir o fundo normal da página]
+- **about.html / api/public/about.html** [Removida primeira seção de depoimentos (owl-carousel); mantida apenas a segunda com Google 4.9 e carousel próprio]
+- **js/testimonials.js** [Script passa a usar .testimonials-section como escopo; frases dos depoimentos aparecem no carousel correto]
 
 ### Versão anterior (2026-01-31)
 - **css/testimonials.css** [Novo arquivo: seção de depoimentos com carousel]

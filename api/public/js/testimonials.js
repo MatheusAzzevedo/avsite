@@ -179,27 +179,37 @@ class TestimonialsCarousel {
   }
 
   init() {
-    // Renderizar depoimentos
+    // Só inicializar se existir a seção de depoimentos (evita conflito com outras páginas)
+    const section = document.querySelector('.testimonials-section');
+    if (!section) return;
+
+    // Renderizar depoimentos no carousel desta seção
     this.render();
 
-    // Anexar event listeners
-    const prevBtn = document.querySelector('.testimonials-arrow.prev');
-    const nextBtn = document.querySelector('.testimonials-arrow.next');
+    // Anexar event listeners dentro da seção
+    const prevBtn = section.querySelector('.testimonials-arrow.prev');
+    const nextBtn = section.querySelector('.testimonials-arrow.next');
 
     if (prevBtn) prevBtn.addEventListener('click', () => this.prev());
     if (nextBtn) nextBtn.addEventListener('click', () => this.next());
 
-    // Anexar dots
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => this.goTo(index));
-    });
+    // Dots: delegação de evento no container (funciona com dots gerados dinamicamente)
+    const dotsContainer = section.querySelector('.testimonials-dots');
+    if (dotsContainer) {
+      dotsContainer.addEventListener('click', (e) => {
+        const dot = e.target.closest('.dot');
+        if (dot) {
+          const index = Array.from(dotsContainer.querySelectorAll('.dot')).indexOf(dot);
+          if (index >= 0) this.goTo(index);
+        }
+      });
+    }
 
     // Iniciar auto-play
     this.startAutoPlay();
 
     // Pausar ao passar mouse, retomar ao sair
-    const carousel = document.querySelector('.testimonials-carousel');
+    const carousel = section.querySelector('.testimonials-carousel');
     if (carousel) {
       carousel.addEventListener('mouseenter', () => this.pauseAutoPlay());
       carousel.addEventListener('mouseleave', () => this.startAutoPlay());
@@ -207,7 +217,7 @@ class TestimonialsCarousel {
   }
 
   render() {
-    const carousel = document.querySelector('.testimonials-carousel');
+    const carousel = document.querySelector('.testimonials-section .testimonials-carousel');
     if (!carousel) return;
 
     // Limpar itens existentes
@@ -231,7 +241,6 @@ class TestimonialsCarousel {
           <div class="testimonial-avatar">${testimonial.initials}</div>
           <div class="testimonial-info">
             <h4>${testimonial.name}</h4>
-            <p>${testimonial.role}</p>
           </div>
         </div>
       `;
@@ -244,7 +253,9 @@ class TestimonialsCarousel {
   }
 
   updateDots() {
-    const dots = document.querySelectorAll('.dot');
+    const section = document.querySelector('.testimonials-section');
+    if (!section) return;
+    const dots = section.querySelectorAll('.testimonials-dots .dot');
     dots.forEach((dot, index) => {
       dot.classList.toggle('active', index === this.currentIndex);
     });
@@ -266,7 +277,9 @@ class TestimonialsCarousel {
   }
 
   update() {
-    const items = document.querySelectorAll('.testimonial-item');
+    const carousel = document.querySelector('.testimonials-section .testimonials-carousel');
+    if (!carousel) return;
+    const items = carousel.querySelectorAll('.testimonial-item');
     items.forEach((item, index) => {
       item.classList.remove('active', 'prev');
       if (index === this.currentIndex) {
