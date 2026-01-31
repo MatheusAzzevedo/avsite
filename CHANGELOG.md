@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-01-31 - Otimização completa da seção de depoimentos
+
+### Arquivos Modificados
+- `css/testimonials.css`, `api/public/css/testimonials.css` [Refatorado: melhor visual, animações suaves, responsividade otimizada]
+- `js/testimonials.js`, `api/public/js/testimonials.js` [Mantido: carousel de 8 segundos com navegação manual]
+- `about.html`, `api/public/about.html` [Adicionado wrapper testimonials-carousel-wrapper]
+
+### Melhorias UX
+- **Backdrop filter** no carousel e setas (efeito glass morphism)
+- **Animações suaves**: slideInRight (0.9s), fadeInDown no header
+- **Sombras e profundidade**: box-shadow em badges, avatars e setas
+- **Espaçamento otimizado**: padding/margin com escala harmônica
+- **Feedback visual**: hover effects no badge do Google, setas e dots
+- **Tipografia**: font-weight aumentados (800), letter-spacing melhorado
+
+### Responsividade Otimizada
+- **1920×1080**: Base - padding 32px, carousel min-height 380px
+- **1400×**: Reduz padding para 28px, título 2.8rem
+- **1200×**: Carousel 320px, setas 44px, dots 6px
+- **768× (Tablet)**: Layout otimizado, padding 20px, min-height 300px
+- **667× (Landscape)**: Transição suave entre desktop/mobile
+- **480× (Mobile)**: Compacto mas elegante, min-height 260px
+- **414× e 375×**: Totalmente otimizado para telas pequenas
+
+### Ajustes Visuais
+- Dots passam de 10px para 8px (base), escalados em cada breakpoint
+- Setas aumentadas de 44px para 48px em desktop
+- Container max-width aumentado de 900px para 1100px em desktop
+- Carousel padding aumentado de 60x50px para 70x60px em desktop
+- Badge Google com gap/padding maiores, responsivo em mobile
+- Animações mais suaves com cubic-bezier(0.25, 0.46, 0.45, 0.94)
+- Dots com flex-wrap para não quebrar em telas pequenas
+
+### Correções
+- Remover overflow dos cards (sem sobreposição)
+- Setas bem posicionadas sem conflitar com conteúdo
+- Dots em linha única em desktop, wrap em mobile
+- Avatar com flex-shrink: 0 para manter tamanho
+- inset: 0 em .testimonial-item para cobertura total
+
+---
+
 ## 2026-01-31 - Seção de depoimentos com carousel automático
 
 ### Arquivos Modificados

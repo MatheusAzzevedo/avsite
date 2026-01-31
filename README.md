@@ -5,17 +5,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 ## Arquivos Modificados [Resumo das Atualizações]
 
 ### Última atualização (2026-01-31)
-- **about.html / api/public/about.html** [Adicionada seção "Experiências Reais" com carousel de 27 depoimentos]
-- **css/testimonials.css / api/public/css/testimonials.css** [Novo arquivo com estilos do carrossel]
-- **js/testimonials.js / api/public/js/testimonials.js** [Novo arquivo com classe TestimonialsCarousel para rotação automática a cada 8 segundos]
-- **Depoimentos**: Exibem 5 ⭐ por avaliação + Google rating 4.9⭐ + navegação por setas/dots
+- **css/testimonials.css / api/public/css/testimonials.css** [Refatorado: melhor UX com glassmorphism, animações, responsividade em 7+ breakpoints]
+- **about.html / api/public/about.html** [Carousel wrapper adicionado, integração com CSS otimizado]
+- **Depoimentos**: 27 avaliações com 5⭐, carousel 8seg, navegação setas/dots, Google 4.9⭐
 
 ### Versão anterior (2026-01-31)
-- **index-10 / api/public/index-10** [Botão principal: "Saiba mais" substituído por "Inscreva-se / Login" com link para login]
-- **css/style.css (raiz e api/public)** [Botão WhatsApp: cor verde (#25D366), posição inferior direita, flutuante em desktop e mobile]
-- **index-11 / api/public/index-11** [Botão WhatsApp adicionado; título da aba "Avoar Turismo"]
-- **avoar-index-eleven.css (raiz e api/public)** [CSS do slide 3 (vídeo YouTube em fundo) na página Biologia Marinha]
-- **Todos os HTML** [Título da aba do navegador padronizado para "Avoar Turismo" em todas as páginas]
+- **css/testimonials.css** [Novo arquivo: seção de depoimentos com carousel]
+- **js/testimonials.js** [Novo arquivo: classe TestimonialsCarousel para rotação automática a cada 8 segundos]
+- **about.html** [Adicionada seção "Experiências Reais" com 27 depoimentos de clientes]
 
 ### Backend (API Node.js)
 - `api/src/server.ts` [Servidor com URLs amigáveis: /inicio, /biologia-marinha, /sobre-nos, /blog, /contato, /excursoes; API em /api/*]
