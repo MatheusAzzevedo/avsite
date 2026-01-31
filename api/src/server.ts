@@ -34,6 +34,7 @@ import publicRoutes from './routes/public.routes';
 import { prisma } from './config/database';
 import { logger } from './utils/logger';
 import { ApiError } from './utils/api-error';
+import requestLoggerMiddleware from './middleware/request-logger.middleware';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -76,11 +77,8 @@ app.use('/images', express.static(path.join(__dirname, '../public/images')));
 app.use('/fonts', express.static(path.join(__dirname, '../public/fonts')));
 app.use('/admin', express.static(path.join(__dirname, '../public/admin')));
 
-// Log de requisições
-app.use((req: Request, _res: Response, next: NextFunction) => {
-  logger.info(`${req.method} ${req.path}`);
-  next();
-});
+// Middleware de logging detalhado para API (após middlewares de parser)
+app.use('/api/', requestLoggerMiddleware);
 
 // ===========================================
 // ROTAS DO SITE (URLs amigáveis)

@@ -26,8 +26,11 @@ router.post('/login',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
+      const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
 
-      logger.info(`[Auth] Tentativa de login: ${email}`);
+      logger.info(`[AVSITE-API] Autenticação iniciada - LOGIN`, {
+        context: { email, ip: clientIp, timestamp: new Date().toISOString() }
+      });
 
       // Busca usuário
       const user = await prisma.user.findUnique({
@@ -35,10 +38,16 @@ router.post('/login',
       });
 
       if (!user) {
+        logger.warn(`[AVSITE-API] Falha de login - email não encontrado`, {
+          context: { email, ip: clientIp }
+        });
         throw ApiError.unauthorized('Email ou senha incorretos');
       }
 
       if (!user.active) {
+        logger.warn(`[AVSITE-API] Falha de login - usuário desativado`, {
+          context: { email, userId: user.id, ip: clientIp }
+        });
         throw ApiError.unauthorized('Usuário desativado');
       }
 
@@ -46,12 +55,18 @@ router.post('/login',
       const validPassword = await bcrypt.compare(password, user.password);
 
       if (!validPassword) {
+        logger.warn(`[AVSITE-API] Falha de login - senha incorreta`, {
+          context: { email, userId: user.id, ip: clientIp }
+        });
         throw ApiError.unauthorized('Email ou senha incorretos');
       }
 
       // Gera token JWT
       const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) {
+        logger.error(`[AVSITE-API] Erro crítico - JWT_SECRET não configurado`, {
+          context: { email }
+        });
         throw ApiError.internal('JWT_SECRET não configurado');
       }
 
@@ -76,11 +91,20 @@ router.post('/login',
           entityId: user.id,
           description: `Login realizado: ${user.email}`,
           userId: user.id,
-          userEmail: user.email
+          userEmail: user.email,
+          ip: clientIp
         }
       });
 
-      logger.info(`[Auth] Login bem-sucedido: ${email}`);
+      logger.info(`[AVSITE-API] ✅ Autenticação bem-sucedida - LOGIN`, {
+        context: { 
+          userId: user.id, 
+          email: user.email, 
+          role: user.role, 
+          ip: clientIp,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       res.json({
         success: true,

@@ -1,5 +1,65 @@
 # Changelog
 
+## 2026-01-31 - Sistema de logging robusto com Winston para Railway
+
+### Arquivos Modificados
+- `api/package.json` [Adicionada dependência winston ^3.11.0 e @types/winston]
+- `api/src/utils/logger.ts` [Substituído por Winston: logs estruturados, prefixo [AVSITE-API], níveis info/warn/error/debug, colorização em dev, JSON em prod]
+- `api/src/middleware/request-logger.middleware.ts` [Novo: middleware para capturar método, endpoint, IP, tempo de resposta, status HTTP, usuário, queryParams]
+- `api/src/server.ts` [Integrado request-logger-middleware para todas as rotas /api/]
+- `api/src/routes/auth.routes.ts` [Melhorados logs em login: tentativa, sucesso, falhas com email/IP/userId]
+- `api/src/routes/excursao.routes.ts` [Melhorados logs em GET/POST/PUT: operação iniciada/concluída com contexto completo]
+- `api/docs/SISTEMA-LOGGING.md` [Novo: documentação completa do sistema de logging, exemplos de saída, Railway Logs, níveis, contextos]
+
+### Implementações
+- Logs com timestamp ISO 8601 e prefixo [AVSITE-API] identificando a API Avorar Turismo
+- Captura automática de requisições HTTP (método, endpoint, IP, tempo de resposta, status, usuário)
+- Logs estruturados com contexto JSON (userId, userEmail, dados operacionais)
+- Stack traces completos para erros
+- Suporte a variável LOG_LEVEL para controle de verbosidade
+- Diferença automática entre desenvolvimento (colorido) e produção (JSON estruturado)
+- Todos os logs aparecem no Railway Logs em tempo real
+
+---
+
+## 2026-01-31 - Checklist de verificação de produção da API
+
+### Arquivos Modificados
+- `api/docs/CHECKLIST-PRODUCAO.md` [Novo: documento técnico verificando se a API está pronta para produção no Railway — verifica servidor, BD, auth, validação, CORS, rate limiting, seed, variáveis env, logging, tratamento de erros]
+
+### Conclusão
+- ✅ API está **PRONTA PARA PRODUÇÃO** no Railway
+- ✅ Todos os requisitos técnicos atendidos
+- ✅ Pode receber integração de outros sistemas
+- ⚠️ Itens de atenção: JWT_SECRET forte, CORS_ORIGINS correto, considerar Winston/Pino para logs
+
+---
+
+## 2026-01-31 - Revisão do documento de integração: API em produção no Railway
+
+### Arquivos Modificados
+- `api/docs/INTEGRACAO-ENVIO-EXCURSOES.md` [Revisado: removidas referências a localhost; base URL fixada em https://avoarturismo.up.railway.app; documento alinhado ao sistema em produção no Railway]
+
+### Alterações
+- Base URL e todos os exemplos de endpoint passam a usar a URL pública do Railway
+- Aviso explícito: não usar localhost; API responde apenas na URL de produção configurada no projeto
+- Resumo para implementação com URLs completas e referência à variável API_BASE_URL do Railway
+
+---
+
+## 2026-01-31 - Documento técnico de integração para envio de excursões
+
+### Arquivos Modificados
+- `api/docs/INTEGRACAO-ENVIO-EXCURSOES.md` [Novo: documento técnico explicando como outro programa deve usar a API para enviar excursões — autenticação JWT, POST/PUT, schema do body, exemplos e tratamento de erros]
+
+### Alterações
+- Documento descreve base URL, headers, login (POST /api/auth/login), uso do Bearer token
+- Especificação do body para criação (POST /api/excursoes) e atualização (PUT /api/excursoes/:id): campos obrigatórios/opcionais, tipos e regras de validação
+- Exemplos de requisição/resposta e códigos de erro (401, 400, 404, 429)
+- Resumo para implementação em programas externos
+
+---
+
 ## 2026-01-31 - Reconstrução da página de login do admin
 
 ### Arquivos Modificados

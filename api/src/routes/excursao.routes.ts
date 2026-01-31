@@ -33,6 +33,12 @@ router.get('/',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { categoria, status, search, page, limit } = req.query as unknown as FilterExcursaoInput;
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
+
+      logger.info(`[AVSITE-API] Listagem de Excursões - INICIADO`, {
+        context: { userId, userEmail, categoria, status, search, page, limit }
+      });
 
       const skip = (page - 1) * limit;
 
@@ -71,13 +77,32 @@ router.get('/',
         prisma.excursao.count({ where })
       ]);
 
-      logger.info(`[Excursões] Listagem: ${excursoes.length} de ${total}`);
+      logger.info(`[AVSITE-API] ✅ Listagem de Excursões - CONCLUÍDO`, {
+        context: { 
+          userId, 
+          userEmail, 
+          encontradas: excursoes.length, 
+          total, 
+          page, 
+          limit 
+        }
+      });
 
       res.json({
         success: true,
         data: excursoes,
         pagination: {
           page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
           limit,
           total,
           totalPages: Math.ceil(total / limit)
@@ -130,8 +155,19 @@ router.post('/',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body;
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
 
-      logger.info(`[Excursões] Criando: ${data.titulo}`);
+      logger.info(`[AVSITE-API] Criação de Excursão - INICIADO`, {
+        context: { 
+          userId, 
+          userEmail, 
+          titulo: data.titulo, 
+          preco: data.preco, 
+          categoria: data.categoria,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       // Gera slug único
       const baseSlug = slugify(data.titulo);
@@ -177,7 +213,16 @@ router.post('/',
         }
       });
 
-      logger.info(`[Excursões] Criada com sucesso: ${excursao.id}`);
+      logger.info(`[AVSITE-API] ✅ Criação de Excursão - CONCLUÍDO`, {
+        context: { 
+          userId, 
+          userEmail, 
+          excursaoId: excursao.id,
+          titulo: excursao.titulo,
+          slug: excursao.slug,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       res.status(201).json({
         success: true,
@@ -200,8 +245,18 @@ router.put('/:id',
     try {
       const { id } = req.params;
       const data = req.body;
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
 
-      logger.info(`[Excursões] Atualizando: ${id}`);
+      logger.info(`[AVSITE-API] Atualização de Excursão - INICIADO`, {
+        context: { 
+          excursaoId: id, 
+          userId, 
+          userEmail,
+          camposAtualizados: Object.keys(data),
+          timestamp: new Date().toISOString()
+        }
+      });
 
       // Verifica se excursão existe
       const existing = await prisma.excursao.findUnique({
@@ -209,6 +264,9 @@ router.put('/:id',
       });
 
       if (!existing) {
+        logger.warn(`[AVSITE-API] Atualização falhou - Excursão não encontrada`, {
+          context: { excursaoId: id, userId, userEmail }
+        });
         throw ApiError.notFound('Excursão não encontrada');
       }
 
@@ -277,6 +335,35 @@ router.put('/:id',
       await prisma.activityLog.create({
         data: {
           action: 'update',
+          entity: 'excursao',
+          entityId: excursao.id,
+          description: `Excursão atualizada: ${excursao.titulo}`,
+          userId: req.user!.id,
+          userEmail: req.user!.email
+        }
+      });
+
+      logger.info(`[AVSITE-API] ✅ Atualização de Excursão - CONCLUÍDO`, {
+        context: { 
+          excursaoId: id,
+          titulo: excursao.titulo,
+          slug: excursao.slug,
+          userId, 
+          userEmail,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+      res.json({
+        success: true,
+        message: 'Excursão atualizada com sucesso',
+        data: excursaoAtualizada
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
           entity: 'excursao',
           entityId: excursao.id,
           description: `Excursão atualizada: ${excursao.titulo}`,

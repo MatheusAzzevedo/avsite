@@ -1,46 +1,91 @@
 /**
  * Explicação do Arquivo [logger.ts]
  * 
- * Utilitário de logging para a aplicação.
- * Fornece métodos padronizados para log com timestamps.
+ * Sistema de logging robusto com Winston.
+ * Fornece logs estruturados visíveis no Railway logs.
  * 
- * Em produção, considerar usar Winston ou Pino para
- * logs mais robustos e persistentes.
+ * Características:
+ * - Logs estruturados em JSON em produção
+ * - Logs coloridos em desenvolvimento
+ * - Prefixo "AVSITE-API" em todos os logs
+ * - Diferentes níveis: info, warn, error, debug
+ * - Captura de stack traces em erros
  */
 
-type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+import winston from 'winston';
 
-interface LoggerInterface {
-  info: (message: string, ...args: unknown[]) => void;
-  warn: (message: string, ...args: unknown[]) => void;
-  error: (message: string, ...args: unknown[]) => void;
-  debug: (message: string, ...args: unknown[]) => void;
-}
+const isProduction = process.env.NODE_ENV === 'production';
 
-const formatMessage = (level: LogLevel, message: string): string => {
-  const timestamp = new Date().toISOString();
-  const levelUpper = level.toUpperCase().padEnd(5);
-  return `[${timestamp}] [${levelUpper}] ${message}`;
+// Define cores para cada nível de log (desenvolvimento)
+const colors = {
+  error: 'red',
+  warn: 'yellow',
+  info: 'green',
+  debug: 'blue'
 };
 
-export const logger: LoggerInterface = {
-  info: (message: string, ...args: unknown[]) => {
-    console.log(formatMessage('info', message), ...args);
-  },
-  
-  warn: (message: string, ...args: unknown[]) => {
-    console.warn(formatMessage('warn', message), ...args);
-  },
-  
-  error: (message: string, ...args: unknown[]) => {
-    console.error(formatMessage('error', message), ...args);
-  },
-  
-  debug: (message: string, ...args: unknown[]) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.debug(formatMessage('debug', message), ...args);
+winston.addColors(colors);
+
+// Formato customizado com prefixo AVSITE-API
+const customFormat = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.errors({ stack: true }),
+  winston.format.printf((info) => {
+    const timestamp = info.timestamp;
+    const level = info.level.toUpperCase();
+    const service = '[AVSITE-API]';
+    const message = info.message;
+    
+    // Se houver erro com stack trace
+    if (info.stack) {
+      return `${timestamp} ${service} [${level}] ${message}\n${info.stack}`;
     }
+    
+    // Se houver dados adicionais (contexto)
+    if (info.context) {
+      return `${timestamp} ${service} [${level}] ${message} | ${JSON.stringify(info.context)}`;
+    }
+    
+    return `${timestamp} ${service} [${level}] ${message}`;
+  })
+);
+
+// Logger Winston
+export const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || (isProduction ? 'info' : 'debug'),
+  format: customFormat,
+  defaultMeta: { service: 'avsite-api' },
+  transports: [
+    // Console (visível no Railway logs)
+    new winston.transports.Console({
+      format: isProduction
+        ? winston.format.json()
+        : winston.format.combine(
+            winston.format.colorize(),
+            customFormat
+          )
+    })
+  ]
+});
+
+// Interface compatível com logger anterior (para não quebrar código existente)
+export const legacyLogger = {
+  info: (message: string, context?: unknown) => {
+    logger.info(message, { context });
+  },
+  
+  warn: (message: string, context?: unknown) => {
+    logger.warn(message, { context });
+  },
+  
+  error: (message: string, context?: unknown) => {
+    logger.error(message, { context });
+  },
+  
+  debug: (message: string, context?: unknown) => {
+    logger.debug(message, { context });
   }
 };
 
 export default logger;
+
