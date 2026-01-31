@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-01-31 - Guia e script para testar a API
+
+### Arquivos Modificados
+- `api/docs/COMO-TESTAR-API.md` [Novo: guia passo a passo para testar se a API está funcionando — health, login, listar excursões, criar excursão, curl, Postman, erros comuns]
+- `api/scripts/test-api.js` [Novo: script Node.js que testa em sequência health, login, listar excursões e criar excursão; uso: node scripts/test-api.js ou node scripts/test-api.js http://localhost:3001]
+
+### Alterações
+- Documentação com comandos curl para produção (Railway) e local
+- Credenciais padrão: admin@avorar.com / admin123
+- Ordem dos testes e tabela resumo
+- Script automático com saída ✅/❌ por teste
+
+---
+
 ## 2026-01-31 - Sistema de logging robusto com Winston para Railway
 
 ### Arquivos Modificados
