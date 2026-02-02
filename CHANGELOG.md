@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-02-02 - Login: remoção de "API: Verificando", logs "Logs avsite" e correção de redirecionamento
+
+### Arquivos Modificados
+- `admin/login.html`, `api/public/admin/login.html` [Removido bloco e texto "API: Verificando..." e função checkApiStatus; página de login sem indicador de status da API]
+- `api/src/routes/auth.routes.ts` [Logs de autenticação com prefixo "Logs avsite" para identificação no painel Railway]
+- `api/src/middleware/request-logger.middleware.ts` [Requisições às rotas /auth passam a incluir "Logs avsite" no log]
+- `js/api-client.js`, `api/public/js/api-client.js` [BASE_URL em produção passa a usar mesma origem (window.location.origin + '/api') para login funcionar quando site e API estão no mesmo deploy]
+
+### Alterações
+- Página de login não exibe mais "API: Verificando..."
+- Logs de login (tentativa, sucesso, falha) e requisições em /auth identificáveis no Railway por "Logs avsite"
+- Login em produção (ex: avoarturismo.up.railway.app) redireciona corretamente para dashboard após autenticação
+
+---
+
 ## 2026-02-02 - Página inicial com 5 seções aplicada ao site online (api/public)
 
 ### Arquivos Modificados

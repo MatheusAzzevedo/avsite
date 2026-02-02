@@ -190,30 +190,6 @@
             cursor: pointer;
         }
 
-        .api-status {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .api-status span {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .api-status .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #fca5a5;
-        }
-
-        .api-status .status-dot.online {
-            background-color: #86efac;
-        }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -260,13 +236,6 @@
         <div class="forgot-password">
             <a href="#" onclick="return false;">Esqueceu a senha ?</a>
         </div>
-
-        <div class="api-status">
-            <span>
-                <div class="status-dot" id="statusDot"></div>
-                API: <span id="apiStatus">Verificando...</span>
-            </span>
-        </div>
     </div>
 
     <script src="../js/api-client.js"></script>
@@ -308,34 +277,7 @@
             }
         }
 
-        /**
-         * Explicação da função [checkApiStatus]
-         * Verifica se a API está online.
-         */
-        async function checkApiStatus() {
-            const statusDot = document.getElementById('statusDot');
-            const apiStatus = document.getElementById('apiStatus');
-
-            try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/health`);
-                const data = await response.json();
-
-                if (data.status === 'ok') {
-                    statusDot.classList.add('online');
-                    apiStatus.textContent = 'Online';
-                } else {
-                    throw new Error('API offline');
-                }
-            } catch (error) {
-                statusDot.classList.remove('online');
-                apiStatus.textContent = 'Offline';
-                console.warn('[Login] API offline:', error.message);
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            checkApiStatus();
-
             if (AuthManager.isAuthenticated()) {
                 AuthManager.verifyToken().then(valid => {
                     if (valid) {

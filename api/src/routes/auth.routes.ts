@@ -28,7 +28,7 @@ router.post('/login',
       const { email, password } = req.body;
       const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
 
-      logger.info(`[AVSITE-API] Autenticação iniciada - LOGIN`, {
+      logger.info(`Logs avsite: Autenticação iniciada - LOGIN`, {
         context: { email, ip: clientIp, timestamp: new Date().toISOString() }
       });
 
@@ -38,14 +38,14 @@ router.post('/login',
       });
 
       if (!user) {
-        logger.warn(`[AVSITE-API] Falha de login - email não encontrado`, {
+        logger.warn(`Logs avsite: Falha de login - email não encontrado`, {
           context: { email, ip: clientIp }
         });
         throw ApiError.unauthorized('Email ou senha incorretos');
       }
 
       if (!user.active) {
-        logger.warn(`[AVSITE-API] Falha de login - usuário desativado`, {
+        logger.warn(`Logs avsite: Falha de login - usuário desativado`, {
           context: { email, userId: user.id, ip: clientIp }
         });
         throw ApiError.unauthorized('Usuário desativado');
@@ -55,7 +55,7 @@ router.post('/login',
       const validPassword = await bcrypt.compare(password, user.password);
 
       if (!validPassword) {
-        logger.warn(`[AVSITE-API] Falha de login - senha incorreta`, {
+        logger.warn(`Logs avsite: Falha de login - senha incorreta`, {
           context: { email, userId: user.id, ip: clientIp }
         });
         throw ApiError.unauthorized('Email ou senha incorretos');
@@ -64,7 +64,7 @@ router.post('/login',
       // Gera token JWT
       const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) {
-        logger.error(`[AVSITE-API] Erro crítico - JWT_SECRET não configurado`, {
+        logger.error(`Logs avsite: Erro crítico - JWT_SECRET não configurado`, {
           context: { email }
         });
         throw ApiError.internal('JWT_SECRET não configurado');
@@ -96,11 +96,11 @@ router.post('/login',
         }
       });
 
-      logger.info(`[AVSITE-API] ✅ Autenticação bem-sucedida - LOGIN`, {
-        context: { 
-          userId: user.id, 
-          email: user.email, 
-          role: user.role, 
+      logger.info(`Logs avsite: Autenticação bem-sucedida - LOGIN`, {
+        context: {
+          userId: user.id,
+          email: user.email,
+          role: user.role,
           ip: clientIp,
           timestamp: new Date().toISOString()
         }

@@ -66,23 +66,25 @@ export function requestLoggerMiddleware(
       ...(queryParams && { queryParams })
     };
     
+    // Logs avsite: identificação para painel Railway (rotas de auth)
+    const logPrefix = path.includes('/auth') ? 'Logs avsite: ' : '';
     // Log baseado no status code
     if (statusCode >= 400) {
       // Erro (400-599)
       logger.error(
-        `[${method}] ${path} → ${statusCode} (${responseTime}ms) - Requisição falhou`,
+        `${logPrefix}[${method}] ${path} → ${statusCode} (${responseTime}ms) - Requisição falhou`,
         metadata
       );
     } else if (statusCode >= 300) {
       // Redirect (300-399)
       logger.warn(
-        `[${method}] ${path} → ${statusCode} (${responseTime}ms) - Redirecionamento`,
+        `${logPrefix}[${method}] ${path} → ${statusCode} (${responseTime}ms) - Redirecionamento`,
         metadata
       );
     } else {
       // Sucesso (200-299)
       logger.info(
-        `[${method}] ${path} → ${statusCode} (${responseTime}ms)`,
+        `${logPrefix}[${method}] ${path} → ${statusCode} (${responseTime}ms)`,
         metadata
       );
     }

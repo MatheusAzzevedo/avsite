@@ -4,11 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
+### Última atualização (2026-02-02) - Login e logs
+- **admin/login.html**, **api/public/admin/login.html** [Removido texto "API: Verificando..." da tela de login]
+- **api/src/routes/auth.routes.ts** [Logs de login com prefixo "Logs avsite" para filtro no Railway]
+- **api/src/middleware/request-logger.middleware.ts** [Requisições em /auth logadas com "Logs avsite"]
+- **js/api-client.js**, **api/public/js/api-client.js** [BASE_URL em produção = mesma origem; login e redirecionamento para dashboard corrigidos]
+
 ### Frontend - Página Inicial
 - `index-10.html`, `api/public/index-10.html` [5 seções fullscreen com scroll e background-image em cada seção; substitui carrossel]
 - `css/avoar-sections-page.css`, `api/public/css/avoar-sections-page.css` [Estilos para seções, animações e responsividade]
 
-### Última atualização (2026-01-31)
+### Versão anterior (2026-01-31)
 - **admin/login.html** [Página de login reconstruída: layout minimalista com gradiente laranja no fundo, formulário centralizado, campos cinza claro, botão laranja, link Esqueceu a senha; mantidas funcionalidades de login, API e Lembrar-me]
 
 ### Versão anterior (2026-01-31)

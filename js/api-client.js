@@ -18,14 +18,13 @@
 
 /**
  * URL base da API
- * Em desenvolvimento: http://localhost:3001
- * Em produção: URL do Railway
+ * Em desenvolvimento: http://localhost:3001/api
+ * Em produção: mesma origem (site e API no mesmo deploy, ex: avoarturismo.up.railway.app)
  */
 const API_CONFIG = {
-  // Atualizar esta URL após deploy no Railway
-  BASE_URL: window.location.hostname === 'localhost' 
+  BASE_URL: window.location.hostname === 'localhost'
     ? 'http://localhost:3001/api'
-    : 'https://avorar-api.up.railway.app/api',
+    : (window.location.origin + '/api'),
   
   // Headers padrão
   getHeaders: () => {
