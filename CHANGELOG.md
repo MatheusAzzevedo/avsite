@@ -1,5 +1,71 @@
 # Changelog
 
+## 2026-02-02 - Seção Parceiros na página Sobre Nós
+
+### Arquivos Modificados
+- `about.html`, `api/public/about.html` [Seção "Parceiros de longa data": layout alterado para texto em cima e imagem embaixo; imagem trocada para parceiros.jpeg]
+- `css/about-page.css`, `api/public/css/about-page.css` [Classe proof-layout-stacked para layout empilhado centralizado]
+- `api/public/images/Imagens para o site/parceiros.jpeg` [Imagem parceiros.jpeg copiada para servir no site]
+
+### Alterações
+- Layout da seção "Quem confia / Parceiros de longa data" agora exibe texto no topo e imagem dos colégios parceiros abaixo
+- Nova imagem parceiros.jpeg (grid com logos das instituições de ensino) substitui a foto de grupo anterior
+- Conteúdo centralizado com max-width para boa legibilidade
+
+---
+
+## 2026-02-02 - Botão Login alterado para Inscreva-se / Login
+
+### Arquivos Modificados
+- `index-10.html`, `index-11.html`, `about.html`, `blog.html`, `blog-single.html`, `contact.html`, `portfolio.html`, `portfolio-single.html` e equivalentes em `api/public/` [Texto do botão na primeira seção (header/navbar) alterado de "Login" para "Inscreva-se / Login" em desktop e menu mobile]
+
+### Alterações
+- Botão laranja no header (avoar-top-header) agora exibe "Inscreva-se / Login"
+- Mesmo texto no menu mobile (main-nav) quando expandido
+- Mantidos links e estilos existentes
+
+---
+
+## 2026-02-02 - Sistema de logs detalhado para diagnóstico no Railway
+
+### Arquivos Modificados
+- `api/src/routes/post.routes.ts` [Logs estruturados em todas operações: 📝 listagem, criação, atualização, exclusão de posts; contexto com userId, userEmail, dados, timestamps; erros com stack trace]
+- `api/src/routes/excursao.routes.ts` [Logs estruturados em todas operações: 🏝️ listagem, criação, atualização, exclusão de excursões; contexto detalhado incluindo galeria de imagens]
+- `api/docs/SISTEMA-LOGS-DETALHADO.md` [Novo: documentação completa; exemplos de logs; guia de filtros no Railway; diagnóstico de problemas comuns]
+
+### Alterações
+- Logs com emojis identificadores: ✅ sucesso, ❌ erro, ⚠️ aviso, 🗑️ exclusão, 📝 post, 🏝️ excursão
+- Log INICIADA + CONCLUÍDA/FALHOU para rastrear ciclo completo de cada operação
+- Contexto JSON com todos os dados relevantes: IDs, títulos, status, categorias, contagem de imagens
+- Erros capturados com mensagem e stack trace completo para debugging
+- Warnings para recursos não encontrados (facilita diagnóstico de IDs incorretos)
+- Timestamps ISO 8601 em todas as operações para correlação temporal
+- Prefixo `[AVSITE-API]` mantido para compatibilidade com filtros existentes
+
+### Benefícios
+- Diagnóstico rápido de falhas: buscar por ❌ ou FALHOU
+- Rastreamento de usuários: filtrar por userEmail
+- Auditoria completa: ver quem criou/editou/excluiu o quê e quando
+- Debug facilitado: stack traces completos em erros
+- Visibilidade no Railway Logs sem configuração adicional
+
+---
+
+## 2026-02-02 - Correção do sistema admin bloqueado por CSP e seed otimizado
+
+### Arquivos Modificados
+- `api/prisma/seed.ts` [Seed inteligente: verifica contagem de excursões; cria apenas admin se banco já tiver dados; evita duplicar excursões de teste a cada deploy]
+- `admin/js/excursao-editor.js`, `api/public/admin/js/excursao-editor.js` [Novo: toda lógica de criação/edição de excursões externalizada; compatível com CSP]
+- `admin/excursao-editor.html`, `api/public/admin/excursao-editor.html` [Removidos onsubmit, onclick, onchange inline; form usa addEventListener; upload de imagens com data-attributes]
+
+### Alterações
+- Seed não cria mais dados de teste a cada deploy no Railway; apenas garante admin existe
+- Criação de excursões pelo painel admin agora funciona (CSP não bloqueia mais scripts)
+- Scripts do editor externalizados: handlers via addEventListener, sem inline events
+- Imagens, galeria, editor de texto e botões todos com event listeners externos
+
+---
+
 ## 2026-02-02 - Correção do login bloqueado por CSP (Content-Security-Policy)
 
 ### Arquivos Modificados

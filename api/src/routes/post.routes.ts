@@ -66,7 +66,22 @@ router.get('/',
         prisma.post.count({ where })
       ]);
 
-      logger.info(`[Posts] Listagem: ${posts.length} de ${total}`);
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
+      
+      logger.info(`[AVSITE-API] 📝 Posts - Listagem`, {
+        context: { 
+          userId, 
+          userEmail, 
+          encontrados: posts.length, 
+          total, 
+          page, 
+          limit,
+          categoria: categoria || 'todas',
+          status: status || 'todos',
+          busca: search || 'sem filtro'
+        }
+      });
 
       res.json({
         success: true,
@@ -120,8 +135,19 @@ router.post('/',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body;
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
 
-      logger.info(`[Posts] Criando: ${data.titulo}`);
+      logger.info(`[AVSITE-API] 📝 Post - Criação INICIADA`, {
+        context: { 
+          userId, 
+          userEmail, 
+          titulo: data.titulo,
+          categoria: data.categoria,
+          status: data.status,
+          autor: data.autor
+        }
+      });
 
       // Gera slug único
       const baseSlug = slugify(data.titulo);
@@ -153,7 +179,17 @@ router.post('/',
         }
       });
 
-      logger.info(`[Posts] Criado com sucesso: ${post.id}`);
+      logger.info(`[AVSITE-API] ✅ Post - Criação CONCLUÍDA`, {
+        context: { 
+          userId, 
+          userEmail,
+          postId: post.id,
+          titulo: post.titulo,
+          slug: post.slug,
+          status: post.status,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       res.status(201).json({
         success: true,
@@ -161,6 +197,14 @@ router.post('/',
         data: post
       });
     } catch (error) {
+      logger.error(`[AVSITE-API] ❌ Post - Criação FALHOU`, {
+        context: { 
+          userId: req.user?.id,
+          userEmail: req.user?.email,
+          erro: error instanceof Error ? error.message : 'Erro desconhecido',
+          stack: error instanceof Error ? error.stack : undefined
+        }
+      });
       next(error);
     }
   }
@@ -176,8 +220,18 @@ router.put('/:id',
     try {
       const { id } = req.params;
       const data = req.body;
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
 
-      logger.info(`[Posts] Atualizando: ${id}`);
+      logger.info(`[AVSITE-API] 📝 Post - Atualização INICIADA`, {
+        context: { 
+          postId: id,
+          userId, 
+          userEmail,
+          camposAtualizados: Object.keys(data),
+          timestamp: new Date().toISOString()
+        }
+      });
 
       // Verifica se post existe
       const existing = await prisma.post.findUnique({
@@ -224,7 +278,17 @@ router.put('/:id',
         }
       });
 
-      logger.info(`[Posts] Atualizado com sucesso: ${id}`);
+      logger.info(`[AVSITE-API] ✅ Post - Atualização CONCLUÍDA`, {
+        context: { 
+          postId: id,
+          titulo: post.titulo,
+          slug: post.slug,
+          status: post.status,
+          userId, 
+          userEmail,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       res.json({
         success: true,
@@ -232,6 +296,15 @@ router.put('/:id',
         data: post
       });
     } catch (error) {
+      logger.error(`[AVSITE-API] ❌ Post - Atualização FALHOU`, {
+        context: { 
+          postId: req.params.id,
+          userId: req.user?.id,
+          userEmail: req.user?.email,
+          erro: error instanceof Error ? error.message : 'Erro desconhecido',
+          stack: error instanceof Error ? error.stack : undefined
+        }
+      });
       next(error);
     }
   }
@@ -245,8 +318,17 @@ router.delete('/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
 
-      logger.info(`[Posts] Excluindo: ${id}`);
+      logger.info(`[AVSITE-API] 🗑️ Post - Exclusão INICIADA`, {
+        context: { 
+          postId: id,
+          userId, 
+          userEmail,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       // Verifica se post existe
       const existing = await prisma.post.findUnique({
@@ -254,6 +336,9 @@ router.delete('/:id',
       });
 
       if (!existing) {
+        logger.warn(`[AVSITE-API] ⚠️ Post - Exclusão FALHOU - Post não encontrado`, {
+          context: { postId: id, userId, userEmail }
+        });
         throw ApiError.notFound('Post não encontrado');
       }
 
@@ -274,13 +359,30 @@ router.delete('/:id',
         }
       });
 
-      logger.info(`[Posts] Excluído com sucesso: ${id}`);
+      logger.info(`[AVSITE-API] ✅ Post - Exclusão CONCLUÍDA`, {
+        context: { 
+          postId: id,
+          titulo: existing.titulo,
+          userId, 
+          userEmail,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       res.json({
         success: true,
         message: 'Post excluído com sucesso'
       });
     } catch (error) {
+      logger.error(`[AVSITE-API] ❌ Post - Exclusão FALHOU`, {
+        context: { 
+          postId: req.params.id,
+          userId: req.user?.id,
+          userEmail: req.user?.email,
+          erro: error instanceof Error ? error.message : 'Erro desconhecido',
+          stack: error instanceof Error ? error.stack : undefined
+        }
+      });
       next(error);
     }
   }

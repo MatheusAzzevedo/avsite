@@ -19,7 +19,7 @@ async function main() {
   // CRIAR USUÁRIO ADMIN
   // ===========================================
   
-  console.log('👤 Criando usuário admin...');
+  console.log('👤 Verificando usuário admin...');
   
   const hashedPassword = await bcrypt.hash('admin123', 10);
   
@@ -35,15 +35,34 @@ async function main() {
     }
   });
   
-  console.log(`   ✅ Admin criado: ${admin.email}`);
+  console.log(`   ✅ Admin garantido: ${admin.email}`);
   console.log(`   📧 Email: admin@avorar.com`);
   console.log(`   🔑 Senha: admin123\n`);
 
   // ===========================================
-  // CRIAR EXCURSÕES DE EXEMPLO
+  // VERIFICAR SE JÁ EXISTEM DADOS
   // ===========================================
   
-  console.log('🏝️ Criando excursões de exemplo...');
+  const excursoesCount = await prisma.excursao.count();
+  const postsCount = await prisma.post.count();
+  
+  if (excursoesCount > 0) {
+    console.log(`ℹ️  Banco já contém ${excursoesCount} excursão(ões). Pulando criação de dados de teste.`);
+    console.log(`ℹ️  Banco já contém ${postsCount} post(s). Pulando criação de dados de teste.\n`);
+    console.log('✨ Seed concluído!\n');
+    console.log('═══════════════════════════════════════');
+    console.log('CREDENCIAIS DO ADMIN:');
+    console.log('Email: admin@avorar.com');
+    console.log('Senha: admin123');
+    console.log('═══════════════════════════════════════\n');
+    return;
+  }
+
+  // ===========================================
+  // CRIAR EXCURSÕES DE EXEMPLO (SOMENTE SE VAZIO)
+  // ===========================================
+  
+  console.log('🏝️ Banco vazio. Criando excursões de exemplo...');
   
   const excursoes = [
     {

@@ -36,8 +36,16 @@ router.get('/',
       const userId = req.user?.id;
       const userEmail = req.user?.email;
 
-      logger.info(`[AVSITE-API] Listagem de Excursões - INICIADO`, {
-        context: { userId, userEmail, categoria, status, search, page, limit }
+      logger.info(`[AVSITE-API] 🏝️ Excursões - Listagem INICIADA`, {
+        context: { 
+          userId, 
+          userEmail, 
+          categoria: categoria || 'todas', 
+          status: status || 'todos', 
+          busca: search || 'sem filtro',
+          page, 
+          limit 
+        }
       });
 
       const skip = (page - 1) * limit;
@@ -77,14 +85,15 @@ router.get('/',
         prisma.excursao.count({ where })
       ]);
 
-      logger.info(`[AVSITE-API] ✅ Listagem de Excursões - CONCLUÍDO`, {
+      logger.info(`[AVSITE-API] ✅ Excursões - Listagem CONCLUÍDA`, {
         context: { 
           userId, 
           userEmail, 
           encontradas: excursoes.length, 
           total, 
           page, 
-          limit 
+          limit,
+          timestamp: new Date().toISOString()
         }
       });
 
@@ -148,13 +157,15 @@ router.post('/',
       const userId = req.user?.id;
       const userEmail = req.user?.email;
 
-      logger.info(`[AVSITE-API] Criação de Excursão - INICIADO`, {
+      logger.info(`[AVSITE-API] 🏝️ Excursão - Criação INICIADA`, {
         context: { 
           userId, 
           userEmail, 
           titulo: data.titulo, 
           preco: data.preco, 
           categoria: data.categoria,
+          status: data.status || 'ATIVO',
+          duracao: data.duracao,
           timestamp: new Date().toISOString()
         }
       });
@@ -203,13 +214,17 @@ router.post('/',
         }
       });
 
-      logger.info(`[AVSITE-API] ✅ Criação de Excursão - CONCLUÍDO`, {
+      logger.info(`[AVSITE-API] ✅ Excursão - Criação CONCLUÍDA`, {
         context: { 
           userId, 
           userEmail, 
           excursaoId: excursao.id,
           titulo: excursao.titulo,
           slug: excursao.slug,
+          preco: excursao.preco,
+          categoria: excursao.categoria,
+          status: excursao.status,
+          galeriaImagens: excursao.galeria?.length || 0,
           timestamp: new Date().toISOString()
         }
       });
@@ -220,6 +235,14 @@ router.post('/',
         data: excursao
       });
     } catch (error) {
+      logger.error(`[AVSITE-API] ❌ Excursão - Criação FALHOU`, {
+        context: { 
+          userId: req.user?.id,
+          userEmail: req.user?.email,
+          erro: error instanceof Error ? error.message : 'Erro desconhecido',
+          stack: error instanceof Error ? error.stack : undefined
+        }
+      });
       next(error);
     }
   }
@@ -238,7 +261,7 @@ router.put('/:id',
       const userId = req.user?.id;
       const userEmail = req.user?.email;
 
-      logger.info(`[AVSITE-API] Atualização de Excursão - INICIADO`, {
+      logger.info(`[AVSITE-API] 🏝️ Excursão - Atualização INICIADA`, {
         context: { 
           excursaoId: id, 
           userId, 
@@ -254,7 +277,7 @@ router.put('/:id',
       });
 
       if (!existing) {
-        logger.warn(`[AVSITE-API] Atualização falhou - Excursão não encontrada`, {
+        logger.warn(`[AVSITE-API] ⚠️ Excursão - Atualização FALHOU - Excursão não encontrada`, {
           context: { excursaoId: id, userId, userEmail }
         });
         throw ApiError.notFound('Excursão não encontrada');
@@ -333,11 +356,13 @@ router.put('/:id',
         }
       });
 
-      logger.info(`[AVSITE-API] ✅ Atualização de Excursão - CONCLUÍDO`, {
+      logger.info(`[AVSITE-API] ✅ Excursão - Atualização CONCLUÍDA`, {
         context: { 
           excursaoId: id,
-          titulo: excursao.titulo,
-          slug: excursao.slug,
+          titulo: excursaoAtualizada?.titulo,
+          slug: excursaoAtualizada?.slug,
+          status: excursaoAtualizada?.status,
+          galeriaImagens: excursaoAtualizada?.galeria?.length || 0,
           userId, 
           userEmail,
           timestamp: new Date().toISOString()
@@ -350,6 +375,15 @@ router.put('/:id',
         data: excursaoAtualizada
       });
     } catch (error) {
+      logger.error(`[AVSITE-API] ❌ Excursão - Atualização FALHOU`, {
+        context: { 
+          excursaoId: req.params.id,
+          userId: req.user?.id,
+          userEmail: req.user?.email,
+          erro: error instanceof Error ? error.message : 'Erro desconhecido',
+          stack: error instanceof Error ? error.stack : undefined
+        }
+      });
       next(error);
     }
   }
@@ -363,15 +397,28 @@ router.delete('/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
+      const userId = req.user?.id;
+      const userEmail = req.user?.email;
 
-      logger.info(`[Excursões] Excluindo: ${id}`);
+      logger.info(`[AVSITE-API] 🗑️ Excursão - Exclusão INICIADA`, {
+        context: { 
+          excursaoId: id,
+          userId,
+          userEmail,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       // Verifica se excursão existe
       const existing = await prisma.excursao.findUnique({
-        where: { id }
+        where: { id },
+        include: { galeria: true }
       });
 
       if (!existing) {
+        logger.warn(`[AVSITE-API] ⚠️ Excursão - Exclusão FALHOU - Excursão não encontrada`, {
+          context: { excursaoId: id, userId, userEmail }
+        });
         throw ApiError.notFound('Excursão não encontrada');
       }
 
@@ -392,13 +439,32 @@ router.delete('/:id',
         }
       });
 
-      logger.info(`[Excursões] Excluída com sucesso: ${id}`);
+      logger.info(`[AVSITE-API] ✅ Excursão - Exclusão CONCLUÍDA`, {
+        context: { 
+          excursaoId: id,
+          titulo: existing.titulo,
+          categoria: existing.categoria,
+          imagensExcluidas: existing.galeria?.length || 0,
+          userId,
+          userEmail,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       res.json({
         success: true,
         message: 'Excursão excluída com sucesso'
       });
     } catch (error) {
+      logger.error(`[AVSITE-API] ❌ Excursão - Exclusão FALHOU`, {
+        context: { 
+          excursaoId: req.params.id,
+          userId: req.user?.id,
+          userEmail: req.user?.email,
+          erro: error instanceof Error ? error.message : 'Erro desconhecido',
+          stack: error instanceof Error ? error.stack : undefined
+        }
+      });
       next(error);
     }
   }

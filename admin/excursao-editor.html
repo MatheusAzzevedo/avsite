@@ -71,7 +71,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form id="excursaoForm" onsubmit="saveExcursao(event)">
+                    <form id="excursaoForm">
                         <!-- ID oculto para edição -->
                         <input type="hidden" id="excursaoId" value="">
 
@@ -152,7 +152,7 @@
                             <div class="form-row">
                                 <div class="form-group" style="flex: 1;">
                                     <label>Imagem de Capa (para listagem)</label>
-                                    <div class="file-upload" onclick="document.getElementById('imagemCapa').click()" style="min-height: 150px;">
+                                    <div class="file-upload" data-upload-target="imagemCapa" style="min-height: 150px; cursor: pointer;">
                                         <i class="fas fa-image" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
                                         <p style="margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem;">Clique para adicionar</p>
                                         <p style="color: var(--text-light); font-size: 0.75rem;">Recomendado: 800x600px</p>
@@ -160,12 +160,11 @@
                                             type="file" 
                                             id="imagemCapa" 
                                             accept="image/*"
-                                            onchange="handleImageUpload(this, 'previewCapa', 'imagemCapaData')"
                                         >
                                     </div>
                                     <div id="previewCapaContainer" style="display: none; margin-top: 0.5rem; position: relative;">
                                         <img id="previewCapa" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: var(--radius-md);" alt="Preview">
-                                        <button type="button" onclick="removeImage('imagemCapaData', 'previewCapaContainer', 'imagemCapa')" style="position: absolute; top: 0.25rem; right: 0.25rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 0.75rem;">
+                                        <button type="button" data-remove="imagemCapa" style="position: absolute; top: 0.25rem; right: 0.25rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 0.75rem;">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
@@ -174,7 +173,7 @@
 
                                 <div class="form-group" style="flex: 1;">
                                     <label>Imagem Principal (para página detalhada)</label>
-                                    <div class="file-upload" onclick="document.getElementById('imagemPrincipal').click()" style="min-height: 150px;">
+                                    <div class="file-upload" data-upload-target="imagemPrincipal" style="min-height: 150px; cursor: pointer;">
                                         <i class="fas fa-image" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
                                         <p style="margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem;">Clique para adicionar</p>
                                         <p style="color: var(--text-light); font-size: 0.75rem;">Recomendado: 1920x1080px</p>
@@ -182,12 +181,11 @@
                                             type="file" 
                                             id="imagemPrincipal" 
                                             accept="image/*"
-                                            onchange="handleImageUpload(this, 'previewPrincipal', 'imagemPrincipalData')"
                                         >
                                     </div>
                                     <div id="previewPrincipalContainer" style="display: none; margin-top: 0.5rem; position: relative;">
                                         <img id="previewPrincipal" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: var(--radius-md);" alt="Preview">
-                                        <button type="button" onclick="removeImage('imagemPrincipalData', 'previewPrincipalContainer', 'imagemPrincipal')" style="position: absolute; top: 0.25rem; right: 0.25rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 0.75rem;">
+                                        <button type="button" data-remove="imagemPrincipal" style="position: absolute; top: 0.25rem; right: 0.25rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 0.75rem;">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
@@ -197,7 +195,7 @@
 
                             <div class="form-group">
                                 <label>Galeria de Imagens (múltiplas imagens)</label>
-                                <div class="file-upload" onclick="document.getElementById('imagemGaleria').click()">
+                                <div class="file-upload" data-upload-target="imagemGaleria" style="cursor: pointer;">
                                     <i class="fas fa-images" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
                                     <p style="margin-bottom: 0.5rem; font-weight: 600;">Clique para adicionar imagens à galeria</p>
                                     <p style="color: var(--text-light); font-size: 0.875rem;">Selecione múltiplas imagens</p>
@@ -206,7 +204,6 @@
                                         id="imagemGaleria" 
                                         accept="image/*"
                                         multiple
-                                        onchange="handleGalleryUpload(this)"
                                     >
                                 </div>
                                 <div id="galeriaPreview" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.75rem; margin-top: 1rem;"></div>
@@ -221,24 +218,24 @@
                                 <label>Conteúdo da Página de Detalhes</label>
                                 <div class="editor-container">
                                     <div class="editor-toolbar">
-                                        <button type="button" onclick="formatText('bold')" title="Negrito">
+                                        <button type="button" data-format="bold" title="Negrito">
                                             <i class="fas fa-bold"></i>
                                         </button>
-                                        <button type="button" onclick="formatText('italic')" title="Itálico">
+                                        <button type="button" data-format="italic" title="Itálico">
                                             <i class="fas fa-italic"></i>
                                         </button>
-                                        <button type="button" onclick="formatText('underline')" title="Sublinhado">
+                                        <button type="button" data-format="underline" title="Sublinhado">
                                             <i class="fas fa-underline"></i>
                                         </button>
                                         <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
-                                        <button type="button" onclick="formatText('insertUnorderedList')" title="Lista">
+                                        <button type="button" data-format="insertUnorderedList" title="Lista">
                                             <i class="fas fa-list-ul"></i>
                                         </button>
-                                        <button type="button" onclick="formatText('insertOrderedList')" title="Lista numerada">
+                                        <button type="button" data-format="insertOrderedList" title="Lista numerada">
                                             <i class="fas fa-list-ol"></i>
                                         </button>
                                         <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
-                                        <select onchange="formatHeading(this.value)" style="padding: 0.5rem; border: 1px solid var(--light-border); border-radius: var(--radius-sm); background: white; cursor: pointer;">
+                                        <select data-format-heading style="padding: 0.5rem; border: 1px solid var(--light-border); border-radius: var(--radius-sm); background: white; cursor: pointer;">
                                             <option value="">Parágrafo</option>
                                             <option value="h2">Título 2</option>
                                             <option value="h3">Título 3</option>
@@ -318,7 +315,7 @@
                             <a href="excursoes.html" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancelar
                             </a>
-                            <button type="button" class="btn btn-secondary" onclick="saveAsInactive()">
+                            <button type="button" class="btn btn-secondary" data-action="save-inactive">
                                 <i class="fas fa-save"></i> Salvar como Inativo
                             </button>
                             <button type="submit" class="btn btn-success">
@@ -334,335 +331,7 @@
     <!-- Script do cliente da API -->
     <script src="../js/api-client.js"></script>
     <script src="js/admin-main.js"></script>
-    <script>
-        // Variáveis globais
-        let isEditing = false;
-        let currentExcursaoId = null;
-        let galeriaImages = [];
+    <script src="js/excursao-editor.js"></script>
 
-        // Mostrar botão de toggle em mobile
-        if (window.innerWidth <= 768) {
-            document.getElementById('sidebarToggle').style.display = 'inline-block';
-        }
-
-        window.addEventListener('resize', function() {
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebarToggle').style.display = 'inline-block';
-            } else {
-                document.getElementById('sidebarToggle').style.display = 'none';
-            }
-        });
-
-        /**
-         * Explicação da função [initEditor]
-         * Inicializa o editor, verificando se é edição ou criação.
-         */
-        function initEditor() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const excursaoId = urlParams.get('id');
-
-            if (excursaoId) {
-                loadExcursaoForEdit(excursaoId);
-            }
-        }
-
-        /**
-         * Explicação da função [loadExcursaoForEdit]
-         * Carrega os dados de uma excursão existente para edição via API.
-         * @param {string} excursaoId - ID da excursão a editar
-         */
-        async function loadExcursaoForEdit(excursaoId) {
-            console.log('[Excursão Editor] Carregando excursão para edição:', excursaoId);
-            
-            try {
-                const excursao = await ExcursaoManager.getById(excursaoId);
-                
-                if (!excursao) {
-                    showToast('Excursão não encontrada!', 'error');
-                    setTimeout(() => {
-                        window.location.href = 'excursoes.html';
-                    }, 1500);
-                    return;
-                }
-
-                isEditing = true;
-                currentExcursaoId = excursaoId;
-
-                // Atualiza título da página
-                document.getElementById('pageTitle').textContent = 'Editar Excursão';
-                document.getElementById('submitBtnText').textContent = 'Salvar Alterações';
-
-                // Preenche os campos
-                document.getElementById('excursaoId').value = excursao.id;
-                document.getElementById('excursaoTitulo').value = excursao.titulo;
-                document.getElementById('excursaoSubtitulo').value = excursao.subtitulo || '';
-                document.getElementById('excursaoPreco').value = excursao.preco;
-                document.getElementById('excursaoDuracao').value = excursao.duracao || '';
-                document.getElementById('excursaoCategoria').value = excursao.categoria;
-                document.getElementById('excursaoStatus').value = excursao.status.toLowerCase();
-                document.getElementById('excursaoDescricao').innerHTML = excursao.descricao || '';
-                document.getElementById('excursaoInclusos').value = excursao.inclusos || '';
-                document.getElementById('excursaoRecomendacoes').value = excursao.recomendacoes || '';
-                document.getElementById('excursaoLocal').value = excursao.local || '';
-                document.getElementById('excursaoHorario').value = excursao.horario || '';
-                document.getElementById('excursaoTags').value = Array.isArray(excursao.tags) ? excursao.tags.join(', ') : '';
-                
-                // Imagem de capa
-                if (excursao.imagemCapa) {
-                    document.getElementById('imagemCapaData').value = excursao.imagemCapa;
-                    document.getElementById('previewCapa').src = excursao.imagemCapa;
-                    document.getElementById('previewCapaContainer').style.display = 'block';
-                }
-
-                // Imagem principal
-                if (excursao.imagemPrincipal) {
-                    document.getElementById('imagemPrincipalData').value = excursao.imagemPrincipal;
-                    document.getElementById('previewPrincipal').src = excursao.imagemPrincipal;
-                    document.getElementById('previewPrincipalContainer').style.display = 'block';
-                }
-
-                // Galeria - pode vir como array de objetos ou strings
-                if (excursao.galeria && excursao.galeria.length > 0) {
-                    galeriaImages = excursao.galeria.map(g => typeof g === 'string' ? g : g.url);
-                    renderGalleryPreview();
-                }
-
-                console.log('[Excursão Editor] Excursão carregada com sucesso');
-            } catch (error) {
-                console.error('[Excursão Editor] Erro ao carregar:', error);
-                showToast('Erro ao carregar excursão!', 'error');
-            }
-        }
-
-        /**
-         * Explicação da função [handleImageUpload]
-         * Processa o upload de uma imagem individual.
-         */
-        function handleImageUpload(input, previewId, dataInputId) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                
-                if (file.size > 5 * 1024 * 1024) {
-                    showToast('A imagem deve ter no máximo 5MB', 'error');
-                    return;
-                }
-
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    document.getElementById(dataInputId).value = e.target.result;
-                    document.getElementById(previewId).src = e.target.result;
-                    document.getElementById(previewId + 'Container').style.display = 'block';
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        }
-
-        /**
-         * Explicação da função [removeImage]
-         * Remove uma imagem individual.
-         */
-        function removeImage(dataInputId, containerId, fileInputId) {
-            document.getElementById(dataInputId).value = '';
-            document.getElementById(fileInputId).value = '';
-            document.getElementById(containerId).style.display = 'none';
-        }
-
-        /**
-         * Explicação da função [handleGalleryUpload]
-         * Processa o upload de múltiplas imagens para a galeria.
-         */
-        function handleGalleryUpload(input) {
-            if (input.files) {
-                Array.from(input.files).forEach(file => {
-                    if (file.size > 5 * 1024 * 1024) {
-                        showToast(`Imagem ${file.name} muito grande (máx 5MB)`, 'warning');
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        galeriaImages.push(e.target.result);
-                        renderGalleryPreview();
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
-        }
-
-        /**
-         * Explicação da função [renderGalleryPreview]
-         * Renderiza a prévia das imagens da galeria.
-         */
-        function renderGalleryPreview() {
-            const container = document.getElementById('galeriaPreview');
-            container.innerHTML = galeriaImages.map((img, index) => `
-                <div style="position: relative; border-radius: var(--radius-md); overflow: hidden;">
-                    <img src="${img}" style="width: 100%; height: 100px; object-fit: cover;">
-                    <button type="button" onclick="removeGalleryImage(${index})" style="position: absolute; top: 0.25rem; right: 0.25rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 0.625rem;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        /**
-         * Explicação da função [removeGalleryImage]
-         * Remove uma imagem da galeria.
-         */
-        function removeGalleryImage(index) {
-            galeriaImages.splice(index, 1);
-            renderGalleryPreview();
-        }
-
-        // Funções do Editor de Texto Rico
-        function formatText(command) {
-            document.execCommand(command, false, null);
-            document.getElementById('excursaoDescricao').focus();
-        }
-
-        function formatHeading(tag) {
-            if (tag) {
-                document.execCommand('formatBlock', false, tag);
-            } else {
-                document.execCommand('formatBlock', false, 'p');
-            }
-            document.getElementById('excursaoDescricao').focus();
-        }
-
-        /**
-         * Explicação da função [getExcursaoData]
-         * Coleta todos os dados do formulário.
-         * @returns {Object} Dados da excursão
-         */
-        function getExcursaoData() {
-            const tagsString = document.getElementById('excursaoTags').value;
-            const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
-
-            return {
-                titulo: document.getElementById('excursaoTitulo').value.trim(),
-                subtitulo: document.getElementById('excursaoSubtitulo').value.trim(),
-                preco: parseFloat(document.getElementById('excursaoPreco').value) || 0,
-                duracao: document.getElementById('excursaoDuracao').value.trim(),
-                categoria: document.getElementById('excursaoCategoria').value,
-                status: document.getElementById('excursaoStatus').value,
-                imagemCapa: document.getElementById('imagemCapaData').value,
-                imagemPrincipal: document.getElementById('imagemPrincipalData').value,
-                galeria: galeriaImages,
-                descricao: document.getElementById('excursaoDescricao').innerHTML,
-                inclusos: document.getElementById('excursaoInclusos').value.trim(),
-                recomendacoes: document.getElementById('excursaoRecomendacoes').value.trim(),
-                local: document.getElementById('excursaoLocal').value.trim(),
-                horario: document.getElementById('excursaoHorario').value.trim(),
-                tags: tags
-            };
-        }
-
-        /**
-         * Explicação da função [validateExcursao]
-         * Valida os dados obrigatórios da excursão.
-         */
-        function validateExcursao(excursaoData) {
-            if (!excursaoData.titulo) {
-                showToast('O título é obrigatório.', 'error');
-                document.getElementById('excursaoTitulo').focus();
-                return false;
-            }
-
-            if (!excursaoData.subtitulo) {
-                showToast('O subtítulo é obrigatório.', 'error');
-                document.getElementById('excursaoSubtitulo').focus();
-                return false;
-            }
-
-            if (!excursaoData.preco || excursaoData.preco <= 0) {
-                showToast('O preço deve ser maior que zero.', 'error');
-                document.getElementById('excursaoPreco').focus();
-                return false;
-            }
-
-            return true;
-        }
-
-        /**
-         * Explicação da função [saveExcursao]
-         * Salva a excursão via API (cria nova ou atualiza existente).
-         */
-        async function saveExcursao(event) {
-            event.preventDefault();
-            
-            const excursaoData = getExcursaoData();
-            
-            if (!validateExcursao(excursaoData)) {
-                return;
-            }
-
-            // Converte status para maiúsculo para a API
-            excursaoData.status = excursaoData.status.toUpperCase();
-
-            // Mostra loading
-            const submitBtn = document.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
-            submitBtn.disabled = true;
-
-            try {
-                let result;
-                
-                if (isEditing && currentExcursaoId) {
-                    result = await ExcursaoManager.update(currentExcursaoId, excursaoData);
-                    
-                    if (result) {
-                        showToast('Excursão atualizada com sucesso!', 'success');
-                    } else {
-                        showToast('Erro ao atualizar excursão.', 'error');
-                        return;
-                    }
-                } else {
-                    result = await ExcursaoManager.create(excursaoData);
-                    
-                    if (result) {
-                        showToast('Excursão criada com sucesso!', 'success');
-                    } else {
-                        showToast('Erro ao criar excursão.', 'error');
-                        return;
-                    }
-                }
-
-                console.log('[Excursão Editor] Excursão salva:', result);
-
-                setTimeout(() => {
-                    window.location.href = 'excursoes.html';
-                }, 1500);
-            } catch (error) {
-                console.error('[Excursão Editor] Erro ao salvar:', error);
-                showToast(error.message || 'Erro ao salvar excursão.', 'error');
-            } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        }
-
-        /**
-         * Explicação da função [saveAsInactive]
-         * Salva a excursão como inativa.
-         */
-        function saveAsInactive() {
-            document.getElementById('excursaoStatus').value = 'inativo';
-            document.getElementById('excursaoForm').dispatchEvent(new Event('submit'));
-        }
-
-        // Atalhos de teclado
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
-                e.preventDefault();
-                saveAsInactive();
-            }
-        });
-
-        // Inicializa o editor quando a página carrega
-        document.addEventListener('DOMContentLoaded', initEditor);
-    </script>
 </body>
 </html>
