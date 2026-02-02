@@ -5,8 +5,8 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 ## Arquivos Modificados [Resumo das Atualizações]
 
 ### Frontend - Página Inicial
-- `index-10.html` [Transformada em 5 seções fullscreen com scroll ao invés de carrossel]
-- `css/avoar-sections-page.css` [Estilos responsivos para seções com background-images e animações]
+- `index-10.html`, `api/public/index-10.html` [5 seções fullscreen com scroll e background-image em cada seção; substitui carrossel]
+- `css/avoar-sections-page.css`, `api/public/css/avoar-sections-page.css` [Estilos para seções, animações e responsividade]
 
 ### Última atualização (2026-01-31)
 - **admin/login.html** [Página de login reconstruída: layout minimalista com gradiente laranja no fundo, formulário centralizado, campos cinza claro, botão laranja, link Esqueceu a senha; mantidas funcionalidades de login, API e Lembrar-me]

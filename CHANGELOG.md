@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-02-02 - Página inicial com 5 seções aplicada ao site online (api/public)
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Atualizado: layout de 5 seções fullscreen com background-image em cada seção; substitui carrossel BXSlider; links para URLs amigáveis /, /biologia-marinha, /sobre-nos, etc.]
+- `api/public/css/avoar-sections-page.css` [Novo: estilos para seções fullscreen, animações fadeInUp, responsividade e overlay]
+
+### Alterações
+- Site online passa a exibir a nova página inicial com 5 seções (como no index-10.html local)
+- Cada seção ocupa 100vh com imagem de fundo; scroll vertical entre seções
+- Removido bxslider.js da página inicial
+
+---
+
 ## 2026-02-02 - Transformação da página inicial em 5 seções fullscreen
 
 ### Arquivos Modificados
