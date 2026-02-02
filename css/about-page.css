@@ -131,6 +131,18 @@
   margin-top: 2px;
 }
 
+.about-hero-modern .floating-badge .badge-logo {
+  max-width: 140px;
+  height: auto;
+  display: block;
+}
+
+.about-hero-modern .floating-badge:has(.badge-logo) {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
 /* Metrics Section */
 .about-metrics {
   position: relative;

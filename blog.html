@@ -6,6 +6,7 @@
 <!-- Stylesheets -->
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
+<link href="css/avoar-top-header.css" rel="stylesheet">
 <link rel="shortcut icon" href="images/favicon%20avoar.png" type="image/png">
 <link rel="icon" href="images/favicon%20avoar.png" type="image/png">
 <!-- Responsive -->
@@ -25,7 +26,26 @@
     <a href="https://wa.me/553125147884" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
 
     <div class="menu-backdrop"></div>
-        
+
+    <!-- Top Header (Desktop Only) - Novo header do site -->
+    <header class="avoar-top-header">
+        <div class="header-logo">
+            <a href="index-10.html"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a>
+        </div>
+        <nav class="header-nav">
+            <a href="index-10.html">Início</a>
+            <a href="index-11.html">Biologia Marinha</a>
+            <a href="portfolio.html">Excursões</a>
+            <a href="about.html">Sobre Nós</a>
+            <a href="blog.html" class="active">Blog</a>
+            <a href="contact.html">Contato</a>
+        </nav>
+        <div class="header-login">
+            <a href="admin/login.html">Login</a>
+        </div>
+    </header>
+    <!--End Top Header-->
+
     <!-- Main Header Bar-->
     <header class="main-header-bar">
         <div class="line-one"></div>
@@ -85,7 +105,7 @@
 
     <div class="scroll-container">
         <div class="main-content-container" id="scroll-container">
-            <div class="body-bg-layer" style="background-image: url(images/background/body-bg-1.jpg);"></div>
+            <div class="body-bg-layer" style="background-image: url(images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg);"></div>
             <!-- Page Title -->
             <section class="page-title" id="to-top-div">
                 <div class="auto-container">
@@ -116,8 +136,7 @@
 
                     <!-- Mensagem quando não há posts -->
                     <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
-                        <h3 style="color: #888;">Nenhum post encontrado</h3>
-                        <p style="color: #666;">Novos conteúdos em breve!</p>
+                        <h3 style="color: #fff; font-size: 1.5rem;">Em breve novas notícias</h3>
                     </div>
 
                 </div>
@@ -179,7 +198,7 @@ function loadBlogPosts() {
         const timeAgo = getTimeAgo(postDate);
         
         // Usa imagem padrão se não tiver
-        const image = post.imagemCapa || 'images/resource/news-1.jpg';
+        const image = post.imagemCapa || 'images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg';
         
         return `
             <!--Block-->
@@ -187,7 +206,7 @@ function loadBlogPosts() {
                 <div class="inner-box">
                     <div class="image-box">
                         <a href="blog-single.html?slug=${post.slug}">
-                            <img src="${image}" alt="${escapeHtml(post.titulo)}" onerror="this.src='images/resource/news-1.jpg'">
+                            <img src="${image}" alt="${escapeHtml(post.titulo)}" onerror="this.src='images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg'">
                         </a>
                     </div>
                     <div class="lower">

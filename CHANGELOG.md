@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-02-02 - Substituição de todas as imagens do site pela pasta Imagens para o site
+
+### Arquivos Modificados
+- `index-11.html`, `api/public/index-11.html` [Carrossel e páginador da Biologia Marinha: slides e imagens de split usando imagens de images/Imagens para o site/Biologia marinha/]
+- `index-10.html`, `api/public/index-10.html` [5 seções fullscreen com background-image da pasta Imagens para o site; seção Biologia Marinha com imagens da subpasta Biologia marinha]
+- `about.html`, `api/public/about.html` [Hero e parceiros com imagens da pasta Imagens para o site]
+- `portfolio.html`, `portfolio-single.html`, `api/public/portfolio.html`, `api/public/portfolio-single.html` [Background e fallbacks de excursões]
+- `blog.html`, `blog-single.html`, `api/public/blog.html`, `api/public/blog-single.html` [Fallbacks de posts e autor]
+- `js/data-manager.js`, `api/public/js/data-manager.js` [Seed de excursões e posts com novas imagens]
+- `api/prisma/seed.ts` [Excursões e posts do banco com imagens da nova pasta]
+- Pasta `images/Imagens para o site` copiada para `api/public/images/`
+
+### Alterações
+- Todas as imagens de conteúdo, carrosséis e fundos substituídas por imagens da pasta images/Imagens para o site
+- Página Biologia Marinha (index-11) e seção Biologia Marinha no início usam exclusivamente imagens de images/Imagens para o site/Biologia marinha/
+- Logos (Logo Branca.png, Logo avorar.webp, favicon) mantidos; slide 3 (Angra dos Reis 2024) mantém vídeo YouTube
+
+---
+
+## 2026-02-02 - Novo header do site em todas as páginas públicas
+
+### Arquivos Modificados
+- `css/avoar-top-header.css`, `api/public/css/avoar-top-header.css` [Fundo preto (#000); padding-top 80px no scroll-container; full-section sem margin duplicado]
+- `about.html`, `blog.html`, `blog-single.html`, `contact.html`, `portfolio.html`, `portfolio-single.html` [Incluído top header (logo, nav Início/Biologia Marinha/Excursões/Sobre Nós/Blog/Contato, botão Login) e link avoar-top-header.css; link ativo por página]
+- `index-11.html`, `api/public/index-11.html` [Menu do top header alinhado: adicionados Excursões e Blog]
+- `api/public/about.html`, `api/public/blog.html`, `api/public/blog-single.html`, `api/public/contact.html`, `api/public/portfolio.html`, `api/public/portfolio-single.html` [Mesmo top header com URLs amigáveis /, /biologia-marinha, /excursoes, /sobre-nos, /blog, /contato, /admin/login.html]
+
+### Alterações
+- Header novo (fundo preto, logo à esquerda, nav central em maiúsculas com sublinhado laranja no ativo, botão Login em gradiente laranja) aplicado em todas as páginas do site (Início, Biologia Marinha, Excursões, Sobre Nós, Blog, Contato, blog-single, portfolio-single). Páginas administrativas (após login) não alteradas.
+
+---
+
 ## 2026-02-02 - Login: remoção de "API: Verificando", logs "Logs avsite" e correção de redirecionamento
 
 ### Arquivos Modificados

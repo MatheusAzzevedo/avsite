@@ -6,6 +6,7 @@
 <!-- Stylesheets -->
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
+<link href="css/avoar-top-header.css" rel="stylesheet">
 <link rel="shortcut icon" href="images/favicon%20avoar.png" type="image/png">
 <link rel="icon" href="images/favicon%20avoar.png" type="image/png">
 <!-- Responsive -->
@@ -25,7 +26,26 @@
     <a href="https://wa.me/553125147884" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
 
     <div class="menu-backdrop"></div>
-        
+
+    <!-- Top Header (Desktop Only) - Novo header do site -->
+    <header class="avoar-top-header">
+        <div class="header-logo">
+            <a href="/"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a>
+        </div>
+        <nav class="header-nav">
+            <a href="/">Início</a>
+            <a href="/biologia-marinha">Biologia Marinha</a>
+            <a href="/excursoes">Excursões</a>
+            <a href="/sobre-nos">Sobre Nós</a>
+            <a href="/blog" class="active">Blog</a>
+            <a href="/contato">Contato</a>
+        </nav>
+        <div class="header-login">
+            <a href="/admin/login.html">Login</a>
+        </div>
+    </header>
+    <!--End Top Header-->
+
     <!-- Main Header Bar-->
     <header class="main-header-bar">
         <div class="line-one"></div>
@@ -86,7 +106,7 @@
 
     <div class="scroll-container">
         <div class="main-content-container" id="scroll-container">
-            <div class="body-bg-layer" style="background-image: url(images/background/body-bg-1.jpg);"></div>
+            <div class="body-bg-layer" style="background-image: url(images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg);"></div>
             <!-- Page Title -->
             <section class="page-title" id="to-top-div">
                 <div class="auto-container">
@@ -117,7 +137,7 @@
                                 <!-- Post Content (hidden initially) -->
                                 <div class="blog-details" id="postContent" style="display: none;">
                                     <div class="image-box">
-                                        <img id="postImage" src="images/resource/news-13.jpg" alt="">
+                                        <img id="postImage" src="images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg" alt="">
                                     </div>
                                     <div class="lower">
                                         <h3 id="postTitle">Título do Post</h3>
@@ -150,7 +170,7 @@
                                 <div class="post-author" id="authorBox" style="display: none;">
                                     <div class="inner-box">
                                         <div class="inner">
-                                            <div class="image"><img src="images/resource/author-1.jpg" alt=""></div>
+                                            <div class="image"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg" alt=""></div>
                                             <h5>Sobre o autor</h5>
                                             <div class="text" id="authorName">Administrador da Avorar Turismo, apaixonado por viagens e aventuras.</div>
                                         </div>
@@ -292,7 +312,7 @@ function loadRecentPosts(excludeId) {
     }
 
     container.innerHTML = posts.map(post => {
-        const image = post.imagemCapa || 'images/resource/n-thumb-1.jpg';
+        const image = post.imagemCapa || 'images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg';
         const date = formatDate(post.data);
         
         return `
@@ -300,7 +320,7 @@ function loadRecentPosts(excludeId) {
                 <div class="inner">
                     <div class="image">
                         <a href="blog-single.html?slug=${post.slug}">
-                            <img src="${image}" alt="${escapeHtml(post.titulo)}" onerror="this.src='images/resource/n-thumb-1.jpg'" style="width: 80px; height: 60px; object-fit: cover;">
+                            <img src="${image}" alt="${escapeHtml(post.titulo)}" onerror="this.src='images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg'" style="width: 80px; height: 60px; object-fit: cover;">
                         </a>
                     </div>
                     <div class="date"><span>${date}</span></div>

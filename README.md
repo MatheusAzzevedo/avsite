@@ -4,11 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-02) - Login e logs
+### Última atualização (2026-02-02) - Substituição de imagens do site
+- **index-11.html**, **index-10.html** [Carrossel Biologia Marinha e 5 seções iniciais com imagens da pasta Imagens para o site; Biologia Marinha usa subpasta Biologia marinha]
+- **about.html**, **portfolio.html**, **portfolio-single.html**, **blog.html**, **blog-single.html** e equivalentes em **api/public/** [Backgrounds, hero, parceiros, fallbacks de excursões e posts]
+- **js/data-manager.js**, **api/public/js/data-manager.js**, **api/prisma/seed.ts** [Excursões e posts com imagens da nova pasta]
+- **images/Imagens para o site** copiada para api/public/images/ para o site online
+
+### Versão anterior (2026-02-02) - Novo header em todas as páginas do site
+- **css/avoar-top-header.css**, **api/public/css/avoar-top-header.css** [Fundo preto; conteúdo com padding-top 80px]
+- **about.html**, **blog.html**, **blog-single.html**, **contact.html**, **portfolio.html**, **portfolio-single.html** e equivalentes em **api/public/** [Top header (logo, nav Início/Biologia Marinha/Excursões/Sobre Nós/Blog/Contato, botão Login) em todas as páginas públicas; link ativo por página]
+- **index-11.html**, **api/public/index-11.html** [Menu do header com Excursões e Blog]
+
+### Versão anterior (2026-02-02) - Login e logs
 - **admin/login.html**, **api/public/admin/login.html** [Removido texto "API: Verificando..." da tela de login]
 - **api/src/routes/auth.routes.ts** [Logs de login com prefixo "Logs avsite" para filtro no Railway]
-- **api/src/middleware/request-logger.middleware.ts** [Requisições em /auth logadas com "Logs avsite"]
-- **js/api-client.js**, **api/public/js/api-client.js** [BASE_URL em produção = mesma origem; login e redirecionamento para dashboard corrigidos]
+- **js/api-client.js**, **api/public/js/api-client.js** [BASE_URL em produção = mesma origem; login e redirecionamento corrigidos]
 
 ### Frontend - Página Inicial
 - `index-10.html`, `api/public/index-10.html` [5 seções fullscreen com scroll e background-image em cada seção; substitui carrossel]

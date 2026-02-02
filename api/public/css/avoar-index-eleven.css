@@ -1,5 +1,34 @@
 /* Avoar - Index 11 (Projeto Biologia Marinha) - Estilos customizados */
 
+/* Slides 1 e 2 - Alinhamento centralizado de título e legendas */
+.banner-eight .slide-item:not(.slide-split):not(.slide-video) .content {
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+}
+
+.banner-eight .slide-item:not(.slide-split):not(.slide-video) .inner {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.banner-eight .slide-item:not(.slide-split):not(.slide-video) .text {
+  text-align: center;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.banner-eight .slide-item:not(.slide-split):not(.slide-video) .links-box {
+  text-align: center;
+}
+
+.banner-eight .slide-item:not(.slide-split):not(.slide-video) .links-box .link {
+  display: inline-block;
+}
+
 /* Slide 3 - Vídeo YouTube em fundo (Angra dos Reis 2024) */
 .slide-item.slide-video {
   position: relative;
