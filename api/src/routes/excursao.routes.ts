@@ -103,16 +103,6 @@ router.get('/',
     }
   }
 );
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit)
-        }
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
 
 /**
  * GET /api/excursoes/:id
@@ -353,26 +343,6 @@ router.put('/:id',
           timestamp: new Date().toISOString()
         }
       });
-
-      res.json({
-        success: true,
-        message: 'Excursão atualizada com sucesso',
-        data: excursaoAtualizada
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-          entity: 'excursao',
-          entityId: excursao.id,
-          description: `Excursão atualizada: ${excursao.titulo}`,
-          userId: req.user!.id,
-          userEmail: req.user!.email
-        }
-      });
-
-      logger.info(`[Excursões] Atualizada com sucesso: ${id}`);
 
       res.json({
         success: true,
