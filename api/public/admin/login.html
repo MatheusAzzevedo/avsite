@@ -203,7 +203,7 @@
             <span id="errorText"></span>
         </div>
 
-        <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+        <form id="loginForm" class="login-form">
             <input 
                 type="email" 
                 id="email" 
@@ -233,77 +233,11 @@
         </form>
 
         <div class="forgot-password">
-            <a href="#" onclick="return false;">Esqueceu a senha ?</a>
+            <a href="#">Esqueceu a senha ?</a>
         </div>
     </div>
 
     <script src="../js/api-client.js"></script>
-    <script>
-        /**
-         * Explicação da função [handleLogin]
-         * Processa o formulário de login e autentica via API.
-         */
-        async function handleLogin(event) {
-            event.preventDefault();
-
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const loginBtn = document.getElementById('loginBtn');
-            const errorDiv = document.getElementById('errorMessage');
-            const errorText = document.getElementById('errorText');
-
-            errorDiv.classList.remove('show');
-            loginBtn.classList.add('loading');
-            loginBtn.disabled = true;
-
-            try {
-                console.log('[Login] Tentando login:', email);
-                const response = await AuthManager.login(email, password);
-
-                if (response.success) {
-                    console.log('[Login] Sucesso! Redirecionando...');
-                    window.location.href = 'dashboard.html';
-                } else {
-                    throw new Error(response.error || 'Erro ao fazer login');
-                }
-            } catch (error) {
-                console.error('[Login] Erro:', error);
-                errorText.textContent = error.message || 'Email ou senha incorretos';
-                errorDiv.classList.add('show');
-            } finally {
-                loginBtn.classList.remove('loading');
-                loginBtn.disabled = false;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            if (AuthManager.isAuthenticated()) {
-                AuthManager.verifyToken().then(valid => {
-                    if (valid) {
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        AuthManager.logout();
-                    }
-                });
-            }
-
-            const savedEmail = localStorage.getItem('avorar_saved_email');
-            if (savedEmail) {
-                document.getElementById('email').value = savedEmail;
-                document.getElementById('remember').checked = true;
-            }
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', function() {
-            const remember = document.getElementById('remember').checked;
-            const email = document.getElementById('email').value;
-
-            if (remember) {
-                localStorage.setItem('avorar_saved_email', email);
-            } else {
-                localStorage.removeItem('avorar_saved_email');
-            }
-        });
-    </script>
+    <script src="js/login.js"></script>
 </body>
 </html>

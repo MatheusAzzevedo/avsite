@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-02-02 - Correção do login bloqueado por CSP (Content-Security-Policy)
+
+### Arquivos Modificados
+- `admin/login.html`, `api/public/admin/login.html` [Removidos script inline e onsubmit; carregamento de js/login.js externo]
+- `admin/js/login.js`, `api/public/admin/js/login.js` [Novo: lógica de login externalizada para compatibilidade com Helmet CSP]
+
+### Alterações
+- Login bloqueado pelo Helmet (CSP `script-src 'self'`) que bloqueia scripts inline
+- Script de login movido para arquivo externo login.js; formulário sem handlers inline
+- Preenchimento de credenciais via URL (?email=&password=) adicionado em login.js
+- Link "Esqueceu a senha" sem onclick inline; handler via addEventListener
+
+---
+
 ## 2026-02-02 - Substituição de todas as imagens do site pela pasta Imagens para o site
 
 ### Arquivos Modificados
