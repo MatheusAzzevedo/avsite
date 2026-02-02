@@ -40,7 +40,9 @@ export function requestLoggerMiddleware(
   const path = req.path;
   const ip = req.ip || req.socket.remoteAddress || 'unknown';
   const queryParams = Object.keys(req.query).length > 0 ? req.query : undefined;
-  const bodySize = req.headers['content-length'] ? `${req.headers['content-length']}B` : undefined;
+  const bodySize = req.headers['content-length']
+    ? parseInt(String(req.headers['content-length']), 10)
+    : undefined;
   
   // Usuário autenticado (se houver)
   const userId = req.user?.id;
