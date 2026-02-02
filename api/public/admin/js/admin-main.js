@@ -325,24 +325,8 @@ class RichTextEditor {
 }
 
 // LocalStorage Helper
-const Storage = {
-    set: (key, value) => {
-        localStorage.setItem(key, JSON.stringify(value));
-    },
-    
-    get: (key) => {
-        const item = localStorage.getItem(key);
-        return item ? JSON.parse(item) : null;
-    },
-    
-    remove: (key) => {
-        localStorage.removeItem(key);
-    },
-    
-    clear: () => {
-        localStorage.clear();
-    }
-};
+// Removido: Storage é definido em api-client.js (importado globalmente)
+// Não redeclarar para evitar conflito "Identifier 'Storage' has already been declared"
 
 // Verificar autenticação (usando AuthManager da API)
 function checkAuth() {
@@ -388,4 +372,4 @@ window.filterTable = filterTable;
 window.formatDate = formatDate;
 window.logout = logout;
 window.RichTextEditor = RichTextEditor;
-window.Storage = Storage;
+// window.Storage = Storage; // Removido: Storage vem de api-client.js

@@ -1,14 +1,17 @@
 /**
- * Explicação do Arquivo [excursao-editor.js]
- *
- * Script do editor de excursões. Gerencia criação e edição de excursões.
- * Externalizado para compatibilidade com Content-Security-Policy (CSP).
+ * Notificação Toast com fallback se não estiver definida
  */
-
-// Variáveis globais
-let isEditing = false;
-let currentExcursaoId = null;
-let galeriaImages = [];
+function showNotification(message, type = 'info') {
+  // Se showToast estiver disponível (de admin-main.js), usa ela
+  if (typeof showToast !== 'undefined') {
+    showNotification(message, type);
+    return;
+  }
+  
+  // Fallback: alert se showToast não estiver disponível
+  console.warn(`[Excursão Editor] showToast não disponível. Mensagem: ${message}`);
+  alert(message);
+}
 
 /**
  * Inicializa o editor quando a página carrega
@@ -37,7 +40,7 @@ async function loadExcursao(excursaoId) {
     const excursao = await ExcursaoManager.getById(excursaoId);
 
     if (!excursao) {
-      showToast('Excursão não encontrada!', 'error');
+      showNotification('Excursão não encontrada!', 'error');
       setTimeout(() => (window.location.href = 'excursoes.html'), 2000);
       return;
     }
@@ -79,7 +82,7 @@ async function loadExcursao(excursaoId) {
     console.log('[Excursão Editor] Excursão carregada com sucesso');
   } catch (error) {
     console.error('[Excursão Editor] Erro ao carregar:', error);
-    showToast('Erro ao carregar excursão!', 'error');
+    showNotification('Erro ao carregar excursão!', 'error');
   }
 }
 
@@ -91,7 +94,7 @@ function handleImageUpload(input, previewId, dataInputId) {
     const file = input.files[0];
 
     if (file.size > 20 * 1024 * 1024) {
-      showToast('A imagem deve ter no máximo 20MB', 'error');
+      showNotification('A imagem deve ter no máximo 20MB', 'error');
       return;
     }
 
@@ -123,7 +126,7 @@ function handleGalleryUpload(input) {
   if (input.files) {
     Array.from(input.files).forEach((file) => {
       if (file.size > 20 * 1024 * 1024) {
-        showToast(`Imagem ${file.name} muito grande (máx 20MB)`, 'warning');
+        showNotification(`Imagem ${file.name} muito grande (máx 20MB)`, 'warning');
         return;
       }
 
@@ -225,25 +228,25 @@ function getExcursaoData() {
  */
 function validateExcursao(excursaoData) {
   if (!excursaoData.titulo) {
-    showToast('O título é obrigatório.', 'error');
+    showNotification('O título é obrigatório.', 'error');
     document.getElementById('excursaoTitulo').focus();
     return false;
   }
 
   if (!excursaoData.subtitulo) {
-    showToast('O subtítulo é obrigatório.', 'error');
+    showNotification('O subtítulo é obrigatório.', 'error');
     document.getElementById('excursaoSubtitulo').focus();
     return false;
   }
 
   if (!excursaoData.preco || excursaoData.preco <= 0) {
-    showToast('O preço deve ser maior que zero.', 'error');
+    showNotification('O preço deve ser maior que zero.', 'error');
     document.getElementById('excursaoPreco').focus();
     return false;
   }
 
   if (!excursaoData.categoria) {
-    showToast('A categoria é obrigatória.', 'error');
+    showNotification('A categoria é obrigatória.', 'error');
     document.getElementById('excursaoCategoria').focus();
     return false;
   }
@@ -280,18 +283,18 @@ async function saveExcursao(event) {
       result = await ExcursaoManager.update(currentExcursaoId, excursaoData);
 
       if (result) {
-        showToast('Excursão atualizada com sucesso!', 'success');
+        showNotification('Excursão atualizada com sucesso!', 'success');
       } else {
-        showToast('Erro ao atualizar excursão.', 'error');
+        showNotification('Erro ao atualizar excursão.', 'error');
         return;
       }
     } else {
       result = await ExcursaoManager.create(excursaoData);
 
       if (result) {
-        showToast('Excursão criada com sucesso!', 'success');
+        showNotification('Excursão criada com sucesso!', 'success');
       } else {
-        showToast('Erro ao criar excursão.', 'error');
+        showNotification('Erro ao criar excursão.', 'error');
         return;
       }
     }
@@ -303,7 +306,7 @@ async function saveExcursao(event) {
     }, 1500);
   } catch (error) {
     console.error('[Excursão Editor] Erro ao salvar:', error);
-    showToast(error.message || 'Erro ao salvar excursão.', 'error');
+    showNotification(error.message || 'Erro ao salvar excursão.', 'error');
   } finally {
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
