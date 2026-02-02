@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-02-02 - Transformação da página inicial em 5 seções fullscreen
+
+### Arquivos Modificados
+- `index-10.html` [Convertida de carrossel BXSlider para 5 seções fullscreen com scroll vertical, cada com background-image]
+- `css/avoar-sections-page.css` [Novo arquivo com estilos para as seções, animações e responsividade completa]
+
+### Alterações
+- Página inicial agora exibe 5 seções em fullscreen (100vh) ao invés de carrossel
+- Cada seção tem sua imagem de fundo (background-image)
+- Conteúdo (título, CTA, descrição) agora posicionado dentro de cada seção
+- Suporte completo a responsividade (desktop, tablet, mobile)
+- Animações de fade-in ao carregar as seções
+- Removido script BXSlider desnecessário
+
+---
+
 ## 2026-01-31 - Guia e script para testar a API
 
 ### Arquivos Modificados
