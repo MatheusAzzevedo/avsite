@@ -90,8 +90,8 @@ function handleImageUpload(input, previewId, dataInputId) {
   if (input.files && input.files[0]) {
     const file = input.files[0];
 
-    if (file.size > 5 * 1024 * 1024) {
-      showToast('A imagem deve ter no máximo 5MB', 'error');
+    if (file.size > 20 * 1024 * 1024) {
+      showToast('A imagem deve ter no máximo 20MB', 'error');
       return;
     }
 
@@ -122,8 +122,8 @@ function removeImage(dataInputId, containerId, fileInputId) {
 function handleGalleryUpload(input) {
   if (input.files) {
     Array.from(input.files).forEach((file) => {
-      if (file.size > 5 * 1024 * 1024) {
-        showToast(`Imagem ${file.name} muito grande (máx 5MB)`, 'warning');
+      if (file.size > 20 * 1024 * 1024) {
+        showToast(`Imagem ${file.name} muito grande (máx 20MB)`, 'warning');
         return;
       }
 

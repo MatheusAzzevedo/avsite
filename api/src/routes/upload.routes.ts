@@ -47,7 +47,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760', 10) // 10MB
+    fileSize: parseInt(process.env.MAX_FILE_SIZE || '20971520', 10) // 20MB - tamanho livre
   }
 });
 
@@ -72,12 +72,8 @@ router.post('/',
       const filename = `${uuidv4()}.webp`;
       const filepath = path.join(UPLOAD_DIR, filename);
 
-      // Processa e otimiza imagem com Sharp
+      // Converte para WebP preservando dimensões originais (qualquer tamanho)
       await sharp(req.file.buffer)
-        .resize(1920, 1080, {
-          fit: 'inside',
-          withoutEnlargement: true
-        })
         .webp({ quality: 85 })
         .toFile(filepath);
 
@@ -140,12 +136,8 @@ router.post('/multiple',
         const filename = `${uuidv4()}.webp`;
         const filepath = path.join(UPLOAD_DIR, filename);
 
-        // Processa imagem
+        // Converte para WebP preservando dimensões originais (qualquer tamanho)
         await sharp(file.buffer)
-          .resize(1920, 1080, {
-            fit: 'inside',
-            withoutEnlargement: true
-          })
           .webp({ quality: 85 })
           .toFile(filepath);
 
