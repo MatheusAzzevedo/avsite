@@ -4,9 +4,10 @@
    ============================================ */
 
 :root {
-    --primary-color: #2563eb;
-    --primary-dark: #1e40af;
-    --primary-light: #3b82f6;
+    /* Cores laranja do site Avorar */
+    --primary-color: #EA580C;
+    --primary-dark: #C2410C;
+    --primary-light: #FB923C;
     --secondary-color: #64748b;
     --success-color: #ff5c00;
     --danger-color: #ef4444;
@@ -120,7 +121,7 @@ body {
 
 .form-control:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
 }
 
 .btn {
@@ -191,7 +192,7 @@ body {
 
 .sidebar {
     width: 280px;
-    background-color: var(--dark-bg);
+    background: linear-gradient(180deg, #7C2D12 0%, #9A3412 40%, #C2410C 100%);
     color: white;
     padding: 0;
     position: fixed;
@@ -203,7 +204,7 @@ body {
 
 .sidebar-header {
     padding: 2rem 1.5rem;
-    border-bottom: 1px solid var(--dark-border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .sidebar-header h2 {
@@ -224,19 +225,19 @@ body {
     display: flex;
     align-items: center;
     padding: 0.875rem 1.5rem;
-    color: #94a3b8;
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
     transition: var(--transition);
     font-size: 0.95rem;
 }
 
 .nav-link:hover {
-    background-color: var(--dark-surface);
+    background-color: rgba(234, 88, 12, 0.4);
     color: white;
 }
 
 .nav-link.active {
-    background-color: var(--primary-color);
+    background: linear-gradient(90deg, #EA580C 0%, #FB923C 100%);
     color: white;
 }
 
@@ -414,6 +415,7 @@ body {
 .editor-toolbar button:hover {
     background-color: var(--primary-color);
     color: white;
+    border-color: var(--primary-color);
 }
 
 .editor-content {
@@ -457,7 +459,7 @@ body {
 
 .file-upload:hover {
     border-color: var(--primary-color);
-    background-color: rgba(37, 99, 235, 0.05);
+    background-color: rgba(234, 88, 12, 0.05);
 }
 
 .file-upload input[type="file"] {
