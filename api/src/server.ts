@@ -43,6 +43,10 @@ const PORT = process.env.PORT || 3001;
 // MIDDLEWARES GLOBAIS
 // ===========================================
 
+// Configurar trust proxy (necessário para Railway e outros ambientes com proxy reverso)
+// Isso permite que o Express reconheça o IP real do cliente através do header X-Forwarded-For
+app.set('trust proxy', 1);
+
 // Helmet para segurança
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }

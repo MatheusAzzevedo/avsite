@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-02-02 - Correção: Excursões não aparecem no site nem no admin (trust proxy)
+
+### Arquivos Modificados
+- `api/src/server.ts` [Adicionada configuração `app.set('trust proxy', 1)` antes dos middlewares para permitir que Express reconheça o IP real do cliente através do header X-Forwarded-For enviado pelo proxy reverso do Railway]
+
+### Problema Identificado
+- **Causa**: No Railway, requisições passam por proxy reverso que envia header `X-Forwarded-For`, mas Express tinha `trust proxy` desabilitado
+- **Efeito**: Rate limiter lançava ValidationError e bloqueava todas as requisições GET antes de chegar aos handlers
+- **Sintoma**: Nenhuma excursão aparecia (nem de exemplo), apesar de estarem no banco e POSTs funcionarem
+- **Motivo dos POSTs funcionarem**: POST de criação pode ter sido feito antes do erro aparecer ou em ambiente diferente
+
+### Solução Implementada
+- Ativada `app.set('trust proxy', 1)` para aceitar header `X-Forwarded-For` do proxy reverso
+- Rate limiter agora identifica corretamente o cliente IP mesmo em ambiente Railway
+- Requisições GET `/api/excursoes` e `/api/public/excursoes` agora funcionam normalmente
+- Todas as 6 excursões (Cristo Redentor, Biologia Marinha, Cachoeiras, Passeio de Barco, 2 de teste) agora aparecem no site e admin
+
+### Benefícios
+- ✅ API funciona corretamente em Railway com proxy reverso
+- ✅ Rate limiting implementado corretamente (identifica cliente por IP real, não por IP do proxy)
+- ✅ Excursões listadas normalmente no site público e painel admin
+- ✅ Problema raiz resolvido — sem mais ValidationError nos GETs
+
+---
+
 ## 2026-02-02 - Seção Parceiros na página Sobre Nós
 
 ### Arquivos Modificados

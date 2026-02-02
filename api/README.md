@@ -2,6 +2,17 @@
 
 Backend em Node.js/Express/TypeScript com PostgreSQL para o sistema Avorar Turismo.
 
+## Status Atual
+
+**✅ API funcionando normalmente em produção (Railway)**
+
+Últimas implementações:
+- Excursões agora aparecem corretamente no site e admin (trust proxy configurado)
+- Rate limiting funcionando com proxy reverso (Railway)
+- 6 excursões no banco e listadas normalmente: Cristo Redentor, Biologia Marinha, Cachoeiras, Passeio de Barco, 2 de teste
+- Sistema de logging robusto com Winston para debugging em Railway
+- CRUD completo de excursões, posts e uploads de imagens
+
 ## Estrutura do Projeto
 
 ```
