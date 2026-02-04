@@ -87,7 +87,7 @@ export async function criarCobrancaAsaas(dados: {
 
     // Cria cliente se não existir
     if (!asaasCustomer) {
-      asaasCustomer = await asaasClient.customers.create(customerData);
+      asaasCustomer = await asaasClient.customers.new(customerData);
       logger.info('[Asaas] Novo cliente criado no Asaas', {
         context: { customerId: asaasCustomer.id }
       });
@@ -111,7 +111,7 @@ export async function criarCobrancaAsaas(dados: {
       }
     });
 
-    const payment = await asaasClient.payments.create(paymentData);
+    const payment = await asaasClient.payments.new(paymentData);
 
     logger.info('[Asaas] Cobrança criada com sucesso', {
       context: {
