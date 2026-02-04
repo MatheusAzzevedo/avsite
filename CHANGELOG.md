@@ -1,5 +1,83 @@
 # Changelog
 
+## 2026-02-04 - Sistema de Autenticação de Clientes (Fase 1 - Backend)
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Novo modelo Cliente: id, email, password, nome, telefone, cpf, authProvider (LOCAL/GOOGLE), googleId, avatarUrl, active, emailVerified; índices em email e googleId]
+- `api/src/schemas/cliente-auth.schema.ts` [Validação Zod: clienteRegisterSchema (senha forte com regex), clienteLoginSchema, clienteUpdateProfileSchema, clienteChangePasswordSchema, clienteVerifyEmailSchema; tipos TypeScript inferidos]
+- `api/src/middleware/cliente-auth.middleware.ts` [clienteAuthMiddleware: valida JWT com type='cliente', busca em tabela clientes, logs detalhados; optionalClienteAuthMiddleware para rotas opcionais]
+- `api/src/routes/cliente-auth.routes.ts` [POST /register (cria cliente com bcrypt), POST /login (JWT 7 dias), GET /me (dados do cliente), PUT /profile (atualizar dados), PUT /change-password (alterar senha), POST /verify (validar token)]
+- `api/src/server.ts` [Registro de rotas /api/cliente/auth separadas das rotas de admin]
+
+### Funcionalidade Implementada
+Sistema completo de autenticação backend para clientes:
+- **Registro de cliente**: Validação rigorosa com senha forte (min 8 chars, maiúscula, minúscula, número); hash bcrypt; campos opcionais telefone e CPF
+- **Login seguro**: Validação de senha, geração de JWT com type='cliente' (separado de admin), log de atividades
+- **Gerenciamento de perfil**: Endpoints para buscar dados, atualizar perfil e trocar senha
+- **Separação completa**: Tabela e rotas separadas dos admins para maior segurança
+- **Preparado para OAuth**: Campo authProvider e googleId prontos para integração Google (Fase 2)
+- **Logs detalhados**: Todas operações registradas em ActivityLog com IP e timestamp
+- **Validação robusta**: Zod schemas com mensagens claras para todos endpoints
+
+### Validações Implementadas
+- ✅ Email: formato válido, lowercase, trim, único
+- ✅ Senha: mínimo 8 caracteres, pelo menos 1 maiúscula, 1 minúscula, 1 número
+- ✅ Telefone: formato (11) 98888-8888 ou sem formatação
+- ✅ CPF: formato 000.000.000-00 ou 00000000000
+- ✅ Nome: mínimo 3 caracteres, máximo 100
+- ✅ Token JWT: validação de assinatura, expiração e tipo (cliente vs admin)
+
+### Segurança
+- ✅ Senha hasheada com bcrypt (10 rounds)
+- ✅ Token JWT com tipo 'cliente' para evitar confusão com admin
+- ✅ Verificação de cliente ativo antes de permitir acesso
+- ✅ Proteção contra uso de token de admin em rotas de cliente
+- ✅ Log de todas tentativas de autenticação (sucesso e falha)
+
+### Próximas Fases
+- **Fase 2**: Integração OAuth Google (aproveitando campos googleId e authProvider já criados)
+- **Fase 3**: Frontend - páginas de login, dashboard e configurações
+- **Fase 4**: Sistema de pedidos (busca por código, seleção de quantidade)
+- **Fase 5**: Checkout e formulário de dados do aluno
+- **Fase 6**: Integração com gateway de pagamento
+
+---
+
+## 2026-02-04 - Sistema de Excursões Pedagógicas
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Novos modelos ExcursaoPedagogica e ExcursaoPedagogicaImagem com campo codigo único; relacionamento com User]
+- `api/src/schemas/excursao-pedagogica.schema.ts` [Validação Zod: campo codigo obrigatório com regex /^[A-Za-z0-9_-]+$/; schemas create, update e filter]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Rotas admin: GET/POST/PUT/DELETE/PATCH /api/excursoes-pedagogicas; validação de código único na criação/atualização; logs detalhados]
+- `api/src/routes/public.routes.ts` [Rotas públicas: GET /api/public/excursoes-pedagogicas, /:slug, /codigo/:codigo; filtro por codigo e categoria]
+- `api/src/server.ts` [Registro de rotas /api/excursoes-pedagogicas no servidor]
+- `js/api-client.js` [Novo ExcursaoPedagogicaManager: getAll, getById, getBySlug, getByCodigo, create, update, delete, toggleStatus, filterByCodigo]
+- `admin/excursoes-pedagogicas.html` [Listagem com filtros: busca, código, categoria, status; badge de código visível nos cards]
+- `admin/excursao-pedagogica-editor.html` [Editor completo: campo codigo único, validação pattern, todas funcionalidades de excursões]
+- `admin/js/excursoes-pedagogicas.js` [Gerenciamento da listagem; filtro por código; renderização com badge de código]
+- `admin/js/excursao-pedagogica-editor.js` [Editor com validação: código obrigatório, formato alfanumérico+hífen+underscore; uso de ExcursaoPedagogicaManager]
+- `admin/*.html` [Menu lateral: novo item "Excursões Pedagógicas" com ícone fa-graduation-cap em todas as páginas admin]
+
+### Funcionalidade Implementada
+Sistema completo de Excursões Pedagógicas para registros de sistemas externos via API:
+- **Campo código único**: Identificador alfanumérico personalizado (ex: PED-2024-RJ-001)
+- **API completa**: CRUD admin (/api/excursoes-pedagogicas) e rotas públicas (/api/public/excursoes-pedagogicas)
+- **Busca por código**: Endpoint dedicado /codigo/:codigo e filtro na listagem
+- **Validação rigorosa**: Código obrigatório, único e com formato específico
+- **Painel admin**: Listagem, editor e filtros dedicados (não aparece no menu público do site)
+- **Integração externa**: API documentada para sistemas externos enviarem excursões com código
+- **Auditoria**: Logs detalhados com código em todas as operações
+- **Isolamento**: Totalmente separado das excursões normais (tabelas, rotas, manager próprios)
+
+### Benefícios
+- ✅ Sistemas externos podem enviar excursões com identificador único
+- ✅ Gerenciamento administrativo completo sem misturar com excursões normais
+- ✅ Busca rápida por código via API pública
+- ✅ Validação automática de códigos duplicados
+- ✅ Menu dedicado no admin para fácil acesso
+
+---
+
 ## 2026-02-04 - Fix: Seção "Sobre esta Excursão" em preto e informações não exibidas
 
 ### Arquivos Modificados

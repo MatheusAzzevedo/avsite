@@ -4,7 +4,31 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Fix: Seção Sobre esta Excursão em preto
+### Última atualização (2026-02-04) - Sistema de Autenticação de Clientes (Fase 1)
+- **api/prisma/schema.prisma** [Novo modelo Cliente com suporte a autenticação local e OAuth; enum AuthProvider]
+- **api/src/schemas/cliente-auth.schema.ts** [Validação Zod completa: registro com senha forte, login, atualização de perfil e troca de senha]
+- **api/src/middleware/cliente-auth.middleware.ts** [Middleware de autenticação JWT exclusivo para clientes com logs detalhados]
+- **api/src/routes/cliente-auth.routes.ts** [Rotas completas: registro, login, perfil, atualizar dados e trocar senha]
+- **api/src/server.ts** [Registro de rotas /api/cliente/auth separadas das rotas de admin]
+
+**Funcionalidade implementada**: Sistema completo de autenticação para clientes separado do sistema de administração. Inclui registro com validação de senha forte (maiúscula, minúscula, número), login com JWT, gerenciamento de perfil, troca de senha e suporte preparado para OAuth Google (Fase 2). Todos endpoints têm logs detalhados e validação rigorosa com Zod. Clientes ficam em tabela separada dos admins para maior segurança.
+
+### Versão anterior (2026-02-04) - Sistema de Excursões Pedagógicas
+- **api/prisma/schema.prisma** [Novos modelos: ExcursaoPedagogica e ExcursaoPedagogicaImagem com campo codigo único]
+- **api/src/schemas/excursao-pedagogica.schema.ts** [Validação Zod com campo codigo obrigatório e regex para formato]
+- **api/src/routes/excursao-pedagogica.routes.ts** [CRUD completo: criar, listar, atualizar, excluir e alterar status]
+- **api/src/routes/public.routes.ts** [Rotas públicas: /api/public/excursoes-pedagogicas, busca por slug e código]
+- **api/src/server.ts** [Registro de rotas /api/excursoes-pedagogicas]
+- **js/api-client.js** [Novo ExcursaoPedagogicaManager com métodos CRUD e busca por código]
+- **admin/excursoes-pedagogicas.html** [Página de listagem com filtros por busca, código, categoria e status]
+- **admin/excursao-pedagogica-editor.html** [Editor completo com campo código único e todas funcionalidades de excursões]
+- **admin/js/excursoes-pedagogicas.js** [Gerenciamento da listagem com badge de código]
+- **admin/js/excursao-pedagogica-editor.js** [Editor com validação de código (alfanumérico, hífen e underscore)]
+- **admin/*.html** [Menu de controle "Excursões Pedagógicas" adicionado em todas páginas admin]
+
+**Funcionalidade implementada**: Sistema completo de Excursões Pedagógicas para registros de sistemas externos via API. Possui código único para identificação, CRUD admin completo, API pública e privada, validação rigorosa e integração com painel administrativo. Não aparece no menu público do site.
+
+### Versão anterior (2026-02-04) - Fix: Seção Sobre esta Excursão em preto
 - **api/public/portfolio-single.html**, **portfolio-single.html** [Fundo branco explícito na seção; opacity do body-bg-layer reduzida]
 - **api/public/js/portfolio-single.js**, **js/portfolio-single.js** [Tratamento robusto de descricao e galeria]
 

@@ -29,8 +29,9 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relacionamentos
-  posts     Post[]
-  excursoes Excursao[]
+  posts                Post[]
+  excursoes            Excursao[]
+  excursoesPedagogicas ExcursaoPedagogica[]
 
   @@map("users")
 }
@@ -100,7 +101,7 @@ model Excursao {
 
   // Relacionamentos
   authorId String?
-  author   User?             @relation(fields: [authorId], references: [id])
+  author   User?            @relation(fields: [authorId], references: [id])
   galeria  ExcursaoImagem[]
 
   @@index([slug])
@@ -119,10 +120,10 @@ enum ExcursaoStatus {
 // ===========================================
 
 model ExcursaoImagem {
-  id         String   @id @default(uuid())
-  url        String
-  ordem      Int      @default(0)
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  url       String
+  ordem     Int      @default(0)
+  createdAt DateTime @default(now())
 
   // Relacionamentos
   excursaoId String
@@ -136,16 +137,70 @@ model ExcursaoImagem {
 // ===========================================
 
 model PaymentConfig {
-  id            String   @id @default(uuid())
-  gateway       String   @unique // asaas, mercadopago, stripe
-  active        Boolean  @default(false)
-  config        Json     // Configurações específicas do gateway (criptografadas em produção)
-  webhookUrl    String?
-  testMode      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id         String   @id @default(uuid())
+  gateway    String   @unique // asaas, mercadopago, stripe
+  active     Boolean  @default(false)
+  config     Json // Configurações específicas do gateway (criptografadas em produção)
+  webhookUrl String?
+  testMode   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("payment_configs")
+}
+
+// ===========================================
+// MODELO DE EXCURSÃO PEDAGÓGICA
+// ===========================================
+
+model ExcursaoPedagogica {
+  id              String         @id @default(uuid())
+  codigo          String         @unique // Código específico criado pelo admin
+  titulo          String
+  slug            String         @unique
+  subtitulo       String?
+  preco           Decimal        @db.Decimal(10, 2)
+  duracao         String?
+  categoria       String
+  status          ExcursaoStatus @default(ATIVO)
+  imagemCapa      String?
+  imagemPrincipal String?
+  descricao       String?        @db.Text
+  inclusos        String?        @db.Text
+  recomendacoes   String?        @db.Text
+  local           String?
+  horario         String?
+  tags            String[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relacionamentos
+  authorId String?
+  author   User?                      @relation(fields: [authorId], references: [id])
+  galeria  ExcursaoPedagogicaImagem[]
+
+  @@index([codigo])
+  @@index([slug])
+  @@index([status])
+  @@index([categoria])
+  @@map("excursoes_pedagogicas")
+}
+
+// ===========================================
+// MODELO DE IMAGENS DA GALERIA DE EXCURSÃO PEDAGÓGICA
+// ===========================================
+
+model ExcursaoPedagogicaImagem {
+  id        String   @id @default(uuid())
+  url       String
+  ordem     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  // Relacionamentos
+  excursaoPedagogicaId String
+  excursaoPedagogica   ExcursaoPedagogica @relation(fields: [excursaoPedagogicaId], references: [id], onDelete: Cascade)
+
+  @@map("excursao_pedagogica_imagens")
 }
 
 // ===========================================
@@ -153,14 +208,14 @@ model PaymentConfig {
 // ===========================================
 
 model Upload {
-  id          String   @id @default(uuid())
-  filename    String
+  id           String   @id @default(uuid())
+  filename     String
   originalName String
-  mimetype    String
-  size        Int
-  url         String
-  path        String
-  createdAt   DateTime @default(now())
+  mimetype     String
+  size         Int
+  url          String
+  path         String
+  createdAt    DateTime @default(now())
 
   @@map("uploads")
 }
@@ -171,8 +226,8 @@ model Upload {
 
 model ActivityLog {
   id          String   @id @default(uuid())
-  action      String   // create, update, delete, login, etc.
-  entity      String   // post, excursao, user, etc.
+  action      String // create, update, delete, login, etc.
+  entity      String // post, excursao, user, etc.
   entityId    String?
   description String?
   userId      String?
@@ -185,4 +240,36 @@ model ActivityLog {
   @@index([entity])
   @@index([createdAt])
   @@map("activity_logs")
+}
+
+// ===========================================
+// MODELO DE CLIENTE
+// ===========================================
+
+model Cliente {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  password      String? // Null se login via OAuth
+  nome          String
+  telefone      String?
+  cpf           String?
+  authProvider  AuthProvider @default(LOCAL) // LOCAL ou GOOGLE
+  googleId      String?      @unique // ID do Google OAuth
+  avatarUrl     String? // URL da foto do perfil
+  active        Boolean      @default(true)
+  emailVerified Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relacionamentos
+  // pedidos      Pedido[]  // Será criado na Fase 4
+
+  @@index([email])
+  @@index([googleId])
+  @@map("clientes")
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
 }

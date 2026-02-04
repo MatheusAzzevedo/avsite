@@ -24,7 +24,9 @@ dotenv.config();
 
 // Importa rotas
 import authRoutes from './routes/auth.routes';
+import clienteAuthRoutes from './routes/cliente-auth.routes';
 import excursaoRoutes from './routes/excursao.routes';
+import excursaoPedagogicaRoutes from './routes/excursao-pedagogica.routes';
 import postRoutes from './routes/post.routes';
 import uploadRoutes from './routes/upload.routes';
 import paymentConfigRoutes from './routes/payment-config.routes';
@@ -147,11 +149,15 @@ app.get('/api/health', (_req: Request, res: Response) => {
 // Rotas públicas (para site e integrações externas)
 app.use('/api/public', publicRoutes);
 
-// Rotas de autenticação
+// Rotas de autenticação (admin)
 app.use('/api/auth', authRoutes);
+
+// Rotas de autenticação de cliente
+app.use('/api/cliente/auth', clienteAuthRoutes);
 
 // Rotas protegidas (admin)
 app.use('/api/excursoes', excursaoRoutes);
+app.use('/api/excursoes-pedagogicas', excursaoPedagogicaRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/payment-config', paymentConfigRoutes);
