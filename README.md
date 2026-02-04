@@ -4,7 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Sistema de Autenticação de Clientes (Fase 1)
+### Última atualização (2026-02-04) - Sistema de Autenticação de Clientes - OAuth Google (Fase 2)
+- **api/package.json** [Nova dependência: googleapis para integração OAuth]
+- **api/src/config/google-oauth.ts** [Configuração OAuth: getGoogleAuthUrl, getGoogleUserInfo, verifyGoogleOAuthConfig com logs detalhados]
+- **api/src/schemas/cliente-auth.schema.ts** [Novos schemas: googleOAuthCallbackSchema e linkGoogleAccountSchema]
+- **api/src/routes/cliente-auth.routes.ts** [Rotas OAuth: GET /google (inicia fluxo), GET /google/callback (processa login), POST /google/link (vincular conta)]
+- **api/src/utils/api-error.ts** [Novo método: ApiError.notImplemented() para status 501]
+- **api/.env.example** [Documentação variáveis: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, FRONTEND_URL]
+
+**Funcionalidade implementada**: Login via Google OAuth completo. Cliente pode fazer login com conta Google, sistema cria ou atualiza cliente automaticamente, vincula googleId, sincroniza foto de perfil e email verificado. Se cliente já existe por email/senha, vincula conta Google ao fazer primeiro login OAuth. Fluxo completo: redirect Google → callback → busca dados → cria/atualiza cliente → gera JWT → redirect frontend com token.
+
+### Versão anterior (2026-02-04) - Sistema de Autenticação de Clientes (Fase 1)
 - **api/prisma/schema.prisma** [Novo modelo Cliente com suporte a autenticação local e OAuth; enum AuthProvider]
 - **api/src/schemas/cliente-auth.schema.ts** [Validação Zod completa: registro com senha forte, login, atualização de perfil e troca de senha]
 - **api/src/middleware/cliente-auth.middleware.ts** [Middleware de autenticação JWT exclusivo para clientes com logs detalhados]

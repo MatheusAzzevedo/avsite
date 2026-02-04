@@ -43,6 +43,10 @@ export class ApiError extends Error {
   static internal(message: string = 'Erro interno do servidor') {
     return new ApiError(message, 500);
   }
+
+  static notImplemented(message: string = 'Funcionalidade não implementada') {
+    return new ApiError(message, 501);
+  }
 }
 
 export default ApiError;

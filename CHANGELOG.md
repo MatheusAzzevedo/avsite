@@ -1,5 +1,95 @@
 # Changelog
 
+## 2026-02-04 - Sistema de Autenticação de Clientes - OAuth Google (Fase 2)
+
+### Arquivos Modificados
+- `api/package.json` [Adicionada dependência googleapis (^134.0.0) para integração com Google OAuth 2.0]
+- `api/src/config/google-oauth.ts` [Novo: Configuração centralizada do Google OAuth; oauth2Client com credenciais; getGoogleAuthUrl() gera URL de autenticação; getGoogleUserInfo(code) troca código por tokens e busca dados do perfil; verifyGoogleOAuthConfig() valida variáveis de ambiente; logs detalhados em todas operações]
+- `api/src/schemas/cliente-auth.schema.ts` [Novos schemas Zod: googleOAuthCallbackSchema (valida code e state do callback), linkGoogleAccountSchema (para vincular conta Google); tipos TypeScript inferidos]
+- `api/src/routes/cliente-auth.routes.ts` [GET /api/cliente/auth/google: inicia fluxo OAuth, redireciona para Google; GET /api/cliente/auth/google/callback: processa retorno do Google, cria ou atualiza cliente, gera JWT, redireciona frontend com token; POST /api/cliente/auth/google/link: preparado para vincular conta Google a cliente logado; tratamento de erros com redirect para frontend]
+- `api/src/utils/api-error.ts` [Novo método estático: ApiError.notImplemented() retorna erro 501]
+- `api/.env.example` [Documentação completa: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI com instruções de como obter credenciais no Google Cloud Console; FRONTEND_URL para redirects]
+
+### Funcionalidade Implementada
+Sistema completo de autenticação OAuth Google para clientes:
+
+**Fluxo de Login:**
+1. Cliente clica em "Login com Google" → redirect para `/api/cliente/auth/google`
+2. Backend redireciona para página de autorização do Google
+3. Usuário autentica no Google e autoriza aplicação
+4. Google redireciona para `/api/cliente/auth/google/callback?code=...`
+5. Backend troca código por access_token e busca dados do perfil (id, email, nome, foto)
+6. Verifica se cliente já existe (por googleId ou email)
+7. **Se cliente existe:** Atualiza dados (nome, foto, emailVerified) e vincula googleId se necessário
+8. **Se cliente não existe:** Cria novo cliente com authProvider=GOOGLE, sem senha
+9. Gera token JWT com type='cliente'
+10. Registra log de atividade (login via Google OAuth)
+11. Redireciona para frontend com token: `{FRONTEND_URL}/cliente/dashboard?token={jwt}`
+
+**Vinculação de Conta:**
+- Se cliente criou conta por email/senha e depois faz login via Google com mesmo email:
+  - Sistema detecta email existente
+  - Vincula googleId à conta existente
+  - Atualiza authProvider para GOOGLE
+  - Mantém histórico e dados do cliente
+
+**Sincronização de Dados:**
+- ✅ Nome atualizado do perfil Google a cada login
+- ✅ Foto de perfil (avatarUrl) sincronizada automaticamente
+- ✅ Email verificado (emailVerified) marcado se Google confirmar
+- ✅ GoogleId único para prevenir duplicatas
+
+**Segurança:**
+- ✅ Validação de código de autorização
+- ✅ Verificação de variáveis de ambiente antes de iniciar fluxo
+- ✅ Logs detalhados de todas etapas OAuth
+- ✅ Tratamento de erros com redirect para frontend
+- ✅ State parameter para prevenir CSRF (preparado)
+- ✅ Tokens armazenados apenas temporariamente (não persistidos no banco)
+
+**Configuração Necessária:**
+Para habilitar Google OAuth, adicionar ao `.env`:
+```env
+GOOGLE_CLIENT_ID="seu-client-id.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="seu-client-secret"
+GOOGLE_REDIRECT_URI="http://localhost:3001/api/cliente/auth/google/callback"
+FRONTEND_URL="http://localhost:3000"
+```
+
+**Obter Credenciais:**
+1. Acessar https://console.cloud.google.com/apis/credentials
+2. Criar projeto no Google Cloud Console
+3. Ativar Google+ API ou People API
+4. Criar credenciais OAuth 2.0
+5. Adicionar URL de redirect autorizada: `http://localhost:3001/api/cliente/auth/google/callback`
+
+**Escopos Solicitados:**
+- `https://www.googleapis.com/auth/userinfo.profile` - Nome e foto
+- `https://www.googleapis.com/auth/userinfo.email` - Email do usuário
+
+**Tratamento de Erros:**
+- Usuário nega autorização → redirect para `/login?error=google_auth_denied`
+- Erro no processo OAuth → redirect para `/login?error=google_auth_failed`
+- OAuth não configurado → erro 500 com mensagem clara
+
+### Logs Implementados
+- ✅ Início do fluxo OAuth (IP, state)
+- ✅ Redirect para Google (estado preservado)
+- ✅ Callback recebido (código, erro, state, IP)
+- ✅ Troca de código por tokens (sucesso/falha)
+- ✅ Dados do usuário obtidos (googleId, email, verificado)
+- ✅ Cliente existente encontrado ou novo criado
+- ✅ Vinculação de conta Google (se aplicável)
+- ✅ Login bem-sucedido (clienteId, email, isNew, IP)
+
+### Próximas Fases
+- **Fase 3**: Frontend - páginas de login com botão Google, dashboard, configurações
+- **Fase 4**: Sistema de pedidos (busca por código, quantidade)
+- **Fase 5**: Checkout e formulário de dados do aluno
+- **Fase 6**: Integração com gateway de pagamento
+
+---
+
 ## 2026-02-04 - Sistema de Autenticação de Clientes (Fase 1 - Backend)
 
 ### Arquivos Modificados

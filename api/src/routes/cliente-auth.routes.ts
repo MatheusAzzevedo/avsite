@@ -25,9 +25,16 @@ import {
   clienteRegisterSchema, 
   clienteLoginSchema,
   clienteUpdateProfileSchema,
-  clienteChangePasswordSchema
+  clienteChangePasswordSchema,
+  googleOAuthCallbackSchema,
+  linkGoogleAccountSchema
 } from '../schemas/cliente-auth.schema';
 import { logger } from '../utils/logger';
+import { 
+  getGoogleAuthUrl, 
+  getGoogleUserInfo, 
+  verifyGoogleOAuthConfig 
+} from '../config/google-oauth';
 
 const router = Router();
 
@@ -506,6 +513,299 @@ router.post('/verify',
         cliente: req.cliente
       }
     });
+  }
+);
+
+// ===========================================
+// ROTAS OAUTH GOOGLE
+// ===========================================
+
+/**
+ * Explicação da API [GET /api/cliente/auth/google]
+ * 
+ * Inicia o fluxo de autenticação OAuth com Google.
+ * Redireciona o cliente para a página de login do Google.
+ * 
+ * Query params:
+ * - state (opcional): String para preservar estado após redirect
+ * 
+ * Response: Redirect 302 para Google OAuth
+ */
+router.get('/google',
+  (req: Request, res: Response, next: NextFunction) => {
+    try {
+      logger.info('[Cliente Auth Google] Iniciando fluxo OAuth', {
+        context: { state: req.query.state, ip: req.ip }
+      });
+
+      // Verifica se OAuth está configurado
+      if (!verifyGoogleOAuthConfig()) {
+        logger.error('[Cliente Auth Google] OAuth não configurado', {
+          context: { 
+            message: 'Variáveis GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET ou GOOGLE_REDIRECT_URI não configuradas' 
+          }
+        });
+        throw ApiError.internal('Google OAuth não configurado no servidor');
+      }
+
+      // Gera URL de autenticação do Google
+      const state = req.query.state as string | undefined;
+      const authUrl = getGoogleAuthUrl(state);
+
+      logger.info('[Cliente Auth Google] Redirecionando para Google OAuth', {
+        context: { hasState: !!state }
+      });
+
+      // Redireciona para Google
+      res.redirect(authUrl);
+    } catch (error) {
+      logger.error('[Cliente Auth Google] Erro ao iniciar fluxo OAuth', {
+        context: { error: error instanceof Error ? error.message : 'Unknown error' }
+      });
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [GET /api/cliente/auth/google/callback]
+ * 
+ * Callback do Google OAuth após autenticação.
+ * Google redireciona para esta rota com código de autorização.
+ * 
+ * Fluxo:
+ * 1. Recebe código de autorização do Google
+ * 2. Troca código por access token
+ * 3. Busca dados do usuário no Google (id, email, nome, foto)
+ * 4. Verifica se cliente já existe (por googleId ou email)
+ * 5. Se existe: atualiza dados e faz login
+ * 6. Se não existe: cria novo cliente
+ * 7. Gera token JWT do sistema
+ * 8. Redireciona para frontend com token
+ * 
+ * Query params:
+ * - code: Código de autorização do Google (obrigatório)
+ * - state: Estado preservado (opcional)
+ * - error: Erro se usuário negou permissão (opcional)
+ * 
+ * Response: Redirect para frontend com token ou erro
+ */
+router.get('/google/callback',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+
+      logger.info('[Cliente Auth Google] Callback recebido', {
+        context: { 
+          hasCode: !!req.query.code, 
+          hasError: !!req.query.error,
+          state: req.query.state,
+          ip: clientIp 
+        }
+      });
+
+      // Verifica se houve erro na autorização
+      if (req.query.error) {
+        logger.warn('[Cliente Auth Google] Usuário negou autorização', {
+          context: { error: req.query.error }
+        });
+        
+        // Redireciona para frontend com erro
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        return res.redirect(`${frontendUrl}/login?error=google_auth_denied`);
+      }
+
+      // Valida código de autorização
+      const { code } = req.query;
+      if (!code || typeof code !== 'string') {
+        logger.warn('[Cliente Auth Google] Código de autorização ausente', {
+          context: { ip: clientIp }
+        });
+        throw ApiError.badRequest('Código de autorização não fornecido');
+      }
+
+      // Busca dados do usuário no Google
+      logger.info('[Cliente Auth Google] Buscando dados do usuário no Google');
+      const googleUser = await getGoogleUserInfo(code);
+
+      logger.info('[Cliente Auth Google] Dados do Google obtidos', {
+        context: { 
+          googleId: googleUser.id,
+          email: googleUser.email,
+          name: googleUser.name,
+          verified: googleUser.verified_email 
+        }
+      });
+
+      // Verifica se cliente já existe (por googleId ou email)
+      let cliente = await prisma.cliente.findFirst({
+        where: {
+          OR: [
+            { googleId: googleUser.id },
+            { email: googleUser.email }
+          ]
+        }
+      });
+
+      if (cliente) {
+        // Cliente existe - atualiza dados do Google se necessário
+        logger.info('[Cliente Auth Google] Cliente existente encontrado', {
+          context: { 
+            clienteId: cliente.id,
+            authProvider: cliente.authProvider,
+            hadGoogleId: !!cliente.googleId 
+          }
+        });
+
+        // Atualiza googleId se não tinha (conta criada por email/senha e agora vinculou Google)
+        if (!cliente.googleId) {
+          logger.info('[Cliente Auth Google] Vinculando conta Google a cliente existente', {
+            context: { clienteId: cliente.id, googleId: googleUser.id }
+          });
+          
+          cliente = await prisma.cliente.update({
+            where: { id: cliente.id },
+            data: {
+              googleId: googleUser.id,
+              authProvider: 'GOOGLE',
+              avatarUrl: googleUser.picture || cliente.avatarUrl,
+              emailVerified: googleUser.verified_email || cliente.emailVerified
+            }
+          });
+        } else {
+          // Já tinha googleId - apenas atualiza dados
+          cliente = await prisma.cliente.update({
+            where: { id: cliente.id },
+            data: {
+              nome: googleUser.name, // Atualiza nome
+              avatarUrl: googleUser.picture || cliente.avatarUrl,
+              emailVerified: googleUser.verified_email || cliente.emailVerified
+            }
+          });
+        }
+      } else {
+        // Cliente não existe - cria novo
+        logger.info('[Cliente Auth Google] Criando novo cliente via Google', {
+          context: { googleId: googleUser.id, email: googleUser.email }
+        });
+
+        cliente = await prisma.cliente.create({
+          data: {
+            email: googleUser.email,
+            nome: googleUser.name,
+            googleId: googleUser.id,
+            authProvider: 'GOOGLE',
+            avatarUrl: googleUser.picture,
+            emailVerified: googleUser.verified_email,
+            password: null // Sem senha para OAuth
+          }
+        });
+
+        logger.info('[Cliente Auth Google] Novo cliente criado', {
+          context: { clienteId: cliente.id, email: cliente.email }
+        });
+      }
+
+      // Gera token JWT
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) {
+        logger.error('[Cliente Auth Google] JWT_SECRET não configurado');
+        throw ApiError.internal('JWT_SECRET não configurado');
+      }
+
+      const token = jwt.sign(
+        {
+          id: cliente.id,
+          email: cliente.email,
+          nome: cliente.nome,
+          authProvider: cliente.authProvider,
+          type: 'cliente'
+        },
+        jwtSecret,
+        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      );
+
+      // Registra atividade
+      await prisma.activityLog.create({
+        data: {
+          action: 'login',
+          entity: 'cliente',
+          entityId: cliente.id,
+          description: `Login via Google OAuth: ${cliente.email}`,
+          userEmail: cliente.email,
+          ip: clientIp
+        }
+      });
+
+      logger.info('[Cliente Auth Google] Login via Google bem-sucedido', {
+        context: {
+          clienteId: cliente.id,
+          email: cliente.email,
+          nome: cliente.nome,
+          isNew: !cliente.updatedAt || cliente.createdAt === cliente.updatedAt,
+          ip: clientIp
+        }
+      });
+
+      // Redireciona para frontend com token
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      const state = req.query.state as string | undefined;
+      const redirectUrl = state || '/cliente/dashboard';
+      
+      res.redirect(`${frontendUrl}${redirectUrl}?token=${token}`);
+    } catch (error) {
+      logger.error('[Cliente Auth Google] Erro no callback OAuth', {
+        context: { 
+          error: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined
+        }
+      });
+
+      // Redireciona para frontend com erro
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      res.redirect(`${frontendUrl}/login?error=google_auth_failed`);
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/cliente/auth/google/link]
+ * 
+ * Vincula conta Google a uma conta de cliente já existente e autenticada.
+ * Cliente já está logado (por email/senha) e quer conectar sua conta Google.
+ * 
+ * Requer autenticação (token JWT válido).
+ * 
+ * Body: { googleToken: string } - ID token do Google
+ * Response: { success, message, data: { cliente } }
+ */
+router.post('/google/link',
+  clienteAuthMiddleware,
+  validateBody(linkGoogleAccountSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { googleToken } = req.body;
+
+      logger.info('[Cliente Auth Google] Tentativa de vincular conta Google', {
+        context: { clienteId: req.cliente!.id }
+      });
+
+      // TODO: Implementar verificação de token do Google
+      // Por ora, retorna erro informativo
+      logger.warn('[Cliente Auth Google] Funcionalidade de link não implementada ainda');
+      
+      throw ApiError.notImplemented(
+        'Funcionalidade de vinculação de conta Google será implementada em breve'
+      );
+    } catch (error) {
+      logger.error('[Cliente Auth Google] Erro ao vincular conta Google', {
+        context: { 
+          error: error instanceof Error ? error.message : 'Unknown error',
+          clienteId: req.cliente?.id 
+        }
+      });
+      next(error);
+    }
   }
 );
 

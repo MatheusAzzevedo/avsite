@@ -119,9 +119,34 @@ export const clienteVerifyEmailSchema = z.object({
     .min(1, 'Token é obrigatório')
 });
 
+/**
+ * Schema para callback OAuth Google
+ * Valida o código de autorização recebido do Google
+ */
+export const googleOAuthCallbackSchema = z.object({
+  code: z
+    .string({ required_error: 'Código de autorização é obrigatório' })
+    .min(1, 'Código de autorização é obrigatório'),
+  state: z
+    .string()
+    .optional() // State é usado para prevenir CSRF, mas é opcional
+});
+
+/**
+ * Schema para vincular conta Google a uma conta existente
+ * Cliente já logado quer conectar sua conta Google
+ */
+export const linkGoogleAccountSchema = z.object({
+  googleToken: z
+    .string({ required_error: 'Token do Google é obrigatório' })
+    .min(1, 'Token do Google é obrigatório')
+});
+
 // Tipos inferidos dos schemas para uso no TypeScript
 export type ClienteRegisterInput = z.infer<typeof clienteRegisterSchema>;
 export type ClienteLoginInput = z.infer<typeof clienteLoginSchema>;
 export type ClienteUpdateProfileInput = z.infer<typeof clienteUpdateProfileSchema>;
 export type ClienteChangePasswordInput = z.infer<typeof clienteChangePasswordSchema>;
 export type ClienteVerifyEmailInput = z.infer<typeof clienteVerifyEmailSchema>;
+export type GoogleOAuthCallbackInput = z.infer<typeof googleOAuthCallbackSchema>;
+export type LinkGoogleAccountInput = z.infer<typeof linkGoogleAccountSchema>;
