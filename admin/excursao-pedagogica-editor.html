@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avoar Turismo</title>
+    <title>Editor de Excursão Pedagógica - Avoar Turismo</title>
     <link rel="stylesheet" href="css/admin-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -12,7 +12,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>Avorar Admin</h2>
+                <h2>Avoar Admin</h2>
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-item">
@@ -28,13 +28,13 @@
                     </a>
                 </div>
                 <div class="nav-item">
-                    <a href="excursoes.html" class="nav-link active">
+                    <a href="excursoes.html" class="nav-link">
                         <i class="fas fa-map-marked-alt"></i>
                         Excursões
                     </a>
                 </div>
                 <div class="nav-item">
-                    <a href="excursoes-pedagogicas.html" class="nav-link">
+                    <a href="excursoes-pedagogicas.html" class="nav-link active">
                         <i class="fas fa-graduation-cap"></i>
                         Excursões Pedagógicas
                     </a>
@@ -67,7 +67,7 @@
                     <button id="sidebarToggle" class="btn btn-secondary btn-sm" style="margin-right: 1rem; display: none;">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h1 id="pageTitle">Nova Excursão</h1>
+                    <h1 id="pageTitle">Nova Excursão Pedagógica</h1>
                 </div>
                 <div class="user-menu">
                     <span id="userName">Administrador</span>
@@ -86,12 +86,28 @@
                             <h3 style="margin-bottom: 1rem; font-size: 1.25rem;"><i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Informações Básicas</h3>
                             
                             <div class="form-group">
+                                <label for="excursaoCodigo">Código Único da Excursão * <small style="color: var(--text-light);">(apenas letras, números, hífen e underscore)</small></label>
+                                <input 
+                                    type="text" 
+                                    id="excursaoCodigo" 
+                                    class="form-control" 
+                                    placeholder="Ex: PED-2024-RJ-001"
+                                    pattern="[A-Za-z0-9_-]+"
+                                    maxlength="50"
+                                    required
+                                >
+                                <small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
+                                    Este código será usado para identificar a excursão em sistemas externos via API
+                                </small>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="excursaoTitulo">Título da Excursão *</label>
                                 <input 
                                     type="text" 
                                     id="excursaoTitulo" 
                                     class="form-control" 
-                                    placeholder="Ex: Cristo Redentor"
+                                    placeholder="Ex: Cristo Redentor - Visita Pedagógica"
                                     required
                                 >
                             </div>
@@ -253,7 +269,7 @@
                                         class="editor-content" 
                                         contenteditable="true"
                                         style="min-height: 250px;"
-                                        placeholder="Descreva a excursão em detalhes..."
+                                        placeholder="Descreva a excursão pedagógica em detalhes..."
                                     ></div>
                                 </div>
                             </div>
@@ -270,7 +286,7 @@
                                         id="excursaoInclusos" 
                                         class="form-control" 
                                         rows="4"
-                                        placeholder="Ex:&#10;- Transporte ida e volta&#10;- Guia turístico&#10;- Ingressos&#10;- Lanche"
+                                        placeholder="Ex:&#10;- Transporte ida e volta&#10;- Guia turístico&#10;- Ingressos&#10;- Material didático&#10;- Lanche"
                                     ></textarea>
                                 </div>
                                 <div class="form-group">
@@ -279,7 +295,7 @@
                                         id="excursaoRecomendacoes" 
                                         class="form-control" 
                                         rows="4"
-                                        placeholder="Ex:&#10;- Usar roupas confortáveis&#10;- Levar protetor solar&#10;- Chegar 15 minutos antes"
+                                        placeholder="Ex:&#10;- Usar roupas confortáveis&#10;- Levar protetor solar&#10;- Chegar 15 minutos antes&#10;- Trazer caderno de anotações"
                                     ></textarea>
                                 </div>
                             </div>
@@ -311,21 +327,21 @@
                                     type="text" 
                                     id="excursaoTags" 
                                     class="form-control" 
-                                    placeholder="Ex: turismo, aventura, família"
+                                    placeholder="Ex: educação, pedagogico, escola, estudantes"
                                 >
                             </div>
                         </div>
 
                         <!-- Ações -->
                         <div class="form-actions">
-                            <a href="excursoes.html" class="btn btn-secondary">
+                            <a href="excursoes-pedagogicas.html" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancelar
                             </a>
                             <button type="button" class="btn btn-secondary" data-action="save-inactive">
                                 <i class="fas fa-save"></i> Salvar como Inativo
                             </button>
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-check"></i> <span id="submitBtnText">Salvar Excursão</span>
+                                <i class="fas fa-check"></i> <span id="submitBtnText">Salvar Excursão Pedagógica</span>
                             </button>
                         </div>
                     </form>
@@ -337,7 +353,7 @@
     <!-- Script do cliente da API -->
     <script src="../js/api-client.js"></script>
     <script src="js/admin-main.js"></script>
-    <script src="js/excursao-editor.js"></script>
+    <script src="js/excursao-pedagogica-editor.js"></script>
 
 </body>
 </html>

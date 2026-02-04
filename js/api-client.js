@@ -425,6 +425,223 @@ const ExcursaoManager = {
 };
 
 // ===========================================
+// GERENCIADOR DE EXCURSÕES PEDAGÓGICAS
+// ===========================================
+
+/**
+ * Explicação do objeto [ExcursaoPedagogicaManager]
+ * Gerencia operações CRUD de excursões pedagógicas via API.
+ * Similar ao ExcursaoManager, mas para excursões que vêm de sistemas externos.
+ * Inclui campo 'codigo' obrigatório e único.
+ */
+const ExcursaoPedagogicaManager = {
+  /**
+   * Lista todas as excursões pedagógicas
+   * @param {boolean} onlyActive - Se true, retorna apenas ativas
+   * @returns {Promise<Array>}
+   */
+  async getAll(onlyActive = false) {
+    const endpoint = onlyActive 
+      ? '/public/excursoes-pedagogicas'  // Rota pública para site
+      : '/excursoes-pedagogicas';        // Rota admin
+    
+    console.log(`[ExcursaoPedagogicaManager] 🔍 BUSCANDO EXCURSÕES PEDAGÓGICAS: onlyActive=${onlyActive}, endpoint=${endpoint}`);
+    
+    const response = await apiRequest(endpoint);
+    
+    console.log(`[ExcursaoPedagogicaManager] 📥 RESPOSTA RECEBIDA:`, {
+      responseType: typeof response,
+      responseKeys: response ? Object.keys(response) : null,
+      hasData: 'data' in response,
+      dataIsArray: Array.isArray(response?.data),
+      dataLength: response?.data?.length,
+      pagination: response?.pagination
+    });
+    
+    const list = Array.isArray(response?.data) ? response.data : (Array.isArray(response) ? response : []);
+    
+    console.log(`[ExcursaoPedagogicaManager] ✅ LISTA FINAL:`, {
+      listLength: list.length,
+      listIsArray: Array.isArray(list),
+      primeiros3: list.slice(0, 3).map(e => ({ id: e.id, codigo: e.codigo, titulo: e.titulo }))
+    });
+    
+    if (list.length === 0 && response?.pagination?.total > 0) {
+      console.error('[ExcursaoPedagogicaManager] ⚠️ PROBLEMA: total > 0 mas data vazio!', response);
+    }
+    
+    return list;
+  },
+
+  /**
+   * Busca excursão pedagógica por ID
+   * @param {string} id 
+   * @returns {Promise<object|null>}
+   */
+  async getById(id) {
+    try {
+      const response = await apiRequest(`/excursoes-pedagogicas/${id}`);
+      return response.data || null;
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao buscar:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Busca excursão pedagógica por slug (pública)
+   * @param {string} slug 
+   * @returns {Promise<object|null>}
+   */
+  async getBySlug(slug) {
+    try {
+      const response = await apiRequest(`/public/excursoes-pedagogicas/${slug}`);
+      return response.data || null;
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao buscar por slug:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Busca excursão pedagógica por código (pública)
+   * @param {string} codigo 
+   * @returns {Promise<object|null>}
+   */
+  async getByCodigo(codigo) {
+    try {
+      const response = await apiRequest(`/public/excursoes-pedagogicas/codigo/${codigo}`);
+      return response.data || null;
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao buscar por código:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Cria nova excursão pedagógica
+   * @param {object} excursaoData - Deve incluir campo 'codigo'
+   * @returns {Promise<object|null>}
+   */
+  async create(excursaoData) {
+    try {
+      if (!excursaoData.codigo) {
+        throw new Error('Campo "codigo" é obrigatório para excursões pedagógicas');
+      }
+      
+      const response = await apiRequest('/excursoes-pedagogicas', {
+        method: 'POST',
+        body: JSON.stringify(excursaoData)
+      });
+      console.log('[ExcursaoPedagogicaManager] Excursão pedagógica criada:', response.data?.id, response.data?.codigo);
+      return response.data;
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao criar:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Atualiza excursão pedagógica existente
+   * @param {string} id 
+   * @param {object} excursaoData 
+   * @returns {Promise<object|null>}
+   */
+  async update(id, excursaoData) {
+    try {
+      const response = await apiRequest(`/excursoes-pedagogicas/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(excursaoData)
+      });
+      console.log('[ExcursaoPedagogicaManager] Excursão pedagógica atualizada:', id, excursaoData.codigo);
+      return response.data;
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao atualizar:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Exclui excursão pedagógica
+   * @param {string} id 
+   * @returns {Promise<boolean>}
+   */
+  async delete(id) {
+    try {
+      await apiRequest(`/excursoes-pedagogicas/${id}`, {
+        method: 'DELETE'
+      });
+      console.log('[ExcursaoPedagogicaManager] Excursão pedagógica excluída:', id);
+      return true;
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao excluir:', error);
+      return false;
+    }
+  },
+
+  /**
+   * Altera status da excursão pedagógica
+   * @param {string} id 
+   * @param {string} status - 'ATIVO' ou 'INATIVO'
+   * @returns {Promise<object|null>}
+   */
+  async toggleStatus(id, status) {
+    try {
+      const response = await apiRequest(`/excursoes-pedagogicas/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status })
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao alterar status:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Filtra excursões pedagógicas por categoria
+   * @param {string} categoria 
+   * @returns {Promise<Array>}
+   */
+  async filterByCategory(categoria) {
+    try {
+      const response = await apiRequest(`/public/excursoes-pedagogicas?categoria=${categoria}`);
+      return response.data || [];
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao filtrar:', error);
+      return [];
+    }
+  },
+
+  /**
+   * Filtra excursões pedagógicas por código (busca parcial)
+   * @param {string} codigo 
+   * @returns {Promise<Array>}
+   */
+  async filterByCodigo(codigo) {
+    try {
+      const response = await apiRequest(`/public/excursoes-pedagogicas?codigo=${codigo}`);
+      return response.data || [];
+    } catch (error) {
+      console.error('[ExcursaoPedagogicaManager] Erro ao filtrar por código:', error);
+      return [];
+    }
+  },
+
+  /**
+   * Formata preço em Real
+   * @param {number} preco 
+   * @returns {string}
+   */
+  formatPrice(preco) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(preco);
+  }
+};
+
+// ===========================================
 // GERENCIADOR DE POSTS/BLOG
 // ===========================================
 
