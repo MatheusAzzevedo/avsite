@@ -235,13 +235,35 @@ async function loadExcursoes() {
         return;
     }
 
+    const grid = document.getElementById('excursoesGrid');
+    const loadingState = document.getElementById('loadingState');
+    const emptyState = document.getElementById('emptyState');
+
+    function removeLoadingAndShowEmpty(message, isError) {
+        if (loadingState && loadingState.parentNode) loadingState.remove();
+        if (grid) grid.innerHTML = '';
+        if (emptyState) {
+            emptyState.innerHTML = isError
+                ? '<i class="fas fa-exclamation-circle" style="font-size: 4rem; color: #ff5c00; margin-bottom: 1rem;"></i><h3>Erro ao carregar excursões</h3><p>' + (message ? escapeHtml(message) : '') + '</p>'
+                : '<h3 style="color: #fff; font-size: 1.5rem;">Em breve novas excursões</h3>';
+            emptyState.style.display = 'block';
+        }
+    }
+
     try {
-        allExcursoes = await ExcursaoManager.getAll(true); // true = apenas ativas
+        var timeoutMs = 15000;
+        var fetchPromise = ExcursaoManager.getAll(true); // true = apenas ativas (endpoint /api/public/excursoes)
+        var timeoutPromise = new Promise(function(_, reject) {
+            setTimeout(function() { reject(new Error('Tempo esgotado. Verifique sua conexão e tente novamente.')); }, timeoutMs);
+        });
+        allExcursoes = await Promise.race([fetchPromise, timeoutPromise]);
+        if (!Array.isArray(allExcursoes)) {
+            allExcursoes = [];
+        }
         renderExcursoes(allExcursoes);
     } catch (error) {
         console.error('[Portfolio] Erro ao carregar excursões:', error);
-        document.getElementById('loadingState')?.remove();
-        document.getElementById('emptyState').style.display = 'block';
+        removeLoadingAndShowEmpty(error.message || 'Não foi possível carregar as excursões.', true);
     }
 }
 

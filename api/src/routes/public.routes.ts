@@ -11,6 +11,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
+import { ExcursaoStatus } from '@prisma/client';
 import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
 
@@ -32,16 +33,20 @@ const router = Router();
 router.get('/excursoes',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      logger.info('[Public API] 🏝️ GET /excursoes - requisição recebida (site público)', {
+        context: { query: req.query }
+      });
+
       const { categoria, limit = '20', page = '1' } = req.query;
       const take = Math.min(parseInt(limit as string) || 20, 100);
       const skip = (parseInt(page as string) - 1) * take;
 
-      const where: Record<string, unknown> = {
-        status: 'ATIVO'
+      const where: { status: ExcursaoStatus; categoria?: string } = {
+        status: ExcursaoStatus.ATIVO
       };
 
-      if (categoria) {
-        where.categoria = categoria;
+      if (categoria && String(categoria).trim()) {
+        where.categoria = String(categoria).trim();
       }
 
       const [excursoes, total] = await Promise.all([
@@ -118,9 +123,9 @@ router.get('/excursoes/:slug',
       const { slug } = req.params;
 
       const excursao = await prisma.excursao.findFirst({
-        where: { 
+        where: {
           slug,
-          status: 'ATIVO'
+          status: ExcursaoStatus.ATIVO
         },
         include: {
           galeria: {
@@ -163,9 +168,9 @@ router.get('/excursoes/categoria/:categoria',
       const { categoria } = req.params;
 
       const excursoes = await prisma.excursao.findMany({
-        where: { 
+        where: {
           categoria,
-          status: 'ATIVO'
+          status: ExcursaoStatus.ATIVO
         },
         orderBy: { createdAt: 'desc' },
         select: {

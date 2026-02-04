@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-02-04 - Fix: Excursão no admin não aparece no site público
+
+### Arquivos Modificados
+- `api/src/routes/public.routes.ts` [Filtro de excursões públicas passa a usar enum Prisma `ExcursaoStatus.ATIVO` em todas as rotas (listagem, por slug, por categoria); log no início de GET /excursoes para diagnóstico]
+- `api/public/portfolio.html`, `portfolio.html` [Timeout de 15s na requisição de excursões; remoção garantida do loading e exibição de erro ou estado vazio; evita "Carregando excursões..." infinito]
+
+### Problema Identificado
+- Excursão cadastrada manualmente aparecia no painel admin mas não na página pública (/excursoes)
+- Página pública podia ficar em "Carregando excursões..." indefinidamente se a API falhasse ou demorasse
+
+### Solução Implementada
+- Uso explícito de `ExcursaoStatus.ATIVO` do Prisma na rota pública para garantir correspondência com o banco
+- Log "[Public API] GET /excursoes - requisição recebida" para confirmar se o site público está chamando a API
+- Front: Promise.race com timeout de 15s; função removeLoadingAndShowEmpty para sempre sair do loading (sucesso, erro ou vazio)
+
+---
+
 ## 2026-02-04 - Fix: Excursões não aparecem na listagem do painel e site
 
 ### Arquivos Modificados

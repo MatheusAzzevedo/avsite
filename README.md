@@ -4,13 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Fix: Excursões não aparecem na listagem
+### Última atualização (2026-02-04) - Fix: Excursão no admin não aparece no site público
+- **api/src/routes/public.routes.ts** [Filtro de excursões públicas usa enum Prisma `ExcursaoStatus.ATIVO`; log de requisição GET /excursoes para diagnóstico]
+- **api/public/portfolio.html**, **portfolio.html** [Timeout 15s na carga de excursões; loading sempre removido e exibição de erro ou "Em breve novas excursões" para evitar loading infinito]
+
+**Problema corrigido**: Excursão ativa no admin não aparecia na página /excursoes; página podia ficar em "Carregando excursões..." para sempre. Agora o backend filtra por enum e o front tem timeout e tratamento de erro.
+
+### Versão anterior (2026-02-04) - Fix: Excursões não aparecem na listagem
 - **js/api-client.js**, **api/public/js/api-client.js** [Removido try/catch que engolia erros em getAll(); erro agora propagado]
 - **admin/excursoes.html**, **api/public/admin/excursoes.html** [Tratamento de erro com mensagem detalhada, botão "Tentar novamente", redireciona para login em 401]
 - **api/public/portfolio.html** [Adicionado mensagem de erro na página pública de excursões]
 - **api/src/routes/excursao.routes.ts**, **api/src/routes/public.routes.ts** [Melhor tratamento de filtros e logs com mais contexto]
-
-**Problema corrigido**: Erros na listagem (401, 500, rede) eram engolidos e retornavam [] → mostrava "0 excursões" sem avisar. Agora propaga erro e mostra mensagem clara ao usuário.
 
 ### Versão anterior (2026-02-02) - Seção Parceiros na página Sobre Nós
 - **about.html**, **api/public/about.html** [Seção "Parceiros de longa data": layout alterado para texto em cima e imagem embaixo; imagem trocada para parceiros.jpeg com logos dos colégios]
