@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excursões Pedagógicas - Avoar Turismo</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header"><h2>Avoar Admin</h2></div>
+            <nav class="sidebar-nav">
+                <div class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></div>
+                <div class="nav-item"><a href="blog.html" class="nav-link"><i class="fas fa-blog"></i> Blog</a></div>
+                <div class="nav-item"><a href="excursoes.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Excursões</a></div>
+                <div class="nav-item"><a href="excursoes-pedagogicas.html" class="nav-link active"><i class="fas fa-graduation-cap"></i> Excursões Pedagógicas</a></div>
+                <div class="nav-item"><a href="checkout.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Checkout</a></div>
+                <div class="nav-item"><a href="config-pagamento.html" class="nav-link"><i class="fas fa-credit-card"></i> Config. Pagamento</a></div>
+                <div class="nav-item" style="margin-top: 2rem;"><a href="#" class="nav-link" id="navLogout"><i class="fas fa-sign-out-alt"></i> Sair</a></div>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <button id="sidebarToggle" class="btn btn-secondary btn-sm" style="margin-right: 1rem; display: none;"><i class="fas fa-bars"></i></button>
+                    <h1>Gerenciar Excursões Pedagógicas</h1>
+                    <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">Excursões com código único para o cliente pesquisar e comprar</p>
+                </div>
+                <div class="user-menu"><span id="userName">Administrador</span><div class="user-avatar">AD</div></div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="filters-bar">
+                        <div class="search-box"><input type="text" id="searchExcursoesPedagogicas" placeholder="Buscar excursões pedagógicas..."></div>
+                        <input type="text" id="filterCodigo" placeholder="Filtrar por código..." style="padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: 0.5rem; font-size: 0.875rem; width: 200px;">
+                        <select id="filterCategoria" class="filter-select">
+                            <option value="todos">Todas as Categorias</option>
+                            <option value="natureza">Natureza</option>
+                            <option value="cultura">Cultura</option>
+                            <option value="aventura">Aventura</option>
+                            <option value="marítimo">Marítimo</option>
+                        </select>
+                        <select id="filterStatus" class="filter-select">
+                            <option value="todos">Todos os Status</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                        <a href="excursao-pedagogica-editor.html" class="btn btn-primary"><i class="fas fa-plus"></i> Nova Excursão Pedagógica</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Excursões Pedagógicas Cadastradas (<span id="excursaoCount">0</span>)</h2></div>
+                <div class="card-body">
+                    <div id="excursoesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;"></div>
+                    <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
+                        <i class="fas fa-graduation-cap" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--text-light);">Nenhuma excursão pedagógica encontrada</h3>
+                        <p style="color: var(--text-light);">Crie sua primeira excursão pedagógica clicando no botão acima.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/api-client.js"></script>
+    <script src="js/admin-main.js"></script>
+    <script src="js/excursoes-pedagogicas.js"></script>
+</body>
+</html>

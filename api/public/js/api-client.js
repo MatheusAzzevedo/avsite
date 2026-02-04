@@ -425,6 +425,43 @@ const ExcursaoManager = {
 };
 
 // ===========================================
+// GERENCIADOR DE EXCURSÕES PEDAGÓGICAS
+// ===========================================
+const ExcursaoPedagogicaManager = {
+  async getAll(onlyActive = false) {
+    const endpoint = onlyActive ? '/public/excursoes-pedagogicas' : '/excursoes-pedagogicas';
+    const response = await apiRequest(endpoint);
+    const list = Array.isArray(response?.data) ? response.data : (Array.isArray(response) ? response : []);
+    return list;
+  },
+  async getById(id) {
+    try {
+      const response = await apiRequest(`/excursoes-pedagogicas/${id}`);
+      return response.data || null;
+    } catch (e) { return null; }
+  },
+  async create(excursaoData) {
+    const response = await apiRequest('/excursoes-pedagogicas', { method: 'POST', body: JSON.stringify(excursaoData) });
+    return response.data;
+  },
+  async update(id, excursaoData) {
+    const response = await apiRequest(`/excursoes-pedagogicas/${id}`, { method: 'PUT', body: JSON.stringify(excursaoData) });
+    return response.data;
+  },
+  async delete(id) {
+    await apiRequest(`/excursoes-pedagogicas/${id}`, { method: 'DELETE' });
+    return true;
+  },
+  async toggleStatus(id, status) {
+    const response = await apiRequest(`/excursoes-pedagogicas/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
+    return response.data;
+  },
+  formatPrice(preco) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
+  }
+};
+
+// ===========================================
 // GERENCIADOR DE POSTS/BLOG
 // ===========================================
 
@@ -792,6 +829,7 @@ window.API_CONFIG = API_CONFIG;
 window.apiRequest = apiRequest;
 window.AuthManager = AuthManager;
 window.ExcursaoManager = ExcursaoManager;
+window.ExcursaoPedagogicaManager = ExcursaoPedagogicaManager;
 window.BlogManager = BlogManager;
 window.UploadManager = UploadManager;
 window.PaymentConfigManager = PaymentConfigManager;

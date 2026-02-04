@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Excursão Pedagógica - Avoar Turismo</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header"><h2>Avoar Admin</h2></div>
+            <nav class="sidebar-nav">
+                <div class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></div>
+                <div class="nav-item"><a href="blog.html" class="nav-link"><i class="fas fa-blog"></i> Blog</a></div>
+                <div class="nav-item"><a href="excursoes.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Excursões</a></div>
+                <div class="nav-item"><a href="excursoes-pedagogicas.html" class="nav-link active"><i class="fas fa-graduation-cap"></i> Excursões Pedagógicas</a></div>
+                <div class="nav-item"><a href="checkout.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Checkout</a></div>
+                <div class="nav-item"><a href="config-pagamento.html" class="nav-link"><i class="fas fa-credit-card"></i> Config. Pagamento</a></div>
+                <div class="nav-item" style="margin-top: 2rem;"><a href="#" class="nav-link" onclick="typeof logout==='function'&&logout();"><i class="fas fa-sign-out-alt"></i> Sair</a></div>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <div class="top-bar">
+                <div><h1>Nova Excursão Pedagógica</h1></div>
+                <div class="user-menu"><span id="userName">Administrador</span><div class="user-avatar">AD</div></div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <p style="color: var(--text-light); margin-bottom: 1rem;">O editor completo de excursões pedagógicas (código único, título, preço, imagens, etc.) está disponível na pasta <code>admin/</code> do projeto. Sincronize os arquivos <code>admin/excursao-pedagogica-editor.html</code> e <code>admin/js/excursao-pedagogica-editor.js</code> para <code>api/public/admin/</code> para habilitar esta página.</p>
+                    <a href="excursoes-pedagogicas.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Voltar à listagem</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/api-client.js"></script>
+    <script src="js/admin-main.js"></script>
+</body>
+</html>
