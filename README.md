@@ -4,11 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Fix: Excursão no admin não aparece no site público
-- **api/src/routes/public.routes.ts** [Filtro de excursões públicas usa enum Prisma `ExcursaoStatus.ATIVO`; log de requisição GET /excursoes para diagnóstico]
-- **api/public/portfolio.html**, **portfolio.html** [Timeout 15s na carga de excursões; loading sempre removido e exibição de erro ou "Em breve novas excursões" para evitar loading infinito]
+### Última atualização (2026-02-04) - Fix: CSP bloqueava script na página de excursões
+- **api/public/js/portfolio-excursoes.js**, **js/portfolio-excursoes.js** [Novo: lógica da página de excursões em arquivo externo]
+- **api/public/portfolio.html**, **portfolio.html** [Removido script inline; referência a portfolio-excursoes.js; filtros sem onclick]
 
-**Problema corrigido**: Excursão ativa no admin não aparecia na página /excursoes; página podia ficar em "Carregando excursões..." para sempre. Agora o backend filtra por enum e o front tem timeout e tratamento de erro.
+**Problema corrigido**: CSP (script-src 'self') bloqueava o script inline em /excursoes, então as excursões não carregavam e a página ficava em "Carregando excursões...". Script externalizado e filtros com addEventListener.
+
+### Versão anterior (2026-02-04) - Fix: Excursão no admin não aparece no site público
+- **api/src/routes/public.routes.ts** [Filtro de excursões públicas usa enum Prisma `ExcursaoStatus.ATIVO`; log de requisição GET /excursoes]
+- **api/public/portfolio.html**, **portfolio.html** [Timeout 15s na carga de excursões; loading sempre removido]
 
 ### Versão anterior (2026-02-04) - Fix: Excursões não aparecem na listagem
 - **js/api-client.js**, **api/public/js/api-client.js** [Removido try/catch que engolia erros em getAll(); erro agora propagado]

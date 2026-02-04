@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-02-04 - Fix: CSP bloqueava script na página de excursões (site público)
+
+### Arquivos Modificados
+- `api/public/js/portfolio-excursoes.js` [Novo: lógica da página de excursões externalizada (loadExcursoes, renderExcursoes, filterExcursoes, etc.)]
+- `js/portfolio-excursoes.js` [Cópia na raiz para consistência]
+- `api/public/portfolio.html`, `portfolio.html` [Removido script inline; referência a portfolio-excursoes.js; removidos onclick dos filtros (delegação no JS)]
+
+### Problema Identificado
+- Content-Security-Policy (Helmet) com `script-src 'self'` bloqueava execução de script inline na página /excursoes
+- Console: "Executing inline script violates the following Content Security Policy directive..."
+- Efeito: código que chama a API e renderiza excursões não rodava → página ficava em "Carregando excursões..."
+
+### Solução Implementada
+- Script inline da página de excursões movido para arquivo externo `portfolio-excursoes.js` (mesmo padrão do admin: login.js, excursao-editor.js)
+- Filtros (Todas, Natureza, etc.) passam a usar addEventListener no JS em vez de onclick no HTML (compatível com CSP)
+
+---
+
 ## 2026-02-04 - Fix: Excursão no admin não aparece no site público
 
 ### Arquivos Modificados
