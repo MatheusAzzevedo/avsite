@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Fix: CSP bloqueava script na página de excursões
+### Última atualização (2026-02-04) - Fix: CSP na página de detalhe da excursão
+- **api/public/js/portfolio-single.js**, **js/portfolio-single.js** [Novo: lógica da página de detalhe em arquivo externo; loadExcursao async com await getBySlug; status ATIVO]
+- **api/public/portfolio-single.html**, **portfolio-single.html** [Removido script inline; botões com data-tab/aria-label]
+
+**Problema corrigido**: Na página da excursão (ex.: ?slug=cristo-redentor) não aparecia informação; CSP bloqueava script inline. Script externalizado e getBySlug corrigido (await + status ATIVO).
+
+### Versão anterior (2026-02-04) - Fix: CSP bloqueava script na página de excursões
 - **api/public/js/portfolio-excursoes.js**, **js/portfolio-excursoes.js** [Novo: lógica da página de excursões em arquivo externo]
 - **api/public/portfolio.html**, **portfolio.html** [Removido script inline; referência a portfolio-excursoes.js; filtros sem onclick]
 

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-02-04 - Fix: CSP bloqueava script na página de detalhe da excursão (portfolio-single)
+
+### Arquivos Modificados
+- `api/public/js/portfolio-single.js`, `js/portfolio-single.js` [Novo: lógica da página de detalhe externalizada (loadExcursao com await getBySlug, renderExcursao, tabs, galeria, WhatsApp); status verificado como ATIVO]
+- `api/public/portfolio-single.html`, `portfolio-single.html` [Removido script inline; referência a portfolio-single.js; botões com data-tab/aria-label e listeners no JS]
+
+### Problema Identificado
+- CSP bloqueava script inline em portfolio-single.html (página específica da excursão por slug)
+- Código não executava → nenhuma informação da excursão aparecia
+- Além disso: getBySlug é assíncrono e não era aguardado; status era comparado com 'ativo' em vez de 'ATIVO'
+
+### Solução Implementada
+- Script movido para portfolio-single.js; loadExcursao agora é async e usa await ExcursaoManager.getBySlug(slug)
+- Verificação de status: (excursao.status || '').toUpperCase() === 'ATIVO'
+- Tabs, galeria, quantidade e botões WhatsApp/Comprar com addEventListener (sem onclick)
+
+---
+
 ## 2026-02-04 - Fix: CSP bloqueava script na página de excursões (site público)
 
 ### Arquivos Modificados

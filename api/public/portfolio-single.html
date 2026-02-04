@@ -226,9 +226,9 @@
                                 <!-- Tabs -->
                                 <div class="product-info-tabs">
                                     <div class="tab-navigation">
-                                        <button class="tab-btn active" onclick="switchProductTab('description')">Descrição</button>
-                                        <button class="tab-btn" onclick="switchProductTab('includes')">O que está incluso</button>
-                                        <button class="tab-btn" onclick="switchProductTab('info')">Informações</button>
+                                        <button type="button" class="tab-btn active" data-tab="description">Descrição</button>
+                                        <button type="button" class="tab-btn" data-tab="includes">O que está incluso</button>
+                                        <button type="button" class="tab-btn" data-tab="info">Informações</button>
                                     </div>
 
                                     <div class="tab-content-area">
@@ -296,18 +296,18 @@
                                 <div class="quantity-section">
                                     <div class="quantity-label">Quantidade</div>
                                     <div class="quantity-control">
-                                        <button class="qty-btn" onclick="decreaseQty()">−</button>
-                                        <input type="number" id="quantity" class="qty-input" value="1" min="1" max="20" onchange="updateTotal()">
-                                        <button class="qty-btn" onclick="increaseQty()">+</button>
+                                        <button type="button" class="qty-btn" aria-label="Diminuir">−</button>
+                                        <input type="number" id="quantity" class="qty-input" value="1" min="1" max="20">
+                                        <button type="button" class="qty-btn" aria-label="Aumentar">+</button>
                                     </div>
                                 </div>
 
-                                <button class="btn-add-cart" onclick="contactWhatsApp()">
+                                <button type="button" class="btn-add-cart">
                                     <i class="fab fa-whatsapp"></i>
                                     Reservar pelo WhatsApp
                                 </button>
 
-                                <button class="btn-buy-now" onclick="buyNow()">
+                                <button type="button" class="btn-buy-now">
                                     <i class="fas fa-bolt"></i>
                                     Comprar Agora
                                 </button>
@@ -392,206 +392,7 @@
 <script src="js/cursor-script.js"></script>
 <script src="js/wow.js"></script>
 <script src="js/custom-script.js"></script>
-
-<script>
-// Variável global para armazenar dados da excursão
-let currentExcursao = null;
-
-/**
- * Explicação da função [loadExcursao]
- * Carrega os dados de uma excursão específica baseado no slug da URL.
- */
-function loadExcursao() {
-    console.log('[Portfolio Single] Carregando excursão...');
-    
-    // Aguarda o DataManager estar disponível
-    if (typeof ExcursaoManager === 'undefined') {
-        setTimeout(loadExcursao, 100);
-        return;
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('slug');
-
-    const loadingState = document.getElementById('loadingState');
-    const errorState = document.getElementById('errorState');
-    const excursaoContent = document.getElementById('excursaoContent');
-
-    if (!slug) {
-        loadingState.style.display = 'none';
-        errorState.style.display = 'block';
-        return;
-    }
-
-    // Busca a excursão pelo slug
-    const excursao = ExcursaoManager.getBySlug(slug);
-
-    if (!excursao || excursao.status !== 'ativo') {
-        loadingState.style.display = 'none';
-        errorState.style.display = 'block';
-        return;
-    }
-
-    currentExcursao = excursao;
-    renderExcursao(excursao);
-
-    // Exibe o conteúdo
-    loadingState.style.display = 'none';
-    excursaoContent.style.display = 'block';
-}
-
-/**
- * Explicação da função [renderExcursao]
- * Renderiza os dados da excursão na página.
- */
-function renderExcursao(excursao) {
-    // Título da página
-    document.getElementById('pageTitle').textContent = `${excursao.titulo} - Avorar Turismo`;
-    
-    // Hero
-    document.getElementById('breadcrumbTitle').textContent = excursao.titulo;
-    document.getElementById('excursaoTitulo').textContent = excursao.titulo;
-    document.getElementById('excursaoSubtitulo').textContent = excursao.subtitulo || '';
-    document.getElementById('excursaoDuracao').textContent = excursao.duracao || 'Consulte';
-    document.getElementById('excursaoCategoria').textContent = capitalizeFirst(excursao.categoria);
-    document.getElementById('excursaoLocal').textContent = excursao.local || 'Angra dos Reis';
-
-    // Imagem principal
-    const mainImage = document.getElementById('mainImage');
-    if (excursao.imagemPrincipal) {
-        mainImage.src = excursao.imagemPrincipal;
-    } else if (excursao.imagemCapa) {
-        mainImage.src = excursao.imagemCapa;
-    }
-    mainImage.alt = excursao.titulo;
-
-    // Galeria
-    const galleryThumbs = document.getElementById('galleryThumbs');
-    let images = [];
-    if (excursao.imagemCapa) images.push(excursao.imagemCapa);
-    if (excursao.imagemPrincipal && excursao.imagemPrincipal !== excursao.imagemCapa) {
-        images.push(excursao.imagemPrincipal);
-    }
-    if (excursao.galeria && excursao.galeria.length > 0) {
-        images = images.concat(excursao.galeria);
-    }
-    
-    if (images.length > 0) {
-        galleryThumbs.innerHTML = images.slice(0, 4).map((img, index) => `
-            <img src="${img}" alt="Imagem ${index + 1}" class="thumb ${index === 0 ? 'active' : ''}" onclick="changeImage(this)">
-        `).join('');
-    } else {
-        galleryThumbs.style.display = 'none';
-    }
-
-    // Descrição
-    document.getElementById('excursaoDescricao').innerHTML = excursao.descricao || '<p>Descrição em breve.</p>';
-
-    // Inclusos e Recomendações
-    const inclusos = excursao.inclusos || '';
-    document.getElementById('excursaoInclusos').innerHTML = formatListContent(inclusos);
-    
-    const recomendacoes = excursao.recomendacoes || '';
-    document.getElementById('excursaoRecomendacoes').innerHTML = formatListContent(recomendacoes);
-
-    // Informações
-    document.getElementById('infoLocal').textContent = excursao.local || 'Centro de Angra dos Reis';
-    document.getElementById('infoHorario').textContent = excursao.horario || 'Consulte';
-    document.getElementById('infoDuracao').textContent = excursao.duracao || 'Consulte';
-    document.getElementById('infoCategoria').textContent = capitalizeFirst(excursao.categoria);
-
-    // Tags
-    const tagsContainer = document.getElementById('excursaoTags');
-    if (excursao.tags && excursao.tags.length > 0) {
-        tagsContainer.innerHTML = excursao.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
-    } else {
-        tagsContainer.innerHTML = '<span class="tag">' + capitalizeFirst(excursao.categoria) + '</span>';
-    }
-
-    // Preço
-    const precoFormatado = ExcursaoManager.formatPrice(excursao.preco);
-    document.getElementById('excursaoPreco').textContent = precoFormatado;
-    
-    const precoComDesconto = (excursao.preco * 0.97).toFixed(2);
-    document.getElementById('precoPix').textContent = `✓ Desconto de 3% no PIX: ${ExcursaoManager.formatPrice(parseFloat(precoComDesconto))}`;
-}
-
-/**
- * Explicação da função [formatListContent]
- * Formata conteúdo de lista para HTML.
- */
-function formatListContent(content) {
-    if (!content) return '<p>-</p>';
-    
-    const lines = content.split('\n').filter(line => line.trim());
-    if (lines.length === 0) return '<p>-</p>';
-    
-    const listItems = lines.map(line => {
-        const cleanLine = line.replace(/^[-•*]\s*/, '');
-        return `<li><i class="fas fa-check-circle" style="color: #ff5c00; margin-right: 10px;"></i>${escapeHtml(cleanLine)}</li>`;
-    }).join('');
-    
-    return `<ul style="list-style: none; padding: 0;">${listItems}</ul>`;
-}
-
-// Funções auxiliares
-function changeImage(thumb) {
-    document.getElementById('mainImage').src = thumb.src;
-    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-    thumb.classList.add('active');
-}
-
-function switchProductTab(tabName) {
-    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('tab-' + tabName).classList.add('active');
-    event.currentTarget.classList.add('active');
-}
-
-function increaseQty() {
-    let qty = document.getElementById('quantity');
-    let currentValue = parseInt(qty.value);
-    if (currentValue < 20) {
-        qty.value = currentValue + 1;
-    }
-}
-
-function decreaseQty() {
-    let qty = document.getElementById('quantity');
-    let currentValue = parseInt(qty.value);
-    if (currentValue > 1) {
-        qty.value = currentValue - 1;
-    }
-}
-
-function contactWhatsApp() {
-    if (!currentExcursao) return;
-    const qty = document.getElementById('quantity').value;
-    const msg = encodeURIComponent(`Olá! Tenho interesse na excursão "${currentExcursao.titulo}" para ${qty} pessoa(s). Gostaria de mais informações.`);
-    window.open(`https://wa.me/553125147884?text=${msg}`, '_blank');
-}
-
-function buyNow() {
-    window.location.href = 'admin/checkout.html';
-}
-
-function capitalizeFirst(str) {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// Carrega a excursão quando o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(loadExcursao, 200);
-});
-</script>
+<script src="js/portfolio-single.js"></script>
 
 </body>
 </html>
