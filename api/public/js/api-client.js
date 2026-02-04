@@ -247,17 +247,12 @@ const ExcursaoManager = {
    * @returns {Promise<Array>}
    */
   async getAll(onlyActive = false) {
-    try {
-      const endpoint = onlyActive 
-        ? '/public/excursoes'  // Rota pública para site
-        : '/excursoes';        // Rota admin
-      
-      const response = await apiRequest(endpoint);
-      return response.data || [];
-    } catch (error) {
-      console.error('[ExcursaoManager] Erro ao listar:', error);
-      return [];
-    }
+    const endpoint = onlyActive 
+      ? '/public/excursoes'  // Rota pública para site
+      : '/excursoes';        // Rota admin
+    
+    const response = await apiRequest(endpoint);
+    return response.data || [];
   },
 
   /**

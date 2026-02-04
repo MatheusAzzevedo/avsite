@@ -53,15 +53,15 @@ router.get('/',
       // Monta filtros
       const where: Record<string, unknown> = {};
 
-      if (categoria) {
+      if (categoria && categoria !== 'todos' && categoria.trim()) {
         where.categoria = categoria;
       }
 
-      if (status) {
+      if (status && status !== 'todos' && status.trim()) {
         where.status = status;
       }
 
-      if (search) {
+      if (search && search.trim()) {
         where.OR = [
           { titulo: { contains: search, mode: 'insensitive' } },
           { subtitulo: { contains: search, mode: 'insensitive' } },
@@ -93,6 +93,7 @@ router.get('/',
           total, 
           page, 
           limit,
+          filtrosAplicados: JSON.stringify(where),
           timestamp: new Date().toISOString()
         }
       });

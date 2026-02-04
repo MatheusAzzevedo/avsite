@@ -149,7 +149,29 @@
                 renderExcursoes(excursoes);
             } catch (error) {
                 console.error('[Excursões Admin] Erro ao carregar:', error);
-                showToast('Erro ao carregar excursões', 'error');
+                
+                // Se for erro 401, redireciona para login
+                if (error.message && error.message.includes('401')) {
+                    showToast('Sessão expirada. Faça login novamente.', 'error');
+                    setTimeout(() => window.location.href = '../admin/login.html', 2000);
+                    return;
+                }
+                
+                showToast('Erro ao carregar excursões: ' + error.message, 'error');
+                
+                // Mostra estado vazio com mensagem de erro
+                const grid = document.getElementById('excursoesGrid');
+                const emptyState = document.getElementById('emptyState');
+                grid.innerHTML = '';
+                emptyState.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="font-size: 4rem; color: var(--danger-color); margin-bottom: 1rem;"></i>
+                    <h3 style="color: var(--text-dark);">Erro ao carregar excursões</h3>
+                    <p style="color: var(--text-light);">${error.message}</p>
+                    <button class="btn btn-primary" onclick="loadExcursoes()" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> Tentar novamente
+                    </button>
+                `;
+                emptyState.style.display = 'block';
             }
         }
 

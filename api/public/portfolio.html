@@ -243,7 +243,14 @@ async function loadExcursoes() {
     } catch (error) {
         console.error('[Portfolio] Erro ao carregar excursões:', error);
         document.getElementById('loadingState')?.remove();
-        document.getElementById('emptyState').style.display = 'block';
+        
+        const emptyState = document.getElementById('emptyState');
+        emptyState.innerHTML = `
+            <i class="fas fa-exclamation-circle" style="font-size: 4rem; color: #ff5c00; margin-bottom: 1rem;"></i>
+            <h3>Erro ao carregar excursões</h3>
+            <p>${error.message}</p>
+        `;
+        emptyState.style.display = 'block';
     }
 }
 

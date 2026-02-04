@@ -80,7 +80,15 @@ router.get('/excursoes',
         galeria: e.galeria.map(g => g.url)
       }));
 
-      logger.info(`[Public API] Excursões: ${data.length} de ${total}`);
+      logger.info(`[Public API] 🏝️ Excursões Públicas - RETORNANDO`, {
+        context: {
+          encontradas: data.length,
+          total,
+          categoria: categoria || 'todas',
+          page: parseInt(page as string),
+          limit: take
+        }
+      });
 
       res.json({
         success: true,
