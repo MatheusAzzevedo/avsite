@@ -14,7 +14,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "inject-masters": "ts-node scripts/inject-master-users.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
