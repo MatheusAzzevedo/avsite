@@ -44,7 +44,7 @@ Este documento verifica se a API Avorar Turismo no Railway está configurada cor
 - Schema bem estruturado com índices e relacionamentos
 - Suporta todas as operações CRUD necessárias
 - Railway DATABASE_URL configurada corretamente (visto nas variáveis)
-- Seed automático na inicialização (`npm run seed`) com usuário admin padrão
+- Seed disponível manualmente (`npm run seed`); não roda na inicialização do deploy
 
 ---
 
@@ -122,7 +122,7 @@ Este documento verifica se a API Avorar Turismo no Railway está configurada cor
 | Item | Status | Configuração |
 |------|--------|--------------|
 | **Procfile** | ✅ | `web: npx prisma db push && npm start` |
-| **Railway.json** | ✅ | Builder: RAILPACK, startCommand com Prisma migration + seed |
+| **Railway.json** | ✅ | Builder: RAILPACK, startCommand com Prisma db push + npm start (sem seed automático) |
 | **Environment Variables** | ⚠️ | Ver seção abaixo |
 | **Deploy restarts** | ✅ | ON_FAILURE com max 10 retries |
 | **Node replicas** | ✅ | 1 réplica (pode escalar se necessário) |
@@ -194,14 +194,13 @@ app.use(cors({
 
 | Item | Status | Descrição |
 |------|--------|-----------|
-| **Seed automático** | ✅ | Executado no deploy via railway.json |
-| **Usuário admin padrão** | ✅ | admin@avorar.com / admin123 |
-| **Excursões de exemplo** | ✅ | 3 excursões criadas no seed |
+| **Seed no deploy** | ❌ | Não roda automaticamente; deploy executa apenas prisma db push + npm start |
+| **Seed manual** | ✅ | `npm run seed` disponível para rodar quando necessário (ex.: primeiro deploy ou ambiente novo) |
+| **Usuário admin padrão** | ✅ | admin@avorar.com / admin123 (criado ao rodar seed manualmente) |
+| **Excursões de exemplo** | ✅ | Criadas ao rodar seed manualmente |
 | **Upsert strategy** | ✅ | Seed é idempotente (executa múltiplas vezes sem erro) |
 
-**Verificação:** Seed.ts popula o banco com:
-- 1 usuário admin (admin@avorar.com, senha: admin123)
-- 3 excursões de exemplo (Cristo Redentor, Pão de Açúcar, Praia Vermelha)
+**Verificação:** Seed.ts não é executado no deploy. Para popular o banco com dados iniciais, rodar manualmente: `railway run npm run seed`.
 
 ---
 
@@ -214,14 +213,14 @@ app.use(cors({
 | `npm start` | Inicia servidor compilado | Railway `startCommand` |
 | `npm run prisma:generate` | Gera Prisma Client | `postinstall` hook |
 | `npm run prisma:push` | Sincroniza schema com banco | Procfile / railway.json |
-| `npm run seed` | Popula banco com dados iniciais | railway.json |
+| `npm run seed` | Popula banco com dados iniciais | Manual (não no deploy) |
 
 **Verificação:** Railway.json executa:
 ```
 npx prisma db push && npm start
 ```
 
-Que garante migrations + inicia servidor. Seed é executado no `startCommand` do railway.json.
+Que garante schema no banco + inicia servidor. Seed não roda no deploy; executar manualmente quando necessário.
 
 ---
 
@@ -266,7 +265,7 @@ Que garante migrations + inicia servidor. Seed é executado no `startCommand` do
 5. Rotas protegidas e públicas implementadas
 6. Tratamento de erros global
 7. Health check endpoint
-8. Seed automático com usuário admin padrão
+8. Seed manual (não automático no deploy); usuário admin criado ao rodar seed
 9. Railway configurado com Procfile e railway.json
 10. Logging básico funcional
 11. CORS permitindo outros domínios

@@ -37,15 +37,15 @@ Consulte **`RAILWAY-VARIABLES.md`** para o resto das variáveis (`JWT_SECRET`, `
 Com o Root Directory = `api`:
 
 - **Build (Railpack):** detecta Node, roda `npm install` → `postinstall` (prisma generate) → `npm run build`.
-- **Start (Procfile):** `npx prisma db push && npm start`.
+- **Start (railway.json):** `npx prisma db push && npm start`.
 
-O `prisma db push` aplica o schema no PostgreSQL a cada deploy. Não é necessário rodar `prisma db push` manualmente antes do primeiro deploy.
+O `prisma db push` aplica o schema no PostgreSQL a cada deploy. A seed **não** roda automaticamente no deploy (excursões, posts e usuários já devem existir no sistema ou ser criados manualmente).
 
 ---
 
-## 3. Seed (opcional, primeiro deploy)
+## 3. Seed (opcional, apenas quando precisar de dados iniciais)
 
-Para criar o admin e dados iniciais:
+Para criar o admin e dados iniciais **manualmente** (por exemplo, primeiro deploy ou ambiente novo):
 
 ```bash
 # Instalar CLI (se ainda não tiver)
@@ -59,7 +59,7 @@ railway link
 railway run npm run seed
 ```
 
-Isso cria o usuário **admin@avorar.com** / **admin123**, excursões e posts de exemplo.
+Isso cria o usuário **admin@avorar.com** / **admin123**, excursões e posts de exemplo. Use apenas quando necessário; não roda em cada deploy.
 
 ---
 
