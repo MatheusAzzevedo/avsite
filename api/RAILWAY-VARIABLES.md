@@ -63,15 +63,47 @@ API_BASE_URL=https://avoarturismo.up.railway.app
 
 ---
 
-## 5. Ordem sugerida
+## 5. Google OAuth (Login com Google do cliente)
 
-1. Clicar em **"Trying to connect a database? Add Variable"** → selecionar **psql-site** (assim a `DATABASE_URL` é configurada).
-2. Adicionar as variáveis da tabela acima (ou colar o bloco do Raw Editor).
-3. Salvar e dar **Deploy** de novo no **avsite**.
+Para o botão **"Continuar com Google"** na página de login do cliente funcionar em produção, configure:
+
+### Variáveis no Railway (avsite → Variables)
+
+| Variável | Valor |
+|----------|--------|
+| **`GOOGLE_CLIENT_ID`** | ID do cliente OAuth (ex.: `xxxxx.apps.googleusercontent.com`) |
+| **`GOOGLE_CLIENT_SECRET`** | Secret do cliente OAuth |
+| **`GOOGLE_REDIRECT_URI`** | `https://avoarturismo.up.railway.app/api/cliente/auth/google/callback` |
+| **`FRONTEND_URL`** | `https://avoarturismo.up.railway.app` |
+
+**Sem essas 4 variáveis**, a API responde com `"Google OAuth não configurado no servidor"` ao acessar `/api/cliente/auth/google`.
+
+### Como obter Client ID e Secret (Google Cloud Console)
+
+1. Acesse [Google Cloud Console](https://console.cloud.google.com/apis/credentials).
+2. Crie um projeto ou selecione um existente.
+3. Em **APIs e serviços** → **Credenciais** → **Criar credenciais** → **ID do cliente OAuth**.
+4. Tipo de aplicativo: **Aplicativo da Web**.
+5. Em **URIs de redirecionamento autorizados**, adicione **exatamente**:
+   ```text
+   https://avoarturismo.up.railway.app/api/cliente/auth/google/callback
+   ```
+6. Salve e copie o **ID do cliente** e o **Segredo do cliente** para as variáveis `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` no Railway.
+
+Depois de salvar as variáveis no Railway, faça um novo deploy do **avsite**.
 
 ---
 
-## 6. Checklist
+## 6. Ordem sugerida
+
+1. Clicar em **"Trying to connect a database? Add Variable"** → selecionar **psql-site** (assim a `DATABASE_URL` é configurada).
+2. Adicionar as variáveis da tabela acima (ou colar o bloco do Raw Editor).
+3. Se quiser login com Google: adicionar `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI` e `FRONTEND_URL` (ver seção 5).
+4. Salvar e dar **Deploy** de novo no **avsite**.
+
+---
+
+## 7. Checklist
 
 - [ ] **Database:** clique em "Trying to connect a database? Add Variable" e escolha **psql-site**
 - [ ] **`DATABASE_URL`** existe em "8 variables added by Railway" (após conectar o DB)
@@ -79,4 +111,5 @@ API_BASE_URL=https://avoarturismo.up.railway.app
 - [ ] **`JWT_SECRET`** = a chave acima
 - [ ] **`CORS_ORIGINS`** = `https://avoarturismo.up.railway.app` (com `https://`)
 - [ ] **`API_BASE_URL`** = `https://avoarturismo.up.railway.app`
+- [ ] **Login com Google (opcional):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `FRONTEND_URL` (ver seção 5)
 - [ ] Novo deploy do **avsite** após salvar as variáveis
