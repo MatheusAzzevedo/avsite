@@ -69,10 +69,21 @@ async function apiRequest(endpoint, options = {}) {
   }
   
   try {
-    console.log(`[API] ${options.method || 'GET'} ${endpoint}`);
+    console.log(`[API] 🚀 REQUISIÇÃO INICIADA: ${options.method || 'GET'} ${endpoint}`, { url, headers: finalOptions.headers });
     
     const response = await fetch(url, finalOptions);
+    console.log(`[API] 📡 RESPOSTA RECEBIDA: ${response.status} ${response.statusText}`, { ok: response.ok, headers: Object.fromEntries(response.headers.entries()) });
+    
     const data = await response.json();
+    console.log(`[API] 📦 DADOS PARSEADOS:`, {
+      endpoint,
+      status: response.status,
+      dataKeys: Object.keys(data),
+      dataType: typeof data,
+      'data.success': data.success,
+      'data.data': data.data ? `Array(${data.data.length})` : data.data,
+      'data.pagination': data.pagination
+    });
     
     if (!response.ok) {
       // Token expirado ou inválido
@@ -87,7 +98,7 @@ async function apiRequest(endpoint, options = {}) {
     
     return data;
   } catch (error) {
-    console.error(`[API] Erro em ${endpoint}:`, error.message);
+    console.error(`[API] ❌ ERRO em ${endpoint}:`, error.message, error);
     throw error;
   }
 }
@@ -251,11 +262,31 @@ const ExcursaoManager = {
       ? '/public/excursoes'  // Rota pública para site
       : '/excursoes';        // Rota admin
     
+    console.log(`[ExcursaoManager] 🔍 BUSCANDO EXCURSÕES: onlyActive=${onlyActive}, endpoint=${endpoint}`);
+    
     const response = await apiRequest(endpoint);
+    
+    console.log(`[ExcursaoManager] 📥 RESPOSTA RECEBIDA:`, {
+      responseType: typeof response,
+      responseKeys: response ? Object.keys(response) : null,
+      hasData: 'data' in response,
+      dataIsArray: Array.isArray(response?.data),
+      dataLength: response?.data?.length,
+      pagination: response?.pagination
+    });
+    
     const list = Array.isArray(response?.data) ? response.data : (Array.isArray(response) ? response : []);
+    
+    console.log(`[ExcursaoManager] ✅ LISTA FINAL:`, {
+      listLength: list.length,
+      listIsArray: Array.isArray(list),
+      primeiros3: list.slice(0, 3).map(e => ({ id: e.id, titulo: e.titulo }))
+    });
+    
     if (list.length === 0 && response?.pagination?.total > 0) {
-      console.warn('[ExcursaoManager] Resposta com total > 0 mas data vazio:', response);
+      console.error('[ExcursaoManager] ⚠️ PROBLEMA: total > 0 mas data vazio!', response);
     }
+    
     return list;
   },
 

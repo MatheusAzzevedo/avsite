@@ -69,6 +69,10 @@ router.get('/',
         ];
       }
 
+      logger.info(`[AVSITE-API] 🔍 QUERY PRISMA - WHERE`, {
+        context: { where, skip, limit }
+      });
+
       // Busca excursões e total
       const [excursoes, total] = await Promise.all([
         prisma.excursao.findMany({
@@ -85,28 +89,29 @@ router.get('/',
         prisma.excursao.count({ where })
       ]);
 
+      logger.info(`[AVSITE-API] 📊 RESULTADO PRISMA`, {
+        context: {
+          totalNoBanco: total,
+          quantidadeRetornada: excursoes.length,
+          primeiros3Ids: excursoes.slice(0, 3).map((e: { id: string; titulo: string }) => `${e.id.substring(0, 8)}... (${e.titulo})`)
+        }
+      });
+
       // Serializa para JSON limpo (evita Decimal/Prisma na resposta)
       const data = excursoes.map((e: { preco: unknown; [key: string]: unknown }) => ({
         ...e,
         preco: e.preco != null ? Number(e.preco) : e.preco
       }));
 
-      logger.info(`[AVSITE-API] ✅ Excursões - Listagem CONCLUÍDA`, {
+      logger.info(`[AVSITE-API] 🔄 SERIALIZANDO RESPOSTA`, {
         context: {
-          userId,
-          userEmail,
-          encontradas: excursoes.length,
-          total,
-          ids: excursoes.map((e: { id: string }) => e.id),
-          page,
-          limit,
-          filtrosAplicados: JSON.stringify(where),
-          timestamp: new Date().toISOString()
+          dataLength: data.length,
+          dataIsArray: Array.isArray(data),
+          primeiros2: data.slice(0, 2).map((e: { id: string; titulo: string }) => ({ id: e.id, titulo: e.titulo }))
         }
       });
 
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-      res.json({
+      const resposta = {
         success: true,
         data,
         pagination: {
@@ -115,7 +120,27 @@ router.get('/',
           total,
           totalPages: Math.ceil(total / limit)
         }
+      };
+
+      logger.info(`[AVSITE-API] ✅ Excursões - Listagem CONCLUÍDA - ENVIANDO RESPOSTA`, {
+        context: {
+          userId,
+          userEmail,
+          'resposta.success': resposta.success,
+          'resposta.data.length': resposta.data.length,
+          'resposta.pagination.total': resposta.pagination.total,
+          encontradas: excursoes.length,
+          total,
+          ids: excursoes.map((e: { id: string }) => e.id.substring(0, 8)),
+          page,
+          limit,
+          filtrosAplicados: JSON.stringify(where),
+          timestamp: new Date().toISOString()
+        }
       });
+
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.json(resposta);
     } catch (error) {
       next(error);
     }

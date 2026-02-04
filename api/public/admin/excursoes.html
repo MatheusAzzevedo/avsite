@@ -143,12 +143,17 @@
          * Carrega todas as excursões da API e renderiza em cards.
          */
         async function loadExcursoes() {
-            console.log('[Excursões Admin] Carregando excursões da API...');
+            console.log('[Excursões Admin] 🚀 INICIANDO CARREGAMENTO...');
             try {
                 const excursoes = await ExcursaoManager.getAll(false);
+                console.log('[Excursões Admin] 📦 EXCURSÕES RETORNADAS:', {
+                    quantidade: excursoes.length,
+                    isArray: Array.isArray(excursoes),
+                    primeiras3: excursoes.slice(0, 3).map(e => ({ id: e.id, titulo: e.titulo }))
+                });
                 renderExcursoes(excursoes);
             } catch (error) {
-                console.error('[Excursões Admin] Erro ao carregar:', error);
+                console.error('[Excursões Admin] ❌ ERRO AO CARREGAR:', error);
                 
                 // Se for erro 401, redireciona para login
                 if (error.message && error.message.includes('401')) {
@@ -181,18 +186,33 @@
          * @param {Array} excursoes - Lista de excursões a renderizar
          */
         function renderExcursoes(excursoes) {
+            console.log('[renderExcursoes] 🎨 INICIANDO RENDERIZAÇÃO:', {
+                excursoes: excursoes,
+                quantidade: excursoes?.length,
+                isArray: Array.isArray(excursoes),
+                tipo: typeof excursoes
+            });
+            
             const grid = document.getElementById('excursoesGrid');
             const emptyState = document.getElementById('emptyState');
             const excursaoCount = document.getElementById('excursaoCount');
             
+            console.log('[renderExcursoes] 📍 ELEMENTOS DOM:', {
+                grid: !!grid,
+                emptyState: !!emptyState,
+                excursaoCount: !!excursaoCount
+            });
+            
             excursaoCount.textContent = excursoes.length;
 
             if (excursoes.length === 0) {
+                console.warn('[renderExcursoes] ⚠️ LISTA VAZIA - mostrando emptyState');
                 grid.innerHTML = '';
                 emptyState.style.display = 'block';
                 return;
             }
 
+            console.log('[renderExcursoes] ✅ RENDERIZANDO', excursoes.length, 'excursões');
             emptyState.style.display = 'none';
 
             grid.innerHTML = excursoes.map(excursao => `
