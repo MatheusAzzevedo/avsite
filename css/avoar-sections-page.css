@@ -92,8 +92,9 @@
 
 .section-bottom {
     display: flex;
-    align-items: center;
-    gap: 40px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
     max-width: 800px;
     animation: fadeInUp 1s ease-out 0.2s both;
 }
@@ -112,6 +113,46 @@
     line-height: 1.8;
     color: rgba(255, 255, 255, 0.9);
     text-align: left;
+}
+
+/* ========================================
+   Ícones de Navegação (apenas seção 1)
+   ======================================== */
+
+.section-nav-icons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    gap: 2rem;
+    margin-top: 0;
+    animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.section-nav-icons .nav-icon-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.section-nav-icons .nav-icon-link:hover {
+    color: #ff5c00;
+    transform: translateY(-3px);
+}
+
+.section-nav-icons .nav-icon-link i {
+    font-size: 1.7rem;
+    display: block;
 }
 
 /* ========================================
@@ -212,6 +253,22 @@
         text-align: center;
     }
 
+    .section-nav-icons {
+        flex-wrap: wrap;
+        justify-content: center;
+        align-self: center;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .section-nav-icons .nav-icon-link i {
+        font-size: 1.49rem;
+    }
+
+    .section-nav-icons .nav-icon-link span {
+        font-size: 0.64rem;
+    }
+
     .section-overlay {
         background: rgba(0, 0, 0, 0.6);
     }
@@ -262,6 +319,22 @@
     .section-description {
         font-size: 0.85rem;
         line-height: 1.6;
+    }
+
+    .section-nav-icons {
+        flex-wrap: wrap;
+        justify-content: center;
+        align-self: center;
+        gap: 1rem;
+        margin-top: 1.25rem;
+    }
+
+    .section-nav-icons .nav-icon-link i {
+        font-size: 1.28rem;
+    }
+
+    .section-nav-icons .nav-icon-link span {
+        font-size: 0.6rem;
     }
 
     .section-overlay {

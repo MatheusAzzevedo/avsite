@@ -1,0 +1,9 @@
+{
+  "name": "avoar-turismo-site",
+  "version": "1.0.0",
+  "description": "Site Avoar Turismo Pedagógico",
+  "private": true,
+  "scripts": {
+    "build:footer": "node scripts/inject-footer.js"
+  }
+}
