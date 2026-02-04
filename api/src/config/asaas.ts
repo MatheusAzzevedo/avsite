@@ -57,12 +57,12 @@ export async function criarCobrancaAsaas(dados: {
       }
     });
 
-    // 1. Criar ou buscar cliente no Asaas
+    // 1. Criar ou buscar cliente no Asaas (IAsaasCustomer exige cpfCnpj: string)
     const customerData = {
       name: dados.clienteNome,
       email: dados.clienteEmail,
-      cpfCnpj: dados.clienteCpf || undefined,
-      phone: dados.clienteTelefone || undefined
+      cpfCnpj: String(dados.clienteCpf ?? ''),
+      phone: String(dados.clienteTelefone ?? '')
     };
 
     logger.info('[Asaas] Criando/buscando cliente no Asaas', {
@@ -130,7 +130,9 @@ export async function criarCobrancaAsaas(dados: {
           context: { paymentId: payment.id }
         });
 
-        const pixResponse = await asaasClient.payments.getPixQrCode(payment.id);
+        const paymentId = payment.id;
+        if (typeof paymentId !== 'string' || !paymentId) throw new Error('Asaas retornou cobrança sem id');
+        const pixResponse = await asaasClient.payments.getPixQrCode(paymentId);
         pixData = {
           qrCode: pixResponse.payload,
           qrCodeImage: pixResponse.encodedImage,
