@@ -68,7 +68,7 @@ export const dadosAlunoSchema = z.object({
 });
 
 /**
- * Schema para criar pedido
+ * Schema para criar pedido de excursão pedagógica (com código)
  * Cliente informa código da excursão, quantidade e dados dos alunos
  */
 export const createPedidoSchema = z.object({
@@ -94,6 +94,37 @@ export const createPedidoSchema = z.object({
   (data) => data.quantidade === data.dadosAlunos.length,
   {
     message: 'Quantidade de alunos informada deve corresponder ao número de dados fornecidos',
+    path: ['dadosAlunos']
+  }
+);
+
+/**
+ * Schema para criar pedido de excursão normal (sem código, por slug)
+ * Cliente informa slug da excursão, quantidade e dados dos participantes
+ */
+export const createPedidoExcursaoSchema = z.object({
+  excursaoSlug: z
+    .string({ required_error: 'Identificador da excursão é obrigatório' })
+    .min(1, 'Identificador da excursão é obrigatório')
+    .trim(),
+  quantidade: z
+    .number({ required_error: 'Quantidade é obrigatória' })
+    .int('Quantidade deve ser um número inteiro')
+    .min(1, 'Quantidade deve ser no mínimo 1')
+    .max(50, 'Quantidade máxima é 50 passagens por pedido'),
+  dadosAlunos: z
+    .array(dadosAlunoSchema)
+    .min(1, 'É necessário informar dados de pelo menos 1 participante')
+    .max(50, 'Máximo de 50 participantes por pedido'),
+  observacoes: z
+    .string()
+    .max(1000, 'Observações devem ter no máximo 1000 caracteres')
+    .trim()
+    .optional()
+}).refine(
+  (data) => data.quantidade === data.dadosAlunos.length,
+  {
+    message: 'Quantidade de participantes informada deve corresponder ao número de dados fornecidos',
     path: ['dadosAlunos']
   }
 );
@@ -176,6 +207,7 @@ export const buscarPorCodigoSchema = z.object({
 // Tipos inferidos dos schemas para uso no TypeScript
 export type DadosAlunoInput = z.infer<typeof dadosAlunoSchema>;
 export type CreatePedidoInput = z.infer<typeof createPedidoSchema>;
+export type CreatePedidoExcursaoInput = z.infer<typeof createPedidoExcursaoSchema>;
 export type UpdatePedidoStatusInput = z.infer<typeof updatePedidoStatusSchema>;
 export type FilterPedidosInput = z.infer<typeof filterPedidosSchema>;
 export type BuscarPorCodigoInput = z.infer<typeof buscarPorCodigoSchema>;

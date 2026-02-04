@@ -20,6 +20,7 @@ import { authMiddleware, adminMiddleware } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 import { 
   createPedidoSchema,
+  createPedidoExcursaoSchema,
   updatePedidoStatusSchema,
   filterPedidosSchema
 } from '../schemas/pedido.schema';
@@ -574,6 +575,84 @@ router.patch('/:id/status',
           adminId: req.user?.id
         }
       });
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [GET /api/cliente/pedidos/excursao-normal/:slug]
+ * Busca excursão normal por slug. Rota pública.
+ */
+router.get('/excursao-normal/:slug',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { slug } = req.params;
+      const excursao = await prisma.excursao.findUnique({
+        where: { slug, status: 'ATIVO' },
+        select: {
+          id: true, titulo: true, slug: true, subtitulo: true, preco: true,
+          duracao: true, categoria: true, imagemCapa: true, imagemPrincipal: true,
+          descricao: true, inclusos: true, recomendacoes: true,
+          local: true, horario: true, tags: true
+        }
+      });
+      if (!excursao) throw ApiError.notFound('Excursão não encontrada');
+      res.json({ success: true, data: excursao });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/cliente/pedidos/excursao-normal]
+ * Cria pedido de excursão normal (sem código). Requer autenticação.
+ */
+router.post('/excursao-normal',
+  clienteAuthMiddleware,
+  validateBody(createPedidoExcursaoSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { excursaoSlug, quantidade, dadosAlunos, observacoes } = req.body;
+      const clienteId = req.cliente!.id;
+
+      const excursao = await prisma.excursao.findUnique({ where: { slug: excursaoSlug } });
+      if (!excursao) throw ApiError.notFound('Excursão não encontrada');
+
+      const valorUnitario = Number(excursao.preco);
+      const valorTotal = valorUnitario * quantidade;
+
+      const pedido = await prisma.$transaction(async (tx) => {
+        const novoPedido = await tx.pedido.create({
+          data: {
+            clienteId,
+            excursaoId: excursao.id,
+            quantidade,
+            valorUnitario,
+            valorTotal,
+            observacoes,
+            itens: {
+              create: dadosAlunos.map((dados: any) => ({
+                nomeAluno: dados.nomeAluno,
+                idadeAluno: dados.idadeAluno,
+                escolaAluno: dados.escolaAluno,
+                serieAluno: dados.serieAluno,
+                cpfAluno: dados.cpfAluno,
+                responsavel: dados.responsavel,
+                telefoneResponsavel: dados.telefoneResponsavel,
+                emailResponsavel: dados.emailResponsavel,
+                observacoes: dados.observacoes
+              }))
+            }
+          },
+          include: { excursao: true, itens: true }
+        });
+        return novoPedido;
+      });
+
+      res.status(201).json({ success: true, data: pedido });
+    } catch (error) {
       next(error);
     }
   }

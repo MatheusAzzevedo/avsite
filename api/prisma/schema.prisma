@@ -103,6 +103,7 @@ model Excursao {
   authorId String?
   author   User?            @relation(fields: [authorId], references: [id])
   galeria  ExcursaoImagem[]
+  pedidos  Pedido[]
 
   @@index([slug])
   @@index([status])
@@ -282,7 +283,8 @@ enum AuthProvider {
 model Pedido {
   id                   String       @id @default(uuid())
   clienteId            String
-  excursaoPedagogicaId String
+  excursaoId           String? // Excursão normal (opcional)
+  excursaoPedagogicaId String? // Excursão pedagógica (opcional)
   quantidade           Int // Número de passagens/alunos
   valorUnitario        Decimal      @db.Decimal(10, 2) // Preço no momento da compra
   valorTotal           Decimal      @db.Decimal(10, 2) // valorUnitario * quantidade
@@ -298,11 +300,13 @@ model Pedido {
   dataConfirmacao DateTime?
 
   // Relacionamentos
-  cliente            Cliente            @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  excursaoPedagogica ExcursaoPedagogica @relation(fields: [excursaoPedagogicaId], references: [id])
+  cliente            Cliente             @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  excursao           Excursao?           @relation(fields: [excursaoId], references: [id])
+  excursaoPedagogica ExcursaoPedagogica? @relation(fields: [excursaoPedagogicaId], references: [id])
   itens              ItemPedido[]
 
   @@index([clienteId])
+  @@index([excursaoId])
   @@index([excursaoPedagogicaId])
   @@index([status])
   @@index([codigoPagamento])
