@@ -25,6 +25,7 @@ dotenv.config();
 // Importa rotas
 import authRoutes from './routes/auth.routes';
 import clienteAuthRoutes from './routes/cliente-auth.routes';
+import pedidoRoutes from './routes/pedido.routes';
 import excursaoRoutes from './routes/excursao.routes';
 import excursaoPedagogicaRoutes from './routes/excursao-pedagogica.routes';
 import postRoutes from './routes/post.routes';
@@ -154,6 +155,9 @@ app.use('/api/auth', authRoutes);
 
 // Rotas de autenticação de cliente
 app.use('/api/cliente/auth', clienteAuthRoutes);
+
+// Rotas de pedidos de cliente
+app.use('/api/cliente/pedidos', pedidoRoutes);
 
 // Rotas protegidas (admin)
 app.use('/api/excursoes', excursaoRoutes);

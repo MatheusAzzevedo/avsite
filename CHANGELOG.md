@@ -1,5 +1,121 @@
 # Changelog
 
+## 2026-02-04 - Sistema de Pedidos de Excursões Pedagógicas (Fase 4 - Backend)
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Novo model Pedido: id, clienteId, excursaoPedagogicaId, quantidade, valorUnitario (preço no momento da compra), valorTotal (calculado), status (PedidoStatus), codigoPagamento, metodoPagamento, observacoes, dataPagamento, dataConfirmacao; relacionamentos com Cliente e ExcursaoPedagogica; índices em clienteId, excursaoPedagogicaId, status, codigoPagamento, createdAt]
+- `api/prisma/schema.prisma` [Novo model ItemPedido: id, pedidoId, nomeAluno (obrigatório), idadeAluno, escolaAluno, serieAluno, cpfAluno, responsavel, telefoneResponsavel, emailResponsavel, observacoes; relacionamento com Pedido com onDelete:Cascade; índice em pedidoId]
+- `api/prisma/schema.prisma` [Novo enum PedidoStatus: PENDENTE (criado, aguardando pagamento), AGUARDANDO_PAGAMENTO (pagamento iniciado), PAGO (pagamento confirmado), CONFIRMADO (confirmado pela empresa), CANCELADO (cancelado), EXPIRADO (prazo expirado)]
+- `api/src/schemas/pedido.schema.ts` [dadosAlunoSchema: valida nome (min 3, max 100), idade (1-120), escola, série, CPF (formato 000.000.000-00 ou 00000000000), responsável, telefone (formato (11) 98888-8888), email, observações (max 1000); createPedidoSchema: valida código excursão, quantidade (1-50), array dadosAlunos (min 1, max 50) com validação cruzada quantidade=length; updatePedidoStatusSchema e filterPedidosSchema; tipos TypeScript inferidos]
+- `api/src/routes/pedido.routes.ts` [GET /api/cliente/pedidos/excursao/:codigo: busca excursão por código, rota pública, retorna dados completos com galeria; POST /api/cliente/pedidos: cria pedido com transação (pedido + itens), calcula valorTotal automaticamente, valida excursão ativa, cria ItemPedido para cada aluno, registra log; GET /api/cliente/pedidos: lista pedidos do cliente com paginação, filtros por status; GET /api/cliente/pedidos/:id: detalhes completos com excursão e itens, garante que cliente só vê próprios pedidos; PATCH /api/cliente/pedidos/:id/status (admin): atualiza status, registra dataPagamento e dataConfirmacao automaticamente; logs detalhados em todas rotas]
+- `api/src/server.ts` [Registro de rotas /api/cliente/pedidos para pedidos de clientes]
+
+### Funcionalidade Implementada
+Sistema completo de pedidos de excursões pedagógicas:
+
+**Fluxo de Compra do Cliente:**
+1. Cliente busca excursão por código único (GET /excursao/:codigo) - **rota pública**
+2. Visualiza detalhes: título, preço, local, horário, descrição, galeria
+3. Decide quantidade de passagens (1-50)
+4. Faz login ou cria conta
+5. Cria pedido (POST /) informando:
+   - Código da excursão
+   - Quantidade de passagens
+   - Dados de cada aluno (um para cada passagem):
+     - Nome completo (obrigatório)
+     - Idade, escola, série (opcionais)
+     - CPF do aluno (opcional, validado)
+     - Dados do responsável (nome, telefone, email)
+     - Observações específicas
+6. Sistema valida:
+   - Excursão existe e está ativa
+   - Quantidade informada = número de dados de alunos fornecidos
+   - Formatos de CPF, telefone, email
+7. Sistema cria pedido em **transação**:
+   - Cria registro Pedido com valorTotal calculado (preço × quantidade)
+   - Cria ItemPedido para cada aluno
+   - Se falhar qualquer etapa, tudo é revertido
+8. Pedido criado com status PENDENTE
+9. Cliente recebe confirmação com dados completos
+
+**Gestão de Pedidos:**
+- Cliente lista seus pedidos (GET /) com filtros:
+  - Por status (PENDENTE, PAGO, CONFIRMADO, etc)
+  - Paginação (limit, page)
+- Cliente vê detalhes de pedido específico (GET /:id):
+  - Dados completos da excursão
+  - Lista de todos os alunos/participantes
+  - Status atual, valores, datas
+- Admin atualiza status do pedido (PATCH /:id/status):
+  - Altera status (ex: PENDENTE → PAGO → CONFIRMADO)
+  - Registra automaticamente dataPagamento e dataConfirmacao
+  - Adiciona observações se necessário
+
+**Cálculo Automático:**
+- valorUnitario: Preço da excursão no momento da compra (congelado)
+- valorTotal: valorUnitario × quantidade (calculado automaticamente)
+- Valores armazenados em Decimal(10,2) para precisão financeira
+
+**Validações Implementadas:**
+- ✅ Nome do aluno: obrigatório, min 3 caracteres
+- ✅ Idade: entre 1 e 120 anos
+- ✅ CPF: formato 000.000.000-00 ou 00000000000
+- ✅ Telefone: formato (11) 98888-8888
+- ✅ Email: formato válido
+- ✅ Quantidade: entre 1 e 50 passagens por pedido
+- ✅ Quantidade = número de dados de alunos fornecidos
+- ✅ Excursão deve estar ATIVA
+- ✅ Cliente só pode ver próprios pedidos
+
+**Status do Pedido (PedidoStatus):**
+1. **PENDENTE**: Pedido criado, aguardando pagamento
+2. **AGUARDANDO_PAGAMENTO**: Processo de pagamento iniciado
+3. **PAGO**: Pagamento confirmado pelo gateway
+4. **CONFIRMADO**: Pedido confirmado pela empresa (vaga garantida)
+5. **CANCELADO**: Cancelado pelo cliente ou admin
+6. **EXPIRADO**: Prazo de pagamento expirou
+
+**Segurança:**
+- ✅ Rotas de criar/listar/detalhar requerem autenticação de cliente
+- ✅ Cliente só acessa próprios pedidos (verificação por clienteId)
+- ✅ Atualização de status apenas para admin
+- ✅ Transação garante consistência (pedido + itens criados juntos ou nenhum)
+- ✅ Logs detalhados de todas operações
+
+**Dados Armazenados:**
+- **Pedido**: Cliente, excursão, quantidade, valores, status, datas, observações
+- **ItemPedido** (para cada aluno):
+  - Nome completo, idade, escola, série
+  - CPF do aluno
+  - Nome do responsável (se menor)
+  - Telefone e email do responsável
+  - Observações específicas deste aluno
+
+**Logs Implementados:**
+- ✅ Busca de excursão por código (código, IP)
+- ✅ Criação de pedido (clienteId, código, quantidade, valorTotal, IP)
+- ✅ Cálculo de valores (unitário, quantidade, total)
+- ✅ Criação de itens (quantidade de alunos)
+- ✅ Listagem de pedidos (clienteId, filtros, resultados)
+- ✅ Detalhes de pedido (pedidoId, clienteId, status)
+- ✅ Atualização de status (pedidoId, status anterior, novo status, adminId)
+
+### Benefícios
+- ✅ Cliente compra múltiplas passagens em um único pedido
+- ✅ Dados de cada aluno registrados individualmente
+- ✅ Histórico completo de pedidos do cliente
+- ✅ Admin gerencia status de todos pedidos
+- ✅ Valor congelado no momento da compra (protege contra alterações de preço)
+- ✅ Transação garante integridade dos dados
+- ✅ Rota pública permite ver excursão antes de fazer login
+
+### Próximas Fases
+- **Fase 5**: Frontend - páginas de busca, checkout e histórico de pedidos
+- **Fase 6**: Integração com gateway de pagamento (PIX, cartão, boleto)
+- **Fase 7**: Notificações por email (confirmação, status, lembretes)
+
+---
+
 ## 2026-02-04 - Sistema de Autenticação de Clientes - OAuth Google (Fase 2)
 
 ### Arquivos Modificados

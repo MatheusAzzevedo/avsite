@@ -4,7 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Sistema de Autenticação de Clientes - OAuth Google (Fase 2)
+### Última atualização (2026-02-04) - Sistema de Pedidos de Excursões Pedagógicas (Fase 4)
+- **api/prisma/schema.prisma** [Novos models: Pedido (clienteId, excursaoPedagogicaId, quantidade, valorTotal, status, pagamento) e ItemPedido (dados do aluno: nome, idade, escola, CPF, responsável); enum PedidoStatus com 6 estados; relacionamentos Cliente→Pedidos, ExcursaoPedagogica→Pedidos, Pedido→ItemPedidos]
+- **api/src/schemas/pedido.schema.ts** [Validação Zod completa: dadosAlunoSchema (nome obrigatório, idade, escola, CPF, responsável com validações), createPedidoSchema (código, quantidade, array de alunos), updatePedidoStatusSchema, filterPedidosSchema; validação cruzada quantidade=length(dadosAlunos)]
+- **api/src/routes/pedido.routes.ts** [GET /excursao/:codigo (busca pública por código), POST / (criar pedido com transação), GET / (listar pedidos do cliente), GET /:id (detalhes completos), PATCH /:id/status (admin atualiza status); cálculo automático de valorTotal; logs detalhados]
+- **api/src/server.ts** [Registro de rotas /api/cliente/pedidos]
+
+**Funcionalidade implementada**: Sistema completo de pedidos onde cliente busca excursão por código único, seleciona quantidade de passagens e preenche dados de cada aluno. Pedido criado com status PENDENTE, valor calculado automaticamente (preço×quantidade), dados dos alunos salvos em ItemPedido. Cliente vê histórico de pedidos, admin pode alterar status. Transação garante consistência: se falhar criação de item, pedido também é revertido.
+
+### Versão anterior (2026-02-04) - Sistema de Autenticação de Clientes - OAuth Google (Fase 2)
 - **api/package.json** [Nova dependência: googleapis para integração OAuth]
 - **api/src/config/google-oauth.ts** [Configuração OAuth: getGoogleAuthUrl, getGoogleUserInfo, verifyGoogleOAuthConfig com logs detalhados]
 - **api/src/schemas/cliente-auth.schema.ts** [Novos schemas: googleOAuthCallbackSchema e linkGoogleAccountSchema]

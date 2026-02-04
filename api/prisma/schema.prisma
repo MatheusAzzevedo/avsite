@@ -178,6 +178,7 @@ model ExcursaoPedagogica {
   authorId String?
   author   User?                      @relation(fields: [authorId], references: [id])
   galeria  ExcursaoPedagogicaImagem[]
+  pedidos  Pedido[]
 
   @@index([codigo])
   @@index([slug])
@@ -262,7 +263,7 @@ model Cliente {
   updatedAt     DateTime     @updatedAt
 
   // Relacionamentos
-  // pedidos      Pedido[]  // Será criado na Fase 4
+  pedidos Pedido[]
 
   @@index([email])
   @@index([googleId])
@@ -272,4 +273,77 @@ model Cliente {
 enum AuthProvider {
   LOCAL
   GOOGLE
+}
+
+// ===========================================
+// MODELO DE PEDIDO
+// ===========================================
+
+model Pedido {
+  id                   String       @id @default(uuid())
+  clienteId            String
+  excursaoPedagogicaId String
+  quantidade           Int // Número de passagens/alunos
+  valorUnitario        Decimal      @db.Decimal(10, 2) // Preço no momento da compra
+  valorTotal           Decimal      @db.Decimal(10, 2) // valorUnitario * quantidade
+  status               PedidoStatus @default(PENDENTE)
+  codigoPagamento      String? // ID do pagamento no gateway
+  metodoPagamento      String? // pix, cartao, boleto
+  observacoes          String?      @db.Text
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  // Data de pagamento e confirmação
+  dataPagamento   DateTime?
+  dataConfirmacao DateTime?
+
+  // Relacionamentos
+  cliente            Cliente            @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  excursaoPedagogica ExcursaoPedagogica @relation(fields: [excursaoPedagogicaId], references: [id])
+  itens              ItemPedido[]
+
+  @@index([clienteId])
+  @@index([excursaoPedagogicaId])
+  @@index([status])
+  @@index([codigoPagamento])
+  @@index([createdAt])
+  @@map("pedidos")
+}
+
+enum PedidoStatus {
+  PENDENTE // Criado, aguardando pagamento
+  AGUARDANDO_PAGAMENTO // Pagamento iniciado
+  PAGO // Pagamento confirmado
+  CONFIRMADO // Pedido confirmado pela empresa
+  CANCELADO // Cancelado pelo cliente ou admin
+  EXPIRADO // Prazo de pagamento expirado
+}
+
+// ===========================================
+// MODELO DE ITEM DO PEDIDO (DADOS DO ALUNO)
+// ===========================================
+
+model ItemPedido {
+  id       String @id @default(uuid())
+  pedidoId String
+
+  // Dados do aluno/participante
+  nomeAluno           String
+  idadeAluno          Int?
+  escolaAluno         String?
+  serieAluno          String?
+  cpfAluno            String?
+  responsavel         String? // Nome do responsável (se menor)
+  telefoneResponsavel String?
+  emailResponsavel    String?
+  observacoes         String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamento
+  pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+
+  @@index([pedidoId])
+  @@map("itens_pedido")
 }

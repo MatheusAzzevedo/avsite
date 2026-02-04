@@ -1,0 +1,181 @@
+/**
+ * Explicação do Arquivo [pedido.schema.ts]
+ * 
+ * Schemas de validação Zod para pedidos de excursões pedagógicas.
+ * Valida dados de criação de pedido, dados dos alunos e filtros.
+ */
+
+import { z } from 'zod';
+
+/**
+ * Schema para dados do aluno/participante da excursão
+ * Usado ao criar item do pedido
+ */
+export const dadosAlunoSchema = z.object({
+  nomeAluno: z
+    .string({ required_error: 'Nome do aluno é obrigatório' })
+    .min(3, 'Nome do aluno deve ter no mínimo 3 caracteres')
+    .max(100, 'Nome do aluno deve ter no máximo 100 caracteres')
+    .trim(),
+  idadeAluno: z
+    .number()
+    .int('Idade deve ser um número inteiro')
+    .min(1, 'Idade deve ser maior que 0')
+    .max(120, 'Idade inválida')
+    .optional(),
+  escolaAluno: z
+    .string()
+    .min(2, 'Nome da escola deve ter no mínimo 2 caracteres')
+    .max(200, 'Nome da escola deve ter no máximo 200 caracteres')
+    .trim()
+    .optional(),
+  serieAluno: z
+    .string()
+    .max(50, 'Série deve ter no máximo 50 caracteres')
+    .trim()
+    .optional(),
+  cpfAluno: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val) || /^\d{11}$/.test(val),
+      'CPF inválido. Use formato: 000.000.000-00 ou 00000000000'
+    ),
+  responsavel: z
+    .string()
+    .min(3, 'Nome do responsável deve ter no mínimo 3 caracteres')
+    .max(100, 'Nome do responsável deve ter no máximo 100 caracteres')
+    .trim()
+    .optional(),
+  telefoneResponsavel: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^\(\d{2}\)\s?\d{4,5}-?\d{4}$/.test(val),
+      'Telefone inválido. Use formato: (11) 98888-8888'
+    ),
+  emailResponsavel: z
+    .string()
+    .email('Email do responsável inválido')
+    .toLowerCase()
+    .trim()
+    .optional(),
+  observacoes: z
+    .string()
+    .max(1000, 'Observações devem ter no máximo 1000 caracteres')
+    .trim()
+    .optional()
+});
+
+/**
+ * Schema para criar pedido
+ * Cliente informa código da excursão, quantidade e dados dos alunos
+ */
+export const createPedidoSchema = z.object({
+  codigoExcursao: z
+    .string({ required_error: 'Código da excursão é obrigatório' })
+    .min(1, 'Código da excursão é obrigatório')
+    .trim(),
+  quantidade: z
+    .number({ required_error: 'Quantidade é obrigatória' })
+    .int('Quantidade deve ser um número inteiro')
+    .min(1, 'Quantidade deve ser no mínimo 1')
+    .max(50, 'Quantidade máxima é 50 passagens por pedido'),
+  dadosAlunos: z
+    .array(dadosAlunoSchema)
+    .min(1, 'É necessário informar dados de pelo menos 1 aluno')
+    .max(50, 'Máximo de 50 alunos por pedido'),
+  observacoes: z
+    .string()
+    .max(1000, 'Observações devem ter no máximo 1000 caracteres')
+    .trim()
+    .optional()
+}).refine(
+  (data) => data.quantidade === data.dadosAlunos.length,
+  {
+    message: 'Quantidade de alunos informada deve corresponder ao número de dados fornecidos',
+    path: ['dadosAlunos']
+  }
+);
+
+/**
+ * Schema para atualizar status do pedido
+ * Usado pelo admin para alterar status
+ */
+export const updatePedidoStatusSchema = z.object({
+  status: z.enum([
+    'PENDENTE',
+    'AGUARDANDO_PAGAMENTO',
+    'PAGO',
+    'CONFIRMADO',
+    'CANCELADO',
+    'EXPIRADO'
+  ], {
+    required_error: 'Status é obrigatório',
+    invalid_type_error: 'Status inválido'
+  }),
+  observacoes: z
+    .string()
+    .max(1000, 'Observações devem ter no máximo 1000 caracteres')
+    .trim()
+    .optional()
+});
+
+/**
+ * Schema para filtrar pedidos
+ * Usado para buscar pedidos por status, data, etc
+ */
+export const filterPedidosSchema = z.object({
+  status: z
+    .enum([
+      'PENDENTE',
+      'AGUARDANDO_PAGAMENTO',
+      'PAGO',
+      'CONFIRMADO',
+      'CANCELADO',
+      'EXPIRADO'
+    ])
+    .optional(),
+  codigoExcursao: z
+    .string()
+    .trim()
+    .optional(),
+  dataInicio: z
+    .string()
+    .datetime('Data de início inválida')
+    .optional(),
+  dataFim: z
+    .string()
+    .datetime('Data de fim inválida')
+    .optional(),
+  limit: z
+    .number()
+    .int()
+    .min(1)
+    .max(100)
+    .optional()
+    .default(20),
+  page: z
+    .number()
+    .int()
+    .min(1)
+    .optional()
+    .default(1)
+});
+
+/**
+ * Schema para buscar excursão por código (antes de criar pedido)
+ */
+export const buscarPorCodigoSchema = z.object({
+  codigo: z
+    .string({ required_error: 'Código é obrigatório' })
+    .min(1, 'Código é obrigatório')
+    .trim()
+});
+
+// Tipos inferidos dos schemas para uso no TypeScript
+export type DadosAlunoInput = z.infer<typeof dadosAlunoSchema>;
+export type CreatePedidoInput = z.infer<typeof createPedidoSchema>;
+export type UpdatePedidoStatusInput = z.infer<typeof updatePedidoStatusSchema>;
+export type FilterPedidosInput = z.infer<typeof filterPedidosSchema>;
+export type BuscarPorCodigoInput = z.infer<typeof buscarPorCodigoSchema>;
