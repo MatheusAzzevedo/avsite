@@ -23,7 +23,7 @@ const router = Router();
 router.get('/status', authMiddleware, async (req, res, next) => {
   try {
     logger.info('[Admin Payment] Verificando status dos gateways', {
-      context: { adminId: req.userId }
+      context: { adminId: req.user?.id }
     });
 
     const asaasConfigured = verificarConfigAsaas();
@@ -58,7 +58,7 @@ router.post('/test', authMiddleware, async (req, res, next) => {
 
     logger.info('[Admin Payment] Criando pagamento de teste', {
       context: {
-        adminId: req.userId,
+        adminId: req.user?.id,
         metodo
       }
     });
