@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-02-04 - Fluxo Cliente e Editor Excursão Pedagógica
+
+### Arquivos Modificados
+- `cliente/login.html`, `api/public/cliente/login.html` [Script corrigido: carregar `js/auth-manager.js` em vez de `../js/api-client.js` para que `clienteAuth` esteja disponível na página de login do cliente; login e Google OAuth passam a funcionar corretamente]
+- `api/public/admin/excursao-pedagogica-editor.html` [Substituído placeholder por formulário completo: código único (obrigatório), título, subtítulo, preço, duração, categoria, status, imagem capa/principal, galeria, descrição rica, inclusos, recomendações, local, horário, tags; botões Salvar e Salvar como Inativo]
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Novo: editor completo usando ExcursaoPedagogicaManager; initEditorPedagogica, loadExcursaoPedagogica, getExcursaoPedagogicaData (inclui codigo), validateExcursaoPedagogica (código obrigatório e regex), saveExcursaoPedagogica (create/update); upload de imagens e galeria; redirecionamento para excursoes-pedagogicas.html]
+
+### Alterações
+- Login do cliente passa a carregar auth-manager.js, corrigindo erro "clienteAuth is not defined" e permitindo login tradicional e Google OAuth.
+- Painel admin passa a ter editor completo de excursões pedagógicas: criar e editar com código único que o cliente usa para buscar; fluxo de compra (login → dashboard → buscar código → excursão → quantidade → checkout com dados por aluno) e criação de excursões no admin ficam integrados de ponta a ponta.
+
+---
+
 ## 2026-02-04 - Gateway de Pagamento Asaas (PIX + Webhook)
 
 ### Arquivos Criados
