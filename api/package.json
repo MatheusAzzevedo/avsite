@@ -15,7 +15,7 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "seed": "ts-node prisma/seed.ts",
-    "inject-masters": "ts-node scripts/inject-master-users.ts"
+    "inject-masters": "node scripts/inject-master-users.js"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
