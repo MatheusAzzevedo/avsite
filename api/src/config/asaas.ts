@@ -10,7 +10,7 @@
  * - Boleto (opcional)
  */
 
-import Asaas from 'asaas';
+import { AsaasClient } from 'asaas';
 import { logger } from '../utils/logger';
 
 /**
@@ -19,7 +19,7 @@ import { logger } from '../utils/logger';
 const asaasApiKey = process.env.ASAAS_API_KEY || '';
 const asaasEnv = process.env.ASAAS_ENVIRONMENT || 'production'; // production ou sandbox
 
-export const asaasClient = new Asaas(asaasApiKey, {
+export const asaasClient = new AsaasClient(asaasApiKey, {
   sandbox: asaasEnv === 'sandbox'
 });
 
