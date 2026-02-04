@@ -107,7 +107,10 @@ router.get('/',
         context: {
           dataLength: data.length,
           dataIsArray: Array.isArray(data),
-          primeiros2: data.slice(0, 2).map((e: { id: string; titulo: string }) => ({ id: e.id, titulo: e.titulo }))
+          primeiros2: data.slice(0, 2).map((e) => ({
+            id: String((e as Record<string, unknown>).id),
+            titulo: String((e as Record<string, unknown>).titulo ?? '')
+          }))
         }
       });
 
