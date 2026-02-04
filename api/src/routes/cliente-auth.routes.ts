@@ -220,6 +220,7 @@ router.post('/login',
         throw ApiError.internal('JWT_SECRET não configurado');
       }
 
+      // Necessário porque o tipo SignOptions do jsonwebtoken é restritivo com expiresIn como string
       const token = jwt.sign(
         {
           id: cliente.id,
@@ -229,7 +230,7 @@ router.post('/login',
           type: 'cliente' // Marca o token como sendo de cliente
         },
         jwtSecret,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' } as jwt.SignOptions
       );
 
       // Registra atividade
@@ -713,6 +714,7 @@ router.get('/google/callback',
         throw ApiError.internal('JWT_SECRET não configurado');
       }
 
+      // Necessário porque o tipo SignOptions do jsonwebtoken é restritivo com expiresIn como string
       const token = jwt.sign(
         {
           id: cliente.id,
@@ -722,7 +724,7 @@ router.get('/google/callback',
           type: 'cliente'
         },
         jwtSecret,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' } as jwt.SignOptions
       );
 
       // Registra atividade
