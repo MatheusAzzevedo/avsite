@@ -1,5 +1,46 @@
 # Changelog
 
+## 2026-02-04 - Fix: Excursões não aparecem na listagem do painel e site
+
+### Arquivos Modificados
+- `js/api-client.js`, `api/public/js/api-client.js` [Removido try/catch que engolia erros em ExcursaoManager.getAll(); agora propaga erro para UI saber o que aconteceu]
+- `admin/excursoes.html`, `api/public/admin/excursoes.html` [Melhorado tratamento de erro em loadExcursoes(); mostra mensagem detalhada, botão "Tentar novamente", redireciona para login em 401]
+- `api/public/portfolio.html` [Adicionado mensagem de erro na função loadExcursoes para página pública]
+- `api/src/routes/excursao.routes.ts` [Adicionado tratamento para ignorar status/categoria quando forem "todos"/"todas"; filtrosAplicados adicionado nos logs]
+- `api/src/routes/public.routes.ts` [Melhorado log com contexto detalhado: encontradas, total, categoria, page, limit]
+
+### Problema Identificado
+- **Causa**: Cliente engolia erros de API (401, 500, rede) e retornava [] em vez de propagar → tela mostrava "0 excursões" sem mensagem
+- **Sintoma**: POST funcionava (201), dados salvos no banco com status ATIVO, mas GET retornava vazio ou erro silencioso
+- **Fluxo afetado**: Listagem admin (GET /api/excursoes) e página pública (GET /api/public/excursoes)
+
+### Solução Implementada
+- Removido catch que retornava [] no ExcursaoManager.getAll(); erro agora é propagado
+- Frontend admin mostra erro com mensagem detalhada e botão "Tentar novamente"
+- Se 401 (token expirado), redireciona para página de login
+- Backend ignora valores inválidos "todos"/"todas" nos filtros em vez de rejeitar com validação
+- Logs aumentados com mais contexto (filtros aplicados, quantidade de dados)
+
+### Resultado
+- ✅ Erros de rede/401/500 agora são visíveis ao usuário
+- ✅ Página de excursões pública mostra mensagem de erro em caso de falha
+- ✅ Listagem admin mais robusta com retry
+- ✅ Possível diagnosticar problemas pelos logs detalhados (filtrosAplicados, contexto)
+
+---
+
+## 2026-02-04 - Remoção da seed automática no deploy
+
+### Arquivos Modificados
+- `api/railway.json` [Removido `npm run seed` do startCommand; deploy passa a executar apenas `npx prisma db push && npm start`]
+
+### Alterações
+- Seed de excursões, posts e usuários não roda mais em cada deploy no Railway
+- Dados já existentes no banco permanecem; novos deploys não recriam dados de exemplo
+- Script `npm run seed` continua disponível para execução manual quando necessário
+
+---
+
 ## 2026-02-02 - Correção: Excursões não aparecem no site nem no admin (trust proxy)
 
 ### Arquivos Modificados
