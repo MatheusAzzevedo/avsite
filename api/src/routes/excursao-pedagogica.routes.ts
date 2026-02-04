@@ -17,7 +17,7 @@ import {
   filterExcursaoPedagogicaSchema,
   FilterExcursaoPedagogicaInput
 } from '../schemas/excursao-pedagogica.schema';
-import { slugify, generateUniqueSlug } from '../utils/slug';
+import { slugify, generateUniqueSlug, generateCodigoFromDestino } from '../utils/slug';
 import { logger } from '../utils/logger';
 
 const router = Router();
@@ -206,48 +206,68 @@ router.post('/',
       const userId = req.user?.id;
       const userEmail = req.user?.email;
 
+      // Código: manual (admin) ou gerado a partir de destino + dataDestino (API)
+      let codigoFinal: string;
+      let destinoFinal: string | null = null;
+      let dataDestinoFinal: Date | null = null;
+
+      if (data.codigo != null && String(data.codigo).trim().length > 0) {
+        codigoFinal = String(data.codigo).trim();
+      } else if (data.destino != null && data.dataDestino != null &&
+                 String(data.destino).trim().length > 0 && String(data.dataDestino).trim().length > 0) {
+        const destino = String(data.destino).trim();
+        const dataDestinoStr = String(data.dataDestino).trim();
+        const existingCodigos = (await prisma.excursaoPedagogica.findMany({ select: { codigo: true } })).map(e => e.codigo);
+        codigoFinal = generateCodigoFromDestino(destino, dataDestinoStr, existingCodigos);
+        destinoFinal = destino;
+        dataDestinoFinal = new Date(dataDestinoStr + 'T12:00:00.000Z');
+      } else {
+        throw ApiError.badRequest('Informe codigo ou destino e dataDestino (formato YYYY-MM-DD)');
+      }
+
       logger.info(`[AVSITE-API] 📚 Excursão Pedagógica - Criação INICIADA`, {
-        context: { 
-          userId, 
-          userEmail, 
-          codigo: data.codigo,
-          titulo: data.titulo, 
-          preco: data.preco, 
+        context: {
+          userId,
+          userEmail,
+          codigo: codigoFinal,
+          titulo: data.titulo,
+          preco: data.preco,
           categoria: data.categoria,
           status: data.status || 'ATIVO',
           duracao: data.duracao,
+          destino: destinoFinal ?? data.codigo ? 'N/A (codigo manual)' : undefined,
+          dataDestino: dataDestinoFinal?.toISOString().slice(0, 10),
           timestamp: new Date().toISOString()
         }
       });
 
-      // Verifica se código já existe
       const codigoExists = await prisma.excursaoPedagogica.findUnique({
-        where: { codigo: data.codigo }
+        where: { codigo: codigoFinal }
       });
 
       if (codigoExists) {
         logger.warn(`[AVSITE-API] ⚠️ Excursão Pedagógica - Criação FALHOU - Código já existe`, {
-          context: { codigo: data.codigo, userId, userEmail }
+          context: { codigo: codigoFinal, userId, userEmail }
         });
-        throw ApiError.badRequest(`Código '${data.codigo}' já está em uso`);
+        throw ApiError.badRequest(`Código '${codigoFinal}' já está em uso`);
       }
 
-      // Gera slug único
       const baseSlug = slugify(data.titulo);
       const existingSlugs = (await prisma.excursaoPedagogica.findMany({
         where: { slug: { startsWith: baseSlug } },
         select: { slug: true }
       })).map(e => e.slug);
-      
+
       const slug = generateUniqueSlug(baseSlug, existingSlugs);
 
-      // Extrai galeria para criar separadamente
-      const { galeria, ...excursaoData } = data;
+      const { galeria, codigo, destino, dataDestino, ...excursaoData } = data;
 
-      // Cria excursão pedagógica
       const excursao = await prisma.excursaoPedagogica.create({
         data: {
           ...excursaoData,
+          codigo: codigoFinal,
+          destino: destinoFinal ?? undefined,
+          dataDestino: dataDestinoFinal ?? undefined,
           slug,
           authorId: req.user!.id,
           galeria: galeria?.length ? {
@@ -378,16 +398,18 @@ router.put('/:id',
         slug = generateUniqueSlug(baseSlug, existingSlugs);
       }
 
-      // Extrai galeria para atualizar separadamente
-      const { galeria, ...excursaoData } = data;
+      const { galeria, dataDestino, ...excursaoData } = data;
+      const updateData: Record<string, unknown> = { ...excursaoData, slug };
+      if (dataDestino != null && String(dataDestino).trim() !== '') {
+        const str = String(dataDestino).trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+          updateData.dataDestino = new Date(str + 'T12:00:00.000Z');
+        }
+      }
 
-      // Atualiza excursão
       const excursao = await prisma.excursaoPedagogica.update({
         where: { id },
-        data: {
-          ...excursaoData,
-          slug
-        },
+        data: updateData as Parameters<typeof prisma.excursaoPedagogica.update>[0]['data'],
         include: {
           galeria: {
             orderBy: { ordem: 'asc' }

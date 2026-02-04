@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-02-04 - Código gerado por destino e data na API de excursões pedagógicas
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Campos opcionais destino (String?) e dataDestino (DateTime?) em ExcursaoPedagogica]
+- `api/src/schemas/excursao-pedagogica.schema.ts` [Criação: codigo opcional; destino e dataDestino (YYYY-MM-DD); refine exige codigo OU (destino + dataDestino)]
+- `api/src/routes/excursao-pedagogica.routes.ts` [POST: gera codigo a partir de destino + dataDestino quando enviados; PUT: converte dataDestino string para Date]
+- `api/src/utils/slug.ts` [Função generateCodigoFromDestino(destino, dataDestino, existingCodigos) — formato slug(destino)-YYYY-MM-DD, sufixo numérico em colisão]
+- `api/docs/ENVIO-EXCURSOES-RESUMO.md` [Documentação: código manual (admin) ou gerado pela API (destino + dataDestino); exemplos com destino e dataDestino]
+
+### Alterações
+- Código da excursão pedagógica pode ser manual (admin) ou gerado pela API quando outro sistema envia destino (nome do destino) e dataDestino (formato YYYY-MM-DD).
+- Código gerado: slug do destino + data, ex.: museu-de-ciencias-2025-03-15; em colisão a API acrescenta -2, -3, etc.
+- No avsite o código continua sendo criado e editado manualmente.
+
+---
+
+## 2026-02-04 - API de integração apenas Excursões Pedagógicas
+
+### Arquivos Modificados
+- `api/docs/ENVIO-EXCURSOES-RESUMO.md` [Documentação da API de envio: passou a documentar exclusivamente Excursões Pedagógicas; URLs de criação/atualização/status alteradas de /api/excursoes para /api/excursoes-pedagogicas; campo obrigatório codigo (1–50 chars, A-Za-z0-9_-) incluído nos exemplos; nota de que excursões normais são criadas apenas pelo sistema avsite]
+
+### Alterações
+- A API que outros sistemas utilizam para enviar excursões cria apenas Excursões Pedagógicas (POST /api/excursoes-pedagogicas).
+- Excursões normais (gerais) passam a ser criadas e gerenciadas exclusivamente pelo painel avsite; não há endpoint de integração para elas.
+
+---
+
 ## 2026-02-04 - Fluxo Cliente e Editor Excursão Pedagógica
 
 ### Arquivos Modificados

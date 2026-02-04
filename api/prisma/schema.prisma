@@ -156,7 +156,7 @@ model PaymentConfig {
 
 model ExcursaoPedagogica {
   id              String         @id @default(uuid())
-  codigo          String         @unique // Código específico criado pelo admin
+  codigo          String         @unique // Manual no admin; via API = gerado por destino + dataDestino
   titulo          String
   slug            String         @unique
   subtitulo       String?
@@ -172,6 +172,8 @@ model ExcursaoPedagogica {
   local           String?
   horario         String?
   tags            String[]
+  destino         String?        // Nome do destino (usado pela API para gerar codigo)
+  dataDestino     DateTime?      // Data do destino (usado pela API para gerar codigo)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 

@@ -4,7 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Fluxo Cliente e Editor Excursão Pedagógica
+### Última atualização (2026-02-04) - Código gerado por destino e data na API pedagógicas
+- **api/prisma/schema.prisma** [Campos opcionais destino (String?) e dataDestino (DateTime?) em ExcursaoPedagogica; usados pela API para gerar codigo]
+- **api/src/schemas/excursao-pedagogica.schema.ts** [Criação: codigo opcional; adicionados destino e dataDestino (YYYY-MM-DD); refine exige codigo OU (destino + dataDestino)]
+- **api/src/routes/excursao-pedagogica.routes.ts** [POST: se destino e dataDestino enviados, gera codigo via generateCodigoFromDestino; PUT: converte dataDestino string para Date]
+- **api/src/utils/slug.ts** [Função generateCodigoFromDestino(destino, dataDestino, existingCodigos) — codigo = slug(destino)-YYYY-MM-DD, sufixo -2/-3 se colisão]
+- **api/docs/ENVIO-EXCURSOES-RESUMO.md** [Doc: código manual (admin) ou gerado pela API (destino + dataDestino); exemplos mínimo e completo com destino/dataDestino]
+
+Resumo: Código da excursão pedagógica pode ser criado/editado manualmente no avsite ou gerado pela API quando outro sistema envia destino (nome) e dataDestino (YYYY-MM-DD). O código gerado é slug(destino)-data, por exemplo museu-de-ciencias-2025-03-15; em colisão a API acrescenta -2, -3, etc.
+
+### Versão anterior (2026-02-04) - API de integração apenas Excursões Pedagógicas
+- **api/docs/ENVIO-EXCURSOES-RESUMO.md** [Documentação alterada: API de envio passa a referir exclusivamente Excursões Pedagógicas; URLs atualizadas para /api/excursoes-pedagogicas; campo obrigatório codigo adicionado; exemplos e códigos de resposta ajustados; nota explícita de que excursões normais são criadas apenas pelo avsite]
+
+Resumo: A API que outros sistemas utilizam para criar/atualizar excursões agora documenta apenas Excursões Pedagógicas (POST/PUT/PATCH em /api/excursoes-pedagogicas). Excursões normais continuam sendo criadas e gerenciadas somente pelo painel avsite.
+
+### Versão anterior (2026-02-04) - Fluxo Cliente e Editor Excursão Pedagógica
 - **cliente/login.html**, **api/public/cliente/login.html** [Script da página de login do cliente alterado para carregar `js/auth-manager.js` em vez de `../js/api-client.js`, garantindo que `clienteAuth` exista e o login (tradicional e Google OAuth) funcione]
 - **api/public/admin/excursao-pedagogica-editor.html** [Placeholder removido; formulário completo com código único, título, preço, imagens, galeria, descrição, inclusos, local, horário, tags e ações Salvar/Salvar como Inativo]
 - **api/public/admin/js/excursao-pedagogica-editor.js** [Novo: lógica do editor usando ExcursaoPedagogicaManager; validação de código; criar/editar excursão pedagógica com redirecionamento para listagem]
