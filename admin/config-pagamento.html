@@ -406,6 +406,13 @@
                         </div>
                         <div style="padding: 1rem; border: 1px solid var(--light-border); border-radius: var(--radius-md);">
                             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <span id="status-api-icon" style="width: 12px; height: 12px; border-radius: 50%; background: var(--danger-color);"></span>
+                                <strong>API Configurada</strong>
+                            </div>
+                            <p id="status-api" style="color: var(--text-light); margin: 0;">Não configurada</p>
+                        </div>
+                        <div style="padding: 1rem; border: 1px solid var(--light-border); border-radius: var(--radius-md);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                 <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--info-color);"></span>
                                 <strong>Ambiente</strong>
                             </div>
@@ -414,9 +421,89 @@
                         <div style="padding: 1rem; border: 1px solid var(--light-border); border-radius: var(--radius-md);">
                             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                 <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--text-light);"></span>
-                                <strong>Última Atualização</strong>
+                                <strong>Webhook URL</strong>
                             </div>
-                            <p id="status-updated" style="color: var(--text-light); margin: 0;">-</p>
+                            <p id="status-webhook" style="color: var(--text-light); margin: 0; font-size: 0.75rem; word-break: break-all;">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teste de Pagamento -->
+            <div class="card">
+                <div class="card-header">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>Teste de Pagamento Real</h2>
+                        <span class="badge badge-warning">Valor mínimo: R$ 1,00</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                        Crie um pagamento de teste real de R$ 1,00 para validar a integração com o gateway.
+                        <strong>Este é um pagamento real</strong> que será cobrado.
+                    </p>
+
+                    <div id="test-payment-form">
+                        <div class="form-group">
+                            <label>Método de Pagamento</label>
+                            <select id="test-method" class="form-control" style="max-width: 300px;">
+                                <option value="PIX">PIX (instantâneo)</option>
+                                <option value="CREDIT_CARD" disabled>Cartão de Crédito (em breve)</option>
+                                <option value="BOLETO" disabled>Boleto (em breve)</option>
+                            </select>
+                        </div>
+
+                        <button type="button" class="btn btn-primary" onclick="criarPagamentoTeste()">
+                            <i class="fas fa-flask"></i> Criar Pagamento de Teste (R$ 1,00)
+                        </button>
+                    </div>
+
+                    <!-- Resultado do Teste -->
+                    <div id="test-result" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: var(--radius-lg);">
+                        <h3 style="margin: 0 0 1rem 0; font-size: 1.125rem;">Pagamento Criado</h3>
+                        
+                        <!-- PIX QR Code -->
+                        <div id="test-pix-section" style="display: none;">
+                            <div style="display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: start;">
+                                <div>
+                                    <p style="margin-bottom: 0.5rem;"><strong>ID do Pagamento:</strong> <code id="test-payment-id" style="background: white; padding: 0.25rem 0.5rem; border-radius: 4px;">-</code></p>
+                                    <p style="margin-bottom: 0.5rem;"><strong>Status:</strong> <span id="test-payment-status" class="badge badge-info">-</span></p>
+                                    <p style="margin-bottom: 1rem;"><strong>Valor:</strong> R$ <span id="test-payment-value">-</span></p>
+                                    
+                                    <h4 style="margin: 1.5rem 0 0.75rem 0; font-size: 1rem;">Código PIX Copia e Cola</h4>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <input 
+                                            type="text" 
+                                            id="test-pix-code" 
+                                            class="form-control" 
+                                            readonly
+                                            style="font-family: monospace; font-size: 0.875rem;"
+                                        >
+                                        <button type="button" class="btn btn-secondary" onclick="copyPixCode()">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">
+                                        Cole este código no app do seu banco para pagar
+                                    </small>
+                                </div>
+                                
+                                <div style="text-align: center;">
+                                    <p style="margin-bottom: 0.5rem; font-weight: 600;">QR Code PIX</p>
+                                    <div id="test-qr-code" style="background: white; padding: 1rem; border-radius: var(--radius-md); display: inline-block;">
+                                        <!-- QR Code será inserido aqui -->
+                                    </div>
+                                    <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">
+                                        Escaneie com o app do banco
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--light-border);">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="resetTest()">
+                                <i class="fas fa-redo"></i> Novo Teste
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -448,7 +535,7 @@
          * Explicação da função [initPaymentConfig]
          * Inicializa a página carregando as configurações salvas.
          */
-        function initPaymentConfig() {
+        async function initPaymentConfig() {
             console.log('[Payment Config] Inicializando...');
             
             const config = PaymentConfigManager.getConfig();
@@ -459,8 +546,123 @@
                 loadGatewayConfig(config.activeGateway);
             }
 
+            await checkApiStatus();
             updateStatus();
             addHoverEffects();
+        }
+
+        /**
+         * Explicação da função [checkApiStatus]
+         * Verifica status real da API de pagamento no backend.
+         */
+        async function checkApiStatus() {
+            try {
+                const response = await apiClient.get('/api/admin/payment/status');
+                
+                if (response.asaas && response.asaas.configured) {
+                    document.getElementById('status-api-icon').style.background = 'var(--success-color)';
+                    document.getElementById('status-api').textContent = 'Asaas Configurado';
+                    document.getElementById('status-environment').textContent = 
+                        response.asaas.environment === 'production' ? 'Produção' : 'Sandbox';
+                    document.getElementById('status-webhook').textContent = 
+                        response.asaas.webhookUrl || 'Não configurado';
+                } else {
+                    document.getElementById('status-api-icon').style.background = 'var(--danger-color)';
+                    document.getElementById('status-api').textContent = 'Não configurada';
+                    document.getElementById('status-environment').textContent = '-';
+                    document.getElementById('status-webhook').textContent = '-';
+                }
+            } catch (error) {
+                console.error('[Payment Config] Erro ao verificar status da API:', error);
+                document.getElementById('status-api-icon').style.background = 'var(--danger-color)';
+                document.getElementById('status-api').textContent = 'Erro ao verificar';
+            }
+        }
+
+        /**
+         * Explicação da função [criarPagamentoTeste]
+         * Cria um pagamento de teste real de R$ 1,00.
+         */
+        async function criarPagamentoTeste() {
+            const method = document.getElementById('test-method').value;
+            
+            if (!confirm(`Criar pagamento de teste de R$ 1,00 via ${method}? Este é um pagamento REAL que será cobrado.`)) {
+                return;
+            }
+
+            try {
+                showToast('Criando pagamento de teste...', 'info');
+                
+                const response = await apiClient.post('/api/admin/payment/test', {
+                    metodo: method
+                });
+
+                if (response.success && response.payment) {
+                    showToast('Pagamento de teste criado com sucesso!', 'success');
+                    exibirResultadoTeste(response.payment);
+                } else {
+                    throw new Error('Resposta inválida da API');
+                }
+            } catch (error) {
+                console.error('[Payment Config] Erro ao criar pagamento de teste:', error);
+                showToast('Erro ao criar pagamento de teste. Verifique se o Asaas está configurado.', 'error');
+            }
+        }
+
+        /**
+         * Explicação da função [exibirResultadoTeste]
+         * Exibe o resultado do pagamento de teste (QR Code PIX, etc).
+         */
+        function exibirResultadoTeste(payment) {
+            // Oculta formulário, mostra resultado
+            document.getElementById('test-payment-form').style.display = 'none';
+            document.getElementById('test-result').style.display = 'block';
+
+            // Preenche dados do pagamento
+            document.getElementById('test-payment-id').textContent = payment.id || '-';
+            document.getElementById('test-payment-status').textContent = payment.status || '-';
+            document.getElementById('test-payment-value').textContent = payment.value ? payment.value.toFixed(2) : '1.00';
+
+            // Se for PIX, exibe QR Code
+            if (payment.billingType === 'PIX' && payment.pixData) {
+                document.getElementById('test-pix-section').style.display = 'block';
+                document.getElementById('test-pix-code').value = payment.pixData.qrCode || '';
+
+                // Exibe imagem do QR Code
+                const qrContainer = document.getElementById('test-qr-code');
+                if (payment.pixData.qrCodeImage) {
+                    qrContainer.innerHTML = `<img src="${payment.pixData.qrCodeImage}" alt="QR Code PIX" style="max-width: 200px; width: 100%;">`;
+                } else {
+                    qrContainer.innerHTML = '<p style="color: var(--text-light); margin: 1rem;">QR Code não disponível</p>';
+                }
+            } else {
+                document.getElementById('test-pix-section').style.display = 'none';
+            }
+        }
+
+        /**
+         * Explicação da função [copyPixCode]
+         * Copia o código PIX para a área de transferência.
+         */
+        function copyPixCode() {
+            const input = document.getElementById('test-pix-code');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                showToast('Código PIX copiado!', 'success');
+            }).catch(() => {
+                showToast('Erro ao copiar código.', 'error');
+            });
+        }
+
+        /**
+         * Explicação da função [resetTest]
+         * Reseta o formulário de teste para permitir novo teste.
+         */
+        function resetTest() {
+            document.getElementById('test-payment-form').style.display = 'block';
+            document.getElementById('test-result').style.display = 'none';
+            document.getElementById('test-pix-section').style.display = 'none';
+            document.getElementById('test-qr-code').innerHTML = '';
         }
 
         /**

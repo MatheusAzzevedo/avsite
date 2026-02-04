@@ -33,6 +33,7 @@ import excursaoPedagogicaRoutes from './routes/excursao-pedagogica.routes';
 import postRoutes from './routes/post.routes';
 import uploadRoutes from './routes/upload.routes';
 import paymentConfigRoutes from './routes/payment-config.routes';
+import adminPaymentRoutes from './routes/admin-payment.routes';
 import publicRoutes from './routes/public.routes';
 
 // Importa utilitários
@@ -173,6 +174,7 @@ app.use('/api/excursoes-pedagogicas', excursaoPedagogicaRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/payment-config', paymentConfigRoutes);
+app.use('/api/admin/payment', adminPaymentRoutes);
 
 // ===========================================
 // TRATAMENTO DE ERROS
