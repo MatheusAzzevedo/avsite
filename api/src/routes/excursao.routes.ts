@@ -57,7 +57,7 @@ router.get('/',
         where.categoria = categoria;
       }
 
-      if (status && status !== 'todos' && status.trim()) {
+      if (status) {
         where.status = status;
       }
 
