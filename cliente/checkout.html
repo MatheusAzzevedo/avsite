@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Dados dos Alunos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        
+        .navbar { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem 2rem; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem; }
+        
+        h1 { color: #333; margin-bottom: 0.5rem; }
+        h2 { color: #EA580C; font-size: 1.3rem; margin: 2rem 0 1rem 0; border-top: 2px solid #EA580C; padding-top: 1rem; }
+        .subtitle { color: #666; margin-bottom: 2rem; }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        .form-group input:focus { outline: none; border-color: #EA580C; }
+        .form-group small { color: #666; font-size: 0.85rem; }
+        
+        .resumo { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0; }
+        .resumo-item { display: flex; justify-content: space-between; margin: 0.75rem 0; }
+        .resumo-total { font-size: 1.5rem; font-weight: bold; color: #EA580C; padding-top: 1rem; border-top: 2px solid #ddd; }
+        
+        .btn-finalizar { width: 100%; padding: 1.2rem; background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 2rem; }
+        .btn-finalizar:hover { transform: translateY(-2px); }
+        .btn-finalizar:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .error { color: #dc2626; background: #fee2e2; padding: 1rem; border-radius: 8px; margin: 1rem 0; display: none; }
+        .error.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="javascript:history.back()" style="text-decoration: none; color: #333;">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="container">
+        <h1>Checkout</h1>
+        <p class="subtitle">Preencha os dados de cada participante</p>
+
+        <div class="card">
+            <div class="resumo">
+                <h3 style="color: #EA580C; margin-bottom: 1rem;">Resumo do Pedido</h3>
+                <div class="resumo-item">
+                    <span>Excursão:</span>
+                    <strong id="resumoTitulo"></strong>
+                </div>
+                <div class="resumo-item">
+                    <span>Quantidade:</span>
+                    <strong id="resumoQtd"></strong>
+                </div>
+                <div class="resumo-item">
+                    <span>Valor Unitário:</span>
+                    <strong>R$ <span id="resumoValorUnit"></span></strong>
+                </div>
+                <div class="resumo-item resumo-total">
+                    <span>Total:</span>
+                    <span>R$ <span id="resumoTotal"></span></span>
+                </div>
+            </div>
+
+            <div id="error" class="error"></div>
+
+            <form id="checkoutForm">
+                <div id="alunosContainer"></div>
+
+                <button type="submit" class="btn-finalizar" id="finalizarBtn">
+                    <i class="fas fa-check-circle"></i> Finalizar Pedido
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/auth-manager.js"></script>
+    <script>
+        let excursao = null;
+
+        (async () => {
+            await clienteAuth.requireAuth();
+
+            const data = localStorage.getItem('checkout_excursao');
+            if (!data) {
+                alert('Nenhuma excursão selecionada');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            excursao = JSON.parse(data);
+            exibirResumo();
+            gerarFormularios();
+        })();
+
+        function exibirResumo() {
+            document.getElementById('resumoTitulo').textContent = excursao.titulo;
+            document.getElementById('resumoQtd').textContent = excursao.quantidade;
+            document.getElementById('resumoValorUnit').textContent = excursao.preco.toFixed(2);
+            document.getElementById('resumoTotal').textContent = (excursao.preco * excursao.quantidade).toFixed(2);
+        }
+
+        function gerarFormularios() {
+            const container = document.getElementById('alunosContainer');
+            for (let i = 1; i <= excursao.quantidade; i++) {
+                container.innerHTML += `
+                    <h2><i class="fas fa-user"></i> Aluno ${i}</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome Completo *</label>
+                            <input type="text" name="nomeAluno_${i}" required minlength="3">
+                        </div>
+                        <div class="form-group">
+                            <label>Idade</label>
+                            <input type="number" name="idadeAluno_${i}" min="1" max="120">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Escola</label>
+                            <input type="text" name="escolaAluno_${i}">
+                        </div>
+                        <div class="form-group">
+                            <label>Série</label>
+                            <input type="text" name="serieAluno_${i}">
+                        </div>
+                    </div>
+                    <h3 style="font-size: 1rem; color: #666; margin-top: 1rem;">Dados do Responsável</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome do Responsável</label>
+                            <input type="text" name="responsavel_${i}">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="tel" name="telefoneResponsavel_${i}" placeholder="(11) 98888-8888">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="emailResponsavel_${i}">
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const finalizarBtn = document.getElementById('finalizarBtn');
+            const errorDiv = document.getElementById('error');
+
+            errorDiv.classList.remove('show');
+            finalizarBtn.disabled = true;
+            finalizarBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+            const dadosAlunos = [];
+            for (let i = 1; i <= excursao.quantidade; i++) {
+                const aluno = {
+                    nomeAluno: form[`nomeAluno_${i}`].value.trim(),
+                    idadeAluno: parseInt(form[`idadeAluno_${i}`].value) || undefined,
+                    escolaAluno: form[`escolaAluno_${i}`].value.trim() || undefined,
+                    serieAluno: form[`serieAluno_${i}`].value.trim() || undefined,
+                    responsavel: form[`responsavel_${i}`].value.trim() || undefined,
+                    telefoneResponsavel: form[`telefoneResponsavel_${i}`].value.trim() || undefined,
+                    emailResponsavel: form[`emailResponsavel_${i}`].value.trim() || undefined
+                };
+                dadosAlunos.push(aluno);
+            }
+
+            try {
+                const response = await clienteAuth.fetchAuth('/cliente/pedidos', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        codigoExcursao: excursao.codigo,
+                        quantidade: excursao.quantidade,
+                        dadosAlunos
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    localStorage.removeItem('checkout_excursao');
+                    alert('Pedido criado com sucesso!');
+                    window.location.href = 'pedidos.html';
+                } else {
+                    throw new Error(data.error || 'Erro ao criar pedido');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                errorDiv.textContent = error.message || 'Erro ao criar pedido';
+                errorDiv.classList.add('show');
+                finalizarBtn.disabled = false;
+                finalizarBtn.innerHTML = '<i class="fas fa-check-circle"></i> Finalizar Pedido';
+            }
+        });
+    </script>
+</body>
+</html>

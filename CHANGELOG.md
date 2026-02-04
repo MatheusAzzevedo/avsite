@@ -1,5 +1,188 @@
 # Changelog
 
+## 2026-02-04 - Frontend Cliente: Login, Busca e Checkout (Fase 5)
+
+### Arquivos Criados
+- `cliente/login.html` [Página de login com formulário tradicional (email/senha) e botão Google OAuth; design moderno com gradiente laranja; mensagens erro/sucesso; spinner de loading; links para registro e site]
+- `cliente/registro.html` [Criação de conta: nome, email, telefone, senha; requisitos de senha visíveis (8 chars, maiúscula, minúscula, número); validação client-side]
+- `cliente/dashboard.html` [Página inicial protegida: navbar com navegação (Início, Pedidos, Configurações, Sair); busca por código (uppercase, alfanumérico); mensagens erro/loading; saudação com nome do cliente]
+- `cliente/excursao.html` [Detalhes completos: imagem de capa, título, subtítulo, preço destacado, informações (local, duração, horário), descrição HTML, seletor quantidade (1-50), cálculo automático total, botão checkout; loading state]
+- `cliente/checkout.html` [Formulários dinâmicos gerados por JavaScript: um para cada aluno conforme quantidade; campos por aluno (nome*, idade, escola, série, CPF, responsável, telefone, email); resumo pedido (excursão, quantidade, valores); botão finalizar; envio API com transação]
+- `cliente/pedidos.html` [Histórico completo: lista de pedidos do cliente; cards com título excursão, status colorido (PENDENTE amarelo, PAGO verde, CONFIRMADO azul), data criação, quantidade pessoas, valor total; loading state; mensagem quando vazio]
+- `cliente/configuracoes.html` [Edição de perfil: formulário com nome (editável), email (bloqueado), telefone (opcional); botão salvar; atualização via API PUT /profile; mensagem sucesso temporária; sincroniza localStorage]
+- `cliente/js/auth-manager.js` [Classe ClienteAuthManager: saveAuth(), getToken(), getCliente(), isAuthenticated(), logout(), verifyToken() (valida JWT na API), login() (email/senha), register(), loginWithGoogle() (redirect OAuth), processOAuthCallback() (captura token da URL), getOAuthErrorMessage(), requireAuth() (protege páginas), fetchAuth() (requests autenticadas com auto-logout em 401)]
+- `cliente/js/login.js` [Handlers: form login tradicional (validação, loading, erro), botão Google (redirect), processamento OAuth callback automático (ao carregar página), exibição mensagens erro/sucesso, redirect para dashboard após login]
+- `cliente/js/registro.js` [Handler form registro: coleta dados (nome, email, telefone, senha), validação client-side, chamada API register(), redirect para login após sucesso com delay para mostrar mensagem]
+
+### Funcionalidade Implementada
+Sistema completo de interface do cliente com fluxo de compra:
+
+**Fluxo Completo:**
+1. **Acesso Inicial**: Cliente acessa `/cliente/login.html`
+   - Opção 1: Login tradicional (email + senha)
+   - Opção 2: Botão "Continuar com Google" (OAuth)
+   - Link para criar conta (registro.html)
+
+2. **Login Tradicional**:
+   - Insere email e senha
+   - Validação client-side (campos preenchidos)
+   - API: POST /api/cliente/auth/login
+   - Recebe: { token, cliente }
+   - Salva em localStorage
+   - Redirect para dashboard
+
+3. **Login Google OAuth**:
+   - Clica botão Google
+   - Redirect: `/api/cliente/auth/google`
+   - Google autentica usuário
+   - Callback: `/cliente/dashboard.html?token=xxx`
+   - auth-manager captura token da URL
+   - Busca dados do cliente: GET /api/cliente/auth/me
+   - Salva autenticação
+   - Limpa URL
+
+4. **Registro**:
+   - Acessa `/cliente/registro.html`
+   - Preenche: nome, email, telefone, senha
+   - Validação senha forte exibida
+   - API: POST /api/cliente/auth/register
+   - Redirect para login
+
+5. **Dashboard** (protegido):
+   - Verifica autenticação (requireAuth)
+   - Exibe nome do cliente
+   - Campo de busca por código
+   - Digite código: ex "ABC-2024-001"
+   - API: GET /api/cliente/pedidos/excursao/ABC-2024-001
+   - Redirect: excursao.html?codigo=ABC-2024-001
+
+6. **Detalhes Excursão**:
+   - Carrega dados da API
+   - Exibe: imagem, título, preço, local, descrição
+   - Seletor quantidade (1-50 pessoas)
+   - Cálculo automático: Total = Preço × Quantidade
+   - Botão "Continuar para Checkout"
+   - Salva dados em localStorage
+   - Redirect: checkout.html
+
+7. **Checkout**:
+   - Recupera dados do localStorage
+   - Gera formulários dinamicamente (JavaScript)
+   - Exemplo: 3 pessoas = 3 formulários de aluno
+   - Cada formulário:
+     - Nome aluno (obrigatório)
+     - Idade, escola, série (opcionais)
+     - CPF aluno
+     - Dados responsável (nome, telefone, email)
+   - Resumo do pedido no topo
+   - Botão "Finalizar Pedido"
+   - Coleta todos dados
+   - API: POST /api/cliente/pedidos
+     ```json
+     {
+       "codigoExcursao": "ABC-2024-001",
+       "quantidade": 3,
+       "dadosAlunos": [
+         { "nomeAluno": "João Silva", ... },
+         { "nomeAluno": "Maria Santos", ... },
+         { "nomeAluno": "Pedro Costa", ... }
+       ]
+     }
+     ```
+   - Backend cria Pedido + ItemPedidos
+   - Redirect: pedidos.html
+
+8. **Histórico de Pedidos**:
+   - API: GET /api/cliente/pedidos
+   - Lista todos pedidos do cliente
+   - Cards com:
+     - Título da excursão
+     - Status (badge colorido)
+     - Data de criação
+     - Quantidade de pessoas
+     - Valor total
+   - Filtros por status (futuro)
+
+9. **Configurações**:
+   - API: GET /api/cliente/auth/me (carrega dados)
+   - Formulário: nome, email (bloqueado), telefone
+   - Botão salvar
+   - API: PUT /api/cliente/auth/profile
+   - Atualiza localStorage
+   - Mensagem sucesso
+
+**Autenticação e Segurança:**
+- ✅ Token JWT salvo em localStorage
+- ✅ Todas páginas (exceto login/registro) protegidas por requireAuth()
+- ✅ requireAuth() verifica:
+  1. Token existe?
+  2. Token válido? (chama API /verify)
+  3. Se inválido → logout e redirect login
+- ✅ fetchAuth() adiciona Authorization header automaticamente
+- ✅ fetchAuth() detecta 401 → logout automático
+- ✅ OAuth callback processado automaticamente ao carregar página
+- ✅ Token limpo da URL após capturar
+
+**Gerenciamento de Estado:**
+- ✅ localStorage: `cliente_auth_token` e `cliente_data`
+- ✅ Dados sincronizados após login e atualização perfil
+- ✅ checkout_excursao salvo temporariamente (removido após finalizar)
+
+**UI/UX:**
+- ✅ Design moderno com gradiente laranja (identidade Avorar)
+- ✅ Loading states (spinners, mensagens)
+- ✅ Mensagens erro/sucesso claras
+- ✅ Formulários responsivos
+- ✅ Validações client-side
+- ✅ Navegação intuitiva (navbar)
+- ✅ Status coloridos (amarelo, verde, azul)
+- ✅ Cálculos automáticos (total pedido)
+- ✅ Formulários dinâmicos (gerados por JS)
+
+**Integração com Backend:**
+- ✅ Login: POST /api/cliente/auth/login
+- ✅ Registro: POST /api/cliente/auth/register
+- ✅ OAuth: GET /api/cliente/auth/google (redirect)
+- ✅ Perfil: GET /api/cliente/auth/me
+- ✅ Atualizar perfil: PUT /api/cliente/auth/profile
+- ✅ Buscar excursão: GET /api/cliente/pedidos/excursao/:codigo
+- ✅ Criar pedido: POST /api/cliente/pedidos
+- ✅ Listar pedidos: GET /api/cliente/pedidos
+- ✅ Verificar token: POST /api/cliente/auth/verify
+
+**Páginas Criadas:**
+1. `/cliente/login.html` - Login (OAuth + tradicional)
+2. `/cliente/registro.html` - Criar conta
+3. `/cliente/dashboard.html` - Busca por código
+4. `/cliente/excursao.html` - Detalhes e quantidade
+5. `/cliente/checkout.html` - Dados dos alunos
+6. `/cliente/pedidos.html` - Histórico
+7. `/cliente/configuracoes.html` - Editar perfil
+
+**JavaScript Criado:**
+1. `auth-manager.js` - Gerenciamento completo de autenticação
+2. `login.js` - Handlers login e OAuth
+3. `registro.js` - Handler criação conta
+
+### Benefícios
+- ✅ Interface profissional e moderna
+- ✅ Fluxo de compra completo e intuitivo
+- ✅ Autenticação robusta com Google OAuth
+- ✅ Proteção de rotas sensíveis
+- ✅ Experiência responsiva
+- ✅ Integração total com backend
+- ✅ Validações em todas etapas
+- ✅ Feedback visual claro (loading, erro, sucesso)
+
+### Próximas Melhorias
+- Página de detalhes do pedido (ver todos alunos)
+- Sistema de recuperação de senha
+- Notificações push/email
+- Upload de documentos dos alunos
+- Integração gateway pagamento (PIX, cartão)
+
+---
+
 ## 2026-02-04 - Sistema de Pedidos de Excursões Pedagógicas (Fase 4 - Backend)
 
 ### Arquivos Modificados

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avorar Turismo - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand { font-size: 1.5rem; font-weight: bold; color: #EA580C; }
+        .navbar-menu { display: flex; gap: 1.5rem; align-items: center; }
+        .navbar-link { text-decoration: none; color: #333; transition: color 0.2s; }
+        .navbar-link:hover { color: #EA580C; }
+        .btn-logout { padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        
+        .container { max-width: 800px; margin: 3rem auto; padding: 0 1rem; }
+        .welcome { text-align: center; margin-bottom: 3rem; }
+        .welcome h1 { font-size: 2rem; color: #333; margin-bottom: 0.5rem; }
+        .welcome p { color: #666; font-size: 1.1rem; }
+        
+        .search-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .search-box h2 { color: #EA580C; margin-bottom: 1rem; }
+        .search-box p { color: #666; margin-bottom: 2rem; }
+        
+        .search-form { display: flex; gap: 1rem; max-width: 500px; margin: 0 auto; }
+        .search-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+        .search-input:focus { outline: none; border-color: #EA580C; }
+        
+        .btn-search {
+            padding: 1rem 2rem;
+            background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-search:hover { transform: translateY(-2px); }
+        .btn-search:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .error-message, .loading-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+        .error-message { background: #fee2e2; color: #dc2626; }
+        .error-message.show, .loading-message.show { display: block; }
+        .loading-message { background: #dbeafe; color: #1e40af; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-plane-departure"></i> Avorar Turismo
+        </div>
+        <div class="navbar-menu">
+            <a href="dashboard.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
+            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome">
+            <h1>Bem-vindo, <span id="clienteNome">Cliente</span>!</h1>
+            <p>Digite o código da sua excursão para começar</p>
+        </div>
+
+        <div class="search-box">
+            <h2><i class="fas fa-search"></i> Buscar Excursão</h2>
+            <p>Insira o código fornecido pela escola ou instituição</p>
+            
+            <form id="searchForm" class="search-form">
+                <input 
+                    type="text" 
+                    id="codigoInput" 
+                    class="search-input"
+                    placeholder="Ex: ABC-2024-001"
+                    required
+                    pattern="[A-Za-z0-9_-]+"
+                >
+                <button type="submit" class="btn-search" id="searchBtn">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </form>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="loadingMessage" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i> Buscando excursão...
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth-manager.js"></script>
+    <script>
+        // Proteção de autenticação
+        (async () => {
+            const isAuth = await clienteAuth.requireAuth();
+            if (!isAuth) return;
+
+            // Exibe nome do cliente
+            const cliente = clienteAuth.getCliente();
+            if (cliente) {
+                document.getElementById('clienteNome').textContent = cliente.nome.split(' ')[0];
+            }
+        })();
+
+        function logout() {
+            clienteAuth.logout();
+            window.location.href = '/cliente/login.html';
+        }
+
+        const searchForm = document.getElementById('searchForm');
+        const codigoInput = document.getElementById('codigoInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const codigo = codigoInput.value.trim().toUpperCase();
+            if (!codigo) return;
+
+            errorMessage.classList.remove('show');
+            loadingMessage.classList.add('show');
+            searchBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/api/cliente/pedidos/excursao/${codigo}`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Redireciona para página de detalhes
+                    window.location.href = `excursao.html?codigo=${codigo}`;
+                } else {
+                    errorMessage.textContent = data.error || 'Excursão não encontrada';
+                    errorMessage.classList.add('show');
+                }
+            } catch (error) {
+                console.error('[Busca] Erro:', error);
+                errorMessage.textContent = 'Erro ao buscar excursão. Tente novamente.';
+                errorMessage.classList.add('show');
+            } finally {
+                loadingMessage.classList.remove('show');
+                searchBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

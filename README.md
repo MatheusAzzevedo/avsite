@@ -4,7 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Sistema de Pedidos de Excursões Pedagógicas (Fase 4)
+### Última atualização (2026-02-04) - Frontend Cliente: Login, Busca e Checkout (Fase 5)
+- **cliente/login.html** [Página de login com email/senha e botão Google OAuth; design moderno com gradiente laranja; mensagens de erro/sucesso]
+- **cliente/registro.html** [Criação de conta com validação de senha forte; requisitos visuais]
+- **cliente/dashboard.html** [Página inicial com busca por código; navbar com navegação; campo de busca uppercase]
+- **cliente/excursao.html** [Detalhes da excursão: imagem, preço, info, descrição; seletor de quantidade; cálculo de total; botão checkout]
+- **cliente/checkout.html** [Formulários dinâmicos para cada aluno baseado em quantidade; dados completos (nome, idade, escola, responsável); resumo do pedido; criação via API]
+- **cliente/pedidos.html** [Histórico de pedidos com status coloridos (PENDENTE, PAGO, CONFIRMADO); filtros; dados resumidos]
+- **cliente/configuracoes.html** [Edição de perfil: nome, telefone; email bloqueado; atualização via API]
+- **cliente/js/auth-manager.js** [Gerenciador completo: login, registro, logout, OAuth callback, proteção de rotas, fetchAuth com token, verificação JWT]
+- **cliente/js/login.js** [Handler de login tradicional e Google; processamento de OAuth callback; validações; redirecionamento]
+- **cliente/js/registro.js** [Criação de conta com validações; redirect para login após sucesso]
+
+**Funcionalidade implementada**: Interface completa do cliente. Fluxo: login (tradicional ou Google) → dashboard com busca por código → visualiza excursão e seleciona quantidade → checkout com formulários dinâmicos para cada aluno → finaliza pedido → vê histórico com status → edita perfil. Sistema protege rotas autenticadas, gerencia token JWT local, processa OAuth automaticamente e integra com todas APIs backend.
+
+### Versão anterior (2026-02-04) - Sistema de Pedidos de Excursões Pedagógicas (Fase 4)
 - **api/prisma/schema.prisma** [Novos models: Pedido (clienteId, excursaoPedagogicaId, quantidade, valorTotal, status, pagamento) e ItemPedido (dados do aluno: nome, idade, escola, CPF, responsável); enum PedidoStatus com 6 estados; relacionamentos Cliente→Pedidos, ExcursaoPedagogica→Pedidos, Pedido→ItemPedidos]
 - **api/src/schemas/pedido.schema.ts** [Validação Zod completa: dadosAlunoSchema (nome obrigatório, idade, escola, CPF, responsável com validações), createPedidoSchema (código, quantidade, array de alunos), updatePedidoStatusSchema, filterPedidosSchema; validação cruzada quantidade=length(dadosAlunos)]
 - **api/src/routes/pedido.routes.ts** [GET /excursao/:codigo (busca pública por código), POST / (criar pedido com transação), GET / (listar pedidos do cliente), GET /:id (detalhes completos), PATCH /:id/status (admin atualiza status); cálculo automático de valorTotal; logs detalhados]
