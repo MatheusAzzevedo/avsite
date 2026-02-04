@@ -98,6 +98,9 @@ function renderExcursoes(excursoes) {
             '</div></div></div></div>'
         );
     }).join('');
+
+    // Garante que os cards fiquem visíveis no carregamento (filtro "Todas" ativo)
+    filterExcursoes('all');
 }
 
 /**
