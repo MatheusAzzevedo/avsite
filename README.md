@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Fix: CSP na página de detalhe da excursão
+### Última atualização (2026-02-04) - Fix: Seção Sobre esta Excursão em preto
+- **api/public/portfolio-single.html**, **portfolio-single.html** [Fundo branco explícito na seção; opacity do body-bg-layer reduzida]
+- **api/public/js/portfolio-single.js**, **js/portfolio-single.js** [Tratamento robusto de descricao e galeria]
+
+### Versão anterior (2026-02-04) - Documento resumido de envio de excursões
+- **api/docs/ENVIO-EXCURSOES-RESUMO.md** [Novo: documento direto com o que enviar e como; login, criar, atualizar e alterar status; campos obrigatórios e opcionais; exemplos mínimos e completos]
+
+### Versão anterior (2026-02-04) - Fix: CSP na página de detalhe da excursão
 - **api/public/js/portfolio-single.js**, **js/portfolio-single.js** [Novo: lógica da página de detalhe em arquivo externo; loadExcursao async com await getBySlug; status ATIVO]
 - **api/public/portfolio-single.html**, **portfolio-single.html** [Removido script inline; botões com data-tab/aria-label]
 

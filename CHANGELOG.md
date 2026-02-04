@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-02-04 - Fix: Seção "Sobre esta Excursão" em preto e informações não exibidas
+
+### Arquivos Modificados
+- `api/public/portfolio-single.html`, `portfolio-single.html` [CSS: fundo branco explícito em product-content, tab-content-area, tab-panel; opacity 0.15 no body-bg-layer; classes portfolio-single-container; cores de texto garantidas]
+- `api/public/js/portfolio-single.js`, `js/portfolio-single.js` [Descrição: tratamento robusto para descricao vazio; galeria: suporte a objetos {url} e strings]
+
+### Problema Identificado
+- Seção "Sobre esta Excursão" aparecia em fundo preto (imagem de fundo visível)
+- Informações da excursão não eram exibidas ou ficavam invisíveis
+
+### Solução Implementada
+- Fundo branco explícito em product-content, tab-content-area e tab-panel; z-index para garantir ordem
+- Opacidade do body-bg-layer reduzida (0.15) para não dominar o fundo
+- Tratamento de descricao vazio/whitespace e galeria em formato objeto ou string
+
+---
+
+## 2026-02-04 - Documento resumido de envio de excursões via API
+
+### Arquivos Modificados
+- `api/docs/ENVIO-EXCURSOES-RESUMO.md` [Novo: resumo direto com informações obrigatórias e opcionais para envio de excursões; login, POST, PUT, PATCH; exemplos mínimos e completos]
+
+---
+
 ## 2026-02-04 - Fix: CSP bloqueava script na página de detalhe da excursão (portfolio-single)
 
 ### Arquivos Modificados

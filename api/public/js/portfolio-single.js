@@ -100,7 +100,12 @@ function renderExcursao(excursao) {
     var images = [];
     if (excursao.imagemCapa) images.push(excursao.imagemCapa);
     if (excursao.imagemPrincipal && excursao.imagemPrincipal !== excursao.imagemCapa) images.push(excursao.imagemPrincipal);
-    if (excursao.galeria && excursao.galeria.length > 0) images = images.concat(excursao.galeria);
+    if (excursao.galeria && excursao.galeria.length > 0) {
+        excursao.galeria.forEach(function(item) {
+            images.push(typeof item === 'string' ? item : (item && item.url ? item.url : null));
+        });
+        images = images.filter(Boolean);
+    }
 
     if (galleryThumbs) {
         if (images.length > 0) {
@@ -115,7 +120,11 @@ function renderExcursao(excursao) {
     }
 
     var descEl = document.getElementById('excursaoDescricao');
-    if (descEl) descEl.innerHTML = excursao.descricao || '<p>Descrição em breve.</p>';
+    if (descEl) {
+        var desc = (excursao.descricao || '').toString().trim();
+        descEl.innerHTML = desc ? desc : '<p>Descrição em breve.</p>';
+        descEl.style.color = '#4b5563';
+    }
 
     var inclusosEl = document.getElementById('excursaoInclusos');
     if (inclusosEl) inclusosEl.innerHTML = formatListContent(excursao.inclusos || '');
