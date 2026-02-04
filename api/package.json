@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "build:footer": "node ../scripts/inject-footer.js",
+    "build:footer": "node scripts/inject-footer.js",
     "prestart": "npm run build:footer",
     "start": "node dist/server.js",
     "postinstall": "prisma generate",
