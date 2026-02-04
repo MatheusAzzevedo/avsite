@@ -4,7 +4,19 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Frontend Cliente: Login, Busca e Checkout (Fase 5)
+### Última atualização (2026-02-04) - Gateway de Pagamento Asaas (PIX + Webhook)
+- **api/src/config/asaas.ts** [Configuração e serviço Asaas - funções criarCobrancaAsaas, consultarPagamentoAsaas, processarWebhookAsaas, verificarConfigAsaas]
+- **api/src/schemas/pagamento.schema.ts** [Schemas Zod para validação - criarPagamentoPixSchema, criarPagamentoCartaoSchema, dadosCartaoSchema, asaasWebhookSchema]
+- **api/src/routes/pagamento.routes.ts** [Rotas de pagamento - POST /pix, POST /cartao, GET /:pedidoId/status]
+- **api/src/routes/webhook.routes.ts** [Webhook Asaas - POST /asaas recebe notificações automáticas de pagamento]
+- **api/ASAAS-CONFIG.md** [Documentação completa de configuração, exemplos e fluxo de pagamento]
+- **api/src/server.ts** [Registradas rotas /api/cliente/pagamento e /api/webhooks]
+- **api/.env.example** [Adicionadas variáveis ASAAS_API_KEY, ASAAS_ENVIRONMENT, ASAAS_WEBHOOK_URL]
+- **api/package.json** [Instalado SDK asaas]
+
+**Funcionalidade implementada**: Sistema de pagamento completo via Asaas. Cliente inicia pagamento PIX recebendo QR Code instantâneo. Asaas envia webhook automático ao confirmar pagamento. Sistema atualiza status do pedido (AGUARDANDO_PAGAMENTO → PAGO → CONFIRMADO), registra datas e gera logs detalhados. Validações rigorosas com Zod, cliente só paga pedidos próprios, cartão preparado para implementação futura.
+
+### Versão anterior (2026-02-04) - Frontend Cliente: Login, Busca e Checkout (Fase 5)
 - **cliente/login.html** [Página de login com email/senha e botão Google OAuth; design moderno com gradiente laranja; mensagens de erro/sucesso]
 - **cliente/registro.html** [Criação de conta com validação de senha forte; requisitos visuais]
 - **cliente/dashboard.html** [Página inicial com busca por código; navbar com navegação; campo de busca uppercase]
@@ -172,11 +184,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 ## Funcionalidades Implementadas
 
 1. **API REST Completa**: Backend Node.js + Express + Prisma + PostgreSQL
-2. **Autenticação JWT**: Sistema seguro de login/logout com tokens
-3. **CRUD Excursões**: Criar, editar, listar e excluir excursões
-4. **CRUD Posts**: Gerenciamento completo do blog
-5. **Upload de Imagens**: Sistema de upload com processamento via Sharp
-6. **Integração Externa**: API pública documentada para outros sistemas
+2. **Autenticação JWT**: Sistema seguro de login/logout com tokens (Admin + Cliente)
+3. **OAuth Google**: Login social para clientes via Google
+4. **CRUD Excursões**: Criar, editar, listar e excluir excursões
+5. **CRUD Posts**: Gerenciamento completo do blog
+6. **Upload de Imagens**: Sistema de upload com processamento via Sharp
+7. **Sistema de Pedidos**: Clientes podem criar pedidos com dados de múltiplos alunos
+8. **Gateway de Pagamento**: Integração completa com Asaas (PIX + Webhook)
+9. **Integração Externa**: API pública documentada para outros sistemas
 
 ## Como Executar
 
@@ -205,6 +220,7 @@ npm run dev
 - **Backend:** Node.js, Express, TypeScript, Prisma
 - **Banco:** PostgreSQL (Railway)
 - **Validação:** Zod
-- **Autenticação:** JWT (jsonwebtoken)
+- **Autenticação:** JWT (jsonwebtoken) + Google OAuth
+- **Pagamento:** Asaas (PIX + Cartão)
 - **Upload:** Multer + Sharp
 - **Frontend:** HTML5, CSS3, JavaScript Vanilla

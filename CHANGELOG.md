@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-02-04 - Gateway de Pagamento Asaas (PIX + Webhook)
+
+### Arquivos Criados
+- `api/src/config/asaas.ts` [Configuração e serviço de integração com Asaas - métodos: criarCobrancaAsaas (cria cliente e cobrança, retorna QR Code PIX), consultarPagamentoAsaas (consulta status), processarWebhookAsaas (mapeia eventos para status do pedido), verificarConfigAsaas (valida API key)]
+- `api/src/schemas/pagamento.schema.ts` [Schemas Zod - criarPagamentoPixSchema (pedidoId UUID), criarPagamentoCartaoSchema (pedidoId + creditCard + holderInfo), dadosCartaoSchema (validação de número, CVV, validade), asaasWebhookSchema (16 eventos possíveis)]
+- `api/src/routes/pagamento.routes.ts` [Rotas: POST /api/cliente/pagamento/pix (cria cobrança PIX, valida pedido PENDENTE, atualiza para AGUARDANDO_PAGAMENTO), POST /cartao (em desenvolvimento), GET /:pedidoId/status (consulta status no Asaas + DB)]
+- `api/src/routes/webhook.routes.ts` [POST /api/webhooks/asaas - recebe notificações do Asaas (PAYMENT_RECEIVED → PAGO, PAYMENT_CONFIRMED → CONFIRMADO), atualiza dataPagamento/dataConfirmacao, registra activity log, retorna 200 OK sempre]
+- `api/ASAAS-CONFIG.md` [Documentação: instruções de configuração, chave de API fornecida (NÃO commitada no .env), como configurar webhook no painel Asaas, fluxo de pagamento PIX, exemplos de requisições]
+
+### Arquivos Modificados
+- `api/src/server.ts` [Importadas e registradas rotas: pagamentoRoutes em /api/cliente/pagamento, webhookRoutes em /api/webhooks]
+- `api/.env.example` [Adicionadas variáveis ASAAS_API_KEY, ASAAS_ENVIRONMENT (production/sandbox), ASAAS_WEBHOOK_URL com instruções]
+- `api/package.json` [Instalado SDK asaas]
+
+### Alterações
+- Sistema de pagamento PIX totalmente funcional
+- Webhook processa automaticamente confirmações de pagamento
+- Logs detalhados em todas operações (winston)
+- Validação rigorosa com Zod
+- Cliente só paga pedidos próprios (clienteAuthMiddleware)
+- Cartão de crédito preparado para implementação futura
+
+---
+
 ## 2026-02-04 - Frontend Cliente: Login, Busca e Checkout (Fase 5)
 
 ### Arquivos Criados

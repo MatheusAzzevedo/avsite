@@ -26,6 +26,8 @@ dotenv.config();
 import authRoutes from './routes/auth.routes';
 import clienteAuthRoutes from './routes/cliente-auth.routes';
 import pedidoRoutes from './routes/pedido.routes';
+import pagamentoRoutes from './routes/pagamento.routes';
+import webhookRoutes from './routes/webhook.routes';
 import excursaoRoutes from './routes/excursao.routes';
 import excursaoPedagogicaRoutes from './routes/excursao-pedagogica.routes';
 import postRoutes from './routes/post.routes';
@@ -150,6 +152,9 @@ app.get('/api/health', (_req: Request, res: Response) => {
 // Rotas públicas (para site e integrações externas)
 app.use('/api/public', publicRoutes);
 
+// Webhooks (públicos - gateways de pagamento)
+app.use('/api/webhooks', webhookRoutes);
+
 // Rotas de autenticação (admin)
 app.use('/api/auth', authRoutes);
 
@@ -158,6 +163,9 @@ app.use('/api/cliente/auth', clienteAuthRoutes);
 
 // Rotas de pedidos de cliente
 app.use('/api/cliente/pedidos', pedidoRoutes);
+
+// Rotas de pagamento de cliente
+app.use('/api/cliente/pagamento', pagamentoRoutes);
 
 // Rotas protegidas (admin)
 app.use('/api/excursoes', excursaoRoutes);
