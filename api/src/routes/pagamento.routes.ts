@@ -72,7 +72,8 @@ router.post('/pix',
         },
         include: {
           cliente: true,
-          excursaoPedagogica: true
+          excursaoPedagogica: true,
+          excursao: true
         }
       });
 
@@ -97,7 +98,7 @@ router.post('/pix',
         clienteCpf: pedido.cliente.cpf || undefined,
         clienteTelefone: pedido.cliente.telefone || undefined,
         valor: Number(pedido.valorTotal),
-        descricao: `Excursão: ${pedido.excursaoPedagogica.titulo} - ${pedido.quantidade}x passagens`,
+        descricao: `Excursão: ${pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão'} - ${pedido.quantidade}x passagens`,
         metodoPagamento: 'PIX',
         externalReference: pedido.id
       });

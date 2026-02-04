@@ -421,6 +421,22 @@ router.get('/:id',
               duracao: true
             }
           },
+          excursao: {
+            select: {
+              id: true,
+              titulo: true,
+              slug: true,
+              subtitulo: true,
+              preco: true,
+              imagemCapa: true,
+              imagemPrincipal: true,
+              descricao: true,
+              inclusos: true,
+              local: true,
+              horario: true,
+              duracao: true
+            }
+          },
           itens: true
         }
       });
@@ -436,15 +452,17 @@ router.get('/:id',
         context: { pedidoId: id, clienteId, status: pedido.status }
       });
 
-      // Formata dados
+      // Formata dados (pedido pode ser de excursão pedagógica ou normal)
       const data = {
         ...pedido,
         valorUnitario: Number(pedido.valorUnitario),
         valorTotal: Number(pedido.valorTotal),
-        excursaoPedagogica: {
-          ...pedido.excursaoPedagogica,
-          preco: Number(pedido.excursaoPedagogica.preco)
-        }
+        excursaoPedagogica: pedido.excursaoPedagogica
+          ? { ...pedido.excursaoPedagogica, preco: Number(pedido.excursaoPedagogica.preco) }
+          : null,
+        excursao: pedido.excursao
+          ? { ...pedido.excursao, preco: Number(pedido.excursao.preco) }
+          : null
       };
 
       res.json({
