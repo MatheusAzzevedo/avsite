@@ -84,12 +84,14 @@ router.get('/excursoes',
         context: {
           encontradas: data.length,
           total,
+          ids: excursoes.map(e => e.id),
           categoria: categoria || 'todas',
           page: parseInt(page as string),
           limit: take
         }
       });
 
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
       res.json({
         success: true,
         data,

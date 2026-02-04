@@ -252,7 +252,11 @@ const ExcursaoManager = {
       : '/excursoes';        // Rota admin
     
     const response = await apiRequest(endpoint);
-    return response.data || [];
+    const list = Array.isArray(response?.data) ? response.data : (Array.isArray(response) ? response : []);
+    if (list.length === 0 && response?.pagination?.total > 0) {
+      console.warn('[ExcursaoManager] Resposta com total > 0 mas data vazio:', response);
+    }
+    return list;
   },
 
   /**

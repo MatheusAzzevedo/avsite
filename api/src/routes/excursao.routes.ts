@@ -85,22 +85,30 @@ router.get('/',
         prisma.excursao.count({ where })
       ]);
 
+      // Serializa para JSON limpo (evita Decimal/Prisma na resposta)
+      const data = excursoes.map((e: { preco: unknown; [key: string]: unknown }) => ({
+        ...e,
+        preco: e.preco != null ? Number(e.preco) : e.preco
+      }));
+
       logger.info(`[AVSITE-API] ✅ Excursões - Listagem CONCLUÍDA`, {
-        context: { 
-          userId, 
-          userEmail, 
-          encontradas: excursoes.length, 
-          total, 
-          page, 
+        context: {
+          userId,
+          userEmail,
+          encontradas: excursoes.length,
+          total,
+          ids: excursoes.map((e: { id: string }) => e.id),
+          page,
           limit,
           filtrosAplicados: JSON.stringify(where),
           timestamp: new Date().toISOString()
         }
       });
 
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
       res.json({
         success: true,
-        data: excursoes,
+        data,
         pagination: {
           page,
           limit,
