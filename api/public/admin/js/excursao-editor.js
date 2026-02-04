@@ -11,12 +11,11 @@
 function showNotification(message, type = 'info') {
   // Se showToast estiver disponível (de admin-main.js), usa ela
   if (typeof showToast !== 'undefined') {
-    showNotification(message, type);
+    showToast(message, type);
     return;
   }
-  
   // Fallback: alert se showToast não estiver disponível
-  console.warn(`[Excursão Editor] showToast não disponível. Mensagem: ${message}`);
+  console.warn('[Excursão Editor] showToast não disponível. Mensagem:', message);
   alert(message);
 }
 

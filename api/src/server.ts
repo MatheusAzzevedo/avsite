@@ -69,9 +69,9 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Parser JSON
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Parser JSON (limite maior para excursões com imagens em base64)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve arquivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -181,13 +181,23 @@ app.use((req: Request, res: Response) => {
 });
 
 // Handler de erros global
-app.use((err: Error | ApiError, _req: Request, res: Response, _next: NextFunction) => {
+app.use((err: Error & { status?: number; statusCode?: number } | ApiError, _req: Request, res: Response, _next: NextFunction) => {
   logger.error(`Erro: ${err.message}`);
-  
+
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
       error: err.message,
       details: err.details
+    });
+  }
+
+  // Request entity too large (body maior que o limite)
+  const isTooLarge = err.status === 413 || err.statusCode === 413 ||
+    (typeof err.message === 'string' && err.message.toLowerCase().includes('entity too large'));
+  if (isTooLarge) {
+    return res.status(413).json({
+      error: 'Requisição muito grande',
+      message: 'O tamanho do corpo da requisição excede o limite. Tente enviar imagens menores ou use upload separado.'
     });
   }
 
