@@ -84,7 +84,7 @@
             <a href="dashboard.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
             <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
-            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
     </nav>
 
@@ -105,7 +105,7 @@
                     class="search-input"
                     placeholder="Ex: ABC-2024-001"
                     required
-                    pattern="[A-Za-z0-9_-]+"
+                    pattern="[-A-Za-z0-9_]+"
                 >
                 <button type="submit" class="btn-search" id="searchBtn">
                     <i class="fas fa-search"></i> Buscar
@@ -120,60 +120,6 @@
     </div>
 
     <script src="js/auth-manager.js"></script>
-    <script>
-        // Proteção de autenticação
-        (async () => {
-            const isAuth = await clienteAuth.requireAuth();
-            if (!isAuth) return;
-
-            // Exibe nome do cliente
-            const cliente = clienteAuth.getCliente();
-            if (cliente) {
-                document.getElementById('clienteNome').textContent = cliente.nome.split(' ')[0];
-            }
-        })();
-
-        function logout() {
-            clienteAuth.logout();
-            window.location.href = '/cliente/login.html';
-        }
-
-        const searchForm = document.getElementById('searchForm');
-        const codigoInput = document.getElementById('codigoInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const errorMessage = document.getElementById('errorMessage');
-        const loadingMessage = document.getElementById('loadingMessage');
-
-        searchForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const codigo = codigoInput.value.trim().toUpperCase();
-            if (!codigo) return;
-
-            errorMessage.classList.remove('show');
-            loadingMessage.classList.add('show');
-            searchBtn.disabled = true;
-
-            try {
-                const response = await fetch(`/api/cliente/pedidos/excursao/${codigo}`);
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    // Redireciona para página de detalhes
-                    window.location.href = `excursao.html?codigo=${codigo}`;
-                } else {
-                    errorMessage.textContent = data.error || 'Excursão não encontrada';
-                    errorMessage.classList.add('show');
-                }
-            } catch (error) {
-                console.error('[Busca] Erro:', error);
-                errorMessage.textContent = 'Erro ao buscar excursão. Tente novamente.';
-                errorMessage.classList.add('show');
-            } finally {
-                loadingMessage.classList.remove('show');
-                searchBtn.disabled = false;
-            }
-        });
-    </script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

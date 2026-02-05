@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-02-04 - Dashboard cliente: CSP e regex do código
+
+### Arquivos Modificados
+- `api/public/cliente/dashboard.html` [Removido script inline e onclick no botão Sair; carrega js/dashboard.js; pattern do input de código alterado para [-A-Za-z0-9_]+]
+- `api/public/cliente/js/dashboard.js` [Novo: lógica de autenticação, logout e busca por código externalizada para compatibilidade com CSP]
+- `cliente/dashboard.html` [Mesmas alterações: script externo, pattern e botão Sair sem onclick]
+- `cliente/js/dashboard.js` [Cópia do dashboard.js para paridade com api/public]
+
+### Alterações
+- Script inline no dashboard do cliente era bloqueado pelo CSP (script-src 'self'), impedindo a busca por código e o logout. Toda a lógica foi movida para dashboard.js.
+- Atributo pattern do input de código [A-Za-z0-9_-]+ gerava "Invalid character in character class" em motores com flag /v. Corrigido para [-A-Za-z0-9_]+ (hífen no início da classe = literal).
+
+---
+
 ## 2026-02-04 - Código gerado por destino e data na API de excursões pedagógicas
 
 ### Arquivos Modificados
