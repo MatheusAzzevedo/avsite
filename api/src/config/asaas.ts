@@ -403,6 +403,48 @@ export function processarWebhookAsaas(event: string, payment: any): {
 }
 
 /**
+ * Explicação da função [listarPagamentosPorReferencia]
+ *
+ * Lista pagamentos no Asaas pelo externalReference (ex.: ID do pedido).
+ * Usado para reconciliar quando a API retorna erro mas a cobrança foi processada.
+ *
+ * @param externalReference - Referência externa (ex.: pedido.id)
+ * @returns Lista de pagamentos ou array vazio
+ */
+export async function listarPagamentosPorReferencia(externalReference: string): Promise<Array<{
+  id: string;
+  status: string;
+  value: number;
+  billingType?: string;
+}>> {
+  const baseUrl = asaasEnv === 'sandbox'
+    ? 'https://sandbox.asaas.com/api/v3'
+    : 'https://api.asaas.com/v3';
+  const url = `${baseUrl}/payments?externalReference=${encodeURIComponent(externalReference)}`;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Avorar-Turismo-API/1.0',
+        access_token: asaasApiKey
+      }
+    });
+    const data = (await response.json()) as { data?: Array<{ id: string; status: string; value: number; billingType?: string }> };
+    const list = data.data || [];
+    logger.info('[Asaas] Pagamentos por referência', {
+      context: { externalReference, total: list.length }
+    });
+    return list;
+  } catch (error) {
+    logger.warn('[Asaas] Erro ao listar pagamentos por referência', {
+      context: { externalReference, error: error instanceof Error ? error.message : 'Unknown' }
+    });
+    return [];
+  }
+}
+
+/**
  * Explicação da função [verificarConfigAsaas]
  * 
  * Verifica se a API Key do Asaas está configurada.

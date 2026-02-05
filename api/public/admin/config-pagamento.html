@@ -154,6 +154,12 @@
                         
                         <!-- Asaas Config -->
                         <div id="config-asaas" style="display: none;">
+                            <div style="background: var(--light-bg, #f1f5f9); border: 1px solid var(--light-border, #e2e8f0); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                                <strong><i class="fas fa-info-circle"></i> Configuração no servidor</strong>
+                                <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: var(--text-light);">
+                                    O gateway em uso é o Asaas. A API Key, o ambiente e a URL de webhook são definidos pelas <strong>variáveis de ambiente no Railway</strong> (<code>ASAAS_API_KEY</code>, <code>ASAAS_ENVIRONMENT</code>, <code>ASAAS_WEBHOOK_URL</code>). O status acima reflete essa configuração. Os campos abaixo são apenas informativos (não alteram o servidor).
+                                </p>
+                            </div>
                             <div class="form-group">
                                 <label for="asaas_api_key">API Key</label>
                                 <input 
@@ -330,59 +336,27 @@
                 </div>
             </div>
 
-            <!-- Webhooks -->
+            <!-- Webhooks (URL real configurada no servidor) -->
             <div class="card">
                 <div class="card-header">
-                    <h2>URLs de Webhook</h2>
+                    <h2>URL de Webhook (Asaas)</h2>
                 </div>
                 <div class="card-body">
-                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
-                        Configure estas URLs no painel do seu gateway de pagamento para receber notificações de transações.
+                    <p style="color: var(--text-light); margin-bottom: 1rem;">
+                        Configure esta URL no painel do Asaas (Configurações &gt; Webhook) para receber notificações de pagamento. O valor abaixo é o que está definido no servidor (variável <code>ASAAS_WEBHOOK_URL</code>).
                     </p>
-                    
                     <div class="form-group">
-                        <label>URL de Notificação (Webhook)</label>
+                        <label>URL de Notificação Asaas</label>
                         <div style="display: flex; gap: 0.5rem;">
                             <input 
                                 type="text" 
                                 class="form-control" 
-                                value="https://avorar.com/api/webhook/payment"
+                                value=""
                                 readonly
                                 id="webhookUrl"
+                                placeholder="Carregando..."
                             >
                             <button type="button" class="btn btn-secondary" onclick="copyUrl('webhookUrl')">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>URL de Retorno (Sucesso)</label>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <input 
-                                type="text" 
-                                class="form-control" 
-                                value="https://avorar.com/payment/success"
-                                readonly
-                                id="successUrl"
-                            >
-                            <button type="button" class="btn btn-secondary" onclick="copyUrl('successUrl')">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>URL de Cancelamento</label>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <input 
-                                type="text" 
-                                class="form-control" 
-                                value="https://avorar.com/payment/cancel"
-                                readonly
-                                id="cancelUrl"
-                            >
-                            <button type="button" class="btn btn-secondary" onclick="copyUrl('cancelUrl')">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
@@ -390,19 +364,22 @@
                 </div>
             </div>
 
-            <!-- Status da Integração -->
+            <!-- Status da Integração (reflete a configuração real do servidor) -->
             <div class="card">
                 <div class="card-header">
                     <h2>Status da Integração</h2>
                 </div>
                 <div class="card-body">
+                    <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.9rem;">
+                        Este status reflete a configuração atual do servidor (variáveis de ambiente no Railway). O gateway em uso é o <strong>Asaas</strong>.
+                    </p>
                     <div id="integrationStatus" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                         <div style="padding: 1rem; border: 1px solid var(--light-border); border-radius: var(--radius-md);">
                             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                 <span id="status-icon" style="width: 12px; height: 12px; border-radius: 50%; background: var(--warning-color);"></span>
                                 <strong>Gateway Ativo</strong>
                             </div>
-                            <p id="status-gateway" style="color: var(--text-light); margin: 0;">Nenhum configurado</p>
+                            <p id="status-gateway" style="color: var(--text-light); margin: 0;">Carregando...</p>
                         </div>
                         <div style="padding: 1rem; border: 1px solid var(--light-border); border-radius: var(--radius-md);">
                             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
@@ -414,9 +391,9 @@
                         <div style="padding: 1rem; border: 1px solid var(--light-border); border-radius: var(--radius-md);">
                             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                 <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--text-light);"></span>
-                                <strong>Última Atualização</strong>
+                                <strong>Webhook URL</strong>
                             </div>
-                            <p id="status-updated" style="color: var(--text-light); margin: 0;">-</p>
+                            <p id="status-webhook" style="color: var(--text-light); margin: 0; font-size: 0.85rem; word-break: break-all;">-</p>
                         </div>
                     </div>
                 </div>
@@ -444,22 +421,86 @@
             }
         });
 
+        /** Estado da configuração real (servidor) */
+        let serverPaymentStatus = null;
+
+        /**
+         * Busca o status real da configuração de pagamento no servidor (GET /api/admin/payment/status).
+         */
+        async function fetchPaymentStatus() {
+            try {
+                const url = (typeof API_CONFIG !== 'undefined' ? API_CONFIG.BASE_URL : (window.location.origin + '/api')) + '/admin/payment/status';
+                const res = await fetch(url, {
+                    headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('avorar_token') || '') }
+                });
+                const data = await res.json();
+                serverPaymentStatus = data.asaas != null ? { asaas: data.asaas } : null;
+                return serverPaymentStatus;
+            } catch (e) {
+                console.warn('[Payment Config] Erro ao buscar status do servidor:', e);
+                serverPaymentStatus = null;
+                return null;
+            }
+        }
+
+        /**
+         * Atualiza a UI com o status real do servidor (gateway ativo, ambiente, webhook).
+         */
+        function applyServerStatus() {
+            const status = serverPaymentStatus && serverPaymentStatus.asaas;
+            const gatewayEl = document.getElementById('status-gateway');
+            const iconEl = document.getElementById('status-icon');
+            const envEl = document.getElementById('status-environment');
+            const webhookEl = document.getElementById('status-webhook');
+            const webhookInput = document.getElementById('webhookUrl');
+            const badgeAsaas = document.getElementById('badge-asaas');
+
+            if (status) {
+                gatewayEl.textContent = status.configured ? 'Asaas' : 'Nenhum (Asaas não configurado)';
+                iconEl.style.background = status.configured ? 'var(--success-color)' : 'var(--warning-color)';
+                envEl.textContent = (status.environment || 'production') === 'sandbox' ? 'Sandbox (Teste)' : 'Produção';
+                webhookEl.textContent = status.webhookUrl || 'Não definida';
+                webhookInput.value = status.webhookUrl || '';
+                if (badgeAsaas) {
+                    badgeAsaas.textContent = status.configured ? 'Configurado' : 'Não configurado';
+                    badgeAsaas.className = status.configured ? 'badge badge-success' : 'badge badge-warning';
+                }
+            } else {
+                gatewayEl.textContent = 'Não foi possível carregar';
+                iconEl.style.background = 'var(--warning-color)';
+                envEl.textContent = '-';
+                webhookEl.textContent = '-';
+                webhookInput.value = '';
+                if (badgeAsaas) {
+                    badgeAsaas.textContent = 'Brasil';
+                    badgeAsaas.className = 'badge badge-info';
+                }
+            }
+        }
+
         /**
          * Explicação da função [initPaymentConfig]
-         * Inicializa a página carregando as configurações salvas.
+         * Inicializa a página: busca status real do servidor e aplica na tela.
          */
-        function initPaymentConfig() {
+        async function initPaymentConfig() {
             console.log('[Payment Config] Inicializando...');
-            
-            const config = PaymentConfigManager.getConfig();
-            
-            if (config && config.activeGateway) {
-                // Carrega o gateway ativo
-                selectGateway(config.activeGateway, false);
-                loadGatewayConfig(config.activeGateway);
-            }
+            document.getElementById('status-gateway').textContent = 'Carregando...';
 
-            updateStatus();
+            await fetchPaymentStatus();
+            applyServerStatus();
+
+            if (typeof PaymentConfigManager.getConfig === 'function') {
+                const config = PaymentConfigManager.getConfig();
+                if (config && config.activeGateway) {
+                    selectGateway(config.activeGateway, false);
+                    if (typeof loadGatewayConfig === 'function') loadGatewayConfig(config.activeGateway);
+                }
+            }
+            if (serverPaymentStatus && serverPaymentStatus.asaas && serverPaymentStatus.asaas.configured) {
+                selectGateway('asaas', false);
+            }
+            if (typeof updateStatus === 'function') updateStatus();
+            applyServerStatus();
             addHoverEffects();
         }
 
@@ -623,41 +664,39 @@
 
         /**
          * Explicação da função [testarConexao]
-         * Simula um teste de conexão com o gateway.
+         * Testa a conexão com o gateway. Para Asaas, chama a API que cria uma cobrança de teste.
          */
-        function testarConexao() {
+        async function testarConexao() {
             if (!currentGateway) {
                 showToast('Selecione um gateway primeiro.', 'warning');
                 return;
             }
 
-            showToast('Testando conexão...', 'info');
-            
-            // Simula teste
-            setTimeout(() => {
-                const config = PaymentConfigManager.getGatewayConfig(currentGateway);
-                
-                // Verifica se tem credenciais básicas
-                let hasCredentials = false;
-                
-                switch(currentGateway) {
-                    case 'asaas':
-                        hasCredentials = !!document.getElementById('asaas_api_key').value;
-                        break;
-                    case 'mercadopago':
-                        hasCredentials = !!document.getElementById('mp_access_token').value;
-                        break;
-                    case 'stripe':
-                        hasCredentials = !!document.getElementById('stripe_secret_key').value;
-                        break;
+            if (currentGateway === 'asaas') {
+                showToast('Testando conexão com Asaas...', 'info');
+                try {
+                    const url = (typeof API_CONFIG !== 'undefined' ? API_CONFIG.BASE_URL : (window.location.origin + '/api')) + '/admin/payment/test';
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + (localStorage.getItem('avorar_token') || '')
+                        },
+                        body: JSON.stringify({ metodo: 'PIX' })
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        showToast('Conexão com Asaas OK. Cobrança de teste criada.', 'success');
+                    } else {
+                        showToast(data.error || data.message || 'Erro ao testar.', 'error');
+                    }
+                } catch (e) {
+                    showToast('Erro ao testar conexão: ' + (e.message || 'verifique o console'), 'error');
                 }
-                
-                if (hasCredentials) {
-                    showToast('Conexão estabelecida com sucesso!', 'success');
-                } else {
-                    showToast('Configure as credenciais do gateway primeiro.', 'warning');
-                }
-            }, 1500);
+                return;
+            }
+
+            showToast('Teste disponível apenas para Asaas no momento.', 'info');
         }
 
         /**

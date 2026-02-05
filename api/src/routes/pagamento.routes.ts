@@ -26,7 +26,8 @@ import {
   criarCobrancaCartaoAsaas,
   consultarPagamentoAsaas,
   processarWebhookAsaas,
-  verificarConfigAsaas
+  verificarConfigAsaas,
+  listarPagamentosPorReferencia
 } from '../config/asaas';
 import { logger } from '../utils/logger';
 
@@ -150,13 +151,61 @@ router.post('/pix',
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown';
+      const pedidoIdFromBody = req.body?.pedidoId as string | undefined;
+
       logger.error('[Pagamento PIX] Erro ao criar cobrança', {
         context: {
           error: message,
-          pedidoId: req.body?.pedidoId,
+          pedidoId: pedidoIdFromBody,
           clienteId: req.cliente?.id
         }
       });
+
+      // Reconciliação: verificar se já existe cobrança PIX confirmada para este pedido
+      if (pedidoIdFromBody && req.cliente?.id && verificarConfigAsaas()) {
+        try {
+          const pagamentos = await listarPagamentosPorReferencia(pedidoIdFromBody);
+          const cobrancaConfirmada = pagamentos.find(
+            (p) =>
+              p.status === 'CONFIRMED' ||
+              p.status === 'RECEIVED' ||
+              p.status === 'RECEIVED_IN_CASH' ||
+              p.status === 'CONFIRMED_BY_CUSTOMER'
+          );
+          if (cobrancaConfirmada) {
+            const pedido = await prisma.pedido.findFirst({
+              where: { id: pedidoIdFromBody, clienteId: req.cliente.id }
+            });
+            if (pedido) {
+              await prisma.pedido.update({
+                where: { id: pedido.id },
+                data: {
+                  codigoPagamento: cobrancaConfirmada.id,
+                  metodoPagamento: 'pix',
+                  status: 'PAGO',
+                  dataPagamento: new Date()
+                }
+              });
+              logger.info('[Pagamento PIX] Cobrança já existente no Asaas; pedido atualizado para PAGO', {
+                context: { pedidoId: pedido.id, cobrancaId: cobrancaConfirmada.id }
+              });
+              return res.json({
+                success: true,
+                message: 'Pagamento já foi confirmado.',
+                data: {
+                  pedidoId: pedido.id,
+                  cobrancaId: cobrancaConfirmada.id,
+                  status: 'PAGO',
+                  valor: Number(pedido.valorTotal)
+                }
+              });
+            }
+          }
+        } catch (reconcileErr) {
+          logger.warn('[Pagamento PIX] Reconciliação falhou', { context: { error: reconcileErr instanceof Error ? reconcileErr.message : 'Unknown' } });
+        }
+      }
+
       // Erros de validação do Asaas (valor mínimo, etc.) retornam 400 para o cliente
       if (error instanceof Error && /valor mínimo|mínimo|invalid|erro/i.test(message)) {
         return res.status(400).json({ success: false, error: message });
@@ -272,14 +321,65 @@ router.post('/cartao',
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown';
+      const pedidoIdFromBody = req.body?.pedidoId as string | undefined;
+
       logger.error('[Pagamento Cartão] Erro', {
         context: {
           error: message,
-          pedidoId: req.body?.pedidoId
+          pedidoId: pedidoIdFromBody
         }
       });
-      // Erros de validação do Asaas (valor mínimo, cartão recusado, etc.) retornam 400
-      if (error instanceof Error && /valor mínimo|mínimo|invalid|erro|recusad|recusado/i.test(message)) {
+
+      // Reconciliação: às vezes o Asaas debita o cartão mas retorna 400 (ex.: "não autorizada").
+      // Consultamos pagamentos por referência e, se existir cobrança confirmada, atualizamos o pedido.
+      if (pedidoIdFromBody && verificarConfigAsaas()) {
+        try {
+          const pagamentos = await listarPagamentosPorReferencia(pedidoIdFromBody);
+          const cobrancaConfirmada = pagamentos.find(
+            (p) =>
+              p.status === 'CONFIRMED' ||
+              p.status === 'RECEIVED' ||
+              p.status === 'RECEIVED_IN_CASH' ||
+              p.status === 'CONFIRMED_BY_CUSTOMER'
+          );
+          if (cobrancaConfirmada) {
+            const pedido = await prisma.pedido.findFirst({
+              where: { id: pedidoIdFromBody, clienteId: req.cliente!.id }
+            });
+            if (pedido) {
+              await prisma.pedido.update({
+                where: { id: pedido.id },
+                data: {
+                  codigoPagamento: cobrancaConfirmada.id,
+                  metodoPagamento: 'cartao',
+                  status: 'PAGO',
+                  dataPagamento: new Date()
+                }
+              });
+              logger.info('[Pagamento Cartão] Cobrança encontrada no Asaas após erro; pedido atualizado para PAGO', {
+                context: { pedidoId: pedido.id, cobrancaId: cobrancaConfirmada.id }
+              });
+              return res.json({
+                success: true,
+                message: 'Pagamento confirmado. A cobrança foi processada.',
+                data: {
+                  pedidoId: pedido.id,
+                  cobrancaId: cobrancaConfirmada.id,
+                  status: 'PAGO',
+                  valor: Number(pedido.valorTotal)
+                }
+              });
+            }
+          }
+        } catch (reconcileErr) {
+          logger.warn('[Pagamento Cartão] Reconciliação falhou', {
+            context: { error: reconcileErr instanceof Error ? reconcileErr.message : 'Unknown' }
+          });
+        }
+      }
+
+      // Erros de validação do Asaas (valor mínimo, etc.) retornam 400
+      if (error instanceof Error && /valor mínimo|mínimo|invalid|erro|recusad|recusado|não autorizada/i.test(message)) {
         return res.status(400).json({ success: false, error: message });
       }
       next(error);
