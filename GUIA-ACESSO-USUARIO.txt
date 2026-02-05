@@ -1,0 +1,203 @@
+================================================================================
+  GUIA DE ACESSO - USUÁRIO dantydias@gmail.com
+  Avorar Turismo - Painel Admin e Painel do Cliente
+================================================================================
+
+Este documento explica como fazer login e como usar cada parte do sistema.
+O endereço do site é: https://avoarturismo.up.railway.app
+
+--------------------------------------------------------------------------------
+PARTE 1 - COMO FAZER LOGIN
+--------------------------------------------------------------------------------
+
+Existem dois tipos de acesso. Você precisa saber qual é o seu:
+
+  • ACESSO ADMINISTRATIVO (painel da empresa)
+    Quem cuida do site, das excursões, do blog e dos pagamentos.
+
+  • ACESSO CLIENTE (área do comprador)
+    Quem compra excursões (por exemplo, pais/responsáveis que recebem um
+    código da escola para fazer a reserva).
+
+
+--- Se você tem ACESSO ADMINISTRATIVO ---
+
+1. Abra o navegador (Chrome, Edge, Safari, etc.).
+
+2. Na barra de endereço, digite:
+   https://avoarturismo.up.railway.app/admin/login.html
+
+3. Pressione Enter.
+
+4. Na tela de login:
+   • No campo "Email", digite o e-mail que foi cadastrado como administrador.
+     (Se for o seu caso, use: dantydias@gmail.com — desde que essa conta
+     já tenha sido criada como admin no sistema.)
+   • No campo "Senha", digite a senha que foi enviada ou combinada com você.
+
+5. Clique no botão "Entrar" (ou "Login").
+
+6. Se os dados estiverem corretos, você será levado à tela inicial do
+   painel administrativo (Dashboard).
+
+   Se aparecer mensagem de erro:
+   • Confira se o e-mail está escrito certo (sem espaço no fim).
+   • Confira a senha (maiúsculas e minúsculas importam).
+   • Se ainda não tiver uma senha de admin, peça ao responsável pelo
+     sistema para criar o acesso de administrador para o e-mail
+     dantydias@gmail.com.
+
+
+--- Se você tem ACESSO CLIENTE (comprar excursão) ---
+
+1. Abra o navegador.
+
+2. Na barra de endereço, digite:
+   https://avoarturismo.up.railway.app/cliente/login.html
+
+3. Pressione Enter.
+
+4. Você pode:
+
+   OPÇÃO A - Já tenho conta
+   • No campo "Email", digite: dantydias@gmail.com
+   • No campo "Senha", digite sua senha de cliente.
+   • Clique em "Entrar".
+   • Você será levado à sua área (tela onde se digita o código da excursão).
+
+   OPÇÃO B - Ainda não tenho conta
+   • Clique no link "Criar conta" (ou "Cadastre-se").
+   • Preencha: nome, e-mail (por exemplo dantydias@gmail.com), telefone e
+     senha.
+   • Clique em "Criar conta" (ou equivalente).
+   • Depois disso, use o mesmo e-mail e senha para fazer login na OPÇÃO A.
+
+   Também existe a opção "Continuar com Google": você pode usar sua conta
+   Google (por exemplo dantydias@gmail.com) para entrar sem criar senha
+   no site.
+
+
+--------------------------------------------------------------------------------
+PARTE 2 - PAINEL ADMINISTRATIVO (para quem tem acesso admin)
+--------------------------------------------------------------------------------
+
+Depois do login, no lado esquerdo da tela aparece um menu. Cada item faz o
+seguinte:
+
+
+• Dashboard (ou "Painel")
+  O que é: A primeira tela após o login.
+  O que faz: Mostra um resumo em números (quantos posts, quantas excursões
+  ativas, etc.) e uma lista de atividades recentes. Serve para ter uma visão
+  geral do sistema.
+
+
+• Blog
+  O que é: Área do blog do site.
+  O que faz: Lista todas as matérias/publicações. Você pode buscar por nome,
+  filtrar por status (publicado ou rascunho) e clicar para criar um novo post
+  ou editar um existente. No editor você escreve o texto, coloca título, autor,
+  categoria e pode enviar imagens.
+
+
+• Excursões
+  O que é: Cadastro das excursões que aparecem no site (passeios normais).
+  O que faz: Mostra as excursões em cards. Você pode buscar por nome, filtrar
+  por categoria (natureza, cultura, etc.) e por ativo/inativo. Clicando em
+  "Nova Excursão" você preenche dados do passeio (nome, preço, descrição,
+  fotos, o que está incluso, recomendações). Depois pode editar ou desativar
+  cada uma.
+
+
+• Excursões Pedagógicas
+  O que é: Excursões com código (usadas quando a escola ou instituição envia
+  um código para os pais/responsáveis reservarem).
+  O que faz: Lista essas excursões em colunas. Cada uma tem um código único
+  (por exemplo ABC-2024-001). Você pode criar nova excursão pedagógica,
+  preencher dados e definir o código. O cliente usa esse código na área do
+  cliente para encontrar a excursão e fazer o pedido.
+
+
+• Checkout
+  O que é: Tela de teste/simulação de finalização de compra.
+  O que faz: Permite simular um pedido como se fosse um cliente: preencher
+  dados, escolher forma de pagamento (cartão, PIX, boleto) e ver o fluxo.
+  Útil para testar se o pagamento está configurado corretamente.
+
+
+• Config. Pagamento (Configuração de Pagamento)
+  O que é: Onde se configura o gateway de pagamento (Asaas).
+  O que faz: Mostra se o pagamento está configurado ou não, em qual ambiente
+  (produção ou teste) e permite testar a conexão. As chaves de acesso (API)
+  são configuradas no servidor; essa tela só mostra o status e opções de
+  teste.
+
+
+• Sair
+  Encerra sua sessão e volta para a tela de login. Use sempre que terminar
+  de trabalhar ou quando for sair do computador.
+
+
+--------------------------------------------------------------------------------
+PARTE 3 - PAINEL DO CLIENTE (para quem compra excursões)
+--------------------------------------------------------------------------------
+
+Depois do login como cliente, no topo da página aparecem links. Cada um faz
+o seguinte:
+
+
+• Início (ou "Dashboard")
+  O que é: A primeira tela após o login do cliente.
+  O que faz: Mostra uma mensagem de boas-vindas e um campo para digitar o
+  "código da excursão". Esse código é enviado pela escola ou instituição.
+  Passo a passo:
+  1. Digite o código no campo (por exemplo ABC-TESTE2).
+  2. Clique no botão de buscar (ou "Buscar").
+  3. Se o código existir, você é levado à página da excursão, onde vê
+     detalhes, preço e pode escolher a quantidade de passagens e ir para
+     o checkout.
+
+
+• Meus Pedidos
+  O que é: Lista de todos os pedidos que você já fez.
+  O que faz: Mostra cada pedido em um card: nome da excursão, quantidade,
+  valor total, status (por exemplo Pendente, Pago, Confirmado) e data.
+  Assim você acompanha o que já reservou e em que situação está cada pedido.
+
+
+• Configurações
+  O que é: Sua ficha de dados pessoais.
+  O que faz: Permite alterar nome e telefone. O e-mail normalmente aparece
+  apenas para consulta (não pode ser alterado em alguns sistemas). Depois
+  de editar, clique em "Salvar" para guardar as alterações.
+
+
+• Sair
+  Encerra sua sessão e volta para a tela de login do cliente. Use quando
+  terminar ou quando for sair do computador.
+
+
+--------------------------------------------------------------------------------
+RESUMO RÁPIDO - dantydias@gmail.com
+--------------------------------------------------------------------------------
+
+• Para entrar no PAINEL ADMIN:
+  Acesse: https://avoarturismo.up.railway.app/admin/login.html
+  Use o e-mail e a senha de administrador que você recebeu.
+  Se ainda não tiver, peça para criarem o acesso admin para dantydias@gmail.com.
+
+• Para entrar na ÁREA DO CLIENTE (comprar excursão):
+  Acesse: https://avoarturismo.up.railway.app/cliente/login.html
+  Use dantydias@gmail.com e sua senha de cliente ou "Continuar com Google".
+  Se não tiver conta, crie em "Criar conta" com esse e-mail.
+
+• Dúvidas comuns:
+  Esqueci a senha: hoje o sistema não tem "Esqueci minha senha" na tela; é
+  necessário combinar com o responsável técnico para redefinir.
+  Não consigo entrar: confira se está usando o endereço certo (admin ou
+  cliente) e se o e-mail e a senha estão corretos, sem espaços extras.
+
+================================================================================
+  Fim do guia. Em caso de dúvida, entre em contato com o responsável pelo
+  sistema Avorar Turismo.
+================================================================================

@@ -5,6 +5,20 @@
 (function () {
     var excursao = null;
 
+    /** Exibe mensagem na tela (toast) em vez de alert. type: 'success' | 'error' | 'info' */
+    function showToast(message, type) {
+        type = type || 'info';
+        var el = document.getElementById('checkoutToast');
+        if (!el) return;
+        el.textContent = message;
+        el.className = 'checkout-toast show ' + type;
+        el.setAttribute('role', 'alert');
+        var t = setTimeout(function () {
+            el.classList.remove('show');
+        }, 5000);
+        el.ontransitionend = el.ontransitionend || null;
+    }
+
     function stripHtml(html) {
         if (!html) return '';
         var div = document.createElement('div');
@@ -207,8 +221,8 @@
                 btnCopiarPix.addEventListener('click', function () {
                     if (pixQrCode) {
                         navigator.clipboard.writeText(pixQrCode).then(function () {
-                            alert('Código PIX copiado! Cole no app do seu banco.');
-                        }).catch(function () { alert('Não foi possível copiar.'); });
+                            showToast('Código PIX copiado! Cole no app do seu banco.', 'success');
+                        }).catch(function () { showToast('Não foi possível copiar.', 'error'); });
                     }
                 });
             }
@@ -237,25 +251,40 @@
         var btn = document.getElementById('btnCopiarPix');
         if (!pedidoIdPagamento || !container) return;
         container.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Gerando cobrança PIX...</p>';
-        btn.style.display = 'none';
+        if (btn) btn.style.display = 'none';
         clienteAuth.fetchAuth('/cliente/pagamento/pix', {
             method: 'POST',
             body: JSON.stringify({ pedidoId: pedidoIdPagamento })
-        }).then(function (r) { return r.json(); }).then(function (data) {
-            if (!data.success || !data.data) {
-                container.innerHTML = '<p style="color: var(--danger-color);">' + (data.error || 'Erro ao gerar PIX') + '</p>';
-                return;
-            }
-            pixQrCode = data.data.qrCode || '';
-            if (data.data.qrCodeImage) {
-                container.innerHTML = '<img src="' + data.data.qrCodeImage + '" alt="QR Code PIX">';
-            } else {
-                container.innerHTML = '<p>Use o código PIX abaixo (botão Copiar).</p>';
-            }
-            btn.style.display = 'inline-block';
-            iniciarPollStatus();
+        }).then(function (response) {
+            return response.json().catch(function () { return {}; }).then(function (data) {
+                if (!response.ok) {
+                    var msg = (data && (data.error || data.message)) || 'Erro ao gerar PIX. Tente novamente.';
+                    container.innerHTML = '<p style="color: var(--danger-color);"><i class="fas fa-exclamation-circle"></i> ' + String(msg).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>';
+                    if (btn) btn.style.display = 'none';
+                    return;
+                }
+                if (!data.success || !data.data) {
+                    var errMsg = (data && (data.error || data.message)) || 'Erro ao gerar PIX';
+                    container.innerHTML = '<p style="color: var(--danger-color);"><i class="fas fa-exclamation-circle"></i> ' + String(errMsg).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>';
+                    if (btn) btn.style.display = 'none';
+                    return;
+                }
+                pixQrCode = data.data.qrCode || '';
+                var html = '';
+                if (data.data.qrCodeImage) {
+                    html += '<img src="' + String(data.data.qrCodeImage).replace(/"/g, '&quot;') + '" alt="QR Code PIX">';
+                }
+                if (pixQrCode) {
+                    html += '<p class="pix-code-text" style="margin-top: 0.75rem;">Ou copie o código PIX com o botão abaixo.</p>';
+                }
+                if (!html) html = '<p style="color: var(--text-light);">Use o botão abaixo para copiar o código PIX.</p>';
+                container.innerHTML = html;
+                if (btn) btn.style.display = 'inline-block';
+                iniciarPollStatus();
+            });
         }).catch(function (err) {
-            container.innerHTML = '<p style="color: var(--danger-color);">Erro ao gerar PIX. Tente novamente.</p>';
+            container.innerHTML = '<p style="color: var(--danger-color);"><i class="fas fa-exclamation-circle"></i> Falha na conexão. Verifique sua internet e tente novamente.</p>';
+            if (btn) btn.style.display = 'none';
             console.error('[Checkout] PIX:', err);
         });
     }
@@ -268,7 +297,7 @@
                 if (data.success && data.data && (data.data.status === 'PAGO' || data.data.status === 'CONFIRMADO')) {
                     clearInterval(pollStatusInterval);
                     pollStatusInterval = null;
-                    alert('Pagamento confirmado!');
+                    showToast('Pagamento confirmado! Redirecionando...', 'success');
                     window.location.href = 'pedidos.html';
                 }
             }).catch(function () {});
@@ -303,11 +332,11 @@
             phone: onlyDigits(document.getElementById('cardHolderPhone').value)
         };
         if (creditCard.number.length < 13 || creditCard.expiryMonth.length !== 2 || creditCard.expiryYear.length !== 4 || creditCard.ccv.length < 3) {
-            alert('Preencha corretamente os dados do cartão (número, validade MM/AA e CVV).');
+            showToast('Preencha corretamente os dados do cartão (número, validade MM/AA e CVV).', 'error');
             return;
         }
         if (creditCardHolderInfo.cpfCnpj.length < 11 || creditCardHolderInfo.postalCode.length < 8 || creditCardHolderInfo.phone.length < 10) {
-            alert('Preencha CPF (11 dígitos), CEP (8 dígitos) e telefone.');
+            showToast('Preencha CPF (11 dígitos), CEP (8 dígitos) e telefone.', 'error');
             return;
         }
         btn.disabled = true;
@@ -323,15 +352,15 @@
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-lock"></i> Pagar com cartão';
             if (data.success) {
-                alert(data.message || 'Pagamento processado!');
+                showToast(data.message || 'Pagamento processado! Redirecionando...', 'success');
                 window.location.href = 'pedidos.html';
             } else {
-                alert(data.error || 'Erro ao processar pagamento.');
+                showToast(data.error || 'Erro ao processar pagamento.', 'error');
             }
         }).catch(function (err) {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-lock"></i> Pagar com cartão';
-            alert(err.message || 'Erro ao processar. Tente novamente.');
+            showToast(err.message || 'Erro ao processar. Tente novamente.', 'error');
         });
     }
 
@@ -440,8 +469,8 @@
 
         var data = localStorage.getItem('checkout_excursao');
         if (!data) {
-            alert('Nenhuma excursão selecionada');
-            window.location.href = 'dashboard.html';
+            showToast('Nenhuma excursão selecionada. Redirecionando...', 'error');
+            setTimeout(function () { window.location.href = 'dashboard.html'; }, 1500);
             return;
         }
 
@@ -449,14 +478,14 @@
             excursao = JSON.parse(data);
         } catch (e) {
             console.error('[Checkout] Erro ao ler excursão:', e);
-            alert('Dados da excursão inválidos');
-            window.location.href = 'dashboard.html';
+            showToast('Dados da excursão inválidos. Redirecionando...', 'error');
+            setTimeout(function () { window.location.href = 'dashboard.html'; }, 1500);
             return;
         }
 
         if (!excursao.codigo || !excursao.quantidade) {
-            alert('Nenhuma excursão selecionada');
-            window.location.href = 'dashboard.html';
+            showToast('Nenhuma excursão selecionada. Redirecionando...', 'error');
+            setTimeout(function () { window.location.href = 'dashboard.html'; }, 1500);
             return;
         }
 
@@ -537,8 +566,8 @@
                     var pedidoId = resData.data && resData.data.id;
                     var valorTotal = (resData.data && resData.data.valorTotal != null) ? Number(resData.data.valorTotal) : (excursao.preco * excursao.quantidade);
                     if (!pedidoId) {
-                        alert('Pedido criado, mas não foi possível abrir o pagamento.');
-                        window.location.href = 'pedidos.html';
+                        showToast('Pedido criado, mas não foi possível abrir o pagamento.', 'error');
+                        setTimeout(function () { window.location.href = 'pedidos.html'; }, 2500);
                         return;
                     }
                     mostrarEtapaPagamento(pedidoId, valorTotal);
