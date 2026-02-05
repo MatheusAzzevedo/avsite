@@ -38,14 +38,7 @@ async function loadExcursoes() {
     }
 
     try {
-        const timeoutMs = 15000;
-        const fetchPromise = ExcursaoManager.getAll(true);
-        const timeoutPromise = new Promise(function(_, reject) {
-            setTimeout(function() {
-                reject(new Error('Tempo esgotado. Verifique sua conexão e tente novamente.'));
-            }, timeoutMs);
-        });
-        allExcursoes = await Promise.race([fetchPromise, timeoutPromise]);
+        allExcursoes = await ExcursaoManager.getAll(true);
         if (!Array.isArray(allExcursoes)) {
             allExcursoes = [];
         }
