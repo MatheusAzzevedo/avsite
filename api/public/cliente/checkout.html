@@ -62,6 +62,40 @@
             margin: 1.25rem 0 0.75rem 0;
             font-weight: 600;
         }
+
+        /* Dropdown por estudante (fechado por padrão) */
+        .aluno-dropdown {
+            margin-bottom: 0.75rem;
+            border: 2px solid var(--light-border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+        }
+        .aluno-dropdown:hover { border-color: var(--primary-light); }
+        .aluno-dropdown[open] { border-color: var(--primary-color); }
+        .aluno-dropdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+        .aluno-dropdown-header::-webkit-details-marker { display: none; }
+        .aluno-dropdown-header::marker { content: none; }
+        .aluno-dropdown-header i.fa-chevron-down {
+            color: var(--primary-color);
+            transition: transform 0.2s;
+        }
+        .aluno-dropdown[open] .aluno-dropdown-header i.fa-chevron-down { transform: rotate(180deg); }
+        .aluno-dropdown-content {
+            padding: 1rem 1.25rem 1.25rem 1.25rem;
+            border-top: 1px solid var(--light-border);
+        }
         .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
         .form-grid-full { grid-column: 1 / -1; }
         .form-group { margin-bottom: 0; }

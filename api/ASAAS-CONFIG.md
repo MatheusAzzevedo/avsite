@@ -107,6 +107,22 @@ Authorization: Bearer {token_cliente}
 
 ---
 
+## 💳 Valores mínimos (regras do Asaas)
+
+O **gateway Asaas** aplica valores mínimos por cobrança; não é possível desativar no painel:
+
+- **Cartão de crédito:** valor mínimo **R$ 5,00** por cobrança.
+- **PIX:** consulte a documentação do Asaas para o mínimo atual.
+
+A API trata assim:
+
+- **Cartão:** se o valor do pedido for menor que R$ 5,00, a rota `POST /api/cliente/pagamento/cartao` retorna **400** com a mensagem explicando o mínimo e sugerindo PIX para valores menores.
+- **PIX:** se o Asaas retornar erro de validação (ex.: valor mínimo), a API repassa o erro como **400** (em vez de 500) para o front exibir a mensagem.
+
+Para pedidos com total &lt; R$ 5,00, o checkout pode orientar o cliente a usar **PIX** ou definir um preço mínimo nas excursões.
+
+---
+
 ## 🔒 Segurança
 
 - ✅ Chave API nunca exposta no frontend

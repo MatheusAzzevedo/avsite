@@ -117,8 +117,12 @@
         var i;
         for (i = 1; i <= qtd; i++) {
             container.innerHTML +=
-                '<section class="form-section form-section-aluno" data-aluno="' + i + '">' +
-                '<h2 class="form-section-title"><i class="fas fa-user-graduate"></i> Aluno ' + i + ' – Informações do estudante</h2>' +
+                '<details class="aluno-dropdown form-section-aluno" data-aluno="' + i + '">' +
+                '<summary class="aluno-dropdown-header">' +
+                '<span><i class="fas fa-user-graduate"></i> Aluno ' + i + ' – Informações do estudante</span>' +
+                '<i class="fas fa-chevron-down"></i>' +
+                '</summary>' +
+                '<div class="aluno-dropdown-content">' +
                 '<div class="form-grid">' +
                 '<div class="form-group"><label for="nomeAluno_' + i + '">Nome completo do estudante <span class="required">*</span></label><input type="text" id="nomeAluno_' + i + '" name="nomeAluno_' + i + '" required minlength="3" placeholder="Ex.: Maria Silva"></div>' +
                 '<div class="form-group"><label for="dataNascimento_' + i + '">Data de nascimento <span class="required">*</span></label><input type="date" id="dataNascimento_' + i + '" name="dataNascimento_' + i + '" required></div>' +
@@ -144,7 +148,8 @@
                 '<div class="form-group"><label for="medicamentosFebre_' + i + '">Medicamentos em caso de febre/dor <span class="required">*</span></label><input type="text" id="medicamentosFebre_' + i + '" name="medicamentosFebre_' + i + '" required placeholder="Ex.: Paracetamol"></div>' +
                 '</div>' +
                 '<div class="form-group"><label for="medicamentosAlergia_' + i + '">Medicamentos em caso de alergia <span class="required">*</span></label><input type="text" id="medicamentosAlergia_' + i + '" name="medicamentosAlergia_' + i + '" required placeholder="Ex.: Antialérgico"></div>' +
-                '</section>';
+                '</div>' +
+                '</details>';
         }
     }
 

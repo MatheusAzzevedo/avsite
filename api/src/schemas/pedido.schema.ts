@@ -119,6 +119,7 @@ export const createPedidoSchema = z.object({
     .min(1, 'Código da excursão é obrigatório')
     .trim(),
   quantidade: z
+    .coerce
     .number({ required_error: 'Quantidade é obrigatória' })
     .int('Quantidade deve ser um número inteiro')
     .min(1, 'Quantidade deve ser no mínimo 1')

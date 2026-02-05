@@ -149,13 +149,18 @@ router.post('/pix',
         }
       });
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown';
       logger.error('[Pagamento PIX] Erro ao criar cobrança', {
         context: {
-          error: error instanceof Error ? error.message : 'Unknown',
+          error: message,
           pedidoId: req.body?.pedidoId,
           clienteId: req.cliente?.id
         }
       });
+      // Erros de validação do Asaas (valor mínimo, etc.) retornam 400 para o cliente
+      if (error instanceof Error && /valor mínimo|mínimo|invalid|erro/i.test(message)) {
+        return res.status(400).json({ success: false, error: message });
+      }
       next(error);
     }
   }
@@ -200,6 +205,15 @@ router.post('/cartao',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
+      const valorTotal = Number(pedido.valorTotal);
+      // Asaas exige valor mínimo de R$ 5,00 para cartão de crédito (regra do gateway)
+      if (valorTotal < 5) {
+        return res.status(400).json({
+          success: false,
+          error: 'O valor mínimo para cobranças via Cartão de Crédito é R$ 5,00 (regra do gateway Asaas). Para valores menores, use PIX.'
+        });
+      }
+
       const tituloExcursao = pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão';
       const descricao = `Excursão: ${tituloExcursao} - ${pedido.quantidade}x passagens`;
 
@@ -208,7 +222,7 @@ router.post('/cartao',
         clienteNome: pedido.cliente.nome,
         clienteCpf: pedido.cliente.cpf || undefined,
         clienteTelefone: pedido.cliente.telefone || undefined,
-        valor: Number(pedido.valorTotal),
+        valor: valorTotal,
         descricao,
         externalReference: pedido.id,
         creditCard: {
@@ -257,12 +271,17 @@ router.post('/cartao',
         }
       });
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown';
       logger.error('[Pagamento Cartão] Erro', {
         context: {
-          error: error instanceof Error ? error.message : 'Unknown',
+          error: message,
           pedidoId: req.body?.pedidoId
         }
       });
+      // Erros de validação do Asaas (valor mínimo, cartão recusado, etc.) retornam 400
+      if (error instanceof Error && /valor mínimo|mínimo|invalid|erro|recusad|recusado/i.test(message)) {
+        return res.status(400).json({ success: false, error: message });
+      }
       next(error);
     }
   }
