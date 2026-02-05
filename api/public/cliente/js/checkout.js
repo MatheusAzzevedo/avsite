@@ -78,6 +78,38 @@
         if (elHorario) elHorario.textContent = excursao.horario || '—';
     }
 
+    var respFieldMap = { nome: 'respNome', sobrenome: 'respSobrenome', cpf: 'respCpf', pais: 'respPais', cep: 'respCep', endereco: 'respEndereco', complemento: 'respComplemento', numero: 'respNumero', cidade: 'respCidade', estado: 'respEstado', bairro: 'respBairro', telefone: 'respTelefone', email: 'respEmail' };
+
+    function gerarResponsavelBlock() {
+        var container = document.getElementById('responsavelContainer');
+        if (!container) return;
+        var estados = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+        var opts = estados.map(function (uf) { return '<option value="' + uf + '">' + uf + '</option>'; }).join('');
+        container.innerHTML =
+            '<section class="form-section">' +
+            '<h2 class="form-section-title"><i class="fas fa-user-tie"></i> Dados do Responsável Financeiro</h2>' +
+            '<p class="subtitle" style="margin-bottom: 1rem;">Preencha os dados de quem fará o pagamento (um por pedido).</p>' +
+            '<div class="form-grid">' +
+            '<div class="form-group"><label for="respNome">Nome <span class="required">*</span></label><input type="text" id="respNome" name="respNome" required placeholder="Nome">' +
+            '</div><div class="form-group"><label for="respSobrenome">Sobrenome <span class="required">*</span></label><input type="text" id="respSobrenome" name="respSobrenome" required placeholder="Sobrenome">' +
+            '</div></div>' +
+            '<div class="form-group"><label for="respCpf">CPF <span class="required">*</span></label><span class="label-hint">Formato: 000.000.000-00</span><input type="text" id="respCpf" name="respCpf" required placeholder="000.000.000-00">' +
+            '</div>' +
+            '<div class="form-group"><label for="respPais">País <span class="required">*</span></label><select id="respPais" name="respPais" required><option value="Brasil">Brasil</option><option value="Argentina">Argentina</option><option value="Uruguai">Uruguai</option><option value="Chile">Chile</option><option value="Paraguai">Paraguai</option></select>' +
+            '</div>' +
+            '<div class="form-grid"><div class="form-group"><label for="respCep">CEP <span class="required">*</span></label><input type="text" id="respCep" name="respCep" required placeholder="00000-000"></div>' +
+            '<div class="form-group"><label for="respEndereco">Endereço <span class="required">*</span></label><input type="text" id="respEndereco" name="respEndereco" required placeholder="Rua e número"></div></div>' +
+            '<div class="form-grid"><div class="form-group"><label for="respNumero">Número <span class="required">*</span></label><input type="text" id="respNumero" name="respNumero" required placeholder="Nº"></div>' +
+            '<div class="form-group"><label for="respComplemento">Complemento</label><input type="text" id="respComplemento" name="respComplemento" placeholder="Apto, sala..."></div></div>' +
+            '<div class="form-grid"><div class="form-group"><label for="respCidade">Cidade <span class="required">*</span></label><input type="text" id="respCidade" name="respCidade" required placeholder="Cidade"></div>' +
+            '<div class="form-group"><label for="respEstado">Estado <span class="required">*</span></label><select id="respEstado" name="respEstado" required><option value="">Selecione</option>' + opts + '</select></div></div>' +
+            '<div class="form-group"><label for="respBairro">Bairro</label><input type="text" id="respBairro" name="respBairro" placeholder="Bairro">' +
+            '</div>' +
+            '<div class="form-grid"><div class="form-group"><label for="respTelefone">Telefone <span class="required">*</span></label><span class="label-hint">(11) 98888-8888</span><input type="tel" id="respTelefone" name="respTelefone" required placeholder="(11) 98888-8888"></div>' +
+            '<div class="form-group"><label for="respEmail">Email <span class="required">*</span></label><input type="email" id="respEmail" name="respEmail" required placeholder="email@exemplo.com"></div></div>' +
+            '</section>';
+    }
+
     function gerarFormularios() {
         var container = document.getElementById('alunosContainer');
         if (!container) return;
@@ -85,47 +117,33 @@
         var i;
         for (i = 1; i <= qtd; i++) {
             container.innerHTML +=
-                '<section class="form-section" data-aluno="' + i + '">' +
-                '<h2 class="form-section-title"><i class="fas fa-user"></i> Aluno ' + i + '</h2>' +
+                '<section class="form-section form-section-aluno" data-aluno="' + i + '">' +
+                '<h2 class="form-section-title"><i class="fas fa-user-graduate"></i> Aluno ' + i + ' – Informações do estudante</h2>' +
                 '<div class="form-grid">' +
-                '<div class="form-group">' +
-                '<label for="nomeAluno_' + i + '">Nome completo <span class="required">*</span></label>' +
-                '<input type="text" id="nomeAluno_' + i + '" name="nomeAluno_' + i + '" required minlength="3" placeholder="Ex.: Maria Silva">' +
-                '</div>' +
-                '<div class="form-group">' +
-                '<label for="idadeAluno_' + i + '">Idade</label>' +
-                '<span class="label-hint">Entre 1 e 120</span>' +
-                '<input type="number" id="idadeAluno_' + i + '" name="idadeAluno_' + i + '" min="1" max="120" placeholder="Ex.: 14">' +
-                '</div>' +
+                '<div class="form-group"><label for="nomeAluno_' + i + '">Nome completo do estudante <span class="required">*</span></label><input type="text" id="nomeAluno_' + i + '" name="nomeAluno_' + i + '" required minlength="3" placeholder="Ex.: Maria Silva"></div>' +
+                '<div class="form-group"><label for="dataNascimento_' + i + '">Data de nascimento <span class="required">*</span></label><input type="date" id="dataNascimento_' + i + '" name="dataNascimento_' + i + '" required></div>' +
                 '</div>' +
                 '<div class="form-grid">' +
-                '<div class="form-group">' +
-                '<label for="escolaAluno_' + i + '">Escola</label>' +
-                '<input type="text" id="escolaAluno_' + i + '" name="escolaAluno_' + i + '" placeholder="Ex.: E.E. Nelson Ferreira">' +
+                '<div class="form-group"><label for="cpfAluno_' + i + '">CPF do estudante <span class="required">*</span></label><span class="label-hint">000.000.000-00</span><input type="text" id="cpfAluno_' + i + '" name="cpfAluno_' + i + '" required placeholder="000.000.000-00"></div>' +
+                '<div class="form-group"><label for="rgAluno_' + i + '">RG do aluno <span class="required">*</span></label><input type="text" id="rgAluno_' + i + '" name="rgAluno_' + i + '" required placeholder="MG 14.123.456"></div>' +
                 '</div>' +
-                '<div class="form-group">' +
-                '<label for="serieAluno_' + i + '">Série</label>' +
-                '<input type="text" id="serieAluno_' + i + '" name="serieAluno_' + i + '" placeholder="Ex.: 6º ano">' +
-                '</div>' +
-                '</div>' +
-                '<h3 class="form-section-subtitle">Dados do responsável</h3>' +
                 '<div class="form-grid">' +
-                '<div class="form-group">' +
-                '<label for="responsavel_' + i + '">Nome do responsável</label>' +
-                '<input type="text" id="responsavel_' + i + '" name="responsavel_' + i + '" placeholder="Ex.: João Silva">' +
+                '<div class="form-group"><label for="idadeAluno_' + i + '">Idade</label><input type="number" id="idadeAluno_' + i + '" name="idadeAluno_' + i + '" min="1" max="120" placeholder="Ex.: 14"></div>' +
+                '<div class="form-group"><label for="serieAluno_' + i + '">Série <span class="required">*</span></label><input type="text" id="serieAluno_' + i + '" name="serieAluno_' + i + '" required placeholder="Ex.: 2º ano"></div>' +
                 '</div>' +
-                '<div class="form-group">' +
-                '<label for="telefoneResponsavel_' + i + '">Telefone</label>' +
-                '<span class="label-hint">Formato: (11) 98888-8888</span>' +
-                '<input type="tel" id="telefoneResponsavel_' + i + '" name="telefoneResponsavel_' + i + '" placeholder="(11) 98888-8888">' +
+                '<div class="form-grid">' +
+                '<div class="form-group"><label for="turma_' + i + '">Turma <span class="required">*</span></label><input type="text" id="turma_' + i + '" name="turma_' + i + '" required placeholder="Ex.: A, B, C"></div>' +
+                '<div class="form-group"><label for="escolaAluno_' + i + '">Escola</label><input type="text" id="escolaAluno_' + i + '" name="escolaAluno_' + i + '" placeholder="Ex.: E.E. Nelson Ferreira"></div>' +
                 '</div>' +
+                '<div class="form-group"><label for="unidadeColegio_' + i + '">Unidade do colégio <span class="required">*</span></label><input type="text" id="unidadeColegio_' + i + '" name="unidadeColegio_' + i + '" required placeholder="Unidade à qual o estudante pertence">' +
                 '</div>' +
-                '<div class="form-grid form-grid-full">' +
-                '<div class="form-group">' +
-                '<label for="emailResponsavel_' + i + '">Email do responsável</label>' +
-                '<input type="email" id="emailResponsavel_' + i + '" name="emailResponsavel_' + i + '" placeholder="exemplo@email.com">' +
+                '<h3 class="form-section-subtitle"><i class="fas fa-heartbeat"></i> Informações médicas</h3>' +
+                '<div class="form-group"><label for="alergiasCuidados_' + i + '">Alergias ou cuidados especiais? <span class="required">*</span></label><textarea id="alergiasCuidados_' + i + '" name="alergiasCuidados_' + i + '" rows="3" required placeholder="Descreva alergias, restrições ou cuidados especiais"></textarea></div>' +
+                '<div class="form-grid">' +
+                '<div class="form-group"><label for="planoSaude_' + i + '">Plano de saúde do aluno <span class="required">*</span></label><input type="text" id="planoSaude_' + i + '" name="planoSaude_' + i + '" required placeholder="Nome do plano"></div>' +
+                '<div class="form-group"><label for="medicamentosFebre_' + i + '">Medicamentos em caso de febre/dor <span class="required">*</span></label><input type="text" id="medicamentosFebre_' + i + '" name="medicamentosFebre_' + i + '" required placeholder="Ex.: Paracetamol"></div>' +
                 '</div>' +
-                '</div>' +
+                '<div class="form-group"><label for="medicamentosAlergia_' + i + '">Medicamentos em caso de alergia <span class="required">*</span></label><input type="text" id="medicamentosAlergia_' + i + '" name="medicamentosAlergia_' + i + '" required placeholder="Ex.: Antialérgico"></div>' +
                 '</section>';
         }
     }
@@ -133,6 +151,183 @@
     function getFormValue(form, name) {
         var el = form.elements[name];
         return el ? el.value.trim() : '';
+    }
+
+    var pedidoIdPagamento = null;
+    var valorPagamento = 0;
+    var pixQrCode = null;
+    var pollStatusInterval = null;
+    var pagamentoListenersAdded = false;
+
+    function mostrarEtapaPagamento(pedidoId, valorTotal) {
+        pedidoIdPagamento = pedidoId;
+        valorPagamento = valorTotal;
+        var form = document.getElementById('checkoutForm');
+        var stepPag = document.getElementById('checkoutStepPagamento');
+        var finalizarBtn = document.getElementById('finalizarBtn');
+        if (form) form.style.display = 'none';
+        if (finalizarBtn) finalizarBtn.style.display = 'none';
+        if (stepPag) {
+            stepPag.classList.add('show');
+            var pagamentoValorEl = document.getElementById('pagamentoValor');
+            if (pagamentoValorEl) pagamentoValorEl.textContent = 'R$ ' + formatBRL(valorTotal);
+        }
+
+        if (!pagamentoListenersAdded) {
+            pagamentoListenersAdded = true;
+            var opcaoPix = document.getElementById('opcaoPix');
+            var opcaoCartao = document.getElementById('opcaoCartao');
+            var pixBox = document.getElementById('pixBox');
+            var cartaoBox = document.getElementById('cartaoBox');
+            if (opcaoPix) {
+                opcaoPix.addEventListener('click', function () {
+                    document.querySelectorAll('.payment-option').forEach(function (o) { o.classList.remove('selected'); });
+                    opcaoPix.classList.add('selected');
+                    if (pixBox) pixBox.classList.remove('show');
+                    if (cartaoBox) cartaoBox.classList.remove('show');
+                    if (pixBox) pixBox.classList.add('show');
+                    gerarPix();
+                });
+            }
+            if (opcaoCartao) {
+                opcaoCartao.addEventListener('click', function () {
+                    document.querySelectorAll('.payment-option').forEach(function (o) { o.classList.remove('selected'); });
+                    opcaoCartao.classList.add('selected');
+                    if (pixBox) pixBox.classList.remove('show');
+                    if (cartaoBox) cartaoBox.classList.add('show');
+                });
+            }
+            var btnCopiarPix = document.getElementById('btnCopiarPix');
+            if (btnCopiarPix) {
+                btnCopiarPix.addEventListener('click', function () {
+                    if (pixQrCode) {
+                        navigator.clipboard.writeText(pixQrCode).then(function () {
+                            alert('Código PIX copiado! Cole no app do seu banco.');
+                        }).catch(function () { alert('Não foi possível copiar.'); });
+                    }
+                });
+            }
+            var formCartao = document.getElementById('formCartao');
+            if (formCartao) {
+                formCartao.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    pagarComCartao();
+                });
+            }
+        }
+
+        // Seleção inicial: PIX em destaque e exibir QR Code
+        document.querySelectorAll('.payment-option').forEach(function (o) { o.classList.remove('selected'); });
+        var opcaoPixEl = document.getElementById('opcaoPix');
+        var pixBoxEl = document.getElementById('pixBox');
+        var cartaoBoxEl = document.getElementById('cartaoBox');
+        if (opcaoPixEl) opcaoPixEl.classList.add('selected');
+        if (pixBoxEl) pixBoxEl.classList.add('show');
+        if (cartaoBoxEl) cartaoBoxEl.classList.remove('show');
+        gerarPix();
+    }
+
+    function gerarPix() {
+        var container = document.getElementById('pixQrContainer');
+        var btn = document.getElementById('btnCopiarPix');
+        if (!pedidoIdPagamento || !container) return;
+        container.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Gerando cobrança PIX...</p>';
+        btn.style.display = 'none';
+        clienteAuth.fetchAuth('/cliente/pagamento/pix', {
+            method: 'POST',
+            body: JSON.stringify({ pedidoId: pedidoIdPagamento })
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            if (!data.success || !data.data) {
+                container.innerHTML = '<p style="color: var(--danger-color);">' + (data.error || 'Erro ao gerar PIX') + '</p>';
+                return;
+            }
+            pixQrCode = data.data.qrCode || '';
+            if (data.data.qrCodeImage) {
+                container.innerHTML = '<img src="' + data.data.qrCodeImage + '" alt="QR Code PIX">';
+            } else {
+                container.innerHTML = '<p>Use o código PIX abaixo (botão Copiar).</p>';
+            }
+            btn.style.display = 'inline-block';
+            iniciarPollStatus();
+        }).catch(function (err) {
+            container.innerHTML = '<p style="color: var(--danger-color);">Erro ao gerar PIX. Tente novamente.</p>';
+            console.error('[Checkout] PIX:', err);
+        });
+    }
+
+    function iniciarPollStatus() {
+        if (pollStatusInterval) clearInterval(pollStatusInterval);
+        pollStatusInterval = setInterval(function () {
+            if (!pedidoIdPagamento) return;
+            clienteAuth.fetchAuth('/cliente/pagamento/' + pedidoIdPagamento + '/status').then(function (r) { return r.json(); }).then(function (data) {
+                if (data.success && data.data && (data.data.status === 'PAGO' || data.data.status === 'CONFIRMADO')) {
+                    clearInterval(pollStatusInterval);
+                    pollStatusInterval = null;
+                    alert('Pagamento confirmado!');
+                    window.location.href = 'pedidos.html';
+                }
+            }).catch(function () {});
+        }, 3000);
+    }
+
+    function onlyDigits(s) {
+        return String(s).replace(/\D/g, '');
+    }
+
+    function pagarComCartao() {
+        var btn = document.getElementById('btnPagarCartao');
+        var num = onlyDigits(document.getElementById('cardNumber').value);
+        var expiry = document.getElementById('cardExpiry').value.trim();
+        var parts = expiry.split('/');
+        var expiryMonth = (parts[0] || '').replace(/\D/g, '');
+        var expiryYear = (parts[1] || '').replace(/\D/g, '');
+        if (expiryYear.length === 2) expiryYear = '20' + expiryYear;
+        var creditCard = {
+            holderName: document.getElementById('cardHolder').value.trim(),
+            number: num,
+            expiryMonth: expiryMonth.length === 1 ? '0' + expiryMonth : expiryMonth,
+            expiryYear: expiryYear,
+            ccv: document.getElementById('cardCvv').value.replace(/\D/g, '')
+        };
+        var creditCardHolderInfo = {
+            name: document.getElementById('cardHolderName').value.trim(),
+            email: document.getElementById('cardHolderEmail').value.trim(),
+            cpfCnpj: onlyDigits(document.getElementById('cardHolderCpf').value),
+            postalCode: onlyDigits(document.getElementById('cardHolderCep').value),
+            addressNumber: document.getElementById('cardHolderAddressNumber').value.trim(),
+            phone: onlyDigits(document.getElementById('cardHolderPhone').value)
+        };
+        if (creditCard.number.length < 13 || creditCard.expiryMonth.length !== 2 || creditCard.expiryYear.length !== 4 || creditCard.ccv.length < 3) {
+            alert('Preencha corretamente os dados do cartão (número, validade MM/AA e CVV).');
+            return;
+        }
+        if (creditCardHolderInfo.cpfCnpj.length < 11 || creditCardHolderInfo.postalCode.length < 8 || creditCardHolderInfo.phone.length < 10) {
+            alert('Preencha CPF (11 dígitos), CEP (8 dígitos) e telefone.');
+            return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+        clienteAuth.fetchAuth('/cliente/pagamento/cartao', {
+            method: 'POST',
+            body: JSON.stringify({
+                pedidoId: pedidoIdPagamento,
+                creditCard: creditCard,
+                creditCardHolderInfo: creditCardHolderInfo
+            })
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-lock"></i> Pagar com cartão';
+            if (data.success) {
+                alert(data.message || 'Pagamento processado!');
+                window.location.href = 'pedidos.html';
+            } else {
+                alert(data.error || 'Erro ao processar pagamento.');
+            }
+        }).catch(function (err) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-lock"></i> Pagar com cartão';
+            alert(err.message || 'Erro ao processar. Tente novamente.');
+        });
     }
 
     /**
@@ -151,14 +346,15 @@
     }
 
     /**
-     * Converte path da API (ex: dadosAlunos.0.emailResponsavel) em nome do input (emailResponsavel_1).
+     * Converte path da API em nome do input.
+     * dadosAlunos.0.emailResponsavel -> emailResponsavel_1; dadosResponsavelFinanceiro.nome -> respNome
      */
     function apiPathToInputName(path) {
-        var match = path && path.match(/^dadosAlunos\.(\d+)\.(.+)$/);
-        if (!match) return null;
-        var index = parseInt(match[1], 10);
-        var field = match[2];
-        return field + '_' + (index + 1);
+        var mAluno = path && path.match(/^dadosAlunos\.(\d+)\.(.+)$/);
+        if (mAluno) return mAluno[2] + '_' + (parseInt(mAluno[1], 10) + 1);
+        var mResp = path && path.match(/^dadosResponsavelFinanceiro\.(.+)$/);
+        if (mResp && respFieldMap[mResp[1]]) return respFieldMap[mResp[1]];
+        return null;
     }
 
     /**
@@ -171,20 +367,35 @@
         var fieldNames = {
             nomeAluno: 'Nome do aluno',
             idadeAluno: 'Idade',
+            dataNascimento: 'Data de nascimento',
             escolaAluno: 'Escola',
             serieAluno: 'Série',
+            turma: 'Turma',
+            unidadeColegio: 'Unidade do colégio',
+            cpfAluno: 'CPF do estudante',
+            rgAluno: 'RG do aluno',
             responsavel: 'Nome do responsável',
             telefoneResponsavel: 'Telefone',
-            emailResponsavel: 'Email do responsável'
+            emailResponsavel: 'Email do responsável',
+            alergiasCuidados: 'Alergias/cuidados especiais',
+            planoSaude: 'Plano de saúde',
+            medicamentosFebre: 'Medicamentos febre/dor',
+            medicamentosAlergia: 'Medicamentos alergia'
         };
+        var respLabels = { nome: 'Nome', sobrenome: 'Sobrenome', cpf: 'CPF', pais: 'País', cep: 'CEP', endereco: 'Endereço', complemento: 'Complemento', numero: 'Número', cidade: 'Cidade', estado: 'Estado', bairro: 'Bairro', telefone: 'Telefone', email: 'Email' };
 
         details.forEach(function (d) {
             var inputName = apiPathToInputName(d.field);
             var label = d.field;
             if (inputName) {
-                var idx = inputName.replace(/^.+\_/, '');
-                var fieldKey = inputName.replace(/\_\d+$/, '');
-                label = 'Aluno ' + idx + ' – ' + (fieldNames[fieldKey] || fieldKey);
+                var mResp = d.field && d.field.match(/^dadosResponsavelFinanceiro\.(.+)$/);
+                if (mResp && respLabels[mResp[1]]) {
+                    label = 'Responsável – ' + respLabels[mResp[1]];
+                } else {
+                    var idx = (inputName.match(/_(\d+)$/) || [])[1];
+                    var fieldKey = inputName.replace(/\_\d+$/, '');
+                    label = idx ? 'Aluno ' + idx + ' – ' + (fieldNames[fieldKey] || fieldKey) : (fieldNames[fieldKey] || fieldKey);
+                }
             }
             list.push({ label: label, message: d.message, inputName: inputName });
         });
@@ -192,7 +403,7 @@
         details.forEach(function (d) {
             var inputName = apiPathToInputName(d.field);
             if (!inputName) return;
-            var input = form.elements[inputName];
+            var input = form.querySelector('[name="' + inputName + '"]') || form.elements[inputName];
             if (!input) return;
             input.classList.add('input-invalid');
             input.setAttribute('aria-invalid', 'true');
@@ -246,6 +457,7 @@
 
         exibirResumo();
         preencherDadosViagem();
+        gerarResponsavelBlock();
         gerarFormularios();
 
         var voltar = document.getElementById('voltarLink');
@@ -265,6 +477,22 @@
                 finalizarBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
             }
 
+            var dadosResponsavelFinanceiro = {
+                nome: getFormValue(form, 'respNome'),
+                sobrenome: getFormValue(form, 'respSobrenome'),
+                cpf: getFormValue(form, 'respCpf'),
+                pais: getFormValue(form, 'respPais'),
+                cep: getFormValue(form, 'respCep'),
+                endereco: getFormValue(form, 'respEndereco'),
+                complemento: getFormValue(form, 'respComplemento') || undefined,
+                numero: getFormValue(form, 'respNumero'),
+                cidade: getFormValue(form, 'respCidade'),
+                estado: getFormValue(form, 'respEstado'),
+                bairro: getFormValue(form, 'respBairro') || undefined,
+                telefone: getFormValue(form, 'respTelefone'),
+                email: getFormValue(form, 'respEmail')
+            };
+
             var dadosAlunos = [];
             var qtd = Math.max(1, Math.min(50, parseInt(excursao.quantidade, 10) || 1));
             var i;
@@ -272,11 +500,17 @@
                 dadosAlunos.push({
                     nomeAluno: getFormValue(form, 'nomeAluno_' + i),
                     idadeAluno: parseInt(getFormValue(form, 'idadeAluno_' + i), 10) || undefined,
+                    dataNascimento: getFormValue(form, 'dataNascimento_' + i) || undefined,
                     escolaAluno: getFormValue(form, 'escolaAluno_' + i) || undefined,
                     serieAluno: getFormValue(form, 'serieAluno_' + i) || undefined,
-                    responsavel: getFormValue(form, 'responsavel_' + i) || undefined,
-                    telefoneResponsavel: getFormValue(form, 'telefoneResponsavel_' + i) || undefined,
-                    emailResponsavel: getFormValue(form, 'emailResponsavel_' + i) || undefined
+                    turma: getFormValue(form, 'turma_' + i) || undefined,
+                    unidadeColegio: getFormValue(form, 'unidadeColegio_' + i) || undefined,
+                    cpfAluno: getFormValue(form, 'cpfAluno_' + i) || undefined,
+                    rgAluno: getFormValue(form, 'rgAluno_' + i) || undefined,
+                    alergiasCuidados: getFormValue(form, 'alergiasCuidados_' + i) || undefined,
+                    planoSaude: getFormValue(form, 'planoSaude_' + i) || undefined,
+                    medicamentosFebre: getFormValue(form, 'medicamentosFebre_' + i) || undefined,
+                    medicamentosAlergia: getFormValue(form, 'medicamentosAlergia_' + i) || undefined
                 });
             }
 
@@ -286,6 +520,7 @@
                     body: JSON.stringify({
                         codigoExcursao: excursao.codigo,
                         quantidade: excursao.quantidade,
+                        dadosResponsavelFinanceiro: dadosResponsavelFinanceiro,
                         dadosAlunos: dadosAlunos
                     })
                 });
@@ -294,8 +529,14 @@
 
                 if (response.ok && resData.success) {
                     localStorage.removeItem('checkout_excursao');
-                    alert('Pedido criado com sucesso!');
-                    window.location.href = 'pedidos.html';
+                    var pedidoId = resData.data && resData.data.id;
+                    var valorTotal = (resData.data && resData.data.valorTotal != null) ? Number(resData.data.valorTotal) : (excursao.preco * excursao.quantidade);
+                    if (!pedidoId) {
+                        alert('Pedido criado, mas não foi possível abrir o pagamento.');
+                        window.location.href = 'pedidos.html';
+                        return;
+                    }
+                    mostrarEtapaPagamento(pedidoId, valorTotal);
                     return;
                 }
 

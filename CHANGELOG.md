@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-02-04 - Checkout: etapa de pagamento Asaas (PIX e Cartão)
+
+### Arquivos Modificados
+- `cliente/checkout.html` [Seção checkoutStepPagamento com opções PIX e Cartão de crédito; pixBox com QR Code e botão Copiar; cartaoBox com formulário completo (cartão + titular)]
+- `cliente/js/checkout.js` [mostrarEtapaPagamento: listeners únicos (pagamentoListenersAdded), PIX selecionado por padrão e gerarPix() ao exibir; gerarPix (POST /cliente/pagamento/pix), iniciarPollStatus (GET status a cada 3s), pagarComCartao (POST /cliente/pagamento/cartao)]
+- `api/public/cliente/checkout.html`, `api/public/cliente/js/checkout.js` [Cópias para paridade com a API]
+
+### Alterações
+- Após criar o pedido, o checkout exibe a etapa de pagamento com valor total, opção PIX (QR Code + copiar código) e opção Cartão de crédito (formulário com número, validade, CVV e dados do titular). Listeners são registrados uma única vez; PIX é exibido por padrão e o polling verifica o status até PAGO/CONFIRMADO. Cartão envia dados para a API que processa via Asaas.
+
+---
+
+## 2026-02-04 - Checkout cliente: todos os campos do admin (responsável + aluno + médico)
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Pedido: campo dadosResponsavelFinanceiro (Json?); ItemPedido: dataNascimento, rgAluno, turma, unidadeColegio, alergiasCuidados, planoSaude, medicamentosFebre, medicamentosAlergia]
+- `api/src/schemas/pedido.schema.ts` [dadosResponsavelFinanceiroSchema (nome, sobrenome, cpf, pais, cep, endereco, numero, cidade, estado, telefone, email, etc.); dadosAlunoSchema estendido com dataNascimento, rgAluno, turma, unidadeColegio, alergiasCuidados, planoSaude, medicamentosFebre, medicamentosAlergia; createPedidoSchema com dadosResponsavelFinanceiro opcional]
+- `api/src/routes/pedido.routes.ts` [POST: salva dadosResponsavelFinanceiro no Pedido; itens com todos os novos campos por aluno]
+- `cliente/checkout.html` [Container responsavelContainer antes de alunosContainer]
+- `cliente/js/checkout.js` [gerarResponsavelBlock: bloco único Dados do Responsável Financeiro (todos os campos do admin); gerarFormularios: por aluno Informações do estudante + Informações médicas; submit envia dadosResponsavelFinanceiro e dadosAlunos completos; apiPathToInputName e showValidationErrors para responsável e novos campos]
+- `api/public/cliente/checkout.html`, `api/public/cliente/js/checkout.js` [Cópias das alterações]
+
+### Alterações
+- Checkout do cliente passou a ter todos os campos do admin/checkout.html: um bloco único "Dados do Responsável Financeiro" (nome, sobrenome, CPF, país, CEP, endereço, número, cidade, estado, bairro, telefone, email) e, para cada participante (quantidade), bloco completo "Informações do estudante" (nome, data nascimento, CPF, RG, série, turma, unidade do colégio, escola, idade) + "Informações médicas" (alergias/cuidados, plano de saúde, medicamentos febre/dor, medicamentos alergia). API e banco atualizados para persistir esses dados; migration deve ser aplicada quando o banco estiver acessível (`npx prisma migrate dev` ou `prisma db push`).
+
+---
+
 ## 2026-02-04 - Checkout cliente: UX, erros por campo e design alinhado ao sistema
 
 ### Arquivos Modificados
@@ -42,31 +69,6 @@
 - Atributo pattern do input de código [A-Za-z0-9_-]+ gerava "Invalid character in character class" em motores com flag /v. Corrigido para [-A-Za-z0-9_]+ (hífen no início da classe = literal).
 
 ---
-
-## 2026-02-04 - Código gerado por destino e data na API de excursões pedagógicas
-
-### Arquivos Modificados
-- `api/prisma/schema.prisma` [Campos opcionais destino (String?) e dataDestino (DateTime?) em ExcursaoPedagogica]
-- `api/src/schemas/excursao-pedagogica.schema.ts` [Criação: codigo opcional; destino e dataDestino (YYYY-MM-DD); refine exige codigo OU (destino + dataDestino)]
-- `api/src/routes/excursao-pedagogica.routes.ts` [POST: gera codigo a partir de destino + dataDestino quando enviados; PUT: converte dataDestino string para Date]
-- `api/src/utils/slug.ts` [Função generateCodigoFromDestino(destino, dataDestino, existingCodigos) — formato slug(destino)-YYYY-MM-DD, sufixo numérico em colisão]
-- `api/docs/ENVIO-EXCURSOES-RESUMO.md` [Documentação: código manual (admin) ou gerado pela API (destino + dataDestino); exemplos com destino e dataDestino]
-
-### Alterações
-- Código da excursão pedagógica pode ser manual (admin) ou gerado pela API quando outro sistema envia destino (nome do destino) e dataDestino (formato YYYY-MM-DD).
-- Código gerado: slug do destino + data, ex.: museu-de-ciencias-2025-03-15; em colisão a API acrescenta -2, -3, etc.
-- No avsite o código continua sendo criado e editado manualmente.
-
----
-
-## 2026-02-04 - API de integração apenas Excursões Pedagógicas
-
-### Arquivos Modificados
-- `api/docs/ENVIO-EXCURSOES-RESUMO.md` [Documentação da API de envio: passou a documentar exclusivamente Excursões Pedagógicas; URLs de criação/atualização/status alteradas de /api/excursoes para /api/excursoes-pedagogicas; campo obrigatório codigo (1–50 chars, A-Za-z0-9_-) incluído nos exemplos; nota de que excursões normais são criadas apenas pelo sistema avsite]
-
-### Alterações
-- A API que outros sistemas utilizam para enviar excursões cria apenas Excursões Pedagógicas (POST /api/excursoes-pedagogicas).
-- Excursões normais (gerais) passam a ser criadas e gerenciadas exclusivamente pelo painel avsite; não há endpoint de integração para elas.
 
 ---
 

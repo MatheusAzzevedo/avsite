@@ -179,6 +179,130 @@ export async function criarCobrancaAsaas(dados: {
 }
 
 /**
+ * Explicação da função [criarCobrancaCartaoAsaas]
+ *
+ * Cria cobrança no Asaas com cartão de crédito (pagamento imediato).
+ * Usa a API REST do Asaas diretamente para enviar creditCard e creditCardHolderInfo.
+ *
+ * @param dados - Dados do pedido, cliente e cartão
+ * @returns Dados da cobrança criada (id, status, value)
+ */
+export async function criarCobrancaCartaoAsaas(dados: {
+  clienteEmail: string;
+  clienteNome: string;
+  clienteCpf?: string;
+  clienteTelefone?: string;
+  valor: number;
+  descricao: string;
+  externalReference: string;
+  creditCard: {
+    holderName: string;
+    number: string;
+    expiryMonth: string;
+    expiryYear: string;
+    ccv: string;
+  };
+  creditCardHolderInfo: {
+    name: string;
+    email: string;
+    cpfCnpj: string;
+    postalCode: string;
+    addressNumber: string;
+    phone: string;
+  };
+}) {
+  const baseUrl = asaasEnv === 'sandbox'
+    ? 'https://sandbox.asaas.com/api/v3'
+    : 'https://api.asaas.com/v3';
+
+  let asaasCustomer: { id: string };
+  try {
+    const customers = await asaasClient.customers.list({ email: dados.clienteEmail });
+    if (customers.data && customers.data.length > 0) {
+      asaasCustomer = customers.data[0];
+    } else {
+      asaasCustomer = await asaasClient.customers.new({
+        name: dados.clienteNome,
+        email: dados.clienteEmail,
+        cpfCnpj: String(dados.clienteCpf ?? dados.creditCardHolderInfo.cpfCnpj ?? ''),
+        phone: String(dados.clienteTelefone ?? dados.creditCardHolderInfo.phone ?? '')
+      });
+    }
+  } catch (error) {
+    logger.error('[Asaas Cartão] Erro ao obter cliente', {
+      context: { error: error instanceof Error ? error.message : 'Unknown' }
+    });
+    throw error;
+  }
+
+  const dueDate = new Date();
+  dueDate.setDate(dueDate.getDate() + 1);
+
+  const body = {
+    customer: asaasCustomer.id,
+    billingType: 'CREDIT_CARD',
+    value: dados.valor,
+    description: dados.descricao,
+    externalReference: dados.externalReference,
+    dueDate: dueDate.toISOString().split('T')[0],
+    creditCard: {
+      holderName: dados.creditCard.holderName,
+      number: dados.creditCard.number.replace(/\D/g, ''),
+      expiryMonth: dados.creditCard.expiryMonth.replace(/\D/g, ''),
+      expiryYear: dados.creditCard.expiryYear.replace(/\D/g, ''),
+      ccv: dados.creditCard.ccv.replace(/\D/g, '')
+    },
+    creditCardHolderInfo: {
+      name: dados.creditCardHolderInfo.name,
+      email: dados.creditCardHolderInfo.email,
+      cpfCnpj: dados.creditCardHolderInfo.cpfCnpj.replace(/\D/g, ''),
+      postalCode: dados.creditCardHolderInfo.postalCode.replace(/\D/g, ''),
+      addressNumber: dados.creditCardHolderInfo.addressNumber,
+      phone: dados.creditCardHolderInfo.phone.replace(/\D/g, '')
+    }
+  };
+
+  logger.info('[Asaas Cartão] Criando cobrança com cartão', {
+    context: { customerId: asaasCustomer.id, valor: dados.valor, reference: dados.externalReference }
+  });
+
+  const response = await fetch(`${baseUrl}/payments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': 'Avorar-Turismo-API/1.0',
+      access_token: asaasApiKey
+    },
+    body: JSON.stringify(body)
+  });
+
+  const payment = await response.json();
+
+  if (!response.ok) {
+    logger.error('[Asaas Cartão] Erro na API', {
+      context: {
+        status: response.status,
+        errors: payment.errors,
+        description: payment.errors?.[0]?.description
+      }
+    });
+    throw new Error(
+      payment.errors?.[0]?.description || payment.error || `Asaas retornou ${response.status}`
+    );
+  }
+
+  logger.info('[Asaas Cartão] Cobrança criada', {
+    context: { paymentId: payment.id, status: payment.status }
+  });
+
+  return {
+    id: payment.id,
+    status: payment.status,
+    value: payment.value
+  };
+}
+
+/**
  * Explicação da função [consultarPagamentoAsaas]
  * 
  * Consulta status de um pagamento no Asaas.

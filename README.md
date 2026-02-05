@@ -4,7 +4,19 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Checkout cliente: UX, erros por campo e design
+### Última atualização (2026-02-04) - Checkout: etapa de pagamento PIX e Cartão (Asaas)
+- **cliente/checkout.html**, **api/public/cliente/checkout.html** [Seção de pagamento com opções PIX (QR Code + copiar) e Cartão de crédito (formulário completo)]
+- **cliente/js/checkout.js**, **api/public/cliente/js/checkout.js** [Etapa pagamento após criar pedido; listeners únicos; PIX selecionado por padrão; gerarPix, polling de status, pagarComCartao integrados à API]
+
+Resumo: Após finalizar o pedido, o cliente vê a etapa de pagamento com valor total, pode pagar por PIX (QR Code e código copiável, com verificação automática de status) ou por cartão de crédito (formulário enviado para POST /api/cliente/pagamento/cartao). Integração completa com Asaas.
+
+### Versão anterior (2026-02-04) - Checkout: todos os campos do admin (responsável + aluno + médico)
+- **api/prisma/schema.prisma**, **api/src/schemas/pedido.schema.ts**, **api/src/routes/pedido.routes.ts** [Dados do responsável financeiro e campos por aluno]
+- **cliente/checkout.html**, **cliente/js/checkout.js**, **api/public/...** [Formulários completos e envio no submit]
+
+Resumo: Checkout com todos os campos do admin (responsável financeiro e por aluno: estudante + médicos). Migration necessária quando o banco estiver acessível.
+
+### Versão anterior (2026-02-04) - Checkout cliente: UX, erros por campo e design
 - **cliente/checkout.html**, **api/public/cliente/checkout.html** [Navbar igual ao dashboard; design com variáveis do sistema; formulário em seções (Aluno N, Dados do responsável); labels com hint e obrigatório; bloco de erro com título + lista; estilos para campo inválido e mensagem inline]
 - **cliente/js/checkout.js**, **api/public/cliente/js/checkout.js** [Uso de resData.details para mostrar quais campos falharam e por quê; clearFieldErrors; showValidationErrors (lista no topo + marcação nos inputs); formulários gerados com seções e labels organizadas]
 

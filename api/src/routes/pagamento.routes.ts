@@ -23,6 +23,7 @@ import {
 } from '../schemas/pagamento.schema';
 import { 
   criarCobrancaAsaas,
+  criarCobrancaCartaoAsaas,
   consultarPagamentoAsaas,
   processarWebhookAsaas,
   verificarConfigAsaas
@@ -199,13 +200,61 @@ router.post('/cartao',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
-      // TODO: Implementar pagamento com cartão no Asaas
-      // Por ora, retorna não implementado
-      logger.warn('[Pagamento Cartão] Funcionalidade em desenvolvimento');
+      const descricao = `Excursão: ${pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão'} - ${pedido.quantidade}x passagens`;
 
-      throw ApiError.notImplemented(
-        'Pagamento com cartão será implementado em breve. Use PIX por enquanto.'
-      );
+      const cobranca = await criarCobrancaCartaoAsaas({
+        clienteEmail: pedido.cliente.email,
+        clienteNome: pedido.cliente.nome,
+        clienteCpf: pedido.cliente.cpf || undefined,
+        clienteTelefone: pedido.cliente.telefone || undefined,
+        valor: Number(pedido.valorTotal),
+        descricao,
+        externalReference: pedido.id,
+        creditCard: {
+          holderName: creditCard.holderName,
+          number: creditCard.number,
+          expiryMonth: creditCard.expiryMonth,
+          expiryYear: creditCard.expiryYear,
+          ccv: creditCard.ccv
+        },
+        creditCardHolderInfo: {
+          name: creditCardHolderInfo.name,
+          email: creditCardHolderInfo.email,
+          cpfCnpj: creditCardHolderInfo.cpfCnpj,
+          postalCode: creditCardHolderInfo.postalCode,
+          addressNumber: creditCardHolderInfo.addressNumber,
+          phone: creditCardHolderInfo.phone
+        }
+      });
+
+      const statusPedido = cobranca.status === 'CONFIRMED' || cobranca.status === 'RECEIVED'
+        ? 'PAGO'
+        : 'AGUARDANDO_PAGAMENTO';
+
+      await prisma.pedido.update({
+        where: { id: pedido.id },
+        data: {
+          codigoPagamento: cobranca.id,
+          metodoPagamento: 'cartao',
+          status: statusPedido,
+          ...(statusPedido === 'PAGO' && { dataPagamento: new Date() })
+        }
+      });
+
+      logger.info('[Pagamento Cartão] Cobrança processada', {
+        context: { pedidoId, cobrancaId: cobranca.id, status: cobranca.status }
+      });
+
+      res.json({
+        success: true,
+        message: statusPedido === 'PAGO' ? 'Pagamento aprovado' : 'Pagamento em processamento',
+        data: {
+          pedidoId: pedido.id,
+          cobrancaId: cobranca.id,
+          status: statusPedido,
+          valor: Number(pedido.valorTotal)
+        }
+      });
     } catch (error) {
       logger.error('[Pagamento Cartão] Erro', {
         context: {

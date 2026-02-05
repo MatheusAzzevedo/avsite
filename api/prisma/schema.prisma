@@ -293,9 +293,10 @@ model Pedido {
   status               PedidoStatus @default(PENDENTE)
   codigoPagamento      String? // ID do pagamento no gateway
   metodoPagamento      String? // pix, cartao, boleto
-  observacoes          String?      @db.Text
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
+  observacoes                String?      @db.Text
+  dadosResponsavelFinanceiro Json? // Nome, sobrenome, CPF, endereço, telefone, email (um por pedido)
+  createdAt                  DateTime     @default(now())
+  updatedAt                  DateTime     @updatedAt
 
   // Data de pagamento e confirmação
   dataPagamento   DateTime?
@@ -336,13 +337,23 @@ model ItemPedido {
   // Dados do aluno/participante
   nomeAluno           String
   idadeAluno          Int?
+  dataNascimento      DateTime?
   escolaAluno         String?
   serieAluno          String?
+  turma               String?
+  unidadeColegio      String?
   cpfAluno            String?
+  rgAluno             String?
   responsavel         String? // Nome do responsável (se menor)
   telefoneResponsavel String?
   emailResponsavel    String?
   observacoes         String? @db.Text
+
+  // Informações médicas (por aluno)
+  alergiasCuidados    String? @db.Text
+  planoSaude          String?
+  medicamentosFebre   String?
+  medicamentosAlergia String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -118,7 +118,7 @@ router.post('/',
   validateBody(createPedidoSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { codigoExcursao, quantidade, dadosAlunos, observacoes } = req.body;
+      const { codigoExcursao, quantidade, dadosResponsavelFinanceiro, dadosAlunos, observacoes } = req.body;
       const clienteId = req.cliente!.id;
       const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
 
@@ -178,7 +178,10 @@ router.post('/',
             valorUnitario,
             valorTotal,
             status: 'PENDENTE',
-            observacoes: observacoes || null
+            observacoes: observacoes || null,
+            dadosResponsavelFinanceiro: dadosResponsavelFinanceiro
+              ? (dadosResponsavelFinanceiro as object)
+              : undefined
           }
         });
 
@@ -186,18 +189,28 @@ router.post('/',
           context: { pedidoId: novoPedido.id }
         });
 
-        // Cria itens do pedido (dados dos alunos)
+        // Cria itens do pedido (dados dos alunos + informações médicas)
         const itensData = dadosAlunos.map((aluno: any) => ({
           pedidoId: novoPedido.id,
           nomeAluno: aluno.nomeAluno,
-          idadeAluno: aluno.idadeAluno || null,
+          idadeAluno: aluno.idadeAluno ?? null,
+          dataNascimento: aluno.dataNascimento
+            ? new Date(aluno.dataNascimento as string)
+            : null,
           escolaAluno: aluno.escolaAluno || null,
           serieAluno: aluno.serieAluno || null,
+          turma: aluno.turma || null,
+          unidadeColegio: aluno.unidadeColegio || null,
           cpfAluno: aluno.cpfAluno || null,
+          rgAluno: aluno.rgAluno || null,
           responsavel: aluno.responsavel || null,
           telefoneResponsavel: aluno.telefoneResponsavel || null,
           emailResponsavel: aluno.emailResponsavel || null,
-          observacoes: aluno.observacoes || null
+          observacoes: aluno.observacoes || null,
+          alergiasCuidados: aluno.alergiasCuidados || null,
+          planoSaude: aluno.planoSaude || null,
+          medicamentosFebre: aluno.medicamentosFebre || null,
+          medicamentosAlergia: aluno.medicamentosAlergia || null
         }));
 
         await tx.itemPedido.createMany({

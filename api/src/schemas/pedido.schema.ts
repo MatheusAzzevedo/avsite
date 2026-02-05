@@ -8,8 +8,38 @@
 import { z } from 'zod';
 
 /**
+ * Schema para dados do responsável financeiro (um por pedido)
+ * Alinhado aos campos do admin/checkout.html
+ */
+export const dadosResponsavelFinanceiroSchema = z.object({
+  nome: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100).trim(),
+  sobrenome: z.string().min(2, 'Sobrenome deve ter no mínimo 2 caracteres').max(100).trim(),
+  cpf: z
+    .string()
+    .refine(
+      (val) => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val) || /^\d{11}$/.test(val),
+      'CPF inválido. Use formato: 000.000.000-00'
+    ),
+  pais: z.string().min(2).max(50).trim(),
+  cep: z.string().trim().regex(/^\d{5}-?\d{3}$/, 'CEP inválido. Use formato: 00000-000'),
+  endereco: z.string().min(3, 'Endereço obrigatório').max(200).trim(),
+  complemento: z.string().max(100).trim().optional(),
+  numero: z.string().min(1, 'Número obrigatório').max(20).trim(),
+  cidade: z.string().min(2).max(100).trim(),
+  estado: z.string().length(2, 'Estado deve ser sigla (ex: SP)').trim(),
+  bairro: z.string().max(100).trim().optional(),
+  telefone: z
+    .string()
+    .refine(
+      (val) => /^\(\d{2}\)\s?\d{4,5}-?\d{4}$/.test(val),
+      'Telefone inválido. Use formato: (11) 98888-8888'
+    ),
+  email: z.string().email('Email inválido').toLowerCase().trim()
+});
+
+/**
  * Schema para dados do aluno/participante da excursão
- * Usado ao criar item do pedido
+ * Usado ao criar item do pedido (informações do estudante + informações médicas)
  */
 export const dadosAlunoSchema = z.object({
   nomeAluno: z
@@ -23,6 +53,10 @@ export const dadosAlunoSchema = z.object({
     .min(1, 'Idade deve ser maior que 0')
     .max(120, 'Idade inválida')
     .optional(),
+  dataNascimento: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data de nascimento inválida. Use YYYY-MM-DD')
+    .optional(),
   escolaAluno: z
     .string()
     .min(2, 'Nome da escola deve ter no mínimo 2 caracteres')
@@ -34,6 +68,8 @@ export const dadosAlunoSchema = z.object({
     .max(50, 'Série deve ter no máximo 50 caracteres')
     .trim()
     .optional(),
+  turma: z.string().max(50).trim().optional(),
+  unidadeColegio: z.string().max(200).trim().optional(),
   cpfAluno: z
     .string()
     .optional()
@@ -41,6 +77,7 @@ export const dadosAlunoSchema = z.object({
       (val) => !val || /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val) || /^\d{11}$/.test(val),
       'CPF inválido. Use formato: 000.000.000-00 ou 00000000000'
     ),
+  rgAluno: z.string().max(50).trim().optional(),
   responsavel: z
     .string()
     .min(3, 'Nome do responsável deve ter no mínimo 3 caracteres')
@@ -64,7 +101,12 @@ export const dadosAlunoSchema = z.object({
     .string()
     .max(1000, 'Observações devem ter no máximo 1000 caracteres')
     .trim()
-    .optional()
+    .optional(),
+  // Informações médicas (por aluno)
+  alergiasCuidados: z.string().max(2000, 'Máximo 2000 caracteres').trim().optional(),
+  planoSaude: z.string().max(200).trim().optional(),
+  medicamentosFebre: z.string().max(200).trim().optional(),
+  medicamentosAlergia: z.string().max(200).trim().optional()
 });
 
 /**
@@ -81,6 +123,7 @@ export const createPedidoSchema = z.object({
     .int('Quantidade deve ser um número inteiro')
     .min(1, 'Quantidade deve ser no mínimo 1')
     .max(50, 'Quantidade máxima é 50 passagens por pedido'),
+  dadosResponsavelFinanceiro: dadosResponsavelFinanceiroSchema.optional(),
   dadosAlunos: z
     .array(dadosAlunoSchema)
     .min(1, 'É necessário informar dados de pelo menos 1 aluno')
@@ -205,6 +248,7 @@ export const buscarPorCodigoSchema = z.object({
 });
 
 // Tipos inferidos dos schemas para uso no TypeScript
+export type DadosResponsavelFinanceiroInput = z.infer<typeof dadosResponsavelFinanceiroSchema>;
 export type DadosAlunoInput = z.infer<typeof dadosAlunoSchema>;
 export type CreatePedidoInput = z.infer<typeof createPedidoSchema>;
 export type CreatePedidoExcursaoInput = z.infer<typeof createPedidoExcursaoSchema>;

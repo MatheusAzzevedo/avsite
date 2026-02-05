@@ -137,10 +137,35 @@
         .order-summary .price-row.total { font-size: 1.125rem; font-weight: 700; border-top: 2px solid var(--light-border); margin-top: 0.5rem; padding-top: 1rem; color: var(--primary-color); }
         .order-summary ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.875rem; line-height: 1.8; }
 
+        /* Etapa de pagamento (após criar pedido) */
+        .checkout-step-pagamento { display: none; margin-top: 1rem; }
+        .checkout-step-pagamento.show { display: block; }
+        .payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+        .payment-option {
+            border: 2px solid var(--light-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition, all 0.2s);
+        }
+        .payment-option:hover { border-color: var(--primary-color); background: rgba(234, 88, 12, 0.05); }
+        .payment-option.selected { border-color: var(--primary-color); background: rgba(234, 88, 12, 0.08); }
+        .payment-option i { font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .payment-option h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .pix-box, .cartao-box { display: none; margin-top: 1.5rem; padding: 1.5rem; background: var(--light-bg); border-radius: 12px; }
+        .pix-box.show, .cartao-box.show { display: block; }
+        .pix-qr { text-align: center; margin: 1rem 0; }
+        .pix-qr img { max-width: 220px; height: auto; }
+        .btn-copy-pix { margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-copy-pix:hover { background: var(--primary-dark); }
+        .pagamento-valor { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); margin-bottom: 1rem; }
+
         @media (max-width: 900px) {
             .checkout-grid { grid-template-columns: 1fr; }
             .order-summary { position: static; }
             .form-grid { grid-template-columns: 1fr; }
+            .payment-methods { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -173,11 +198,93 @@
                 <div id="error" class="error"></div>
 
                 <form id="checkoutForm">
+                    <div id="responsavelContainer"></div>
                     <div id="alunosContainer"></div>
                     <button type="submit" class="btn-finalizar" id="finalizarBtn">
                         <i class="fas fa-check-circle"></i> Finalizar Pedido
                     </button>
                 </form>
+
+                <!-- Etapa 2: Pagamento (exibida após criar o pedido) -->
+                <div id="checkoutStepPagamento" class="card checkout-step-pagamento">
+                    <div class="card-header">
+                        <h2><i class="fas fa-credit-card"></i> Pagamento</h2>
+                    </div>
+                    <p class="subtitle" style="margin-bottom: 1rem;">Escolha a forma de pagamento para o valor do pedido.</p>
+                    <div class="pagamento-valor" id="pagamentoValor">R$ 0,00</div>
+
+                    <div class="payment-methods">
+                        <div class="payment-option" id="opcaoPix" data-metodo="pix">
+                            <i class="fas fa-qrcode"></i>
+                            <h3>PIX</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-light);">Pagamento instantâneo</p>
+                        </div>
+                        <div class="payment-option" id="opcaoCartao" data-metodo="cartao">
+                            <i class="fas fa-credit-card"></i>
+                            <h3>Cartão de crédito</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-light);">Pague com cartão</p>
+                        </div>
+                    </div>
+
+                    <div id="pixBox" class="pix-box">
+                        <p style="margin-bottom: 0.5rem;"><strong>Escaneie o QR Code ou copie o código PIX:</strong></p>
+                        <div class="pix-qr" id="pixQrContainer"></div>
+                        <div style="text-align: center;">
+                            <button type="button" class="btn-copy-pix" id="btnCopiarPix"><i class="fas fa-copy"></i> Copiar código PIX</button>
+                        </div>
+                        <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-light);">Após o pagamento, o status será atualizado automaticamente.</p>
+                    </div>
+
+                    <div id="cartaoBox" class="cartao-box">
+                        <form id="formCartao">
+                            <div class="form-grid">
+                                <div class="form-group form-grid-full">
+                                    <label for="cardNumber">Número do cartão <span class="required">*</span></label>
+                                    <input type="text" id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                                </div>
+                                <div class="form-group form-grid-full">
+                                    <label for="cardHolder">Nome no cartão <span class="required">*</span></label>
+                                    <input type="text" id="cardHolder" name="cardHolder" placeholder="Como está no cartão" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardExpiry">Validade (MM/AA) <span class="required">*</span></label>
+                                    <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/AA" maxlength="5" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardCvv">CVV <span class="required">*</span></label>
+                                    <input type="text" id="cardCvv" name="cardCvv" placeholder="123" maxlength="4" required>
+                                </div>
+                                <div class="form-group form-grid-full">
+                                    <label for="cardHolderName">Nome completo (titular) <span class="required">*</span></label>
+                                    <input type="text" id="cardHolderName" name="cardHolderName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardHolderEmail">Email <span class="required">*</span></label>
+                                    <input type="email" id="cardHolderEmail" name="cardHolderEmail" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardHolderCpf">CPF (apenas números) <span class="required">*</span></label>
+                                    <input type="text" id="cardHolderCpf" name="cardHolderCpf" placeholder="00000000000" maxlength="14" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardHolderCep">CEP <span class="required">*</span></label>
+                                    <input type="text" id="cardHolderCep" name="cardHolderCep" placeholder="00000-000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardHolderAddressNumber">Número <span class="required">*</span></label>
+                                    <input type="text" id="cardHolderAddressNumber" name="cardHolderAddressNumber" required>
+                                </div>
+                                <div class="form-group form-grid-full">
+                                    <label for="cardHolderPhone">Telefone (apenas números) <span class="required">*</span></label>
+                                    <input type="text" id="cardHolderPhone" name="cardHolderPhone" placeholder="11999999999" maxlength="11" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-finalizar" id="btnPagarCartao" style="margin-top: 1rem;">
+                                <i class="fas fa-lock"></i> Pagar com cartão
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
 
             <!-- Coluna direita: Dados da viagem (igual ao admin) -->
