@@ -608,6 +608,31 @@ body {
 }
 
 /* ============================================
+   GRID DE EXCURSÕES (3 COLUNAS)
+   ============================================ */
+
+.excursoes-grid,
+#excursoesGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+    .excursoes-grid,
+    #excursoesGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .excursoes-grid,
+    #excursoesGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
    RESPONSIVIDADE
    ============================================ */
 
