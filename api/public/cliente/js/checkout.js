@@ -5,6 +5,22 @@
 (function () {
     var excursao = null;
 
+    function stripHtml(html) {
+        if (!html) return '';
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        return (div.textContent || div.innerText || '').trim();
+    }
+
+    function parseListText(str) {
+        if (!str || typeof str !== 'string') return [];
+        return str.split(/\n/).map(function (s) { return s.replace(/^\s*[-•]\s*/, '').trim(); }).filter(Boolean);
+    }
+
+    function formatBRL(num) {
+        return (num != null ? Number(num).toFixed(2) : '0,00').replace('.', ',');
+    }
+
     function exibirResumo() {
         var titulo = document.getElementById('resumoTitulo');
         var qtd = document.getElementById('resumoQtd');
@@ -12,8 +28,54 @@
         var total = document.getElementById('resumoTotal');
         if (titulo) titulo.textContent = excursao.titulo || '';
         if (qtd) qtd.textContent = excursao.quantidade || 0;
-        if (valorUnit) valorUnit.textContent = (excursao.preco != null ? Number(excursao.preco).toFixed(2) : '0,00');
-        if (total) total.textContent = (excursao.preco != null && excursao.quantidade ? (excursao.preco * excursao.quantidade).toFixed(2) : '0,00');
+        if (valorUnit) valorUnit.textContent = formatBRL(excursao.preco);
+        if (total) total.textContent = (excursao.preco != null && excursao.quantidade ? formatBRL(excursao.preco * excursao.quantidade) : '0,00');
+    }
+
+    function preencherDadosViagem() {
+        var qtd = parseInt(excursao.quantidade, 10) || 1;
+        var totalValor = (excursao.preco != null ? Number(excursao.preco) : 0) * qtd;
+        var produtoTexto = (excursao.titulo || 'Excursão') + ' x ' + qtd;
+        var totalStr = 'R$ ' + formatBRL(totalValor);
+
+        var elProduto = document.getElementById('dadosViagemProduto');
+        var elSubtotal = document.getElementById('dadosViagemSubtotal');
+        var elTotalLabel = document.getElementById('dadosViagemTotalLabel');
+        var elTotal = document.getElementById('dadosViagemTotal');
+        if (elProduto) elProduto.textContent = produtoTexto;
+        if (elSubtotal) elSubtotal.textContent = totalStr;
+        if (elTotalLabel) elTotalLabel.textContent = totalStr;
+        if (elTotal) elTotal.textContent = totalStr;
+
+        var sobre = stripHtml(excursao.descricao || '') || excursao.subtitulo || '—';
+        if (sobre.length > 400) sobre = sobre.substring(0, 397) + '...';
+        var elSobre = document.getElementById('dadosViagemSobre');
+        if (elSobre) elSobre.textContent = sobre;
+
+        var inclusosList = parseListText(excursao.inclusos);
+        var elInclusos = document.getElementById('dadosViagemInclusos');
+        if (elInclusos) {
+            if (inclusosList.length) {
+                elInclusos.innerHTML = inclusosList.map(function (item) { return '<li>' + (item.replace(/</g, '&lt;')) + '</li>'; }).join('');
+            } else {
+                elInclusos.textContent = '—';
+            }
+        }
+
+        var recList = parseListText(excursao.recomendacoes);
+        var elRec = document.getElementById('dadosViagemRecomendacoes');
+        if (elRec) {
+            if (recList.length) {
+                elRec.innerHTML = recList.map(function (item) { return '<li>' + (item.replace(/</g, '&lt;')) + '</li>'; }).join('');
+            } else {
+                elRec.textContent = '—';
+            }
+        }
+
+        var elLocal = document.getElementById('dadosViagemLocal');
+        var elHorario = document.getElementById('dadosViagemHorario');
+        if (elLocal) elLocal.textContent = excursao.local || '—';
+        if (elHorario) elHorario.textContent = excursao.horario || '—';
     }
 
     function gerarFormularios() {
@@ -72,7 +134,11 @@
         }
 
         exibirResumo();
+        preencherDadosViagem();
         gerarFormularios();
+
+        var voltar = document.getElementById('voltarLink');
+        if (voltar) voltar.addEventListener('click', function (e) { e.preventDefault(); history.back(); });
 
         var form = document.getElementById('checkoutForm');
         if (!form) return;

@@ -6,77 +6,134 @@
     <title>Checkout - Dados dos Alunos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #EA580C;
+            --light-bg: #f8fafc;
+            --light-border: #e2e8f0;
+            --text-light: #64748b;
+            --text-dark: #0f172a;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
-        
+
         .navbar { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem 2rem; }
-        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem; }
-        
-        h1 { color: #333; margin-bottom: 0.5rem; }
-        h2 { color: #EA580C; font-size: 1.3rem; margin: 2rem 0 1rem 0; border-top: 2px solid #EA580C; padding-top: 1rem; }
-        .subtitle { color: #666; margin-bottom: 2rem; }
-        
+        .checkout-container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; }
+
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 1.5rem; }
+        .card-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--light-border); }
+        .card-header h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+
+        h1 { color: #333; margin-bottom: 0.5rem; font-size: 1.75rem; }
+        .subtitle { color: #666; margin-bottom: 1.5rem; }
+
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; }
-        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
-        .form-group input:focus { outline: none; border-color: #EA580C; }
-        .form-group small { color: #666; font-size: 0.85rem; }
-        
-        .resumo { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        .form-group input:focus { outline: none; border-color: var(--primary-color); }
+
         .resumo-item { display: flex; justify-content: space-between; margin: 0.75rem 0; }
-        .resumo-total { font-size: 1.5rem; font-weight: bold; color: #EA580C; padding-top: 1rem; border-top: 2px solid #ddd; }
-        
+        .resumo-total { font-size: 1.25rem; font-weight: bold; color: var(--primary-color); padding-top: 1rem; border-top: 2px solid var(--light-border); }
+
         .btn-finalizar { width: 100%; padding: 1.2rem; background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 2rem; }
         .btn-finalizar:hover { transform: translateY(-2px); }
         .btn-finalizar:disabled { opacity: 0.6; cursor: not-allowed; }
-        
+
         .error { color: #dc2626; background: #fee2e2; padding: 1rem; border-radius: 8px; margin: 1rem 0; display: none; }
         .error.show { display: block; }
+
+        /* Painel Dados da viagem (igual ao admin) */
+        .order-summary { background: var(--light-bg); padding: 2rem; border-radius: 12px; height: fit-content; position: sticky; top: 2rem; }
+        .order-summary h2 { margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600; color: var(--text-dark); }
+        .order-summary .price-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.95rem; }
+        .order-summary .price-row.total { font-size: 1.125rem; font-weight: 700; border-top: 2px solid var(--light-border); margin-top: 0.5rem; padding-top: 1rem; color: var(--primary-color); }
+        .order-summary ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.875rem; line-height: 1.8; }
+
+        @media (max-width: 900px) {
+            .checkout-grid { grid-template-columns: 1fr; }
+            .order-summary { position: static; }
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <a href="javascript:history.back()" style="text-decoration: none; color: #333;">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </a>
+        <a href="#" id="voltarLink" style="text-decoration: none; color: #333;"><i class="fas fa-arrow-left"></i> Voltar</a>
     </div>
 
-    <div class="container">
+    <div class="checkout-container">
         <h1>Checkout</h1>
         <p class="subtitle">Preencha os dados de cada participante</p>
 
-        <div class="card">
-            <div class="resumo">
-                <h3 style="color: #EA580C; margin-bottom: 1rem;">Resumo do Pedido</h3>
-                <div class="resumo-item">
-                    <span>Excursão:</span>
-                    <strong id="resumoTitulo"></strong>
+        <div class="checkout-grid">
+            <!-- Coluna esquerda: formulário -->
+            <div>
+                <div class="card">
+                    <div class="card-header"><h2>Resumo do Pedido</h2></div>
+                    <div class="resumo-item"><span>Excursão:</span><strong id="resumoTitulo"></strong></div>
+                    <div class="resumo-item"><span>Quantidade:</span><strong id="resumoQtd"></strong></div>
+                    <div class="resumo-item"><span>Valor Unitário:</span><strong>R$ <span id="resumoValorUnit"></span></strong></div>
+                    <div class="resumo-item resumo-total"><span>Total:</span><span>R$ <span id="resumoTotal"></span></span></div>
                 </div>
-                <div class="resumo-item">
-                    <span>Quantidade:</span>
-                    <strong id="resumoQtd"></strong>
-                </div>
-                <div class="resumo-item">
-                    <span>Valor Unitário:</span>
-                    <strong>R$ <span id="resumoValorUnit"></span></strong>
-                </div>
-                <div class="resumo-item resumo-total">
-                    <span>Total:</span>
-                    <span>R$ <span id="resumoTotal"></span></span>
-                </div>
+
+                <div id="error" class="error"></div>
+
+                <form id="checkoutForm">
+                    <div id="alunosContainer"></div>
+                    <button type="submit" class="btn-finalizar" id="finalizarBtn">
+                        <i class="fas fa-check-circle"></i> Finalizar Pedido
+                    </button>
+                </form>
             </div>
 
-            <div id="error" class="error"></div>
+            <!-- Coluna direita: Dados da viagem (igual ao admin) -->
+            <div>
+                <div class="order-summary">
+                    <h2>Dados da viagem</h2>
 
-            <form id="checkoutForm">
-                <div id="alunosContainer"></div>
+                    <div style="padding: 1rem 0; border-bottom: 1px solid var(--light-border);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-weight: 600; font-size: 0.95rem;">Produto</span>
+                            <span style="font-weight: 600; font-size: 0.95rem;">Subtotal</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <span id="dadosViagemProduto" style="color: var(--text-light); font-size: 0.9rem; flex: 1;">—</span>
+                            <span id="dadosViagemSubtotal" style="font-weight: 600; color: #000; white-space: nowrap; margin-left: 1rem;">R$ 0,00</span>
+                        </div>
+                    </div>
 
-                <button type="submit" class="btn-finalizar" id="finalizarBtn">
-                    <i class="fas fa-check-circle"></i> Finalizar Pedido
-                </button>
-            </form>
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--light-border);">
+                        <h3 style="margin-bottom: 1rem; font-size: 1.125rem;">Sobre o Passeio</h3>
+                        <div id="dadosViagemSobre" style="color: var(--text-light); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">—</div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; font-weight: 600;">O que está incluso</h4>
+                            <ul id="dadosViagemInclusos">—</ul>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; font-weight: 600;">Recomendações</h4>
+                            <ul id="dadosViagemRecomendacoes">—</ul>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div>
+                                <h4 style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem; font-weight: 500;">Local de Saída</h4>
+                                <p id="dadosViagemLocal" style="margin: 0; font-size: 0.9rem; font-weight: 600;">—</p>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem; font-weight: 500;">Horário</h4>
+                                <p id="dadosViagemHorario" style="margin: 0; font-size: 0.9rem; font-weight: 600;">—</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin: 1.5rem 0;">
+                        <div class="price-row"><span>Subtotal</span><strong id="dadosViagemTotalLabel">R$ 0,00</strong></div>
+                        <div class="price-row total"><span>Total</span><strong id="dadosViagemTotal">R$ 0,00</strong></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
