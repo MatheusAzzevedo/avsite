@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Checkout: etapa de pagamento PIX e Cartão (Asaas)
+### Última atualização (2026-02-04) - Reconciliação PIX/cartão quando Asaas retorna erro
+- **api/src/config/asaas.ts** [listarPagamentosPorReferencia para consultar pagamentos por pedido na Asaas; erros de criação repassados às rotas]
+- **api/src/routes/pagamento.routes.ts** [POST /pix e POST /cartao: em erro da Asaas, consulta pagamentos por referência; se houver pagamento confirmado, atualiza pedido para PAGO e retorna 200; senão 400 com mensagem]
+- **api/public/admin/config-pagamento.html** [Ajustes de status e teste de conexão]
+
+Resumo: Quando a cobrança é aprovada (cartão ou PIX) mas a Asaas devolve erro, a API passa a consultar os pagamentos do pedido na Asaas. Se existir pagamento confirmado, o pedido é marcado como PAGO e o cliente recebe sucesso (200), evitando 500 e inconsistência entre cobrança real e estado do sistema.
+
+### Versão anterior (2026-02-04) - Checkout: etapa de pagamento PIX e Cartão (Asaas)
 - **cliente/checkout.html**, **api/public/cliente/checkout.html** [Seção de pagamento com opções PIX (QR Code + copiar) e Cartão de crédito (formulário completo)]
 - **cliente/js/checkout.js**, **api/public/cliente/js/checkout.js** [Etapa pagamento após criar pedido; listeners únicos; PIX selecionado por padrão; gerarPix, polling de status, pagarComCartao integrados à API]
 
