@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Excursão e dashboard: CSP + pattern removido
+### Última atualização (2026-02-04) - Checkout cliente: UX, erros por campo e design
+- **cliente/checkout.html**, **api/public/cliente/checkout.html** [Navbar igual ao dashboard; design com variáveis do sistema; formulário em seções (Aluno N, Dados do responsável); labels com hint e obrigatório; bloco de erro com título + lista; estilos para campo inválido e mensagem inline]
+- **cliente/js/checkout.js**, **api/public/cliente/js/checkout.js** [Uso de resData.details para mostrar quais campos falharam e por quê; clearFieldErrors; showValidationErrors (lista no topo + marcação nos inputs); formulários gerados com seções e labels organizadas]
+
+Resumo: A página de checkout passou a exibir erros de validação de forma clara (lista “Aluno N – Campo: motivo” e marcação nos campos) usando o array details já retornado pela API em 400. Design alinhado à área do cliente (navbar, cores, cards) e labels organizadas em seções com hints e indicação de obrigatório.
+
+### Versão anterior (2026-02-04) - Excursão e dashboard: CSP + pattern removido
 - **api/public/cliente/excursao.html**, **cliente/excursao.html** [Script inline removido; carregamento de js/excursao.js; botão Checkout sem onclick]
 - **api/public/cliente/js/excursao.js**, **cliente/js/excursao.js** [Novo: carregar excursão por código, exibir, calcular total e ir para checkout em arquivo externo para CSP]
 - **api/public/cliente/dashboard.html**, **cliente/dashboard.html** [Removido atributo pattern do input de código para evitar SyntaxError com flag /v]

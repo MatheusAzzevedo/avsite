@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-02-04 - Checkout cliente: UX, erros por campo e design alinhado ao sistema
+
+### Arquivos Modificados
+- `cliente/checkout.html` [Navbar alinhada ao dashboard (marca + Voltar + Meus Pedidos); design com variáveis do sistema; formulário em seções (Aluno N, Dados do responsável); labels com hint e obrigatório; bloco de erro com título + lista; estilos para campo inválido e mensagem inline]
+- `cliente/js/checkout.js` [Uso de resData.details da API para exibir quais campos falharam e por quê; clearFieldErrors; apiPathToInputName; showValidationErrors (lista no topo + marcação nos inputs); gerarFormularios com seções, labels e placeholders organizados]
+- `api/public/cliente/checkout.html`, `api/public/cliente/js/checkout.js` [Cópias das alterações para paridade]
+
+### Alterações
+- Resposta 400 da API já retorna `details: [{ field, message }]`. O checkout passou a exibir lista "Aluno N – Campo: motivo" no topo e a marcar cada input inválido com borda vermelha e mensagem abaixo do campo.
+- Design da página alinhado à área do cliente: mesma navbar (marca Avorar, Voltar, Meus Pedidos), cores (--primary-color, --danger-color), cards e botão em gradiente. Labels organizadas em seções (Aluno 1, Dados do responsável), com hint (ex.: formato do telefone) e asterisco só no obrigatório.
+
+---
+
 ## 2026-02-04 - Excursão e dashboard: CSP excursao.html + pattern removido
 
 ### Arquivos Modificados
