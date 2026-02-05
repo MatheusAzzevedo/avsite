@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-02-04 - Excursão e dashboard: CSP excursao.html + pattern removido
+
+### Arquivos Modificados
+- `api/public/cliente/excursao.html` [Removido script inline e onclick no botão Checkout; carrega js/excursao.js]
+- `api/public/cliente/js/excursao.js` [Novo: lógica de carregar excursão por código, exibir, calcular total e checkout externalizada para CSP]
+- `cliente/excursao.html` [Mesmas alterações: script externo e botão sem onclick]
+- `cliente/js/excursao.js` [Cópia do excursao.js para paridade com api/public]
+- `api/public/cliente/dashboard.html`, `cliente/dashboard.html` [Removido atributo pattern do input de código]
+- `api/public/cliente/js/dashboard.js`, `cliente/js/dashboard.js` [Validação do código no submit com regex em JS: ^[A-Za-z0-9_\-]+$]
+
+### Alterações
+- excursao.html ficava em "Carregando excursão..." porque o CSP bloqueava o script inline (linha 79). Toda a lógica foi movida para excursao.js.
+- pattern [-A-Za-z0-9_]+ no dashboard ainda gerava SyntaxError em alguns navegadores (flag /v). Atributo pattern removido; validação feita apenas em JavaScript no submit.
+
+---
+
 ## 2026-02-04 - Dashboard cliente: CSP e regex do código
 
 ### Arquivos Modificados

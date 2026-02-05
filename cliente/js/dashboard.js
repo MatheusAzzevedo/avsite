@@ -35,6 +35,13 @@
 
             const codigo = codigoInput.value.trim().toUpperCase();
             if (!codigo) return;
+            if (!/^[A-Za-z0-9_\-]+$/.test(codigo)) {
+                if (errorMessage) {
+                    errorMessage.textContent = 'Código deve conter apenas letras, números, hífen e underscore.';
+                    errorMessage.classList.add('show');
+                }
+                return;
+            }
 
             if (errorMessage) errorMessage.classList.remove('show');
             if (loadingMessage) loadingMessage.classList.add('show');

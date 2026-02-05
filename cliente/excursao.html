@@ -68,7 +68,7 @@
                     </p>
                 </div>
 
-                <button class="btn-checkout" onclick="irParaCheckout()">
+                <button type="button" class="btn-checkout">
                     <i class="fas fa-shopping-cart"></i> Continuar para Checkout
                 </button>
             </div>
@@ -76,70 +76,6 @@
     </div>
 
     <script src="js/auth-manager.js"></script>
-    <script>
-        let excursao = null;
-
-        (async () => {
-            await clienteAuth.requireAuth();
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const codigo = urlParams.get('codigo');
-
-            if (!codigo) {
-                alert('Código não fornecido');
-                window.location.href = 'dashboard.html';
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/cliente/pedidos/excursao/${codigo}`);
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    excursao = data.data;
-                    exibirExcursao(excursao);
-                } else {
-                    alert('Excursão não encontrada');
-                    window.location.href = 'dashboard.html';
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao carregar excursão');
-            }
-        })();
-
-        function exibirExcursao(exc) {
-            document.getElementById('excursaoImage').src = exc.imagemCapa || '/images/default.jpg';
-            document.getElementById('excursaoTitulo').textContent = exc.titulo;
-            document.getElementById('excursaoSubtitulo').textContent = exc.subtitulo || '';
-            document.getElementById('excursaoPreco').textContent = exc.preco.toFixed(2);
-            document.getElementById('excursaoLocal').textContent = exc.local || 'Não informado';
-            document.getElementById('excursaoDuracao').textContent = exc.duracao || 'Não informado';
-            document.getElementById('excursaoHorario').textContent = exc.horario || 'Não informado';
-            document.getElementById('excursaoDescricao').innerHTML = exc.descricao || '';
-
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('content').style.display = 'block';
-
-            document.getElementById('quantidade').addEventListener('input', calcularTotal);
-            calcularTotal();
-        }
-
-        function calcularTotal() {
-            const qtd = parseInt(document.getElementById('quantidade').value) || 1;
-            const total = excursao.preco * qtd;
-            document.getElementById('valorTotal').textContent = total.toFixed(2);
-        }
-
-        function irParaCheckout() {
-            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
-            if (quantidade < 1 || quantidade > 50) {
-                alert('Quantidade inválida');
-                return;
-            }
-            localStorage.setItem('checkout_excursao', JSON.stringify({ ...excursao, quantidade }));
-            window.location.href = 'checkout.html';
-        }
-    </script>
+    <script src="js/excursao.js"></script>
 </body>
 </html>

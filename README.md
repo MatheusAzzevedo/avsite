@@ -4,7 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Dashboard cliente: CSP e regex do código
+### Última atualização (2026-02-04) - Excursão e dashboard: CSP + pattern removido
+- **api/public/cliente/excursao.html**, **cliente/excursao.html** [Script inline removido; carregamento de js/excursao.js; botão Checkout sem onclick]
+- **api/public/cliente/js/excursao.js**, **cliente/js/excursao.js** [Novo: carregar excursão por código, exibir, calcular total e ir para checkout em arquivo externo para CSP]
+- **api/public/cliente/dashboard.html**, **cliente/dashboard.html** [Removido atributo pattern do input de código para evitar SyntaxError com flag /v]
+- **api/public/cliente/js/dashboard.js**, **cliente/js/dashboard.js** [Validação do código no submit em JS com regex ^[A-Za-z0-9_\-]+$]
+
+Resumo: A página de excursão ficava carregando eternamente porque o CSP bloqueava o script inline; o dashboard ainda quebrava por causa do pattern no input. Script da excursão externalizado em excursao.js; pattern removido do dashboard e validação feita só em JavaScript.
+
+### Versão anterior (2026-02-04) - Dashboard cliente: CSP e regex do código
 - **api/public/cliente/dashboard.html**, **cliente/dashboard.html** [Script inline removido e carregamento de js/dashboard.js; pattern do código alterado para [-A-Za-z0-9_]+; botão Sair sem onclick]
 - **api/public/cliente/js/dashboard.js**, **cliente/js/dashboard.js** [Novo: lógica do dashboard (auth, logout, busca por código) em arquivo externo para respeitar CSP]
 
