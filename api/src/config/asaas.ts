@@ -276,7 +276,13 @@ export async function criarCobrancaCartaoAsaas(dados: {
     body: JSON.stringify(body)
   });
 
-  const payment = await response.json();
+  const payment = (await response.json()) as {
+    id?: string;
+    status?: string;
+    value?: number;
+    errors?: Array<{ description?: string }>;
+    error?: string;
+  };
 
   if (!response.ok) {
     logger.error('[Asaas Cartão] Erro na API', {

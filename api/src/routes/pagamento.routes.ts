@@ -189,7 +189,7 @@ router.post('/cartao',
       // Busca pedido
       const pedido = await prisma.pedido.findFirst({
         where: { id: pedidoId, clienteId },
-        include: { cliente: true, excursaoPedagogica: true }
+        include: { cliente: true, excursaoPedagogica: true, excursao: true }
       });
 
       if (!pedido) {
@@ -200,7 +200,8 @@ router.post('/cartao',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
-      const descricao = `Excursão: ${pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão'} - ${pedido.quantidade}x passagens`;
+      const tituloExcursao = pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão';
+      const descricao = `Excursão: ${tituloExcursao} - ${pedido.quantidade}x passagens`;
 
       const cobranca = await criarCobrancaCartaoAsaas({
         clienteEmail: pedido.cliente.email,
