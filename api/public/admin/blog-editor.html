@@ -77,7 +77,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form id="postForm" onsubmit="savePost(event)">
+                    <form id="postForm">
                         <!-- ID oculto para edição -->
                         <input type="hidden" id="postId" value="">
 
@@ -140,20 +140,20 @@
                         <!-- Imagem de Capa -->
                         <div class="form-group">
                             <label>Imagem de Capa</label>
-                            <div class="file-upload" onclick="document.getElementById('postImage').click()">
+                            <label for="postImage" class="file-upload" style="cursor: pointer; display: block;">
                                 <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
                                 <p style="margin-bottom: 0.5rem; font-weight: 600;">Clique para fazer upload</p>
                                 <p style="color: var(--text-light); font-size: 0.875rem;">PNG, JPG ou WEBP (máx. 5MB)</p>
-                                <input 
-                                    type="file" 
-                                    id="postImage" 
-                                    accept="image/*"
-                                    onchange="handleImageUpload(this)"
-                                >
-                            </div>
+                            </label>
+                            <input 
+                                type="file" 
+                                id="postImage" 
+                                accept="image/png,image/jpeg,image/webp"
+                                style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;"
+                            >
                             <div id="imagePreviewContainer" style="display: none; margin-top: 1rem; position: relative;">
                                 <img id="imagePreview" class="image-preview" alt="Preview" style="max-width: 100%; border-radius: var(--radius-md);">
-                                <button type="button" onclick="removeImage()" style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">
+                                <button type="button" id="btnRemoveImage" style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -180,40 +180,40 @@
                             <label>Conteúdo do Post *</label>
                             <div class="editor-container">
                                 <div class="editor-toolbar">
-                                    <button type="button" onclick="formatText('bold')" title="Negrito (Ctrl+B)">
+                                    <button type="button" class="editor-btn" data-command="bold" title="Negrito (Ctrl+B)">
                                         <i class="fas fa-bold"></i>
                                     </button>
-                                    <button type="button" onclick="formatText('italic')" title="Itálico (Ctrl+I)">
+                                    <button type="button" class="editor-btn" data-command="italic" title="Itálico (Ctrl+I)">
                                         <i class="fas fa-italic"></i>
                                     </button>
-                                    <button type="button" onclick="formatText('underline')" title="Sublinhado (Ctrl+U)">
+                                    <button type="button" class="editor-btn" data-command="underline" title="Sublinhado (Ctrl+U)">
                                         <i class="fas fa-underline"></i>
                                     </button>
                                     <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
-                                    <button type="button" onclick="formatText('justifyLeft')" title="Alinhar à esquerda">
+                                    <button type="button" class="editor-btn" data-command="justifyLeft" title="Alinhar à esquerda">
                                         <i class="fas fa-align-left"></i>
                                     </button>
-                                    <button type="button" onclick="formatText('justifyCenter')" title="Centralizar">
+                                    <button type="button" class="editor-btn" data-command="justifyCenter" title="Centralizar">
                                         <i class="fas fa-align-center"></i>
                                     </button>
-                                    <button type="button" onclick="formatText('justifyRight')" title="Alinhar à direita">
+                                    <button type="button" class="editor-btn" data-command="justifyRight" title="Alinhar à direita">
                                         <i class="fas fa-align-right"></i>
                                     </button>
-                                    <button type="button" onclick="formatText('justifyFull')" title="Justificar">
+                                    <button type="button" class="editor-btn" data-command="justifyFull" title="Justificar">
                                         <i class="fas fa-align-justify"></i>
                                     </button>
                                     <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
-                                    <button type="button" onclick="formatText('insertUnorderedList')" title="Lista com marcadores">
+                                    <button type="button" class="editor-btn" data-command="insertUnorderedList" title="Lista com marcadores">
                                         <i class="fas fa-list-ul"></i>
                                     </button>
-                                    <button type="button" onclick="formatText('insertOrderedList')" title="Lista numerada">
+                                    <button type="button" class="editor-btn" data-command="insertOrderedList" title="Lista numerada">
                                         <i class="fas fa-list-ol"></i>
                                     </button>
                                     <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
-                                    <button type="button" onclick="insertLink()" title="Inserir link">
+                                    <button type="button" id="btnInsertLink" title="Inserir link">
                                         <i class="fas fa-link"></i>
                                     </button>
-                                    <button type="button" onclick="formatText('removeFormat')" title="Remover formatação">
+                                    <button type="button" class="editor-btn" data-command="removeFormat" title="Remover formatação">
                                         <i class="fas fa-remove-format"></i>
                                     </button>
                                     <div style="width: 1px; height: 30px; background-color: var(--light-border);"></div>
@@ -253,7 +253,7 @@
                             <a href="blog.html" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancelar
                             </a>
-                            <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                            <button type="button" id="btnSaveDraft" class="btn btn-secondary">
                                 <i class="fas fa-save"></i> Salvar Rascunho
                             </button>
                             <button type="submit" class="btn btn-success">
@@ -269,8 +269,9 @@
     <!-- Script do gerenciador de dados -->
     <script src="../js/api-client.js"></script>
     <script src="js/admin-main.js"></script>
-    <script>
-        // Variáveis globais
+    <script src="js/blog-editor.js"></script>
+</body>
+</html>
         let isEditing = false;
         let currentPostId = null;
 
@@ -306,6 +307,14 @@
 
             // Contador de caracteres do resumo
             document.getElementById('postExcerpt').addEventListener('input', updateExcerptCount);
+
+            // Clique na área de upload abre o input de arquivo via <label for="postImage">; ao selecionar arquivo, processa
+            var postImageInput = document.getElementById('postImage');
+            if (postImageInput) {
+                postImageInput.addEventListener('change', function() {
+                    handleImageUpload(this);
+                });
+            }
         }
 
         /**
