@@ -620,6 +620,13 @@ body {
     align-items: stretch;
 }
 
+/* Grid fixo em 3 colunas para excursões pedagógicas em telas grandes */
+@media (min-width: 1024px) {
+    .excursoes-pedagogicas-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 /* Cards dentro do grid não estouram a coluna */
 .excursoes-grid .excursao-card,
 #excursoesGrid .excursao-card,
