@@ -8,36 +8,43 @@ A chave de produção deve ficar **APENAS** no arquivo `.env` do servidor de pro
 
 ---
 
-## 📝 Sua Chave de API
-
-Você forneceu a chave:
-```
-$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjFkNmVhYjQxLTMwNzktNDgzYS1iMjljLTNhOGY3NWI3YjUzZTo6JGFhY2hfMDM5YTAyZTYtY2Q2Yy00MGIwLTg5YzYtYjk4NTliMzNjZGYw
-```
-
----
-
 ## 🔧 Como Configurar
 
-### 1. **No Servidor de Produção (Railway, Heroku, etc)**
+### 1. **Obter sua API Key do Asaas**
 
-Adicione as seguintes variáveis de ambiente:
+1. Acesse: https://www.asaas.com/config/api
+2. Gere uma nova chave de API (se necessário, após revogar a anterior)
+3. **IMPORTANTE:** Copie a chave e guarde em local seguro. Ela não será exibida novamente.
+
+### 2. **No Servidor de Produção (Railway)**
+
+**No Railway, configure as variáveis de ambiente:**
+
+1. Acesse seu projeto no Railway
+2. Vá em **Variables** (ou **Settings** → **Variables**)
+3. Adicione as seguintes variáveis:
 
 ```env
-ASAAS_API_KEY=$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjFkNmVhYjQxLTMwNzktNDgzYS1iMjljLTNhOGY3NWI3YjUzZTo6JGFhY2hfMDM5YTAyZTYtY2Q2Yy00MGIwLTg5YzYtYjk4NTliMzNjZGYw
+ASAAS_API_KEY=$aact_prod_SUA_CHAVE_AQUI
 ASAAS_ENVIRONMENT=production
 ASAAS_WEBHOOK_URL=https://seudominio.com/api/webhooks/asaas
 ```
 
-### 2. **Localmente (desenvolvimento)**
+**⚠️ IMPORTANTE:** Substitua `SUA_CHAVE_AQUI` pela chave real que você obteve no painel do Asaas.
 
-Adicione no arquivo `api/.env`:
+### 3. **Localmente (desenvolvimento)**
+
+Adicione no arquivo `api/.env` (que está no `.gitignore`):
 
 ```env
-ASAAS_API_KEY=$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjFkNmVhYjQxLTMwNzktNDgzYS1iMjljLTNhOGY3NWI3YjUzZTo6JGFhY2hfMDM5YTAyZTYtY2Q2Yy00MGIwLTg5YzYtYjk4NTliMzNjZGYw
+ASAAS_API_KEY=$aact_prod_SUA_CHAVE_AQUI
 ASAAS_ENVIRONMENT=production
 ASAAS_WEBHOOK_URL=http://localhost:3001/api/webhooks/asaas
 ```
+
+**⚠️ IMPORTANTE:** 
+- O arquivo `.env` está no `.gitignore` e **NUNCA** deve ser commitado
+- Use a chave de **sandbox** para testes locais (opcional)
 
 **Nota:** Para testes locais com webhook, use ngrok ou similar para expor localhost.
 
