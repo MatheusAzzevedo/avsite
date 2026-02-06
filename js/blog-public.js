@@ -52,6 +52,7 @@
         console.log('[Blog] Carregando posts publicados...');
 
         if (typeof BlogManager === 'undefined') {
+            console.log('[Blog] BlogManager não disponível, aguardando...');
             setTimeout(loadBlogPosts, 100);
             return;
         }
@@ -60,9 +61,20 @@
         var loadingState = document.getElementById('loadingState');
         var emptyState = document.getElementById('emptyState');
 
+        console.log('[Blog] Elementos encontrados:', {
+            grid: !!grid,
+            loadingState: !!loadingState,
+            emptyState: !!emptyState
+        });
+
+        var posts = [];
         try {
-            var posts = await BlogManager.getAll(true);
-            if (!Array.isArray(posts)) posts = [];
+            posts = await BlogManager.getAll(true);
+            console.log('[Blog] Posts recebidos da API:', posts);
+            if (!Array.isArray(posts)) {
+                console.warn('[Blog] Resposta não é array:', posts);
+                posts = [];
+            }
         } catch (err) {
             console.error('[Blog] Erro ao carregar posts:', err);
             posts = [];
@@ -70,13 +82,18 @@
 
         if (loadingState) loadingState.remove();
 
+        console.log('[Blog] Total de posts:', posts.length);
+
         if (!posts || posts.length === 0) {
+            console.log('[Blog] Nenhum post encontrado, exibindo estado vazio');
             if (grid) grid.innerHTML = '';
             if (emptyState) emptyState.style.display = 'block';
             return;
         }
 
         if (emptyState) emptyState.style.display = 'none';
+
+        console.log('[Blog] Renderizando', posts.length, 'posts...');
 
         grid.innerHTML = posts.map(function(post) {
             var postDate = new Date(post.data);
@@ -103,6 +120,8 @@
                 '<a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '" class="theme-btn">continuar lendo <i class="far fa-long-arrow-alt-right"></i></a>' +
                 '</div></div></div>';
         }).join('');
+
+        console.log('[Blog] Posts renderizados com sucesso!');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
