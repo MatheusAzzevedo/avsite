@@ -4,7 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-06) - Tipografia unificada e ajustes na página inicial
+### Última atualização (2026-02-06) - Grid de excursões pedagógicas no admin
+- **api/public/admin/css/admin-style.css** [Container `#excursoesGrid.excursoes-pedagogicas-grid` passou a usar grid responsivo com `repeat(auto-fill, minmax(260px, 1fr))`, organizando os cards de excursões pedagógicas em múltiplas colunas no desktop e empilhando em uma coluna apenas em telas menores]
+
+Resumo: A listagem de excursões pedagógicas no painel administrativo deixou de empilhar todos os cards em uma única coluna larga. O CSS do grid foi ajustado para um layout de colunas responsivo, fazendo com que cada excursão seja exibida em um card alinhado dentro de um grid fluido (2–3 colunas conforme a largura disponível), melhorando a leitura e o aproveitamento de espaço sem alterar a lógica de carregamento das excursões.
+
+### Versão anterior (2026-02-06) - Logout consistente no painel admin
+- **api/public/admin/js/admin-main.js** [Link lateral com id `navLogout` agora é conectado automaticamente à função `logout()`, garantindo que o clique em "Sair" limpe a autenticação e redirecione o administrador para `login.html` em qualquer página do painel]
+
+Resumo: Padronizado o comportamento do botão "Sair" no painel administrativo. Sempre que o item de menu com id `navLogout` estiver presente, o JavaScript central (`admin-main.js`) registra um listener que chama `logout()`, removendo o token/estado de login e levando o usuário de volta à tela de login do admin, evitando páginas do painel acessíveis após logout.
+
+### Versão anterior (2026-02-06) - Tipografia unificada e ajustes na página inicial
 - **css/style.css**, **api/public/css/style.css** [Site inteiro usando apenas Cairo (base) e Montserrat (destaques), removendo fontes Gotham/Monument/Telegraf/Khula e centralizando o carregamento via Google Fonts]
 - **css/about-page.css**, **css/footer.css**, **css/avoar-custom.css**, **css/consultant-form.css** e equivalentes em **api/public/css/** [Títulos, parágrafos, botões e labels alinhados ao novo padrão tipográfico Cairo/Montserrat]
 - **css/avoar-sections-page.css**, **api/public/css/avoar-sections-page.css** [Hero da página inicial com melhor alinhamento vertical do título, botão de Pagamento/Login e texto, além de ícones de navegação com espaçamento mais confortável]

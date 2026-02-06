@@ -357,6 +357,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Carregar dados do usuário
     loadUserData();
+
+    // Conectar link de logout do menu lateral (quando existir)
+    const navLogout = document.getElementById('navLogout');
+    if (navLogout) {
+        navLogout.addEventListener('click', function(event) {
+            event.preventDefault();
+            logout();
+        });
+    }
 });
 
 // Exportar funções para uso global

@@ -608,15 +608,16 @@ body {
 }
 
 /* ============================================
-   GRID DE EXCURSÕES (3 COLUNAS)
+   GRID DE EXCURSÕES (LAYOUT EM COLUNAS)
    ============================================ */
 
 .excursoes-grid,
 #excursoesGrid,
 .excursoes-pedagogicas-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.5rem;
+    align-items: stretch;
 }
 
 /* Cards dentro do grid não estouram a coluna */
@@ -624,14 +625,7 @@ body {
 #excursoesGrid .excursao-card,
 .excursoes-pedagogicas-grid .excursao-card {
     min-width: 0;
-}
-
-@media (max-width: 1200px) {
-    .excursoes-grid,
-    #excursoesGrid,
-    .excursoes-pedagogicas-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    height: 100%;
 }
 
 @media (max-width: 768px) {
