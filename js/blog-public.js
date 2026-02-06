@@ -108,7 +108,7 @@
                 '<div class="inner-box">' +
                 '<div class="image-box">' +
                 '<a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '">' +
-                '<img src="' + imageSrc + '" alt="' + titulo + '" onerror="this.src=\'images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg\'">' +
+                '<img src="' + imageSrc + '" alt="' + titulo + '" class="post-image">' +
                 '</a></div>' +
                 '<div class="lower">' +
                 '<h4><a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '">' + titulo + '</a></h4>' +
@@ -120,6 +120,13 @@
                 '<a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '" class="theme-btn">continuar lendo <i class="far fa-long-arrow-alt-right"></i></a>' +
                 '</div></div></div>';
         }).join('');
+
+        // Adiciona fallback de imagem para todas as imagens
+        document.querySelectorAll('.post-image').forEach(function(img) {
+            img.addEventListener('error', function() {
+                this.src = 'images/resource/news-1.jpg';
+            });
+        });
 
         console.log('[Blog] Posts renderizados com sucesso!');
     }
