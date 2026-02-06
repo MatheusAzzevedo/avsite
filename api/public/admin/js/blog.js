@@ -56,19 +56,58 @@
             var statusNorm = (post.status || '').toUpperCase();
             var statusClass = statusNorm === 'PUBLICADO' ? 'badge-success' : 'badge-warning';
             var statusLabel = statusNorm === 'PUBLICADO' ? 'Publicado' : 'Rascunho';
-            var tituloAttr = escapeHtml(post.titulo).replace(/'/g, "\\'");
-            return '<tr data-id="' + post.id + '">' +
+            return '<tr data-id="' + post.id + '" data-slug="' + escapeHtml(post.slug || '') + '" data-titulo="' + escapeHtml(post.titulo) + '">' +
                 '<td><strong>' + titulo + '</strong><br><span style="color: var(--text-light); font-size: 0.875rem;">' + resumo + '</span></td>' +
                 '<td>' + autor + '</td>' +
                 '<td>' + dataStr + '</td>' +
                 '<td><span class="badge badge-info">' + cat + '</span></td>' +
                 '<td><span class="badge ' + statusClass + '">' + statusLabel + '</span></td>' +
                 '<td><div class="table-actions">' +
-                '<button class="btn btn-sm btn-secondary" onclick="window.editPost(\'' + post.id + '\')" title="Editar"><i class="fas fa-edit"></i></button>' +
-                '<button class="btn btn-sm btn-info" onclick="window.viewPost(\'' + escapeHtml(post.slug || '') + '\')" title="Visualizar"><i class="fas fa-eye"></i></button>' +
-                '<button class="btn btn-sm btn-danger" onclick="window.deletePost(\'' + post.id + '\', \'' + tituloAttr + '\')" title="Excluir"><i class="fas fa-trash"></i></button>' +
+                '<button class="btn btn-sm btn-secondary btn-edit-post" title="Editar"><i class="fas fa-edit"></i></button>' +
+                '<button class="btn btn-sm btn-info btn-view-post" title="Visualizar"><i class="fas fa-eye"></i></button>' +
+                '<button class="btn btn-sm btn-danger btn-delete-post" title="Excluir"><i class="fas fa-trash"></i></button>' +
                 '</div></td></tr>';
         }).join('');
+
+        // Adicionar event listeners aos botões
+        attachButtonListeners();
+    }
+
+    /**
+     * Explicação da função [attachButtonListeners]
+     * Adiciona event listeners aos botões de ação (editar, visualizar, deletar)
+     */
+    function attachButtonListeners() {
+        // Botões de editar
+        document.querySelectorAll('.btn-edit-post').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var row = this.closest('tr');
+                var postId = row.getAttribute('data-id');
+                editPost(postId);
+            });
+        });
+
+        // Botões de visualizar
+        document.querySelectorAll('.btn-view-post').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var row = this.closest('tr');
+                var slug = row.getAttribute('data-slug');
+                viewPost(slug);
+            });
+        });
+
+        // Botões de deletar
+        document.querySelectorAll('.btn-delete-post').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var row = this.closest('tr');
+                var postId = row.getAttribute('data-id');
+                var titulo = row.getAttribute('data-titulo');
+                deletePost(postId, titulo);
+            });
+        });
     }
 
     /**
@@ -165,10 +204,6 @@
         window.open('../blog-single.html?slug=' + encodeURIComponent(slug || ''), '_blank');
     }
 
-    // Exportar funções para window (usadas nos onclick dos botões)
-    window.editPost = editPost;
-    window.viewPost = viewPost;
-
     /**
      * Explicação da função [deletePost]
      * Exclui um post via API após confirmação.
@@ -204,9 +239,6 @@
 
     window.loadPosts = loadPosts;
     window.filterPosts = filterPosts;
-    window.editPost = editPost;
-    window.viewPost = viewPost;
-    window.deletePost = deletePost;
 
     function initSidebarToggle() {
         var toggle = document.getElementById('sidebarToggle');

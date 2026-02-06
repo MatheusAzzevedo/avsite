@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-06 - Correção dos botões de ação no admin do blog
+
+### Arquivos Modificados
+- `api/public/admin/js/blog.js` [Removidos atributos onclick inline dos botões de editar/visualizar/deletar; adicionada função `attachButtonListeners()` que registra event listeners via `addEventListener`; botões agora usam classes CSS (`.btn-edit-post`, `.btn-view-post`, `.btn-delete-post`) e data attributes (`data-id`, `data-slug`, `data-titulo`) para identificação]
+
+### Alterações
+- Os botões de editar, visualizar e deletar posts na tabela do painel administrativo não funcionavam porque usavam `onclick` inline, bloqueado pelo CSP (Content Security Policy). A solução foi remover os `onclick` e adicionar event listeners via JavaScript externo usando `addEventListener`. Agora os botões funcionam corretamente: editar abre o editor com o post carregado, visualizar abre o post publicado em nova aba, e deletar solicita confirmação antes de excluir o post da API.
+
+---
+
 ## 2026-02-06 - Correção do blog público: posts do admin agora aparecem no site
 
 ### Arquivos Modificados
@@ -44,21 +54,6 @@
 
 ### Alterações
 - O botão "Sair" do menu lateral do painel administrativo passou a usar um listener centralizado em `admin-main.js` para chamar `logout()`. Isso garante que, sempre que o elemento com id `navLogout` existir, o usuário será deslogado (tokens e flags limpos) e enviado para `login.html` do admin, mantendo o comportamento consistente entre todas as telas do painel.
-
----
-
-## 2026-02-06 - Tipografia unificada e ajustes na página inicial
-
-### Arquivos Modificados
-- `css/style.css`, `api/public/css/style.css` [Uso exclusivo das famílias Cairo e Montserrat via Google Fonts; remoção de @font-face personalizados (Gotham, Monument, Telegraf, Khula); padronização da tipografia global do site]
-- `css/about-page.css`, `api/public/css/about-page.css` [Títulos e destaques migrados para Cairo/Montserrat; remoção de variações Gotham/Monument/Telegraf e fontes serifadas pontuais]
-- `css/footer.css`, `api/public/css/footer.css` [Footer modernizado usando Cairo como base e Montserrat em títulos de seção]
-- `css/avoar-custom.css`, `api/public/css/avoar-custom.css`, `css/consultant-form.css`, `api/public/css/consultant-form.css` [Ajustes de tipografia em labels, botões e títulos utilitários para Cairo/Montserrat]
-- `css/avoar-sections-page.css`, `api/public/css/avoar-sections-page.css` [Hero da página inicial com tipografia padronizada, ícones de navegação com espaçamento ajustado e alinhamento vertical refinado do título, botão e texto]
-- `api/public/admin/css/admin-style.css` [Admin atualizado para usar Cairo como fonte principal, mantendo consistência visual com o site público]
-
-### Alterações
-- O site passou a utilizar apenas as famílias Cairo (base) e Montserrat (destaques), removendo fontes personalizadas anteriores e garantindo consistência visual entre todas as páginas públicas e o painel administrativo. A hero da página inicial foi refinada: título, botão de Pagamento/Login e texto foram reposicionados para melhor equilíbrio vertical, e os ícones de navegação ganharam espaçamento horizontal e vertical ajustados para leitura e clique mais confortáveis.
 
 ---
 

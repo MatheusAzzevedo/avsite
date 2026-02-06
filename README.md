@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-06) - Correção do blog público: posts do admin agora aparecem no site
+### Última atualização (2026-02-06) - Correção dos botões de ação no admin do blog
+- **api/public/admin/js/blog.js** [Removidos atributos onclick inline dos botões de editar/visualizar/deletar; adicionada função attachButtonListeners() que registra event listeners via addEventListener; botões agora usam classes CSS (.btn-edit-post, .btn-view-post, .btn-delete-post) e data attributes (data-id, data-slug, data-titulo) para identificação]
+
+Resumo: Os botões de editar, visualizar e deletar posts na tabela do painel administrativo não funcionavam porque usavam onclick inline, bloqueado pelo CSP (Content Security Policy). A solução foi remover os onclick e adicionar event listeners via JavaScript externo. Agora os botões funcionam corretamente: editar abre o editor, visualizar abre o post em nova aba, e deletar solicita confirmação antes de excluir.
+
+### Versão anterior (2026-02-06) - Correção do blog público: posts do admin agora aparecem no site
 - **blog.html** [Removido script inline antigo que chamava BlogManager.getAll(true) de forma síncrona; substituído por referência a js/blog-public.js externo]
 - **blog-single.html** [Removido script inline antigo que chamava BlogManager.getBySlug(slug) de forma síncrona; substituído por referência a js/blog-single-public.js externo]
 - **js/blog-public.js** [Copiado de api/public/js/blog-public.js - carrega posts publicados via API com await BlogManager.getAll(true)]
@@ -30,13 +35,6 @@ Resumo: A listagem de excursões pedagógicas no painel administrativo deixou de
 
 Resumo: Padronizado o comportamento do botão "Sair" no painel administrativo. Sempre que o item de menu com id `navLogout` estiver presente, o JavaScript central (`admin-main.js`) registra um listener que chama `logout()`, removendo o token/estado de login e levando o usuário de volta à tela de login do admin, evitando páginas do painel acessíveis após logout.
 
-### Versão anterior (2026-02-06) - Tipografia unificada e ajustes na página inicial
-- **css/style.css**, **api/public/css/style.css** [Site inteiro usando apenas Cairo (base) e Montserrat (destaques), removendo fontes Gotham/Monument/Telegraf/Khula e centralizando o carregamento via Google Fonts]
-- **css/about-page.css**, **css/footer.css**, **css/avoar-custom.css**, **css/consultant-form.css** e equivalentes em **api/public/css/** [Títulos, parágrafos, botões e labels alinhados ao novo padrão tipográfico Cairo/Montserrat]
-- **css/avoar-sections-page.css**, **api/public/css/avoar-sections-page.css** [Hero da página inicial com melhor alinhamento vertical do título, botão de Pagamento/Login e texto, além de ícones de navegação com espaçamento mais confortável]
-- **api/public/admin/css/admin-style.css** [Painel administrativo atualizado para usar Cairo como fonte principal, mantendo consistência visual com o site público]
-
-Resumo: Foi feita uma limpeza geral de tipografia, padronizando o projeto para usar apenas Cairo como fonte principal e Montserrat em destaques, removendo fontes customizadas antigas. A hero da página inicial foi refinada (título, botão e texto reposicionados) e os ícones de navegação ganharam espaçamento ajustado, melhorando leitura e usabilidade sem alterar o fluxo de navegação.
 
 ### Versão anterior (2026-02-04) - Reconciliação PIX/cartão quando Asaas retorna erro
 - **api/src/config/asaas.ts** [listarPagamentosPorReferencia para consultar pagamentos por pedido na Asaas; erros de criação repassados às rotas]
