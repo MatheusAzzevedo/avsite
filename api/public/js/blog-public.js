@@ -85,11 +85,13 @@
             var titulo = escapeHtml(post.titulo);
             var cat = escapeHtml(post.categoria);
             var slug = (post.slug || '').replace(/'/g, '\\\'');
+            // Para src de imagem, usar atributo direto sem escapeHtml (pode ser data URL base64)
+            var imageSrc = (image || '').replace(/"/g, '&quot;');
             return '<div class="news-block col-xl-4 col-lg-6 col-md-6 col-sm-12">' +
                 '<div class="inner-box">' +
                 '<div class="image-box">' +
                 '<a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '">' +
-                '<img src="' + escapeHtml(image) + '" alt="' + titulo + '" onerror="this.src=\'images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg\'">' +
+                '<img src="' + imageSrc + '" alt="' + titulo + '" onerror="this.src=\'images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg\'">' +
                 '</a></div>' +
                 '<div class="lower">' +
                 '<h4><a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '">' + titulo + '</a></h4>' +

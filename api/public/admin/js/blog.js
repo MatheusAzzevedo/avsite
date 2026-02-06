@@ -82,11 +82,40 @@
         try {
             var posts = await BlogManager.getAll();
             if (!Array.isArray(posts)) posts = [];
+            populateCategoryFilter(posts);
             renderPosts(posts);
         } catch (err) {
             console.error('[Blog Admin] Erro ao carregar posts:', err);
             if (typeof showToast === 'function') showToast('Erro ao carregar posts. Tente novamente.', 'error');
             renderPosts([]);
+        }
+    }
+
+    /**
+     * Explicação da função [populateCategoryFilter]
+     * Popula o filtro de categorias com as categorias únicas dos posts.
+     */
+    function populateCategoryFilter(posts) {
+        var filterCategoria = document.getElementById('filterCategoria');
+        if (!filterCategoria) return;
+
+        var categorias = new Set();
+        posts.forEach(function(post) {
+            if (post.categoria) categorias.add(post.categoria);
+        });
+
+        var currentValue = filterCategoria.value;
+        filterCategoria.innerHTML = '<option value="todos">Todas as Categorias</option>';
+        
+        Array.from(categorias).sort().forEach(function(cat) {
+            var option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+            filterCategoria.appendChild(option);
+        });
+
+        if (currentValue && currentValue !== 'todos') {
+            filterCategoria.value = currentValue;
         }
     }
 
@@ -135,6 +164,10 @@
     function viewPost(slug) {
         window.open('../blog-single.html?slug=' + encodeURIComponent(slug || ''), '_blank');
     }
+
+    // Exportar funções para window (usadas nos onclick dos botões)
+    window.editPost = editPost;
+    window.viewPost = viewPost;
 
     /**
      * Explicação da função [deletePost]
