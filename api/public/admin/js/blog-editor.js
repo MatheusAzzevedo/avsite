@@ -229,14 +229,25 @@ function getPostData() {
     const tagsString = document.getElementById('postTags').value;
     const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
 
+    const titulo = document.getElementById('postTitle').value.trim();
+    const autor = document.getElementById('postAuthor').value.trim();
+    const data = document.getElementById('postDate').value;
+    const categoria = document.getElementById('postCategory').value;
+    const status = document.getElementById('postStatus').value;
+    const imagemCapa = document.getElementById('postImageData').value;
+    const resumo = document.getElementById('postExcerpt').value.trim();
+
+    console.log('[Blog Editor getPostData] Status value raw:', status);
+    console.log('[Blog Editor getPostData] Status element:', document.getElementById('postStatus'));
+
     return {
-        titulo: document.getElementById('postTitle').value.trim(),
-        autor: document.getElementById('postAuthor').value.trim(),
-        data: document.getElementById('postDate').value,
-        categoria: document.getElementById('postCategory').value,
-        status: document.getElementById('postStatus').value,
-        imagemCapa: document.getElementById('postImageData').value,
-        resumo: document.getElementById('postExcerpt').value.trim(),
+        titulo: titulo,
+        autor: autor,
+        data: data,
+        categoria: categoria,
+        status: status,
+        imagemCapa: imagemCapa,
+        resumo: resumo,
         conteudo: document.getElementById('postContent').innerHTML,
         tags: tags
     };
@@ -286,19 +297,27 @@ async function savePost(event) {
     event.preventDefault();
 
     const postData = getPostData();
+    console.log('[Blog Editor] Dados coletados do formulário:', postData);
+    
     if (!validatePost(postData)) return;
 
     const payload = Object.assign({}, postData, {
         status: (postData.status || 'rascunho').toUpperCase() === 'PUBLICADO' ? 'PUBLICADO' : 'RASCUNHO'
     });
 
+    console.log('[Blog Editor] Payload sendo enviado à API:', payload);
+    console.log('[Blog Editor] Status normalizado:', payload.status);
+
     try {
         let result;
         if (isEditing && currentPostId) {
+            console.log('[Blog Editor] Atualizando post:', currentPostId);
             result = await BlogManager.update(currentPostId, payload);
             showToast('Post atualizado com sucesso!', 'success');
         } else {
+            console.log('[Blog Editor] Criando novo post...');
             result = await BlogManager.create(payload);
+            console.log('[Blog Editor] Post criado com ID:', result?.id);
             showToast('Post criado com sucesso!', 'success');
         }
         console.log('[Blog Editor] Post salvo:', result);
