@@ -41,6 +41,7 @@ import { prisma } from './config/database';
 import { logger } from './utils/logger';
 import { ApiError } from './utils/api-error';
 import requestLoggerMiddleware from './middleware/request-logger.middleware';
+import { healthCheckAsaas } from './config/asaas';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -244,6 +245,16 @@ async function startServer() {
       logger.info(`🚀 Servidor rodando em http://localhost:${PORT}`);
       logger.info(`📚 API disponível em http://localhost:${PORT}/api`);
       logger.info(`🔐 Rotas públicas em http://localhost:${PORT}/api/public`);
+
+      // Health check Asaas (não bloqueia o startup, roda em background)
+      healthCheckAsaas().then((result) => {
+        if (!result.ok) {
+          logger.warn(`⚠️ Asaas health check falhou: ${result.error}`);
+          logger.warn('⚠️ Pagamentos via Asaas NÃO funcionarão até resolver o problema acima.');
+        }
+      }).catch((err) => {
+        logger.warn(`⚠️ Erro ao executar health check Asaas: ${err instanceof Error ? err.message : err}`);
+      });
     });
   } catch (error) {
     logger.error('❌ Erro ao iniciar servidor:', error);

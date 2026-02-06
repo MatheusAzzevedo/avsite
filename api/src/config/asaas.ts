@@ -16,19 +16,24 @@ import { logger } from '../utils/logger';
 /**
  * Cliente Asaas — API Key lida apenas das variáveis de ambiente (ex.: Railway).
  * Nenhuma chave deve ficar no código; configure ASAAS_API_KEY no Railway → Variables.
+ * A chave é trimada para evitar 401 por espaços/quebras de linha ao colar no Railway.
  */
-const asaasApiKey = process.env.ASAAS_API_KEY || '';
-const asaasEnv = process.env.ASAAS_ENVIRONMENT || 'production'; // production ou sandbox
+const asaasApiKeyRaw = process.env.ASAAS_API_KEY || '';
+const asaasApiKey = asaasApiKeyRaw.trim();
+const asaasEnvRaw = process.env.ASAAS_ENVIRONMENT || 'production';
+const asaasEnv = asaasEnvRaw.trim().toLowerCase(); // production ou sandbox
 
-// Log de inicialização para verificar se a chave foi carregada
+// Log de inicialização (avisa se havia espaços na chave)
 if (!asaasApiKey) {
   logger.warn('[Asaas] ⚠️ ASAAS_API_KEY não está definida! Configure a variável no Railway.');
 } else {
+  const hadWhitespace = asaasApiKeyRaw.length !== asaasApiKey.length;
   logger.info('[Asaas] ✅ API Key carregada com sucesso', {
     context: {
       environment: asaasEnv,
       keyPrefix: asaasApiKey.substring(0, 15) + '...',
-      keyLength: asaasApiKey.length
+      keyLength: asaasApiKey.length,
+      ...(hadWhitespace && { warning: 'Espaços removidos da chave (trim)' })
     }
   });
 }
@@ -497,4 +502,83 @@ export function verificarConfigAsaas(): boolean {
   });
 
   return true;
+}
+
+/**
+ * Explicação da função [healthCheckAsaas]
+ *
+ * Testa conexão real com a API do Asaas usando a chave configurada.
+ * Faz uma requisição GET /customers?limit=1 para verificar se a chave é válida.
+ * Chamada na inicialização do servidor para diagnóstico imediato.
+ *
+ * @returns { ok: boolean, error?: string }
+ */
+export async function healthCheckAsaas(): Promise<{ ok: boolean; error?: string }> {
+  if (!asaasApiKey) {
+    return { ok: false, error: 'ASAAS_API_KEY não definida' };
+  }
+
+  const baseUrl = asaasEnv === 'sandbox'
+    ? 'https://sandbox.asaas.com/api/v3'
+    : 'https://api.asaas.com/v3';
+
+  try {
+    const response = await fetch(`${baseUrl}/customers?limit=1`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Avorar-Turismo-API/1.0',
+        'access_token': asaasApiKey
+      }
+    });
+
+    if (response.ok) {
+      logger.info('[Asaas] ✅ Health check OK — conexão com Asaas funcionando', {
+        context: { environment: asaasEnv, status: response.status }
+      });
+      return { ok: true };
+    }
+
+    // Erro de autenticação
+    const body = await response.text();
+    let errorDetail = `HTTP ${response.status}`;
+    try {
+      const json = JSON.parse(body);
+      if (json.errors && json.errors.length > 0) {
+        errorDetail = json.errors.map((e: { description?: string }) => e.description || '').join('; ');
+      }
+    } catch { /* body não era JSON */ }
+
+    if (response.status === 401) {
+      logger.error('[Asaas] ❌ Health check FALHOU — API Key REJEITADA pelo Asaas (401 Unauthorized)', {
+        context: {
+          status: 401,
+          environment: asaasEnv,
+          baseUrl,
+          keyPrefix: asaasApiKey.substring(0, 15) + '...',
+          keyLength: asaasApiKey.length,
+          errorDetail,
+          solucao: [
+            '1. Acesse o painel Asaas → Integrações → Chaves de API',
+            '2. Verifique se a chave está ATIVA (não revogada)',
+            '3. Gere uma nova chave se necessário',
+            '4. Atualize ASAAS_API_KEY no Railway e faça redeploy',
+            '5. Certifique-se de que ASAAS_ENVIRONMENT corresponde ao tipo da chave (production/sandbox)'
+          ]
+        }
+      });
+      return { ok: false, error: `API Key rejeitada (401). ${errorDetail}` };
+    }
+
+    logger.error('[Asaas] ⚠️ Health check — resposta inesperada', {
+      context: { status: response.status, errorDetail }
+    });
+    return { ok: false, error: `Resposta inesperada: HTTP ${response.status}` };
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Erro desconhecido';
+    logger.error('[Asaas] ❌ Health check FALHOU — erro de rede', {
+      context: { error: msg }
+    });
+    return { ok: false, error: msg };
+  }
 }
