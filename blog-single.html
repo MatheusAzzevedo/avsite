@@ -14,7 +14,25 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <link href="css/responsive.css" rel="stylesheet">
-<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]--> 
+<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
+<style>
+/* Texto branco na área do post */
+.content-inner .blog-details .lower,
+.content-inner .blog-details .lower .info,
+.content-inner .blog-details .lower .text-content,
+.content-inner .blog-details .lower .text-content p,
+.content-inner .blog-details .lower .text-content h1,
+.content-inner .blog-details .lower .text-content h2,
+.content-inner .blog-details .lower .text-content h3,
+.content-inner .blog-details .lower .text-content li,
+.content-inner .blog-details .lower .post-tags,
+.content-inner .blog-details .lower .post-tags .ttl { color: #fff !important; }
+.content-inner .blog-details .lower .post-tags a { color: #ff5c00 !important; }
+.sidebar .sidebar-widget .sidebar-title h5,
+.sidebar .sidebar-widget .posts,
+.sidebar .sidebar-widget .posts .post .text a,
+.sidebar .sidebar-widget .posts .post .date { color: #fff !important; }
+</style>
 
 </head>
 
@@ -107,7 +125,7 @@
 
     <div class="scroll-container">
         <div class="main-content-container" id="scroll-container">
-            <div class="body-bg-layer" style="background-image: url(images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg);"></div>
+            <div class="body-bg-layer" style="background-image: none; background-color: transparent;"></div>
             <!-- Page Title -->
             <section class="page-title" id="to-top-div">
                 <div class="auto-container">
@@ -167,17 +185,6 @@
                                     </a>
                                 </div>
 
-                                <!-- Author Box -->
-                                <div class="post-author" id="authorBox" style="display: none;">
-                                    <div class="inner-box">
-                                        <div class="inner">
-                                            <div class="image"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg" alt=""></div>
-                                            <h5>Sobre o autor</h5>
-                                            <div class="text" id="authorName">Administrador da Avorar Turismo, apaixonado por viagens e aventuras.</div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                         <!--Sidebar Side-->
@@ -187,18 +194,6 @@
                                     <div class="sidebar-title"><h5><span>Posts Recentes</span></h5></div>
                                     <div class="posts" id="recentPosts">
                                         <!-- Posts recentes serão carregados dinamicamente -->
-                                    </div>
-                                </div>
-                                <div class="sidebar-widget cat-widget">
-                                    <div class="sidebar-title"><h5><span>Categorias</span></h5></div>
-                                    <div class="categories">
-                                        <ul>
-                                            <li><a href="blog.html">Turismo</a></li>
-                                            <li><a href="blog.html">Aventura</a></li>
-                                            <li><a href="blog.html">Gastronomia</a></li>
-                                            <li><a href="blog.html">Cultura</a></li>
-                                            <li><a href="blog.html">Natureza</a></li>
-                                        </ul>
                                     </div>
                                 </div>
                             </div>

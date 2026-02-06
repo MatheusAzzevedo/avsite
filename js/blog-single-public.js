@@ -44,7 +44,6 @@
         var loadingState = document.getElementById('loadingState');
         var postContent = document.getElementById('postContent');
         var errorState = document.getElementById('errorState');
-        var authorBox = document.getElementById('authorBox');
 
         if (!slug) {
             if (loadingState) loadingState.style.display = 'none';
@@ -90,7 +89,6 @@
 
         if (loadingState) loadingState.style.display = 'none';
         if (postContent) postContent.style.display = 'block';
-        if (authorBox) authorBox.style.display = 'block';
 
         loadRecentPosts(post.id);
     }
