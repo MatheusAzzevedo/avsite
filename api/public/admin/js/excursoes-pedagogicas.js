@@ -51,21 +51,43 @@
     var formatPrice = typeof ExcursaoPedagogicaManager !== 'undefined' && ExcursaoPedagogicaManager.formatPrice
       ? ExcursaoPedagogicaManager.formatPrice
       : function(p) { return 'R$ ' + (p != null ? Number(p).toFixed(2).replace('.', ',') : '0,00'); };
-    grid.innerHTML = excursoes.map(function(e) {
-      var imgStyle = e.imagemCapa ? "url('" + e.imagemCapa.replace(/'/g, "\\'") + "')" : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-      return '<div class="excursao-card" data-id="' + escapeHtml(e.id) + '" style="border: 2px solid var(--light-border); border-radius: var(--radius-lg); overflow: hidden;">' +
-        '<div style="height: 200px; background: ' + imgStyle + ' center/cover; position: relative;">' +
-        '<span class="badge ' + (e.status === 'ATIVO' ? 'badge-success' : 'badge-danger') + '" style="position: absolute; top: 1rem; right: 1rem;">' + capitalizeFirst((e.status || '').toLowerCase()) + '</span>' +
-        '<span class="badge badge-primary" style="position: absolute; top: 1rem; left: 1rem;">' + escapeHtml(e.codigo) + '</span></div>' +
-        '<div style="padding: 1.5rem;"><h3 style="font-size: 1.25rem; margin: 0 0 0.5rem 0;">' + escapeHtml(e.titulo) + '</h3>' +
-        '<p style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 1rem;">' + escapeHtml((e.subtitulo || '').substring(0, 80)) + (e.subtitulo && e.subtitulo.length > 80 ? '...' : '') + '</p>' +
-        '<div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;"><span class="badge badge-info">' + capitalizeFirst(e.categoria || '') + '</span></div>' +
-        '<div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--light-border);">' +
-        '<strong style="color: var(--primary-color);">' + formatPrice(e.preco) + '</strong>' +
-        '<div style="display: flex; gap: 0.5rem;">' +
-        '<a href="excursao-pedagogica-editor.html?id=' + encodeURIComponent(e.id) + '" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></a>' +
-        '</div></div></div>';
-    }).join('');
+    
+    // Limpar grid antes de renderizar
+    grid.innerHTML = '';
+    
+    // Renderizar cada card individualmente para garantir ordem da esquerda para direita
+    excursoes.forEach(function(e) {
+      var card = document.createElement('div');
+      card.className = 'excursao-card';
+      card.setAttribute('data-id', escapeHtml(e.id));
+      
+      var imgStyle = e.imagemCapa 
+        ? "background-image: url('" + e.imagemCapa.replace(/'/g, "\\'") + "'); background-size: cover; background-position: center;"
+        : 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);';
+      
+      var statusBadgeClass = e.status === 'ATIVO' ? 'badge-success' : 'badge-danger';
+      var statusText = capitalizeFirst((e.status || '').toLowerCase());
+      
+      card.innerHTML = 
+        '<div class="excursao-card-image" style="height: 200px; ' + imgStyle + ' position: relative;">' +
+          '<span class="badge ' + statusBadgeClass + '" style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">' + statusText + '</span>' +
+          '<span class="badge badge-info" style="position: absolute; top: 1rem; left: 1rem; z-index: 10; background-color: rgba(0,0,0,0.6); color: white;">' + escapeHtml(e.codigo) + '</span>' +
+        '</div>' +
+        '<div class="excursao-card-content" style="padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1;">' +
+          '<h3 style="font-size: 1.25rem; font-weight: 600; margin: 0 0 0.5rem 0; color: var(--text-dark);">' + escapeHtml(e.titulo) + '</h3>' +
+          '<p style="color: var(--text-light); font-size: 0.875rem; margin: 0 0 1rem 0; line-height: 1.5; flex-grow: 1;">' + escapeHtml((e.subtitulo || '').substring(0, 100)) + (e.subtitulo && e.subtitulo.length > 100 ? '...' : '') + '</p>' +
+          '<div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">' +
+            '<span class="badge badge-info">' + capitalizeFirst(e.categoria || '') + '</span>' +
+          '</div>' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--light-border); margin-top: auto;">' +
+            '<strong style="color: var(--primary-color); font-size: 1.25rem;">' + formatPrice(e.preco) + '</strong>' +
+            '<a href="excursao-pedagogica-editor.html?id=' + encodeURIComponent(e.id) + '" class="btn btn-sm btn-secondary" style="text-decoration: none;"><i class="fas fa-edit"></i> Editar</a>' +
+          '</div>' +
+        '</div>';
+      
+      
+      grid.appendChild(card);
+    });
   }
   window.loadExcursoesPedagogicas = loadExcursoesPedagogicas;
   document.addEventListener('DOMContentLoaded', function() {

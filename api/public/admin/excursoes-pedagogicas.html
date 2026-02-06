@@ -16,8 +16,8 @@
                 <div class="nav-item"><a href="blog.html" class="nav-link"><i class="fas fa-blog"></i> Blog</a></div>
                 <div class="nav-item"><a href="excursoes.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Excursões</a></div>
                 <div class="nav-item"><a href="excursoes-pedagogicas.html" class="nav-link active"><i class="fas fa-graduation-cap"></i> Excursões Pedagógicas</a></div>
-                <div class="nav-item"><a href="checkout.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Checkout</a></div>
-                <div class="nav-item"><a href="config-pagamento.html" class="nav-link"><i class="fas fa-credit-card"></i> Config. Pagamento</a></div>
+                <div class="nav-item" style="display: none;"><a href="checkout.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Checkout</a></div>
+                <div class="nav-item" style="display: none;"><a href="config-pagamento.html" class="nav-link"><i class="fas fa-credit-card"></i> Config. Pagamento</a></div>
                 <div class="nav-item" style="margin-top: 2rem;"><a href="#" class="nav-link" id="navLogout"><i class="fas fa-sign-out-alt"></i> Sair</a></div>
             </nav>
         </aside>
@@ -54,11 +54,7 @@
             <div class="card">
                 <div class="card-header"><h2>Excursões Pedagógicas Cadastradas (<span id="excursaoCount">0</span>)</h2></div>
                 <div class="card-body">
-                    <div 
-                        id="excursoesGrid" 
-                        class="excursoes-grid excursoes-pedagogicas-grid"
-                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;"
-                    ></div>
+                    <div id="excursoesGrid" class="excursoes-pedagogicas-grid"></div>
                     <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
                         <i class="fas fa-graduation-cap" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
                         <h3 style="color: var(--text-light);">Nenhuma excursão pedagógica encontrada</h3>
