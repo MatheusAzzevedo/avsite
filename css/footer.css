@@ -160,15 +160,24 @@
 .footer-legal-links {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
 }
 
+.footer-legal-links span {
+  color: rgba(255, 255, 255, 0.6);
+}
+
 .footer-legal-links a {
-  color: rgba(255, 255, 255, 0.7);
+  color: #ff5c00;
   text-decoration: none;
   transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.footer-legal-links a:hover {
+  color: #ffaa00;
 }
 
 .footer-social {
