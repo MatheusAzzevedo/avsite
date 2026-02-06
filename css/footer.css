@@ -9,13 +9,26 @@
   margin-top: 80px;
 }
 
+.auto-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
 .footer-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 40px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
   margin-bottom: 40px;
   padding-bottom: 40px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 1024px) {
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
 }
 
 /* Logo e Descrição */
@@ -23,11 +36,13 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .footer-brand img {
   width: 120px;
   height: auto;
+  margin-bottom: 8px;
 }
 
 .footer-brand h3 {
@@ -47,25 +62,31 @@
   margin: 0;
 }
 
-/* Coluna de Informações */
-.footer-info h4 {
+/* Títulos das colunas - uniformes */
+.footer-info h4,
+.footer-nav h4,
+.footer-social h4 {
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #ff5c00;
-  margin: 0 0 16px 0;
+  margin: 0 0 20px 0;
   font-family: 'Montserrat', sans-serif;
+  line-height: 1.2;
 }
 
-.footer-info ul {
+.footer-info ul,
+.footer-nav ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.footer-info li {
+.footer-info li,
+.footer-nav li {
   margin-bottom: 12px;
+  line-height: 1.6;
 }
 
 .footer-info a,
@@ -77,7 +98,8 @@
   transition: color 0.3s ease;
 }
 
-.footer-info a:hover {
+.footer-info a:hover,
+.footer-nav a:hover {
   color: #ff5c00;
 }
 
@@ -86,24 +108,8 @@
 }
 
 /* Links de Navegação */
-.footer-nav h4 {
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #ff5c00;
-  margin: 0 0 16px 0;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.footer-nav ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.footer-nav li {
-  margin-bottom: 10px;
+.footer-nav {
+  min-width: 0;
 }
 
 .footer-nav a {
@@ -163,6 +169,11 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
+}
+
+.footer-info {
+  min-width: 0;
 }
 
 .footer-social-links {
@@ -196,9 +207,13 @@
     margin-top: 60px;
   }
 
+  .auto-container {
+    padding: 0 1.5rem;
+  }
+
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 2rem;
     margin-bottom: 30px;
     padding-bottom: 30px;
   }
@@ -223,9 +238,13 @@
     margin-top: 40px;
   }
 
+  .auto-container {
+    padding: 0 1rem;
+  }
+
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 1.5rem;
     margin-bottom: 20px;
     padding-bottom: 20px;
   }
