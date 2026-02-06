@@ -20,6 +20,19 @@ import { logger } from '../utils/logger';
 const asaasApiKey = process.env.ASAAS_API_KEY || '';
 const asaasEnv = process.env.ASAAS_ENVIRONMENT || 'production'; // production ou sandbox
 
+// Log de inicialização para verificar se a chave foi carregada
+if (!asaasApiKey) {
+  logger.warn('[Asaas] ⚠️ ASAAS_API_KEY não está definida! Configure a variável no Railway.');
+} else {
+  logger.info('[Asaas] ✅ API Key carregada com sucesso', {
+    context: {
+      environment: asaasEnv,
+      keyPrefix: asaasApiKey.substring(0, 15) + '...',
+      keyLength: asaasApiKey.length
+    }
+  });
+}
+
 export const asaasClient = new AsaasClient(asaasApiKey, {
   sandbox: asaasEnv === 'sandbox'
 });
@@ -453,15 +466,33 @@ export async function listarPagamentosPorReferencia(externalReference: string): 
  * @returns true se configurado
  */
 export function verificarConfigAsaas(): boolean {
-  if (!process.env.ASAAS_API_KEY) {
-    logger.error('[Asaas] ASAAS_API_KEY não configurada');
+  if (!asaasApiKey) {
+    logger.error('[Asaas] ❌ ASAAS_API_KEY não está definida no ambiente!', {
+      context: {
+        errorType: 'MISSING_API_KEY',
+        environment: asaasEnv,
+        solution: 'Configure ASAAS_API_KEY nas Variables do Railway'
+      }
+    });
     return false;
   }
 
-  logger.info('[Asaas] Configuração verificada', {
+  if (asaasApiKey.length < 10) {
+    logger.error('[Asaas] ❌ ASAAS_API_KEY parece estar inválida (muito curta)', {
+      context: {
+        errorType: 'INVALID_API_KEY',
+        keyLength: asaasApiKey.length,
+        solution: 'Verifique se a chave foi copiada corretamente no Railway'
+      }
+    });
+    return false;
+  }
+
+  logger.info('[Asaas] ✅ Configuração verificada', {
     context: {
       environment: asaasEnv,
-      keyPrefix: process.env.ASAAS_API_KEY.substring(0, 20) + '...'
+      keyPrefix: asaasApiKey.substring(0, 15) + '...',
+      keyLength: asaasApiKey.length
     }
   });
 
