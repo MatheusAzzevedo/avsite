@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-02-06 - Correção do blog público: posts do admin agora aparecem no site
+
+### Arquivos Modificados
+- `blog.html` [Removido script inline antigo que chamava BlogManager.getAll(true) de forma síncrona; substituído por referência a `js/blog-public.js` externo]
+- `blog-single.html` [Removido script inline antigo que chamava BlogManager.getBySlug(slug) de forma síncrona; substituído por referência a `js/blog-single-public.js` externo]
+- `js/blog-public.js` [Copiado de api/public/js/blog-public.js - carrega posts publicados via API com await BlogManager.getAll(true)]
+- `js/blog-single-public.js` [Copiado de api/public/js/blog-single-public.js - carrega post individual via API com await BlogManager.getBySlug(slug)]
+
+### Alterações
+- Os posts criados no painel administrativo (admin/blog.html) não apareciam no blog público do site porque os arquivos blog.html e blog-single.html da raiz usavam código inline antigo que chamava o BlogManager de forma síncrona (sem await). Isso fazia com que as chamadas à API retornassem Promises não resolvidas. Os scripts foram externalizados e agora usam async/await corretamente, fazendo com que os posts publicados pelo administrador apareçam na listagem do blog e nas páginas individuais de posts.
+
+---
+
 ## 2026-02-06 - Blog admin: CSP, listagem e publicação via API
 
 ### Arquivos Modificados
@@ -58,18 +71,6 @@
 
 ### Alterações
 - Cobrança aprovada no cartão ou PIX mas resposta da Asaas com erro (ex.: "Transação não autorizada") deixava de atualizar o pedido e retornava 500. Agora, após erro na criação, a API consulta pagamentos pela referência do pedido na Asaas; se houver pagamento confirmado, o pedido é marcado como PAGO e o cliente recebe 200, alinhando estado do sistema ao que realmente foi pago.
-
----
-
-## 2026-02-04 - Checkout: etapa de pagamento Asaas (PIX e Cartão)
-
-### Arquivos Modificados
-- `cliente/checkout.html` [Seção checkoutStepPagamento com opções PIX e Cartão de crédito; pixBox com QR Code e botão Copiar; cartaoBox com formulário completo (cartão + titular)]
-- `cliente/js/checkout.js` [mostrarEtapaPagamento: listeners únicos (pagamentoListenersAdded), PIX selecionado por padrão e gerarPix() ao exibir; gerarPix (POST /cliente/pagamento/pix), iniciarPollStatus (GET status a cada 3s), pagarComCartao (POST /cliente/pagamento/cartao)]
-- `api/public/cliente/checkout.html`, `api/public/cliente/js/checkout.js` [Cópias para paridade com a API]
-
-### Alterações
-- Após criar o pedido, o checkout exibe a etapa de pagamento com valor total, opção PIX (QR Code + copiar código) e opção Cartão de crédito (formulário com número, validade, CVV e dados do titular). Listeners são registrados uma única vez; PIX é exibido por padrão e o polling verifica o status até PAGO/CONFIRMADO. Cartão envia dados para a API que processa via Asaas.
 
 ---
 

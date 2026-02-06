@@ -194,7 +194,7 @@
 </div>
 <!--End Site Container--> 
 
-<!-- Script do gerenciador de dados -->
+<!-- Scripts: api-client (BlogManager), libs, blog-public (lista de posts) -->
 <script src="js/api-client.js"></script>
 <script src="js/jquery.js"></script>
 <script src="js/popper.min.js"></script>
@@ -205,120 +205,6 @@
 <script src="js/cursor-script.js"></script>
 <script src="js/wow.js"></script>
 <script src="js/custom-script.js"></script>
-<script>
-/**
- * Explicação da função [loadBlogPosts]
- * Carrega os posts publicados do BlogManager e renderiza na página.
- * Exibe apenas posts com status "publicado".
- */
-function loadBlogPosts() {
-    console.log('[Blog] Carregando posts publicados...');
-    
-    // Aguarda o DataManager estar disponível
-    if (typeof BlogManager === 'undefined') {
-        setTimeout(loadBlogPosts, 100);
-        return;
-    }
-
-    const posts = BlogManager.getAll(true); // true = apenas publicados
-    const grid = document.getElementById('blogGrid');
-    const loadingState = document.getElementById('loadingState');
-    const emptyState = document.getElementById('emptyState');
-
-    // Remove loading
-    if (loadingState) {
-        loadingState.remove();
-    }
-
-    if (posts.length === 0) {
-        grid.innerHTML = '';
-        emptyState.style.display = 'block';
-        return;
-    }
-
-    emptyState.style.display = 'none';
-
-    grid.innerHTML = posts.map(post => {
-        // Formata a data
-        const postDate = new Date(post.data);
-        const timeAgo = getTimeAgo(postDate);
-        
-        // Usa imagem padrão se não tiver
-        const image = post.imagemCapa || 'images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg';
-        
-        return `
-            <!--Block-->
-            <div class="news-block col-xl-4 col-lg-6 col-md-6 col-sm-12">
-                <div class="inner-box">
-                    <div class="image-box">
-                        <a href="blog-single.html?slug=${post.slug}">
-                            <img src="${image}" alt="${escapeHtml(post.titulo)}" onerror="this.src='images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg'">
-                        </a>
-                    </div>
-                    <div class="lower">
-                        <h4><a href="blog-single.html?slug=${post.slug}">${escapeHtml(post.titulo)}</a></h4>
-                        <div class="info">
-                            <div class="cat i-block"><i class="far fa-folder"></i> ${escapeHtml(post.categoria)}</div>
-                            <div class="time i-block"><i class="far fa-clock"></i> ${timeAgo}</div>
-                        </div>
-                        <div class="link-box">
-                            <a href="blog-single.html?slug=${post.slug}" class="theme-btn">
-                                continuar lendo <i class="far fa-long-arrow-alt-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-/**
- * Explicação da função [getTimeAgo]
- * Calcula o tempo decorrido desde uma data.
- * @param {Date} date - Data para calcular
- * @returns {string} Texto do tempo decorrido
- */
-function getTimeAgo(date) {
-    const now = new Date();
-    const diffMs = now - date;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) {
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        if (diffHours === 0) {
-            return 'Agora';
-        }
-        return `${diffHours} hora${diffHours > 1 ? 's' : ''} atrás`;
-    }
-    
-    if (diffDays === 1) return 'Ontem';
-    if (diffDays < 7) return `${diffDays} dias atrás`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} semana${Math.floor(diffDays / 7) > 1 ? 's' : ''} atrás`;
-    
-    // Formata como data
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-}
-
-/**
- * Explicação da função [escapeHtml]
- * Escapa caracteres HTML para prevenir XSS.
- */
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// Carrega os posts quando o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', function() {
-    // Pequeno delay para garantir que o DataManager carregou
-    setTimeout(loadBlogPosts, 200);
-});
-</script>
+<script src="js/blog-public.js"></script>
 </body>
 </html>

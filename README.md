@@ -4,7 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-06) - Blog admin: CSP, listagem e publicação via API
+### Última atualização (2026-02-06) - Correção do blog público: posts do admin agora aparecem no site
+- **blog.html** [Removido script inline antigo que chamava BlogManager.getAll(true) de forma síncrona; substituído por referência a js/blog-public.js externo]
+- **blog-single.html** [Removido script inline antigo que chamava BlogManager.getBySlug(slug) de forma síncrona; substituído por referência a js/blog-single-public.js externo]
+- **js/blog-public.js** [Copiado de api/public/js/blog-public.js - carrega posts publicados via API com await BlogManager.getAll(true)]
+- **js/blog-single-public.js** [Copiado de api/public/js/blog-single-public.js - carrega post individual via API com await BlogManager.getBySlug(slug)]
+
+Resumo: Os posts criados no painel administrativo (admin/blog.html) não apareciam no blog público do site porque os arquivos blog.html e blog-single.html da raiz usavam código inline antigo que chamava o BlogManager de forma síncrona (sem await). Isso fazia com que as chamadas à API retornassem Promises não resolvidas. Os scripts foram externalizados e agora usam async/await corretamente, fazendo com que os posts publicados pelo administrador apareçam na listagem do blog e nas páginas individuais de posts.
+
+### Versão anterior (2026-02-06) - Blog admin: CSP, listagem e publicação via API
 - **api/public/admin/blog.html** [Script inline removido; carregamento de blog.js para respeitar CSP]
 - **api/public/admin/js/blog.js** [Novo: listagem, filtros e exclusão de posts com chamadas assíncronas à API]
 - **api/public/admin/blog-editor.html** [savePost, saveDraft e loadPostForEdit em async/await; status enviado como PUBLICADO/RASCUNHO]
