@@ -38,12 +38,12 @@ Use **"+ New Variable"** ou **"{} Raw Editor"** e configure:
 | Variável | Valor |
 |----------|--------|
 | **`NODE_ENV`** | `production` |
-| **`JWT_SECRET`** | `CHqesEH3XkaMypjQRyl5jfAp8Mmz1aBme7yMvQadiIr9hsIo/sa+HCkxp9E7dYCH` |
+| **`JWT_SECRET`** | *(gere uma chave forte e única; ex.: `openssl rand -base64 48`)* |
 | **`JWT_EXPIRES_IN`** | `7d` |
 | **`CORS_ORIGINS`** | `https://avoarturismo.up.railway.app` |
 | **`API_BASE_URL`** | `https://avoarturismo.up.railway.app` |
 
-**Importante:** use essa **JWT_SECRET** só neste projeto e não compartilhe. Em produção, o ideal é gerar uma nova chave e trocar.
+**Importante:** gere uma **JWT_SECRET** forte e única (ex.: `openssl rand -base64 48`). Nunca commite o valor real no repositório.
 
 ---
 
@@ -53,7 +53,7 @@ No **avsite** → **Variables** → **"{} Raw Editor"**, você pode colar:
 
 ```env
 NODE_ENV=production
-JWT_SECRET=CHqesEH3XkaMypjQRyl5jfAp8Mmz1aBme7yMvQadiIr9hsIo/sa+HCkxp9E7dYCH
+JWT_SECRET=<gere-uma-chave-forte-ex-openssl-rand-base64-48>
 JWT_EXPIRES_IN=7d
 CORS_ORIGINS=https://avoarturismo.up.railway.app
 API_BASE_URL=https://avoarturismo.up.railway.app

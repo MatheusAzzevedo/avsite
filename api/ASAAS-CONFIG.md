@@ -2,9 +2,9 @@
 
 ## ⚠️ IMPORTANTE - SEGURANÇA
 
-**NUNCA commite a chave de API de produção no repositório!**
+**NUNCA commite a chave de API no repositório!**
 
-A chave de produção deve ficar **APENAS** no arquivo `.env` do servidor de produção.
+A API key do Asaas deve existir **apenas** nas variáveis de ambiente (Railway → Variables em produção; arquivo `.env` local apenas para desenvolvimento, sem commit).
 
 ---
 
@@ -22,29 +22,25 @@ A chave de produção deve ficar **APENAS** no arquivo `.env` do servidor de pro
 
 1. Acesse seu projeto no Railway
 2. Vá em **Variables** (ou **Settings** → **Variables**)
-3. Adicione as seguintes variáveis:
+3. Adicione as seguintes variáveis (a API key só deve existir aqui, nunca no código):
 
-```env
-ASAAS_API_KEY=$aact_prod_SUA_CHAVE_AQUI
-ASAAS_ENVIRONMENT=production
-ASAAS_WEBHOOK_URL=https://seudominio.com/api/webhooks/asaas
-```
+| Variável | Onde obter / valor |
+|----------|---------------------|
+| `ASAAS_API_KEY` | Painel Asaas → Configurações → Integrações → API (copie e cole apenas no Railway) |
+| `ASAAS_ENVIRONMENT` | `production` ou `sandbox` |
+| `ASAAS_WEBHOOK_URL` | Ex.: `https://seudominio.com/api/webhooks/asaas` |
 
-**⚠️ IMPORTANTE:** Substitua `SUA_CHAVE_AQUI` pela chave real que você obteve no painel do Asaas.
+A API key **não deve aparecer em nenhum arquivo do código**; apenas nas variáveis de ambiente do Railway.
 
 ### 3. **Localmente (desenvolvimento)**
 
-Adicione no arquivo `api/.env` (que está no `.gitignore`):
+Adicione no arquivo `api/.env` (que está no `.gitignore`). Use valores reais apenas no seu `.env` local; nunca commite:
 
-```env
-ASAAS_API_KEY=$aact_prod_SUA_CHAVE_AQUI
-ASAAS_ENVIRONMENT=production
-ASAAS_WEBHOOK_URL=http://localhost:3001/api/webhooks/asaas
-```
+- `ASAAS_API_KEY` = chave obtida no painel do Asaas (sandbox para testes)
+- `ASAAS_ENVIRONMENT` = `sandbox` ou `production`
+- `ASAAS_WEBHOOK_URL` = ex.: `http://localhost:3001/api/webhooks/asaas`
 
-**⚠️ IMPORTANTE:** 
-- O arquivo `.env` está no `.gitignore` e **NUNCA** deve ser commitado
-- Use a chave de **sandbox** para testes locais (opcional)
+O arquivo `.env` está no `.gitignore` e **nunca** deve ser commitado.
 
 **Nota:** Para testes locais com webhook, use ngrok ou similar para expor localhost.
 

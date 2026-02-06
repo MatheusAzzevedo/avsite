@@ -14,7 +14,8 @@ import { AsaasClient } from 'asaas';
 import { logger } from '../utils/logger';
 
 /**
- * Cliente Asaas configurado com API Key
+ * Cliente Asaas — API Key lida apenas das variáveis de ambiente (ex.: Railway).
+ * Nenhuma chave deve ficar no código; configure ASAAS_API_KEY no Railway → Variables.
  */
 const asaasApiKey = process.env.ASAAS_API_KEY || '';
 const asaasEnv = process.env.ASAAS_ENVIRONMENT || 'production'; // production ou sandbox
