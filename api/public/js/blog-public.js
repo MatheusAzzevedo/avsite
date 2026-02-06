@@ -61,12 +61,6 @@
         var loadingState = document.getElementById('loadingState');
         var emptyState = document.getElementById('emptyState');
 
-        console.log('[Blog] Elementos encontrados:', {
-            grid: !!grid,
-            loadingState: !!loadingState,
-            emptyState: !!emptyState
-        });
-
         var posts = [];
         try {
             posts = await BlogManager.getAll(true);
@@ -85,7 +79,6 @@
         console.log('[Blog] Total de posts:', posts.length);
 
         if (!posts || posts.length === 0) {
-            console.log('[Blog] Nenhum post encontrado, exibindo estado vazio');
             if (grid) grid.innerHTML = '';
             if (emptyState) emptyState.style.display = 'block';
             return;
@@ -98,31 +91,36 @@
         grid.innerHTML = posts.map(function(post) {
             var postDate = new Date(post.data);
             var timeAgo = getTimeAgo(postDate);
-            var image = post.imagemCapa || 'images/resource/news-1.jpg';
             var titulo = escapeHtml(post.titulo);
             var cat = escapeHtml(post.categoria);
-            var slug = (post.slug || '').replace(/'/g, '\\\'');
-            // Para src de imagem, usar atributo direto sem escapeHtml (pode ser data URL base64)
-            var imageSrc = (image || '').replace(/"/g, '&quot;');
+            var resumo = post.resumo ? escapeHtml(post.resumo.substring(0, 120)) + '...' : '';
+            var imageSrc = (post.imagemCapa || 'images/resource/news-1.jpg').replace(/"/g, '&quot;');
+            var slugEncoded = encodeURIComponent(post.slug || '');
+
             return '<div class="news-block col-xl-4 col-lg-6 col-md-6 col-sm-12">' +
                 '<div class="inner-box">' +
-                '<div class="image-box">' +
-                '<a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '">' +
-                '<img src="' + imageSrc + '" alt="' + titulo + '" class="post-image">' +
-                '</a></div>' +
-                '<div class="lower">' +
-                '<h4><a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '">' + titulo + '</a></h4>' +
-                '<div class="info">' +
-                '<div class="cat i-block"><i class="far fa-folder"></i> ' + cat + '</div>' +
-                '<div class="time i-block"><i class="far fa-clock"></i> ' + timeAgo + '</div>' +
+                    '<div class="image-box">' +
+                        '<a href="blog-single.html?slug=' + slugEncoded + '">' +
+                            '<img src="' + imageSrc + '" alt="' + titulo + '" class="post-img">' +
+                        '</a>' +
+                    '</div>' +
+                    '<div class="lower">' +
+                        '<h4><a href="blog-single.html?slug=' + slugEncoded + '">' + titulo + '</a></h4>' +
+                        (resumo ? '<p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-bottom: 10px;">' + resumo + '</p>' : '') +
+                        '<div class="info">' +
+                            '<div class="cat i-block"><i class="far fa-folder"></i> ' + cat + '</div>' +
+                            '<div class="time i-block"><i class="far fa-clock"></i> ' + timeAgo + '</div>' +
+                        '</div>' +
+                        '<div class="link-box">' +
+                            '<a href="blog-single.html?slug=' + slugEncoded + '" class="theme-btn">continuar lendo <i class="far fa-long-arrow-alt-right"></i></a>' +
+                        '</div>' +
+                    '</div>' +
                 '</div>' +
-                '<div class="link-box">' +
-                '<a href="blog-single.html?slug=' + encodeURIComponent(post.slug || '') + '" class="theme-btn">continuar lendo <i class="far fa-long-arrow-alt-right"></i></a>' +
-                '</div></div></div>';
+            '</div>';
         }).join('');
 
-        // Adiciona fallback de imagem para todas as imagens
-        document.querySelectorAll('.post-image').forEach(function(img) {
+        // Fallback de imagem via addEventListener (compatível com CSP)
+        document.querySelectorAll('#blogGrid .post-img').forEach(function(img) {
             img.addEventListener('error', function() {
                 this.src = 'images/resource/news-1.jpg';
             });
