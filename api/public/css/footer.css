@@ -29,6 +29,10 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 2.5rem;
   }
+
+  .footer-nav {
+    padding-left: 8%;
+  }
 }
 
 /* Logo e Descrição */
@@ -110,6 +114,8 @@
 /* Links de Navegação */
 .footer-nav {
   min-width: 0;
+  padding-left: 15%;
+  position: relative;
 }
 
 
@@ -217,6 +223,10 @@
     gap: 2rem;
     margin-bottom: 30px;
     padding-bottom: 30px;
+  }
+
+  .footer-nav {
+    padding-left: 0;
   }
 
   .footer-bottom {
