@@ -1,12 +1,11 @@
 /* Vosio Portfolio Template */
 
 
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Khula:wght@300;400;600;700;800&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
 
 /*
-  font-family: 'Cairo', sans-serif;
-  font-family: 'Khula', sans-serif;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Cairo', sans-serif; (Principal - mais utilizada)
+  font-family: 'Montserrat', sans-serif; (Textos específicos - títulos destacados, badges, etc)
 */
 
 
@@ -19,126 +18,7 @@
 @import url('jquery.fancybox.min.css');
 
 
-@font-face {
-    font-family: 'Gotham_Book';
-    src: url('../fonts/Gotham-Book.eot');
-    src: url('../fonts/Gotham-Book.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Gotham-Book.woff') format('woff'),
-         url('../fonts/Gotham-Book.ttf') format('truetype'),
-         url('../fonts/Gotham-Book.svg#Gotham_Book') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gotham_Light';
-    src: url('../fonts/Gotham-Light.eot');
-    src: url('../fonts/Gotham-Light.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Gotham-Light.woff') format('woff'),
-         url('../fonts/Gotham-Light.ttf') format('truetype'),
-         url('../fonts/Gotham-Light.svg#Gotham_Light') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gotham_Thin';
-    src: url('../fonts/Gotham-Thin.eot');
-    src: url('../fonts/Gotham-Thin.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Gotham-Thin.woff') format('woff'),
-         url('../fonts/Gotham-Thin.ttf') format('truetype'),
-         url('../fonts/Gotham-Thin.svg#Gotham_Thin') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gotham_Medium';
-    src: url('../fonts/Gotham-Medium.eot');
-    src: url('../fonts/Gotham-Medium.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Gotham-Medium.woff') format('woff'),
-         url('../fonts/Gotham-Medium.ttf') format('truetype'),
-         url('../fonts/Gotham-Medium.svg#Gotham_Medium') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gotham_Bold';
-    src: url('../fonts/Gotham-Bold.eot');
-    src: url('../fonts/Gotham-Bold.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Gotham-Bold.woff') format('woff'),
-         url('../fonts/Gotham-Bold.ttf') format('truetype'),
-         url('../fonts/Gotham-Bold.svg#Gotham_Bold') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gotham_Black';
-    src: url('../fonts/Gotham-Black.eot');
-    src: url('../fonts/Gotham-Black.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Gotham-Black.woff') format('woff'),
-         url('../fonts/Gotham-Black.ttf') format('truetype'),
-         url('../fonts/Gotham-Black.svg#Gotham_Black') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Monument_Extended_Regular';
-    src: url('../fonts/MonumentExtended-Regular.eot');
-    src: url('../fonts/MonumentExtended-Regular.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/MonumentExtended-Regular.woff') format('woff'),
-         url('../fonts/MonumentExtended-Regular.ttf') format('truetype'),
-         url('../fonts/MonumentExtended-Regular.svg#Monument_Extended_Regular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Monument_Extended_Ultrabold';
-    src: url('../fonts/MonumentExtended-Ultrabold.eot');
-    src: url('../fonts/MonumentExtended-Ultrabold.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/MonumentExtended-Ultrabold.woff') format('woff'),
-         url('../fonts/MonumentExtended-Ultrabold.ttf') format('truetype'),
-         url('../fonts/MonumentExtended-Ultrabold.svg#Monument_Extended_Ultrabold') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Telegraf_UltraLight';
-    src: url('../fonts/Telegraf-UltraLight.eot');
-    src: url('../fonts/Telegraf-UltraLight.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Telegraf-UltraLight.woff') format('woff'),
-         url('../fonts/Telegraf-UltraLight.ttf') format('truetype'),
-         url('../fonts/Telegraf-UltraLight.svg#Telegraf_UltraLight') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Telegraf_Regular';
-    src: url('../fonts/Telegraf-Regular.eot');
-    src: url('../fonts/Telegraf-Regular.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Telegraf-Regular.woff') format('woff'),
-         url('../fonts/Telegraf-Regular.ttf') format('truetype'),
-         url('../fonts/Telegraf-Regular.svg#Telegraf_Regular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Telegraf_UltraBold';
-    src: url('../fonts/Telegraf-UltraBold.eot');
-    src: url('../fonts/Telegraf-UltraBold.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Telegraf-UltraBold.woff') format('woff'),
-         url('../fonts/Telegraf-UltraBold.ttf') format('truetype'),
-         url('../fonts/Telegraf-UltraBold.svg#Telegraf_UltraBold') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
+/* Fontes customizadas removidas - usando apenas Cairo e Montserrat do Google Fonts */
 
 
 /*** 
@@ -330,7 +210,7 @@ p{
   position:relative;
   display:inline-block;
   vertical-align: top;
-  font-family: 'Khula', sans-serif;
+  font-family: 'Cairo', sans-serif;
   margin: 0;
   line-height: 30px;
   padding: 16px 35px 14px;
@@ -389,7 +269,7 @@ p{
   position:relative;
   display:inline-block;
   vertical-align: top;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin: 0;
   line-height: 26px;
   padding: 16px 30px 14px;
@@ -624,7 +504,7 @@ form .form-group .field-label{
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   text-transform: none;
   margin-bottom: 0px;
 }
@@ -660,7 +540,7 @@ form .form-group select{
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
-    font-family: 'Telegraf_Regular', sans-serif;
+    font-family: 'Cairo', sans-serif;
     font-weight: 500;
     padding: 5px 0px 5px 0;
     background: none;
@@ -1556,7 +1436,7 @@ form label.error{
   width: 140px;
   height: 100px;
   padding: 20px 20px;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 48px;
   line-height: 60px;
@@ -1616,7 +1496,7 @@ form label.error{
 
 .banner-section .slide-item h1{
   position: relative;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 62px;
   color: #ffffff;
@@ -1628,7 +1508,7 @@ form label.error{
 .banner-section .slide-item .text{
   position: relative;
   display: block;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 24px;
   line-height: 1.6em;
   padding-top: 5px;
@@ -1752,7 +1632,7 @@ form label.error{
   width: 140px;
   height: 100px;
   padding: 20px 20px;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 48px;
   line-height: 60px;
@@ -1810,7 +1690,7 @@ form label.error{
 
 .banner-two .slide-item h2{
   position: relative;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 54px;
   color: #ffffff;
@@ -1927,7 +1807,7 @@ form label.error{
 .def-title-box .subtitle{
   position: relative;
   font-size: 14px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   letter-spacing: 4px;
   color: rgba(255, 255, 255, 0.35);
   margin: 7px 0 3px;
@@ -1936,7 +1816,7 @@ form label.error{
 .def-title-box h3{
   position: relative;
   font-size: 30px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   color: rgba(255, 255, 255, 1);
   margin: 0 0;
 }
@@ -2015,7 +1895,7 @@ form label.error{
 .service-block h5{
   position: relative;
   font-size: 18px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: rgba(255, 255, 255, 1);
   margin: 0 0;
 }
@@ -2023,7 +1903,7 @@ form label.error{
 .service-block .text{
   position: relative;
   font-size: 15px;
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
   color: rgba(255, 255, 255, 0.40);
   margin: 0 0 10px;
 }
@@ -2129,7 +2009,7 @@ form label.error{
 .plans-section .text-col h4{
   position: relative;
   font-size: 26px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: rgba(255, 255, 255, 1);
   line-height: 1.25em;
   margin: 0 0 20px;
@@ -2138,7 +2018,7 @@ form label.error{
 .plans-section .text-col .text{
   position: relative;
   font-size: 15px;
-  font-family: 'Gotham_Light', sans-serif;
+  font-family: 'Cairo', sans-serif;
   color: rgba(255, 255, 255, 0.40);
   line-height: 1.6em;
 }
@@ -2254,7 +2134,7 @@ form label.error{
   top: 0;
   width: 100%;
   text-align: center;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   -webkit-transition:all 500ms ease;
   -ms-transition:all 500ms ease;
   -o-transition:all 500ms ease;
@@ -2344,7 +2224,7 @@ form label.error{
   line-height: 30px;
   text-align: center;
   background: #15181b;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   border-radius: 0 0 20px 20px;
   z-index: 3;
 }
@@ -2436,7 +2316,7 @@ form label.error{
   vertical-align: middle;
   line-height: 26px;
   padding: 10px 10px;
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 16px;
   text-align: center;
   color: rgba(255,255,255,0.50);
@@ -2477,7 +2357,7 @@ form label.error{
 .def-tabs-box .text-col{
   position: relative;
   font-size: 15px;
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 .def-tabs-box .text-col p{
@@ -2517,7 +2397,7 @@ form label.error{
   color: rgba(255, 255, 255, 0.50);
   padding:8px 20px 8px 70px;
   font-size: 16px;
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 20px;
   cursor:pointer;
@@ -2575,7 +2455,7 @@ form label.error{
   line-height: 1.60em;
   margin: 0;
   font-size: 15px;
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 
@@ -2627,7 +2507,7 @@ form label.error{
   line-height: 20px;
   font-size: 16px;
   text-transform: uppercase;
-  font-family: 'Gotham_Light', sans-serif;
+  font-family: 'Cairo', sans-serif;
   color: rgba(255, 255, 255, 0.40);
 }
 
@@ -2664,7 +2544,7 @@ form label.error{
   vertical-align: top;
   font-size: 16px;
   color: #ff5c00;
-  font-family: 'Gotham_Light', sans-serif;
+  font-family: 'Cairo', sans-serif;
   text-transform: uppercase;
   border-bottom: 1px solid #ff5c00;
 }
@@ -2708,7 +2588,7 @@ form label.error{
 
 .page-title h1{
   position: relative;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   text-transform: none;
   margin: 0 0;
 }
@@ -2819,7 +2699,7 @@ form label.error{
   position: relative;
   font-size: 18px;
   line-height: 28px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   margin-bottom: 5px;
 }
 
@@ -2827,7 +2707,7 @@ form label.error{
   position: relative;
   font-size: 14px;
   color: #666666;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   line-height: 20px;
 }
 
@@ -2842,7 +2722,7 @@ form label.error{
 
 .contact-section .form-col h5{
   position: relative;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-top: 25px;
   margin-bottom: 20px;
 }
@@ -2982,7 +2862,7 @@ form label.error{
   width: 120px;
   height: 120px;
   padding: 30px 20px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 48px;
   color: #292c30;
@@ -3043,7 +2923,7 @@ form label.error{
 
 .banner-three .slide-item h3{
   position: relative;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 28px;
   color: #ffffff;
@@ -3203,7 +3083,7 @@ form label.error{
 .portfolio-item-one h5{
   position: relative;
   font-size: 18px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   margin-bottom: 0;
 }
 
@@ -3214,7 +3094,7 @@ form label.error{
 .portfolio-item-one .cat{
   position: relative;
   display: block;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5em;
@@ -3305,7 +3185,7 @@ form label.error{
 .news-block h4{
   position: relative;
   font-size: 20px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 10px;
 }
 
@@ -3319,7 +3199,7 @@ form label.error{
 
 .news-block .info{
   position: relative;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 .news-block .info .i-block{
@@ -3341,7 +3221,7 @@ form label.error{
 
 .news-block .link-box{
   position: relative;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   padding-top: 20px;
 }
 
@@ -3376,7 +3256,7 @@ form label.error{
 .styled-pagination li{
   position:relative;
   float:left;
-  font-family: 'Gotham_Light', sans-serif;
+  font-family: 'Cairo', sans-serif;
   margin-right:20px;
 }
 
@@ -3459,7 +3339,7 @@ form label.error{
   position: relative;
   display: table-cell;
   vertical-align: top;
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 16px;
   line-height: 30px;
   padding: 25px 10px;
@@ -3554,7 +3434,7 @@ form label.error{
 .portfolio-block h5{
   position: relative;
   font-size: 20px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 0;
 }
 
@@ -3569,7 +3449,7 @@ form label.error{
 .portfolio-block .cat{
   position: relative;
   display: block;
-  font-family: 'Gotham_Light', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5em;
@@ -3650,7 +3530,7 @@ form label.error{
 .project-details .text-col h3{
   position: relative;
   font-size: 36px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   max-width: 380px;
   margin-bottom: 25px;
 }
@@ -3666,7 +3546,7 @@ form label.error{
   top: 0;
   width: 104px;
   font-size: 26px;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   
 }
 
@@ -3686,7 +3566,7 @@ form label.error{
 .project-details .text-col .scope ul{
   position: relative;
   font-size: 18px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   margin-bottom: 20px;
 }
 
@@ -3700,7 +3580,7 @@ form label.error{
   position: relative;
   margin-right: -100px;
   font-size: 24px;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   line-height: 1.45em;
   z-index: 1;
   
@@ -3771,7 +3651,7 @@ form label.error{
 .post-controls ul li a{
   position: relative;
   display: block;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 24px;
   line-height: 40px;
   padding: 30px 10px;
@@ -3837,7 +3717,7 @@ form label.error{
 .blog-details h3{
   position: relative;
   font-size: 30px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 10px;
 }
 
@@ -3851,7 +3731,7 @@ form label.error{
 
 .blog-details .info{
   position: relative;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   margin-bottom: 10px;
 }
 
@@ -3874,7 +3754,7 @@ form label.error{
 
 .blog-details .text-content{
   position: relative;
-  font-family: 'Gotham_Light', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 15px;
   color: rgba(255, 255, 255, 0.55);
   margin-bottom: 50px;
@@ -3909,7 +3789,7 @@ form label.error{
 
 .blog-details .post-tags{
   position: relative;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .blog-details .post-tags .ttl{
@@ -3921,7 +3801,7 @@ form label.error{
 .blog-details .post-tags a{
   position: relative;
   color: #ffffff;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   text-decoration: underline;
 }
 
@@ -3972,13 +3852,13 @@ form label.error{
 .sidebar-page-container .post-author h5{
   position: relative;
   font-size: 20px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 10px;
 }
 
 .sidebar-page-container .post-author .text{
   position: relative;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   color: rgba(255, 255, 255, 0.45);
 }
@@ -3991,7 +3871,7 @@ form label.error{
 .post-comments h4{
    position: relative;
   font-size: 24px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 22px;
 }
 
@@ -4063,7 +3943,7 @@ form label.error{
     position: relative;
     font-size: 14px;
     line-height: 20px;
-    font-family: 'Telegraf_UltraLight', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 5px;
     opacity: 0;
     visibility: hidden;
@@ -4086,7 +3966,7 @@ form label.error{
 
 .post-comments .comment .text{
   position: relative;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 15px;
   color: rgba(255, 255, 255, 0.45);
   transition:all 500ms ease;
@@ -4108,7 +3988,7 @@ form label.error{
 .post-comments .comment .link a{
   position: relative;
   display: inline-block;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 14px;
   padding: 4px 14px;
   color: #ffffff;
@@ -4130,7 +4010,7 @@ form label.error{
 .add-comment h4{
    position: relative;
   font-size: 24px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 22px;
 }
 
@@ -4168,7 +4048,7 @@ form label.error{
 .sidebar-side .sidebar-title h5{
   position: relative;
   font-size: 18px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   text-transform: uppercase;
   margin-bottom: 0;
   overflow: hidden;
@@ -4234,7 +4114,7 @@ form label.error{
 
 .sidebar-side .recent-post .post .date span{
   position: relative;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 14px;
   text-transform: uppercase;
   color: #292c30;
@@ -4246,7 +4126,7 @@ form label.error{
 
 .sidebar-side .recent-post .post .text{
   position: relative;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 14px;
   text-transform: uppercase;
   transition:all 500ms ease;
@@ -4292,7 +4172,7 @@ form label.error{
 .sidebar-side .categories ul li a{
   position: relative;
   display: inline-block;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 15px;
   line-height: 24px;
   color: #ffffff;
@@ -4489,7 +4369,7 @@ form label.error{
   display: block;
   font-size: 20px;
   line-height: 40px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   transition:all 500ms ease;
   -webkit-transition:all 500ms ease;
   -ms-transition:all 500ms ease;
@@ -4544,7 +4424,7 @@ form label.error{
   width: 120px;
   height: 120px;
   padding: 30px 20px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 48px;
   color: #292c30;
@@ -4560,7 +4440,7 @@ form label.error{
   left: 20px;
   bottom: 20px;
   display: block;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5em;
@@ -4717,7 +4597,7 @@ form label.error{
 .portfolio-item-two h5{
   position: relative;
   font-size: 18px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   margin-bottom: 0;
 }
 
@@ -4728,7 +4608,7 @@ form label.error{
 .portfolio-item-two .cat{
   position: relative;
   display: block;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5em;
@@ -4887,7 +4767,7 @@ form label.error{
   left: 0;
   top: 15%;
   width: 100%;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 110px;
   color: rgba(255, 255, 255, 0.15);
@@ -4950,7 +4830,7 @@ form label.error{
 
 .banner-six .slide-item h3{
   position: relative;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 28px;
   color: #ffffff;
@@ -5078,7 +4958,7 @@ form label.error{
   font-size: 17px;
   line-height: 1.5em;
   color: #ffffff;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   border-top: 3px solid rgba(255, 255, 255, 0.30);
   padding-top: 20px;
   transition:all 500ms ease;
@@ -5094,7 +4974,7 @@ form label.error{
 
 .banner-seven .pager-outer .pager-item .text strong{
   font-size: 20px;
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .banner-seven .slider-box{
@@ -5193,7 +5073,7 @@ form label.error{
 
 .banner-seven .slide-item h1{
   position: relative;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 60px;
   color: #ffffff;
@@ -5205,7 +5085,7 @@ form label.error{
 .banner-seven .slide-item .text{
   position: relative;
   display: block;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 17px;
   line-height: 1.5em;
   padding-top: 25px;
@@ -5326,7 +5206,7 @@ form label.error{
 .banner-eight .pager-box .pager-item .count{
   position: relative;
   display: block;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 17px;
   line-height: 1em;
@@ -5338,7 +5218,7 @@ form label.error{
   display: block;
   font-size: 13px;
   line-height: 1.5em;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   transition:all 500ms ease;
   -webkit-transition:all 500ms ease;
   -ms-transition:all 500ms ease;
@@ -5443,7 +5323,7 @@ form label.error{
 
 .banner-eight .slide-item h1{
   position: relative;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 60px;
   color: #ffffff;
@@ -5454,7 +5334,7 @@ form label.error{
 
 .banner-eight .slide-item h4{
   position: relative;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 26px;
   color: #ff5c00;
@@ -5464,7 +5344,7 @@ form label.error{
 }
 
 .banner-eight .slide-item h4 strong{
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .banner-eight .slide-item .links-box{
@@ -5687,7 +5567,7 @@ form label.error{
   position: relative;
   display: block;
   background: #101010;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: #ffffff;
   padding: 40px 40px;
   border-radius: 20px;
@@ -5701,7 +5581,7 @@ form label.error{
 }
 
 .banner-nine .slide-item .text-content .ttl strong{
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 20px;
 }
 
@@ -5709,7 +5589,7 @@ form label.error{
   position: absolute;
   left: 0;
   top: 75px;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 24px;
   color: #ffffff;
@@ -5722,7 +5602,7 @@ form label.error{
   position: absolute;
   left: 0;
   top: 130px;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 100px;
   color: #ffffff;
@@ -5735,7 +5615,7 @@ form label.error{
   position: absolute;
   left: 0;
   top: 310px;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 20px;
   color: rgba(255, 255, 255, 0.50);
@@ -5930,7 +5810,7 @@ form label.error{
 
 .banner-ten .slide-item h1{
   position: relative;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 48px;
   color: #ffffff;
@@ -5941,7 +5821,7 @@ form label.error{
 
 .banner-ten .slide-item h4{
   position: relative;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 26px;
   color: #ff5c00;
@@ -5951,7 +5831,7 @@ form label.error{
 }
 
 .banner-ten .slide-item h4 strong{
-  font-family: 'Telegraf_UltraBold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .banner-ten .slide-item .bottom-content{
@@ -5985,7 +5865,7 @@ form label.error{
 
 .banner-ten .slide-item .bottom-content .text{
   position: relative;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 17px;
   padding-top: 25px;
@@ -6006,7 +5886,7 @@ form label.error{
   top: 70px;
   width: 140px;
   text-align: center;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 50px;
   color: #ff5c00;
@@ -6020,7 +5900,7 @@ form label.error{
   position: absolute;
   right: 60px;
   bottom: 100px;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 30px;
   color: rgba(255, 255, 255, 0.50);
@@ -6272,7 +6152,7 @@ form label.error{
   line-height: 110px;
   height: 110px;
   text-align: center;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 50px;
   color: rgba(255, 255, 255, 0.50);
@@ -6283,7 +6163,7 @@ form label.error{
 
 .banner-eleven .slide-item h1{
   position: relative;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 60px;
   color: #ffffff;
@@ -6294,7 +6174,7 @@ form label.error{
 
 .banner-eleven .slide-item .text{
   position: relative;
-  font-family: 'Telegraf_UltraLight', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 26px;
   text-transform: none;

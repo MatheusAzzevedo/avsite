@@ -22,11 +22,11 @@
   font-weight: 600;
   color: #ff5c00;
   margin-bottom: 16px;
-  font-family: 'Gotham_Medium', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .about-hero-modern h1 {
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 52px;
   line-height: 1.15;
   margin-bottom: 24px;
@@ -38,7 +38,7 @@
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.8);
   margin-bottom: 32px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 .about-hero-modern .hero-stats-inline {
@@ -57,7 +57,7 @@
 
 .about-hero-modern .stat-inline strong {
   font-size: 32px;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: #ff5c00;
   line-height: 1;
   margin-bottom: 4px;
@@ -68,7 +68,7 @@
   color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 .about-hero-modern .hero-actions {
@@ -120,7 +120,7 @@
 
 .about-hero-modern .floating-badge .badge-text strong {
   font-size: 14px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: #ffffff;
   line-height: 1;
 }
@@ -181,7 +181,7 @@
 
 .about-metrics .metric-content h3 {
   font-size: 16px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 6px;
   color: #ffffff;
 }
@@ -212,11 +212,11 @@
   font-weight: 600;
   color: #ff5c00;
   margin-bottom: 12px;
-  font-family: 'Gotham_Medium', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .section-heading-centered h2 {
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 42px;
   margin-bottom: 16px;
   color: #ffffff;
@@ -281,7 +281,7 @@
   height: 96px;
   background: linear-gradient(135deg, #ff5c00 0%, #ff7a33 100%);
   border-radius: 50%;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 32px;
   color: #ffffff;
   margin: 0 auto 24px;
@@ -301,7 +301,7 @@
 
 .process-step .step-content h3 {
   font-size: 18px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 12px;
   color: #ffffff;
 }
@@ -399,7 +399,7 @@
 
 .about-differentials-modern .feature-header h3 {
   font-size: 20px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin: 0;
   color: #ffffff;
 }
@@ -452,11 +452,11 @@
   font-weight: 600;
   color: #ff5c00;
   margin-bottom: 12px;
-  font-family: 'Gotham_Medium', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .about-social-proof .proof-text h2 {
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 40px;
   line-height: 1.2;
   margin-bottom: 20px;
@@ -486,7 +486,7 @@
 
 .about-social-proof .number-item strong {
   font-size: 36px;
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: #ffffff;
   line-height: 1;
   margin-bottom: 6px;
@@ -495,7 +495,7 @@
 .about-social-proof .number-item span {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 .about-social-proof .partners-showcase {
@@ -549,7 +549,7 @@
   font-size: 64px;
   color: rgba(255, 92, 0, 0.2);
   line-height: 1;
-  font-family: Georgia, serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .testimonial-card-modern .testimonial-text {
@@ -557,7 +557,7 @@
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.85);
   margin-bottom: 28px;
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 .testimonial-card-modern .testimonial-footer {
@@ -581,7 +581,7 @@
 
 .testimonial-card-modern .avatar-initials {
   font-size: 16px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: #ffffff;
 }
 
@@ -591,7 +591,7 @@
 
 .testimonial-card-modern .author-name {
   font-size: 15px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: #ffffff;
   margin-bottom: 2px;
 }
@@ -599,7 +599,7 @@
 .testimonial-card-modern .author-role {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
-  font-family: 'Gotham_Book', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 .testimonial-card-modern .rating-stars {
@@ -657,7 +657,7 @@
 
 .about-values-modern .value-card-modern h3 {
   font-size: 22px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 16px;
   color: #ffffff;
 }
@@ -704,7 +704,7 @@
 }
 
 .about-cta-modern .cta-text h2 {
-  font-family: 'Monument_Extended_Regular', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 36px;
   line-height: 1.25;
   margin-bottom: 16px;

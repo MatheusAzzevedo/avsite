@@ -8,7 +8,7 @@
   font-size: 12px;
   font-weight: 600;
   color: #ff5c00;
-  font-family: 'Gotham_Medium', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* Smooth focus states */
@@ -64,7 +64,7 @@
   color: #ffffff;
   padding: 12px 24px;
   border-radius: 8px;
-  font-family: 'Gotham_Bold', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   z-index: 100000;
   transition: top 0.3s ease;
 }

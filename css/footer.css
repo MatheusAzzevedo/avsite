@@ -5,7 +5,7 @@
   color: rgba(255, 255, 255, 0.9);
   padding: 60px 0 20px;
   border-top: 1px solid rgba(255, 92, 0, 0.2);
-  font-family: 'Telegraf_Regular', sans-serif;
+  font-family: 'Cairo', sans-serif;
   margin-top: 80px;
 }
 
@@ -37,7 +37,7 @@
   letter-spacing: 0.05em;
   color: #ff5c00;
   margin: 0;
-  font-family: 'Gotham_Medium', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .footer-brand p {
@@ -55,7 +55,7 @@
   letter-spacing: 0.05em;
   color: #ff5c00;
   margin: 0 0 16px 0;
-  font-family: 'Gotham_Medium', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .footer-info ul {
@@ -93,7 +93,7 @@
   letter-spacing: 0.05em;
   color: #ff5c00;
   margin: 0 0 16px 0;
-  font-family: 'Gotham_Medium', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .footer-nav ul {

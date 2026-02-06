@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-02-06 - Tipografia unificada e ajustes na página inicial
+
+### Arquivos Modificados
+- `css/style.css`, `api/public/css/style.css` [Uso exclusivo das famílias Cairo e Montserrat via Google Fonts; remoção de @font-face personalizados (Gotham, Monument, Telegraf, Khula); padronização da tipografia global do site]
+- `css/about-page.css`, `api/public/css/about-page.css` [Títulos e destaques migrados para Cairo/Montserrat; remoção de variações Gotham/Monument/Telegraf e fontes serifadas pontuais]
+- `css/footer.css`, `api/public/css/footer.css` [Footer modernizado usando Cairo como base e Montserrat em títulos de seção]
+- `css/avoar-custom.css`, `api/public/css/avoar-custom.css`, `css/consultant-form.css`, `api/public/css/consultant-form.css` [Ajustes de tipografia em labels, botões e títulos utilitários para Cairo/Montserrat]
+- `css/avoar-sections-page.css`, `api/public/css/avoar-sections-page.css` [Hero da página inicial com tipografia padronizada, ícones de navegação com espaçamento ajustado e alinhamento vertical refinado do título, botão e texto]
+- `api/public/admin/css/admin-style.css` [Admin atualizado para usar Cairo como fonte principal, mantendo consistência visual com o site público]
+
+### Alterações
+- O site passou a utilizar apenas as famílias Cairo (base) e Montserrat (destaques), removendo fontes personalizadas anteriores e garantindo consistência visual entre todas as páginas públicas e o painel administrativo. A hero da página inicial foi refinada: título, botão de Pagamento/Login e texto foram reposicionados para melhor equilíbrio vertical, e os ícones de navegação ganharam espaçamento horizontal e vertical ajustados para leitura e clique mais confortáveis.
+
+---
+
 ## 2026-02-04 - Reconciliação de pagamento PIX/cartão quando Asaas retorna erro
 
 ### Arquivos Modificados

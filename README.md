@@ -4,7 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-04) - Reconciliação PIX/cartão quando Asaas retorna erro
+### Última atualização (2026-02-06) - Tipografia unificada e ajustes na página inicial
+- **css/style.css**, **api/public/css/style.css** [Site inteiro usando apenas Cairo (base) e Montserrat (destaques), removendo fontes Gotham/Monument/Telegraf/Khula e centralizando o carregamento via Google Fonts]
+- **css/about-page.css**, **css/footer.css**, **css/avoar-custom.css**, **css/consultant-form.css** e equivalentes em **api/public/css/** [Títulos, parágrafos, botões e labels alinhados ao novo padrão tipográfico Cairo/Montserrat]
+- **css/avoar-sections-page.css**, **api/public/css/avoar-sections-page.css** [Hero da página inicial com melhor alinhamento vertical do título, botão de Pagamento/Login e texto, além de ícones de navegação com espaçamento mais confortável]
+- **api/public/admin/css/admin-style.css** [Painel administrativo atualizado para usar Cairo como fonte principal, mantendo consistência visual com o site público]
+
+Resumo: Foi feita uma limpeza geral de tipografia, padronizando o projeto para usar apenas Cairo como fonte principal e Montserrat em destaques, removendo fontes customizadas antigas. A hero da página inicial foi refinada (título, botão e texto reposicionados) e os ícones de navegação ganharam espaçamento ajustado, melhorando leitura e usabilidade sem alterar o fluxo de navegação.
+
+### Versão anterior (2026-02-04) - Reconciliação PIX/cartão quando Asaas retorna erro
 - **api/src/config/asaas.ts** [listarPagamentosPorReferencia para consultar pagamentos por pedido na Asaas; erros de criação repassados às rotas]
 - **api/src/routes/pagamento.routes.ts** [POST /pix e POST /cartao: em erro da Asaas, consulta pagamentos por referência; se houver pagamento confirmado, atualiza pedido para PAGO e retorna 200; senão 400 com mensagem]
 - **api/public/admin/config-pagamento.html** [Ajustes de status e teste de conexão]
