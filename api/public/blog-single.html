@@ -286,95 +286,99 @@
 <script>
 /**
  * Explicação da função [loadPost]
- * Carrega um post específico baseado no slug da URL.
- * Exibe mensagem de erro se o post não for encontrado.
+ * Carrega um post pela API (BlogManager.getBySlug). Exibe erro se não encontrado ou não publicado.
  */
-function loadPost() {
+async function loadPost() {
     console.log('[Blog Single] Carregando post...');
-    
-    // Aguarda o DataManager estar disponível
+
     if (typeof BlogManager === 'undefined') {
         setTimeout(loadPost, 100);
         return;
     }
 
-    // Pega o slug da URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('slug');
+    var urlParams = new URLSearchParams(window.location.search);
+    var slug = urlParams.get('slug');
 
-    const loadingState = document.getElementById('loadingState');
-    const postContent = document.getElementById('postContent');
-    const errorState = document.getElementById('errorState');
-    const authorBox = document.getElementById('authorBox');
+    var loadingState = document.getElementById('loadingState');
+    var postContent = document.getElementById('postContent');
+    var errorState = document.getElementById('errorState');
+    var authorBox = document.getElementById('authorBox');
 
     if (!slug) {
-        loadingState.style.display = 'none';
-        errorState.style.display = 'block';
+        if (loadingState) loadingState.style.display = 'none';
+        if (errorState) errorState.style.display = 'block';
         return;
     }
 
-    // Busca o post pelo slug
-    const post = BlogManager.getBySlug(slug);
-
-    if (!post || post.status !== 'publicado') {
-        loadingState.style.display = 'none';
-        errorState.style.display = 'block';
+    var post;
+    try {
+        post = await BlogManager.getBySlug(slug);
+    } catch (err) {
+        console.error('[Blog Single] Erro ao carregar post:', err);
+        if (loadingState) loadingState.style.display = 'none';
+        if (errorState) errorState.style.display = 'block';
         return;
     }
 
-    // Preenche os dados do post
-    document.getElementById('pageTitle').textContent = `${post.titulo} - Avorar Turismo`;
+    if (!post || (post.status || '').toUpperCase() !== 'PUBLICADO') {
+        if (loadingState) loadingState.style.display = 'none';
+        if (errorState) errorState.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('pageTitle').textContent = post.titulo + ' - Avorar Turismo';
     document.getElementById('breadcrumbTitle').textContent = post.titulo;
     document.getElementById('postTitle').textContent = post.titulo;
     document.getElementById('postCategory').textContent = capitalizeFirst(post.categoria);
     document.getElementById('postDate').textContent = formatDate(post.data);
     document.getElementById('postAuthor').textContent = post.autor;
-    document.getElementById('postBody').innerHTML = post.conteudo;
+    document.getElementById('postBody').innerHTML = post.conteudo || '';
 
-    // Imagem
     if (post.imagemCapa) {
         document.getElementById('postImage').src = post.imagemCapa;
         document.getElementById('postImage').alt = post.titulo;
     }
 
-    // Tags
     if (post.tags && post.tags.length > 0) {
         document.getElementById('postTags').style.display = 'block';
         document.getElementById('tagsContainer').innerHTML = post.tags
-            .map(tag => `<a href="blog.html">${escapeHtml(tag)}</a>`)
+            .map(function(tag) { return '<a href="blog.html">' + escapeHtml(tag) + '</a>'; })
             .join(', &ensp; ');
     }
 
-    // Exibe o conteúdo
-    loadingState.style.display = 'none';
-    postContent.style.display = 'block';
-    authorBox.style.display = 'block';
+    if (loadingState) loadingState.style.display = 'none';
+    if (postContent) postContent.style.display = 'block';
+    if (authorBox) authorBox.style.display = 'block';
 
-    // Carrega posts recentes
     loadRecentPosts(post.id);
 }
 
 /**
  * Explicação da função [loadRecentPosts]
- * Carrega os posts recentes para a sidebar.
+ * Carrega os posts recentes via API para a sidebar.
  * @param {string} excludeId - ID do post atual para excluir da lista
  */
-function loadRecentPosts(excludeId) {
-    const posts = BlogManager.getAll(true)
-        .filter(p => p.id !== excludeId)
-        .slice(0, 3);
+async function loadRecentPosts(excludeId) {
+    var posts = [];
+    try {
+        posts = await BlogManager.getAll(true);
+        if (!Array.isArray(posts)) posts = [];
+    } catch (e) {
+        posts = [];
+    }
+    posts = posts.filter(function(p) { return p.id !== excludeId; }).slice(0, 3);
 
-    const container = document.getElementById('recentPosts');
+    var container = document.getElementById('recentPosts');
+    if (!container) return;
 
     if (posts.length === 0) {
         container.innerHTML = '<p style="color: #888; text-align: center;">Nenhum outro post disponível</p>';
         return;
     }
 
-    container.innerHTML = posts.map(post => {
-        const image = post.imagemCapa || 'images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg';
-        const date = formatDate(post.data);
-        
+    container.innerHTML = posts.map(function(post) {
+        var image = post.imagemCapa || 'images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg';
+        var date = formatDate(post.data);
         return `
             <div class="post">
                 <div class="inner">

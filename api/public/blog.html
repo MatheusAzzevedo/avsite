@@ -223,44 +223,42 @@
 <script>
 /**
  * Explicação da função [loadBlogPosts]
- * Carrega os posts publicados do BlogManager e renderiza na página.
- * Exibe apenas posts com status "publicado".
+ * Carrega os posts publicados via API (BlogManager.getAll(true)) e renderiza na página.
  */
-function loadBlogPosts() {
+async function loadBlogPosts() {
     console.log('[Blog] Carregando posts publicados...');
-    
-    // Aguarda o DataManager estar disponível
+
     if (typeof BlogManager === 'undefined') {
         setTimeout(loadBlogPosts, 100);
         return;
     }
 
-    const posts = BlogManager.getAll(true); // true = apenas publicados
-    const grid = document.getElementById('blogGrid');
-    const loadingState = document.getElementById('loadingState');
-    const emptyState = document.getElementById('emptyState');
+    var grid = document.getElementById('blogGrid');
+    var loadingState = document.getElementById('loadingState');
+    var emptyState = document.getElementById('emptyState');
 
-    // Remove loading
-    if (loadingState) {
-        loadingState.remove();
+    try {
+        var posts = await BlogManager.getAll(true);
+        if (!Array.isArray(posts)) posts = [];
+    } catch (err) {
+        console.error('[Blog] Erro ao carregar posts:', err);
+        posts = [];
     }
 
+    if (loadingState) loadingState.remove();
+
     if (posts.length === 0) {
-        grid.innerHTML = '';
-        emptyState.style.display = 'block';
+        if (grid) grid.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
         return;
     }
 
-    emptyState.style.display = 'none';
+    if (emptyState) emptyState.style.display = 'none';
 
-    grid.innerHTML = posts.map(post => {
-        // Formata a data
-        const postDate = new Date(post.data);
-        const timeAgo = getTimeAgo(postDate);
-        
-        // Usa imagem padrão se não tiver
-        const image = post.imagemCapa || 'images/resource/news-1.jpg';
-        
+    grid.innerHTML = posts.map(function(post) {
+        var postDate = new Date(post.data);
+        var timeAgo = getTimeAgo(postDate);
+        var image = post.imagemCapa || 'images/resource/news-1.jpg';
         return `
             <!--Block-->
             <div class="news-block col-xl-4 col-lg-6 col-md-6 col-sm-12">
