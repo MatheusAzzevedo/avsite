@@ -3,74 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes da Excursão</title>
+    <title>Detalhes da Excursão - Avorar Turismo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
-        .navbar { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem 2rem; }
-        .navbar a { margin-right: 1.5rem; text-decoration: none; color: #333; }
+        body { 
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
+            min-height: 100vh;
+        }
         
-        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem; }
+        /* NAVBAR */
+        .navbar { 
+            background: #ffffff; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #ff5c00;
+        }
         
-        .loading { text-align: center; padding: 3rem; }
-        .excursao-image { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 1.5rem; }
-        .excursao-title { font-size: 2rem; color: #333; margin-bottom: 0.5rem; }
-        .excursao-subtitle { color: #666; margin-bottom: 1.5rem; }
-        .excursao-preco { font-size: 2.5rem; color: #EA580C; font-weight: bold; margin: 1.5rem 0; }
-        .excursao-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
-        .info-item { display: flex; align-items: center; gap: 0.5rem; color: #666; }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff5c00;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
         
-        .quantidade-selector { margin: 2rem 0; }
-        .quantidade-selector label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-        .quantidade-input { padding: 0.75rem; font-size: 1.1rem; border: 2px solid #ddd; border-radius: 8px; width: 150px; }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
         
-        .btn-checkout { padding: 1rem 3rem; background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 2rem; }
-        .btn-checkout:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(234, 88, 12, 0.5); }
+        .navbar-link {
+            text-decoration: none;
+            color: #333333;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .navbar-link:hover {
+            color: #ff5c00;
+        }
+        
+        /* CONTAINER */
+        .container { 
+            max-width: 1100px; 
+            margin: 3rem auto; 
+            padding: 0 2rem;
+        }
+        
+        .card { 
+            background: #ffffff; 
+            border-radius: 14px; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 0; 
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        .excursao-image { 
+            width: 100%; 
+            height: 400px; 
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 2.5rem;
+        }
+        
+        .excursao-title { 
+            font-size: 2.2rem; 
+            color: #101010;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .excursao-subtitle { 
+            color: #666666; 
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .excursao-preco { 
+            font-size: 2.8rem; 
+            color: #ff5c00; 
+            font-weight: 700; 
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+        
+        .excursao-preco small {
+            font-size: 1.1rem;
+            color: #666666;
+            font-weight: 500;
+        }
+        
+        .excursao-info { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 1.5rem; 
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #f9f9f9;
+            border-radius: 12px;
+        }
+        
+        .info-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem;
+            font-weight: 600;
+            color: #333333;
+        }
+        
+        .info-item i {
+            font-size: 1.2rem;
+            color: #ff5c00;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #101010;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        
+        .section-title i {
+            color: #ff5c00;
+        }
+        
+        .excursao-descricao {
+            margin-top: 2rem;
+            line-height: 1.8;
+            color: #333333;
+            font-size: 1rem;
+        }
+        
+        /* QUANTIDADE SELECTOR */
+        .quantidade-card {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 14px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .quantidade-label {
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #101010;
+        }
+        
+        .quantidade-helper {
+            color: #666666;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .quantidade-helper i {
+            color: #ff5c00;
+        }
+        
+        .quantidade-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .quantidade-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #ff5c00;
+            background: #ffffff;
+            color: #ff5c00;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quantidade-btn:hover {
+            background: #ff5c00;
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+        
+        .quantidade-input {
+            width: 100px;
+            padding: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            color: #101010;
+        }
+        
+        .quantidade-input:focus {
+            outline: none;
+            border-color: #ff5c00;
+        }
+        
+        .valor-total-box {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #ff5c00;
+        }
+        
+        .valor-total-label {
+            font-size: 0.9rem;
+            color: #666666;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .valor-total {
+            font-size: 2rem;
+            color: #ff5c00;
+            font-weight: 700;
+        }
+        
+        /* BOTÃO CHECKOUT */
+        .btn-checkout {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 92, 0, 0.4);
+        }
+        
+        .btn-checkout:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* LOADING */
+        .loading { 
+            text-align: center; 
+            padding: 5rem 2rem;
+        }
+        
+        .loading i {
+            font-size: 3rem;
+            color: #ff5c00;
+            margin-bottom: 1rem;
+        }
+        
+        .loading p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666666;
+        }
+        
+        .error-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .error-state i {
+            font-size: 3.5rem;
+            color: #dc2626;
+            margin-bottom: 1rem;
+        }
+        
+        .error-state h2 {
+            font-size: 1.5rem;
+            color: #101010;
+            margin-bottom: 0.5rem;
+        }
+        
+        .error-state p {
+            color: #666666;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* ANIMATIONS */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .navbar-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .container {
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            
+            .excursao-image {
+                height: 250px;
+            }
+            
+            .card-content {
+                padding: 1.5rem;
+            }
+            
+            .excursao-title {
+                font-size: 1.6rem;
+            }
+            
+            .excursao-preco {
+                font-size: 2rem;
+            }
+            
+            .excursao-info {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .quantidade-card {
+                padding: 1.5rem;
+            }
+            
+            .quantidade-controls {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="dashboard.html"><i class="fas fa-arrow-left"></i> Voltar</a>
-    </div>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="dashboard.html" class="navbar-brand">
+                <i class="fas fa-plane-departure"></i> Avorar Turismo
+            </a>
+            <a href="dashboard.html" class="navbar-link">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </nav>
 
     <div class="container">
         <div id="loading" class="loading">
-            <i class="fas fa-spinner fa-spin fa-3x" style="color: #EA580C;"></i>
-            <p style="margin-top: 1rem; color: #666;">Carregando excursão...</p>
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Carregando excursão...</p>
+        </div>
+
+        <div id="errorState" class="error-state" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <h2>Excursão não encontrada</h2>
+            <p>Não foi possível carregar os detalhes da excursão.</p>
+            <a href="dashboard.html" class="btn-checkout" style="max-width: 300px; margin: 0 auto;">
+                <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+            </a>
         </div>
 
         <div id="content" style="display: none;">
             <div class="card">
                 <img id="excursaoImage" class="excursao-image" src="" alt="Excursão">
-                <h1 id="excursaoTitulo" class="excursao-title"></h1>
-                <p id="excursaoSubtitulo" class="excursao-subtitle"></p>
                 
-                <div class="excursao-preco">
-                    R$ <span id="excursaoPreco">0</span> <small style="font-size: 1rem; color: #666;">/por pessoa</small>
+                <div class="card-content">
+                    <h1 id="excursaoTitulo" class="excursao-title"></h1>
+                    <p id="excursaoSubtitulo" class="excursao-subtitle"></p>
+                    
+                    <div class="excursao-preco">
+                        R$ <span id="excursaoPreco">0</span>
+                        <small>/por pessoa</small>
+                    </div>
+
+                    <div class="excursao-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="excursaoLocal">Carregando...</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <span id="excursaoDuracao">Carregando...</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar"></i>
+                            <span id="excursaoHorario">Carregando...</span>
+                        </div>
+                    </div>
+
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Sobre esta Excursão
+                    </h2>
+                    <div id="excursaoDescricao" class="excursao-descricao"></div>
+
+                    <div class="quantidade-card">
+                        <label class="quantidade-label">
+                            <i class="fas fa-users"></i> Quantas pessoas?
+                        </label>
+                        <p class="quantidade-helper">
+                            <i class="fas fa-lightbulb"></i>
+                            Selecione o número de participantes
+                        </p>
+                        
+                        <div class="quantidade-controls">
+                            <button type="button" class="quantidade-btn" id="btnDiminuir">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input 
+                                type="number" 
+                                id="quantidade" 
+                                class="quantidade-input" 
+                                min="1" 
+                                max="50" 
+                                value="1"
+                            >
+                            <button type="button" class="quantidade-btn" id="btnAumentar">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+
+                        <div class="valor-total-box">
+                            <div class="valor-total-label">Valor Total</div>
+                            <div class="valor-total">R$ <span id="valorTotal">0,00</span></div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-checkout" id="btnCheckout">
+                        <i class="fas fa-shopping-cart"></i>
+                        Continuar para Checkout
+                    </button>
                 </div>
-
-                <div class="excursao-info">
-                    <div class="info-item"><i class="fas fa-map-marker-alt"></i> <span id="excursaoLocal"></span></div>
-                    <div class="info-item"><i class="fas fa-clock"></i> <span id="excursaoDuracao"></span></div>
-                    <div class="info-item"><i class="fas fa-calendar"></i> <span id="excursaoHorario"></span></div>
-                </div>
-
-                <div id="excursaoDescricao" style="margin-top: 2rem; line-height: 1.6; color: #333;"></div>
-
-                <div class="quantidade-selector">
-                    <label for="quantidade">Quantas pessoas?</label>
-                    <input type="number" id="quantidade" class="quantidade-input" min="1" max="50" value="1">
-                    <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">
-                        Total: R$ <span id="valorTotal">0</span>
-                    </p>
-                </div>
-
-                <button type="button" class="btn-checkout">
-                    <i class="fas fa-shopping-cart"></i> Continuar para Checkout
-                </button>
             </div>
         </div>
     </div>

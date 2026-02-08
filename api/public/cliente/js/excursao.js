@@ -18,7 +18,8 @@
         const loading = document.getElementById('loading');
         const content = document.getElementById('content');
         const quantidade = document.getElementById('quantidade');
-        const valorTotal = document.getElementById('valorTotal');
+        const btnDiminuir = document.getElementById('btnDiminuir');
+        const btnAumentar = document.getElementById('btnAumentar');
 
         if (img) img.src = exc.imagemCapa || '/images/default.jpg';
         if (titulo) titulo.textContent = exc.titulo;
@@ -32,9 +33,31 @@
         if (loading) loading.style.display = 'none';
         if (content) content.style.display = 'block';
 
+        // Listeners para controle de quantidade
         if (quantidade) {
             quantidade.addEventListener('input', calcularTotal);
         }
+        
+        if (btnDiminuir) {
+            btnDiminuir.addEventListener('click', () => {
+                const qtdAtual = parseInt(quantidade.value, 10) || 1;
+                if (qtdAtual > 1) {
+                    quantidade.value = qtdAtual - 1;
+                    calcularTotal();
+                }
+            });
+        }
+        
+        if (btnAumentar) {
+            btnAumentar.addEventListener('click', () => {
+                const qtdAtual = parseInt(quantidade.value, 10) || 1;
+                if (qtdAtual < 50) {
+                    quantidade.value = qtdAtual + 1;
+                    calcularTotal();
+                }
+            });
+        }
+        
         calcularTotal();
     }
 
@@ -49,10 +72,19 @@
     function irParaCheckout() {
         if (!excursao) return;
         const quantidade = parseInt(document.getElementById('quantidade').value, 10) || 1;
-        if (quantidade < 1 || quantidade > 50) {
-            alert('Quantidade inválida');
+        
+        if (quantidade < 1) {
+            alert('⚠️ A quantidade mínima é 1 pessoa');
+            document.getElementById('quantidade').value = 1;
             return;
         }
+        
+        if (quantidade > 50) {
+            alert('⚠️ A quantidade máxima é 50 pessoas por reserva');
+            document.getElementById('quantidade').value = 50;
+            return;
+        }
+        
         localStorage.setItem('checkout_excursao', JSON.stringify({ ...excursao, quantidade }));
         window.location.href = 'checkout.html';
     }
@@ -64,12 +96,12 @@
         const codigo = urlParams.get('codigo');
 
         if (!codigo) {
-            alert('Código não fornecido');
-            window.location.href = 'dashboard.html';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
             return;
         }
 
-        const btnCheckout = document.querySelector('.btn-checkout');
+        const btnCheckout = document.getElementById('btnCheckout');
         if (btnCheckout) {
             btnCheckout.addEventListener('click', irParaCheckout);
         }
@@ -82,12 +114,13 @@
                 excursao = data.data;
                 exibirExcursao(excursao);
             } else {
-                alert('Excursão não encontrada');
-                window.location.href = 'dashboard.html';
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
             }
         } catch (error) {
             console.error('[Excursao] Erro:', error);
-            alert('Erro ao carregar excursão');
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
         }
     }
 
