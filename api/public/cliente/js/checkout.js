@@ -308,6 +308,45 @@
         return String(s).replace(/\D/g, '');
     }
 
+    /** Formata telefone como (XX) XXXXX-XXXX (máx. 11 dígitos). */
+    function formatPhoneBr(value) {
+        var d = String(value).replace(/\D/g, '').slice(0, 11);
+        if (d.length <= 2) return d.length ? '(' + d : '';
+        if (d.length <= 7) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+        return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7, 11);
+    }
+
+    /** Aplica máscara de telefone no input: usuário só digita, campo exibe parênteses e hífen. */
+    function applyPhoneMask(inputEl) {
+        if (!inputEl) return;
+        inputEl.addEventListener('input', function () {
+            var digits = inputEl.value.replace(/\D/g, '').slice(0, 11);
+            var formatted = formatPhoneBr(digits);
+            inputEl.value = formatted;
+            inputEl.setSelectionRange(formatted.length, formatted.length);
+        });
+    }
+
+    /** Formata CPF como 000.000.000-00 (11 dígitos). */
+    function formatCpfBr(value) {
+        var d = String(value).replace(/\D/g, '').slice(0, 11);
+        if (d.length <= 3) return d;
+        if (d.length <= 6) return d.slice(0, 3) + '.' + d.slice(3);
+        if (d.length <= 9) return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6);
+        return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6, 9) + '-' + d.slice(9, 11);
+    }
+
+    /** Aplica máscara de CPF no input: usuário só digita, campo exibe pontos e hífen. */
+    function applyCpfMask(inputEl) {
+        if (!inputEl) return;
+        inputEl.addEventListener('input', function () {
+            var digits = inputEl.value.replace(/\D/g, '').slice(0, 11);
+            var formatted = formatCpfBr(digits);
+            inputEl.value = formatted;
+            inputEl.setSelectionRange(formatted.length, formatted.length);
+        });
+    }
+
     function pagarComCartao() {
         var btn = document.getElementById('btnPagarCartao');
         var num = onlyDigits(document.getElementById('cardNumber').value);
@@ -494,6 +533,17 @@
         gerarResponsavelBlock();
         gerarFormularios();
 
+        applyPhoneMask(document.getElementById('respTelefone'));
+        applyPhoneMask(document.getElementById('cardHolderPhone'));
+
+        applyCpfMask(document.getElementById('respCpf'));
+        applyCpfMask(document.getElementById('cardHolderCpf'));
+        var qtdAlunos = Math.max(1, Math.min(50, parseInt(excursao.quantidade, 10) || 1));
+        for (var a = 1; a <= qtdAlunos; a++) {
+            var cpfAlunoEl = document.getElementById('cpfAluno_' + a);
+            if (cpfAlunoEl) applyCpfMask(cpfAlunoEl);
+        }
+
         var voltar = document.getElementById('voltarLink');
         if (voltar) voltar.addEventListener('click', function (e) { e.preventDefault(); history.back(); });
 
@@ -514,7 +564,7 @@
             var dadosResponsavelFinanceiro = {
                 nome: getFormValue(form, 'respNome'),
                 sobrenome: getFormValue(form, 'respSobrenome'),
-                cpf: getFormValue(form, 'respCpf'),
+                cpf: onlyDigits(getFormValue(form, 'respCpf')),
                 pais: getFormValue(form, 'respPais'),
                 cep: getFormValue(form, 'respCep'),
                 endereco: getFormValue(form, 'respEndereco'),
@@ -523,7 +573,7 @@
                 cidade: getFormValue(form, 'respCidade'),
                 estado: getFormValue(form, 'respEstado'),
                 bairro: getFormValue(form, 'respBairro') || undefined,
-                telefone: getFormValue(form, 'respTelefone'),
+                telefone: onlyDigits(getFormValue(form, 'respTelefone')),
                 email: getFormValue(form, 'respEmail')
             };
 
@@ -539,7 +589,7 @@
                     serieAluno: getFormValue(form, 'serieAluno_' + i) || undefined,
                     turma: getFormValue(form, 'turma_' + i) || undefined,
                     unidadeColegio: getFormValue(form, 'unidadeColegio_' + i) || undefined,
-                    cpfAluno: getFormValue(form, 'cpfAluno_' + i) || undefined,
+                    cpfAluno: onlyDigits(getFormValue(form, 'cpfAluno_' + i)) || undefined,
                     rgAluno: getFormValue(form, 'rgAluno_' + i) || undefined,
                     alergiasCuidados: getFormValue(form, 'alergiasCuidados_' + i) || undefined,
                     planoSaude: getFormValue(form, 'planoSaude_' + i) || undefined,

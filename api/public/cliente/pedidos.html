@@ -303,7 +303,7 @@
             <p class="page-subtitle">Acompanhe todas as suas excursões e pagamentos</p>
         </div>
         
-        <div id="loading" class="loading">
+        <div id="loading" class="loading" style="display: none;">
             <i class="fas fa-spinner fa-spin fa-2x"></i>
             <p>Carregando pedidos...</p>
         </div>
@@ -316,16 +316,31 @@
         (async () => {
             await clienteAuth.requireAuth();
 
+            const loadingEl = document.getElementById('loading');
+            const containerEl = document.getElementById('pedidosContainer');
+
+            let loadingTimer = setTimeout(() => {
+                loadingTimer = null;
+                if (loadingEl) loadingEl.style.display = 'block';
+            }, 400);
+
+            function hideLoadingAndShow() {
+                if (loadingTimer) {
+                    clearTimeout(loadingTimer);
+                    loadingTimer = null;
+                }
+                if (loadingEl) loadingEl.style.display = 'none';
+            }
+
             try {
                 const response = await clienteAuth.fetchAuth('/cliente/pedidos');
                 const data = await response.json();
 
-                document.getElementById('loading').style.display = 'none';
+                hideLoadingAndShow();
 
                 if (data.success && data.data.length > 0) {
-                    const container = document.getElementById('pedidosContainer');
                     data.data.forEach(pedido => {
-                        container.innerHTML += `
+                        containerEl.innerHTML += `
                             <div class="pedido-card">
                                 <div class="pedido-header">
                                     <div class="pedido-titulo">${pedido.excursaoPedagogica.titulo}</div>
@@ -342,7 +357,7 @@
                         `;
                     });
                 } else {
-                    document.getElementById('pedidosContainer').innerHTML = `
+                    containerEl.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-shopping-bag"></i>
                             <p>Nenhum pedido encontrado</p>
@@ -351,8 +366,8 @@
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('pedidosContainer').innerHTML = `
+                hideLoadingAndShow();
+                containerEl.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-exclamation-circle"></i>
                         <p>Erro ao carregar pedidos</p>
