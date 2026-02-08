@@ -4,36 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-06) - Correção dos botões de ação no admin do blog
+### Última atualização (2026-02-08) - Redesign das páginas do cliente (dashboard, pedidos, configurações)
+- **cliente/dashboard.html** [Redesign completo com navbar moderna, gradiente no fundo, animações suaves, busca em card com estilo premium, cores alinhadas ao site (#ff5c00 laranja e #101010 preto)]
+- **cliente/pedidos.html** [Nova estrutura com navbar melhorada, cards de pedidos com estilos avançados, status badges modernizadas, empty state para sem pedidos, animações de entrada]
+- **cliente/configuracoes.html** [Redesign com navbar consistente, formulário em card com border-top laranja, mensagens de sucesso com animação, labels com ícones, campos com efeito focus suave]
+
+Resumo: As 3 páginas do cliente (dashboard, pedidos, configurações) foram completamente redesenhadas para estar alinhadas visualmente ao site principal (Avorar Turismo). Implementado novo design com: paleta de cores do site (#ff5c00 laranja, #101010 preto), gradientes modernos, sombras elevation, animações suaves (slideUp/slideDown), responsividade melhorada, navbar com estilo consistente, cards com hover effects, tipografia Montserrat, e UX aprimorada com indicadores visuais e mensagens claras.
+
+### Versão anterior (2026-02-06) - Correção dos botões de ação no admin do blog
 - **api/public/admin/js/blog.js** [Removidos atributos onclick inline dos botões de editar/visualizar/deletar; adicionada função attachButtonListeners() que registra event listeners via addEventListener; botões agora usam classes CSS (.btn-edit-post, .btn-view-post, .btn-delete-post) e data attributes (data-id, data-slug, data-titulo) para identificação]
 
 Resumo: Os botões de editar, visualizar e deletar posts na tabela do painel administrativo não funcionavam porque usavam onclick inline, bloqueado pelo CSP (Content Security Policy). A solução foi remover os onclick e adicionar event listeners via JavaScript externo. Agora os botões funcionam corretamente: editar abre o editor, visualizar abre o post em nova aba, e deletar solicita confirmação antes de excluir.
-
-### Versão anterior (2026-02-06) - Correção do blog público: posts do admin agora aparecem no site
-- **blog.html** [Removido script inline antigo que chamava BlogManager.getAll(true) de forma síncrona; substituído por referência a js/blog-public.js externo]
-- **blog-single.html** [Removido script inline antigo que chamava BlogManager.getBySlug(slug) de forma síncrona; substituído por referência a js/blog-single-public.js externo]
-- **js/blog-public.js** [Copiado de api/public/js/blog-public.js - carrega posts publicados via API com await BlogManager.getAll(true)]
-- **js/blog-single-public.js** [Copiado de api/public/js/blog-single-public.js - carrega post individual via API com await BlogManager.getBySlug(slug)]
-
-Resumo: Os posts criados no painel administrativo (admin/blog.html) não apareciam no blog público do site porque os arquivos blog.html e blog-single.html da raiz usavam código inline antigo que chamava o BlogManager de forma síncrona (sem await). Isso fazia com que as chamadas à API retornassem Promises não resolvidas. Os scripts foram externalizados e agora usam async/await corretamente, fazendo com que os posts publicados pelo administrador apareçam na listagem do blog e nas páginas individuais de posts.
-
-### Versão anterior (2026-02-06) - Blog admin: CSP, listagem e publicação via API
-- **api/public/admin/blog.html** [Script inline removido; carregamento de blog.js para respeitar CSP]
-- **api/public/admin/js/blog.js** [Novo: listagem, filtros e exclusão de posts com chamadas assíncronas à API]
-- **api/public/admin/blog-editor.html** [savePost, saveDraft e loadPostForEdit em async/await; status enviado como PUBLICADO/RASCUNHO]
-- **api/public/blog.html**, **api/public/blog-single.html** [loadBlogPosts, loadPost e loadRecentPosts assíncronas com await à API]
-
-Resumo: A página "Gerenciar Blog" do admin quebrava ao carregar por violação de CSP (script inline bloqueado). O script foi externalizado em blog.js, corrigindo o erro. Os posts passaram a ser listados e salvos via API: a lista e o editor usam await em getAll/getById/create/update; o status é enviado em maiúsculas (PUBLICADO/RASCUNHO). As páginas públicas do blog também passaram a aguardar a API, exibindo os posts publicados no site.
-
-### Versão anterior (2026-02-06) - Grid de excursões pedagógicas no admin
-- **api/public/admin/css/admin-style.css** [Container `#excursoesGrid.excursoes-pedagogicas-grid` passou a usar grid responsivo com `repeat(auto-fill, minmax(260px, 1fr))`, organizando os cards de excursões pedagógicas em múltiplas colunas no desktop e empilhando em uma coluna apenas em telas menores]
-
-Resumo: A listagem de excursões pedagógicas no painel administrativo deixou de empilhar todos os cards em uma única coluna larga. O CSS do grid foi ajustado para um layout de colunas responsivo, fazendo com que cada excursão seja exibida em um card alinhado dentro de um grid fluido (2–3 colunas conforme a largura disponível), melhorando a leitura e o aproveitamento de espaço sem alterar a lógica de carregamento das excursões.
-
-### Versão anterior (2026-02-06) - Logout consistente no painel admin
-- **api/public/admin/js/admin-main.js** [Link lateral com id `navLogout` agora é conectado automaticamente à função `logout()`, garantindo que o clique em "Sair" limpe a autenticação e redirecione o administrador para `login.html` em qualquer página do painel]
-
-Resumo: Padronizado o comportamento do botão "Sair" no painel administrativo. Sempre que o item de menu com id `navLogout` estiver presente, o JavaScript central (`admin-main.js`) registra um listener que chama `logout()`, removendo o token/estado de login e levando o usuário de volta à tela de login do admin, evitando páginas do painel acessíveis após logout.
 
 
 ### Versão anterior (2026-02-04) - Reconciliação PIX/cartão quando Asaas retorna erro

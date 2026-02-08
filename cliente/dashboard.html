@@ -7,15 +7,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* FORÇA cursor visível - sobrescreve CSS global que esconde o cursor */
         * {
             cursor: auto !important;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body { 
-            margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: #f5f5f5;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
+            min-height: 100vh;
             cursor: default !important;
         }
         
@@ -27,70 +29,265 @@
             cursor: text !important;
         }
         
+        /* NAVBAR */
         .navbar {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 1rem 2rem;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.2rem 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #ff5c00;
         }
         
-        .navbar-brand { font-size: 1.5rem; font-weight: bold; color: #EA580C; }
-        .navbar-menu { display: flex; gap: 1.5rem; align-items: center; }
-        .navbar-link { text-decoration: none; color: #333; transition: color 0.2s; }
-        .navbar-link:hover { color: #EA580C; }
-        .btn-logout { padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        .navbar-brand { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            color: #ff5c00;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
         
-        .container { max-width: 800px; margin: 3rem auto; padding: 0 1rem; }
-        .welcome { text-align: center; margin-bottom: 3rem; }
-        .welcome h1 { font-size: 2rem; color: #333; margin-bottom: 0.5rem; }
-        .welcome p { color: #666; font-size: 1.1rem; }
+        .navbar-menu { 
+            display: flex; 
+            gap: 2.5rem; 
+            align-items: center;
+        }
         
+        .navbar-link { 
+            text-decoration: none; 
+            color: #333333;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.3rem;
+        }
+        
+        .navbar-link:hover, .navbar-link.active { 
+            color: #ff5c00;
+            border-bottom-color: #ff5c00;
+        }
+        
+        .btn-logout { 
+            padding: 0.7rem 1.5rem; 
+            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+        }
+        
+        .btn-logout:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
+        }
+        
+        /* CONTAINER */
+        .container { 
+            max-width: 900px; 
+            margin: 3rem auto; 
+            padding: 0 2rem;
+        }
+        
+        .welcome { 
+            text-align: center; 
+            margin-bottom: 3rem;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        .welcome h1 { 
+            font-size: 2.5rem; 
+            color: #101010;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .welcome p { 
+            color: #666666; 
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        /* SEARCH BOX */
         .search-box {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             text-align: center;
+            border-top: 4px solid #ff5c00;
+            animation: slideUp 0.8s ease-out;
         }
         
-        .search-box h2 { color: #EA580C; margin-bottom: 1rem; }
-        .search-box p { color: #666; margin-bottom: 2rem; }
+        .search-box h2 { 
+            color: #ff5c00; 
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
         
-        .search-form { display: flex; gap: 1rem; max-width: 500px; margin: 0 auto; }
+        .search-box p { 
+            color: #666666; 
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .search-form { 
+            display: flex; 
+            gap: 1rem; 
+            max-width: 600px; 
+            margin: 0 auto;
+        }
+        
         .search-input {
             flex: 1;
-            padding: 1rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 1rem;
             text-transform: uppercase;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
         }
-        .search-input:focus { outline: none; border-color: #EA580C; }
+        
+        .search-input:focus { 
+            outline: none; 
+            border-color: #ff5c00;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.1);
+        }
         
         .btn-search {
-            padding: 1rem 2rem;
-            background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%);
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 10px;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+            white-space: nowrap;
         }
-        .btn-search:hover { transform: translateY(-2px); }
-        .btn-search:disabled { opacity: 0.6; cursor: not-allowed; }
         
-        .error-message, .loading-message {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            display: none;
+        .btn-search:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 92, 0, 0.4);
         }
-        .error-message { background: #fee2e2; color: #dc2626; }
-        .error-message.show, .loading-message.show { display: block; }
-        .loading-message { background: #dbeafe; color: #1e40af; }
+        
+        .btn-search:disabled { 
+            opacity: 0.6; 
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* MESSAGES */
+        .error-message, .loading-message {
+            margin-top: 2rem;
+            padding: 1.2rem 1.5rem;
+            border-radius: 10px;
+            display: none;
+            font-weight: 600;
+            animation: slideDown 0.4s ease-out;
+        }
+        
+        .error-message { 
+            background: #fee2e2; 
+            color: #c2410c;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .error-message.show, .loading-message.show { 
+            display: block;
+        }
+        
+        .loading-message { 
+            background: #dbeafe; 
+            color: #1e40af;
+            border-left: 4px solid #2563eb;
+        }
+        
+        /* ANIMATIONS */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .navbar-menu {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+            
+            .navbar-link {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn-logout {
+                width: 100%;
+            }
+            
+            .container {
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            
+            .welcome h1 {
+                font-size: 1.8rem;
+            }
+            
+            .search-box {
+                padding: 2rem;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .btn-search {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -99,7 +296,7 @@
             <i class="fas fa-plane-departure"></i> Avorar Turismo
         </div>
         <div class="navbar-menu">
-            <a href="dashboard.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="dashboard.html" class="navbar-link active"><i class="fas fa-home"></i> Início</a>
             <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
             <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
