@@ -149,16 +149,35 @@ function renderExcursoes() {
  * Abre view de lista de alunos de uma excursão específica
  */
 async function abrirListaAlunos(excursaoId) {
+    console.log('[Listas] Abrindo lista de alunos para excursão:', excursaoId);
+    
     currentExcursaoId = excursaoId;
     
+    // Verifica se os elementos existem
+    const excursoesView = document.getElementById('excursoesView');
+    const alunosView = document.getElementById('alunosView');
+    const pageTitle = document.getElementById('pageTitle');
+    
+    if (!excursoesView || !alunosView) {
+        console.error('[Listas] Elementos de view não encontrados!');
+        return;
+    }
+    
     // Esconde view de excursões e mostra view de alunos
-    document.getElementById('excursoesView').style.display = 'none';
-    document.getElementById('alunosView').style.display = 'block';
-    document.getElementById('pageTitle').textContent = 'Lista de Alunos';
+    excursoesView.style.display = 'none';
+    alunosView.style.display = 'block';
+    
+    if (pageTitle) {
+        pageTitle.textContent = 'Lista de Alunos';
+    }
 
     // Reseta filtro
-    document.getElementById('filterStatusPedido').value = '';
+    const filterStatus = document.getElementById('filterStatusPedido');
+    if (filterStatus) {
+        filterStatus.value = '';
+    }
 
+    console.log('[Listas] View de alunos exibida, carregando dados...');
     await loadAlunos();
 }
 
