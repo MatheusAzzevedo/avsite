@@ -187,7 +187,7 @@
                     </a>
                 </div>
                 <div class="nav-item" style="margin-top: 2rem;">
-                    <a href="#" class="nav-link" onclick="logout()">
+                    <a href="#" class="nav-link" id="navLogout">
                         <i class="fas fa-sign-out-alt"></i>
                         Sair
                     </a>
@@ -218,7 +218,7 @@
                         <div class="filters">
                             <div class="filter-group">
                                 <label for="filterStatus">Status</label>
-                                <select id="filterStatus" class="form-control" onchange="loadExcursoes()">
+                                <select id="filterStatus" class="form-control">
                                     <option value="">Todos</option>
                                     <option value="ATIVO">Ativo</option>
                                     <option value="INATIVO">Inativo</option>
@@ -236,7 +236,7 @@
 
             <!-- View: Lista de Alunos -->
             <div id="alunosView" style="display: none;">
-                <a href="#" class="back-button" onclick="voltarParaExcursoes(event)">
+                <a href="#" class="back-button" id="btnVoltarExcursoes">
                     <i class="fas fa-arrow-left"></i> Voltar para Excursões
                 </a>
 
@@ -247,7 +247,7 @@
                             <p id="excursaoInfo" style="color: var(--text-light); margin: 0.5rem 0 0 0;"></p>
                         </div>
                         <div class="action-buttons">
-                            <button id="btnExportar" class="btn btn-success" onclick="exportarExcel()">
+                            <button type="button" id="btnExportar" class="btn btn-success">
                                 <i class="fas fa-file-excel"></i> Exportar Excel
                             </button>
                         </div>
@@ -256,7 +256,7 @@
                         <div class="filters">
                             <div class="filter-group">
                                 <label for="filterStatusPedido">Status do Pedido</label>
-                                <select id="filterStatusPedido" class="form-control" onchange="loadAlunos()">
+                                <select id="filterStatusPedido" class="form-control">
                                     <option value="">Todos</option>
                                     <option value="PAGO">Pago</option>
                                     <option value="CONFIRMADO">Confirmado</option>

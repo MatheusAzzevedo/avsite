@@ -132,10 +132,10 @@ function renderExcursoes() {
                 ` : ''}
 
                 <div style="display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--light-border);">
-                    <button class="btn btn-primary" onclick="event.stopPropagation(); abrirListaAlunos('${excursao.id}')" style="flex: 1;">
+                    <button type="button" class="btn btn-primary btn-ver-alunos" data-excursao-id="${escapeHtml(excursao.id)}" style="flex: 1;">
                         <i class="fas fa-users"></i> Ver Alunos
                     </button>
-                    <button class="btn btn-danger" onclick="event.stopPropagation(); deletarExcursao('${excursao.id}', '${escapeHtml(excursao.titulo).replace(/'/g, "\\'")}')">
+                    <button type="button" class="btn btn-danger btn-deletar-excursao" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-titulo="${escapeHtml(excursao.titulo)}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -475,6 +475,39 @@ async function deletarExcursao(excursaoId, titulo) {
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[Listas] Inicializando página de listas...');
+
+    // Event delegation para botões dos cards (CSP não permite onclick inline)
+    const excursoesList = document.getElementById('excursoesList');
+    if (excursoesList) {
+        excursoesList.addEventListener('click', function (e) {
+            const btnVer = e.target.closest('.btn-ver-alunos');
+            const btnDeletar = e.target.closest('.btn-deletar-excursao');
+            if (btnVer) {
+                e.preventDefault();
+                const id = btnVer.getAttribute('data-excursao-id');
+                if (id) abrirListaAlunos(id);
+            } else if (btnDeletar) {
+                e.preventDefault();
+                const id = btnDeletar.getAttribute('data-excursao-id');
+                const titulo = btnDeletar.getAttribute('data-excursao-titulo') || '';
+                if (id) deletarExcursao(id, titulo);
+            }
+        });
+    }
+
+    // Filtros e botões (sem inline handlers por CSP)
+    const filterStatus = document.getElementById('filterStatus');
+    if (filterStatus) filterStatus.addEventListener('change', loadExcursoes);
+
+    const btnVoltar = document.getElementById('btnVoltarExcursoes');
+    if (btnVoltar) btnVoltar.addEventListener('click', function (e) { e.preventDefault(); voltarParaExcursoes(e); });
+
+    const btnExportar = document.getElementById('btnExportar');
+    if (btnExportar) btnExportar.addEventListener('click', exportarExcel);
+
+    const filterStatusPedido = document.getElementById('filterStatusPedido');
+    if (filterStatusPedido) filterStatusPedido.addEventListener('change', loadAlunos);
+
     loadExcursoes();
 
     // Mostrar botão de toggle em mobile
