@@ -28,7 +28,7 @@ async function loadExcursoes() {
 
         console.log('[Listas] Carregando excursões pedagógicas...');
 
-        const token = localStorage.getItem('adminToken');
+        const token = (typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token'));
         if (!token) {
             console.error('[Listas] Token não encontrado');
             window.location.href = 'login.html';
@@ -170,7 +170,7 @@ async function loadAlunos() {
 
         console.log('[Listas] Carregando alunos da excursão:', currentExcursaoId);
 
-        const token = localStorage.getItem('adminToken');
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
         if (!token) {
             console.error('[Listas] Token não encontrado');
             window.location.href = 'login.html';
@@ -283,7 +283,7 @@ async function exportarExcel() {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
 
-        const token = localStorage.getItem('adminToken');
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
         if (!token) {
             console.error('[Listas] Token não encontrado');
             window.location.href = 'login.html';
