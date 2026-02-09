@@ -72,8 +72,8 @@ function renderExcursoes() {
         container.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-inbox"></i>
-                <h3>Nenhuma excursão encontrada</h3>
-                <p>Não há excursões pedagógicas cadastradas.</p>
+                <h3>Nenhum registro</h3>
+                <p>Não há excursões pedagógicas com compras ainda.</p>
             </div>
         `;
         return;
@@ -97,7 +97,7 @@ function renderExcursoes() {
                     <div class="excursao-info">
                         <h3>${escapeHtml(excursao.titulo)}</h3>
                         ${excursao.subtitulo ? `<p>${escapeHtml(excursao.subtitulo)}</p>` : ''}
-                        <p><strong>Código:</strong> ${excapeHtml(excursao.codigo)}</p>
+                        <p><strong>Código:</strong> ${escapeHtml(excursao.codigo)}</p>
                         ${excursao.local ? `<p><i class="fas fa-map-marker-alt"></i> ${escapeHtml(excursao.local)}</p>` : ''}
                         ${excursao.horario ? `<p><i class="fas fa-clock"></i> ${escapeHtml(excursao.horario)}</p>` : ''}
                     </div>
@@ -221,8 +221,8 @@ function renderAlunos() {
             <tr>
                 <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-light);">
                     <i class="fas fa-inbox" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 1rem;"></i>
-                    <strong>Nenhum aluno encontrado</strong>
-                    <p style="margin-top: 0.5rem;">Não há alunos cadastrados para esta excursão com os filtros selecionados.</p>
+                    <strong>Nenhum registro</strong>
+                    <p style="margin-top: 0.5rem;">Não há alunos para esta excursão com os filtros selecionados.</p>
                 </td>
             </tr>
         `;
