@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listas de Alunos - Avoar Turismo</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .excursao-card {
+            border: 2px solid var(--light-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .excursao-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .excursao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .excursao-info h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+        }
+
+        .excursao-info p {
+            margin: 0.25rem 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .excursao-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .alunos-table {
+            margin-top: 2rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            transition: color 0.3s;
+        }
+
+        .back-button:hover {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .excursao-header {
+                flex-direction: column;
+            }
+
+            .excursao-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Avorar Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="blog.html" class="nav-link">
+                        <i class="fas fa-blog"></i>
+                        Blog
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="excursoes.html" class="nav-link">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Excursões
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="excursoes-pedagogicas.html" class="nav-link">
+                        <i class="fas fa-graduation-cap"></i>
+                        Excursões Pedagógicas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="listas.html" class="nav-link active">
+                        <i class="fas fa-list-alt"></i>
+                        Listas de Alunos
+                    </a>
+                </div>
+                <div class="nav-item" style="display: none;">
+                    <a href="checkout.html" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        Checkout
+                    </a>
+                </div>
+                <div class="nav-item" style="display: none;">
+                    <a href="config-pagamento.html" class="nav-link">
+                        <i class="fas fa-credit-card"></i>
+                        Config. Pagamento
+                    </a>
+                </div>
+                <div class="nav-item" style="margin-top: 2rem;">
+                    <a href="#" class="nav-link" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sair
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <button id="sidebarToggle" class="btn btn-secondary btn-sm" style="margin-right: 1rem; display: none;">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle">Listas de Alunos</h1>
+                </div>
+                <div class="user-menu">
+                    <span id="userName">Administrador</span>
+                    <div class="user-avatar">AD</div>
+                </div>
+            </div>
+
+            <!-- View: Lista de Excursões -->
+            <div id="excursoesView">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Excursões Pedagógicas</h2>
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label for="filterStatus">Status</label>
+                                <select id="filterStatus" class="form-control" onchange="loadExcursoes()">
+                                    <option value="">Todos</option>
+                                    <option value="ATIVO">Ativo</option>
+                                    <option value="INATIVO">Inativo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="excursoesList">
+                            <!-- Carregado via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Lista de Alunos -->
+            <div id="alunosView" style="display: none;">
+                <a href="#" class="back-button" onclick="voltarParaExcursoes(event)">
+                    <i class="fas fa-arrow-left"></i> Voltar para Excursões
+                </a>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 id="excursaoTitulo">Carregando...</h2>
+                            <p id="excursaoInfo" style="color: var(--text-light); margin: 0.5rem 0 0 0;"></p>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="btnExportar" class="btn btn-success" onclick="exportarExcel()">
+                                <i class="fas fa-file-excel"></i> Exportar Excel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label for="filterStatusPedido">Status do Pedido</label>
+                                <select id="filterStatusPedido" class="form-control" onchange="loadAlunos()">
+                                    <option value="">Todos</option>
+                                    <option value="PAGO">Pago</option>
+                                    <option value="CONFIRMADO">Confirmado</option>
+                                    <option value="PENDENTE">Pendente</option>
+                                    <option value="AGUARDANDO_PAGAMENTO">Aguardando Pagamento</option>
+                                    <option value="CANCELADO">Cancelado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="alunos-table">
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome do Aluno</th>
+                                            <th>Turma</th>
+                                            <th>Série</th>
+                                            <th>CPF</th>
+                                            <th>Telefone</th>
+                                            <th>Status Pedido</th>
+                                            <th>Data Pedido</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="alunosTableBody">
+                                        <!-- Carregado via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/api-client.js"></script>
+    <script src="js/admin-main.js"></script>
+    <script src="js/listas.js"></script>
+</body>
+</html>

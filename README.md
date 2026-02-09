@@ -4,7 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-08) - Redesign das páginas do cliente (dashboard, pedidos, configurações)
+### Última atualização (2026-02-08) - Sistema de Listas de Alunos por Excursão Pedagógica
+- **api/src/routes/lista-alunos.routes.ts** [Novas rotas admin: GET /excursoes (lista excursões com contagem de alunos), GET /excursao/:id/alunos (lista alunos de uma excursão), GET /excursao/:id/exportar (gera Excel); estatísticas por status de pedido; filtros por status]
+- **api/public/admin/listas.html** [Nova página com duas views: lista de excursões pedagógicas com stats e lista detalhada de alunos; filtros por status; botão exportar Excel; design responsivo com cards]
+- **api/public/admin/js/listas.js** [Gerenciamento completo: carrega excursões com contagem, exibe alunos com filtros, exporta Excel com download automático; estados de loading e empty state]
+- **api/src/server.ts** [Registrada rota /api/admin/listas para sistema de listas]
+- **api/public/admin/*.html** [Adicionado link "Listas de Alunos" no menu lateral de todas as páginas admin]
+- **api/package.json** [Instalada dependência exceljs para geração de arquivos Excel]
+
+Resumo: Nova funcionalidade para o admin gerenciar listas de alunos matriculados por excursão pedagógica. Sistema carrega automaticamente alunos conforme pedidos são criados. Interface mostra estatísticas (total de alunos, pedidos, status), permite filtrar por status do pedido e exportar lista completa em Excel (.xlsx) seguindo formato especificado (colunas: Nome, Turma, Série, CPF, Telefone, Celular). Cada excursão tem sua lista isolada e específica. Telefone responsável mapeado para coluna Celular no Excel.
+
+### Versão anterior (2026-02-08) - Redesign das páginas do cliente (dashboard, pedidos, configurações)
 - **cliente/dashboard.html** [Redesign completo com navbar moderna, gradiente no fundo, animações suaves, busca em card com estilo premium, cores alinhadas ao site (#ff5c00 laranja e #101010 preto)]
 - **cliente/pedidos.html** [Nova estrutura com navbar melhorada, cards de pedidos com estilos avançados, status badges modernizadas, empty state para sem pedidos, animações de entrada]
 - **cliente/configuracoes.html** [Redesign com navbar consistente, formulário em card com border-top laranja, mensagens de sucesso com animação, labels com ícones, campos com efeito focus suave]

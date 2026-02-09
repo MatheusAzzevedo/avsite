@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-02-08 - Sistema de Listas de Alunos por Excursão Pedagógica
+
+### Arquivos Modificados
+- `api/src/routes/lista-alunos.routes.ts` [Novas rotas para admin gerenciar listas: GET /api/admin/listas/excursoes retorna todas excursões pedagógicas com contagem de alunos e estatísticas por status; GET /api/admin/listas/excursao/:id/alunos lista alunos de uma excursão específica com dados completos e filtro por status de pedido; GET /api/admin/listas/excursao/:id/exportar gera arquivo Excel (.xlsx) com colunas Nome, Turma, Série, CPF, Telefone, Celular seguindo especificação da Lista de Chamada]
+- `api/public/admin/listas.html` [Nova página com interface dupla: view de excursões (cards com stats de alunos, pedidos e status) e view de alunos (tabela detalhada com filtros); design responsivo com empty states; ações de navegação e exportação]
+- `api/public/admin/js/listas.js` [Gerenciamento completo: carrega excursões com estatísticas agregadas; exibe lista de alunos com dados do pedido e cliente; filtros por status (PAGO, CONFIRMADO, PENDENTE); exportação Excel com download automático; tratamento de erros e estados vazios]
+- `api/src/server.ts` [Registrada rota /api/admin/listas conectando o módulo lista-alunos.routes.ts]
+- `api/public/admin/dashboard.html`, `api/public/admin/blog.html`, `api/public/admin/blog-editor.html`, `api/public/admin/excursoes.html`, `api/public/admin/excursao-editor.html`, `api/public/admin/excursoes-pedagogicas.html`, `api/public/admin/excursao-pedagogica-editor.html` [Adicionado item "Listas de Alunos" no menu lateral do admin com ícone fa-list-alt]
+- `api/package.json` [Instalada biblioteca exceljs (^4.x) para geração de arquivos Excel com formatação]
+
+### Alterações
+- Implementado sistema completo de listas de alunos matriculados por excursão pedagógica. Cada excursão tem sua lista específica que é preenchida automaticamente conforme pedidos são criados. Admin pode visualizar estatísticas (total de alunos, total de pedidos, alunos por status: PAGO, CONFIRMADO, PENDENTE), filtrar alunos por status do pedido e exportar lista completa em Excel seguindo formato especificado. Arquivo Excel gerado contém: Nome (obrigatório, mínimo 2 caracteres), Turma, Série, CPF, Telefone (vazio), Celular (mapeado de telefoneResponsavel). Sistema valida dados, ignora linhas sem nome válido e gera logs detalhados. Exportação registra atividade no log do sistema.
+
+---
+
 ## 2026-02-06 - Correção dos botões de ação no admin do blog
 
 ### Arquivos Modificados
@@ -34,26 +49,6 @@
 
 ### Alterações
 - Ao carregar a página "Gerenciar Blog" no admin, o CSP bloqueava o script inline e a lista de posts não era carregada. O script foi externalizado para `blog.js`, eliminando o erro de CSP. Os posts passaram a ser carregados e salvos via API (BlogManager assíncrono): a lista usa await getAll(), o editor usa await getById/create/update e envia status em maiúsculas (PUBLICADO/RASCUNHO). As páginas públicas do blog (listagem e post único) também passaram a usar await ao chamar a API, exibindo os posts publicados corretamente.
-
----
-
-## 2026-02-06 - Grid de excursões pedagógicas no admin
-
-### Arquivos Modificados
-- `api/public/admin/css/admin-style.css` [Seção de grid de excursões atualizada para usar `display: grid` com `repeat(auto-fill, minmax(260px, 1fr))` em `.excursoes-pedagogicas-grid` e contêineres relacionados, permitindo que os cards de excursões pedagógicas sejam exibidos lado a lado em múltiplas colunas (desktop) e empilhados apenas em telas menores]
-
-### Alterações
-- A listagem de "Excursões Pedagógicas Cadastradas" do painel admin deixou de exibir os cards em uma única coluna fixa. O container `#excursoesGrid.excursoes-pedagogicas-grid` passou a usar um grid responsivo que distribui os cards em 2–3 colunas conforme a largura disponível, mantendo os cards com altura estendida (`height: 100%`) para um layout organizado e alinhado, e voltando para uma coluna apenas em mobile.
-
----
-
-## 2026-02-06 - Logout consistente no painel admin
-
-### Arquivos Modificados
-- `api/public/admin/js/admin-main.js` [Adicionada conexão automática do link com id `navLogout` ao fluxo de `logout()`, garantindo que o clique em "Sair" no menu lateral deslogue o usuário e redirecione para a tela de login do admin em qualquer página do painel]
-
-### Alterações
-- O botão "Sair" do menu lateral do painel administrativo passou a usar um listener centralizado em `admin-main.js` para chamar `logout()`. Isso garante que, sempre que o elemento com id `navLogout` existir, o usuário será deslogado (tokens e flags limpos) e enviado para `login.html` do admin, mantendo o comportamento consistente entre todas as telas do painel.
 
 ---
 

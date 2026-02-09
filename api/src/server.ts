@@ -35,6 +35,7 @@ import uploadRoutes from './routes/upload.routes';
 import paymentConfigRoutes from './routes/payment-config.routes';
 import adminPaymentRoutes from './routes/admin-payment.routes';
 import publicRoutes from './routes/public.routes';
+import listaAlunosRoutes from './routes/lista-alunos.routes';
 
 // Importa utilitários
 import { prisma } from './config/database';
@@ -177,6 +178,7 @@ app.use('/api/posts', postRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/payment-config', paymentConfigRoutes);
 app.use('/api/admin/payment', adminPaymentRoutes);
+app.use('/api/admin/listas', listaAlunosRoutes);
 
 // ===========================================
 // TRATAMENTO DE ERROS
