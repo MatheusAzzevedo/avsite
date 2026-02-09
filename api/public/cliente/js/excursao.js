@@ -1,5 +1,5 @@
 /**
- * Página de detalhes da excursão - carrega por código e exibe; checkout.
+ * Página de detalhes da excursão - carrega por código e exibe com design premium
  * Script externalizado para compatibilidade com Content-Security-Policy (CSP).
  */
 
@@ -7,33 +7,62 @@
     let excursao = null;
 
     function exibirExcursao(exc) {
-        const img = document.getElementById('excursaoImage');
+        // Elementos gerais
+        const mainImage = document.getElementById('mainImage');
+        const breadcrumbTitle = document.getElementById('breadcrumbTitle');
         const titulo = document.getElementById('excursaoTitulo');
         const subtitulo = document.getElementById('excursaoSubtitulo');
-        const preco = document.getElementById('excursaoPreco');
-        const local = document.getElementById('excursaoLocal');
         const duracao = document.getElementById('excursaoDuracao');
+        const local = document.getElementById('excursaoLocal');
         const horario = document.getElementById('excursaoHorario');
+        const preco = document.getElementById('excursaoPreco');
+        
+        // Tabs e descritivos
         const descricao = document.getElementById('excursaoDescricao');
-        const loading = document.getElementById('loading');
-        const content = document.getElementById('content');
-        const quantidade = document.getElementById('quantidade');
+        const inclusos = document.getElementById('excursaoInclusos');
+        const recomendacoes = document.getElementById('excursaoRecomendacoes');
+        
+        // Info grid
+        const infoLocal = document.getElementById('infoLocal');
+        const infoHorario = document.getElementById('infoHorario');
+        const infoDuracao = document.getElementById('infoDuracao');
+        
+        // Controles
+        const quantidade = document.getElementById('quantity');
         const btnDiminuir = document.getElementById('btnDiminuir');
         const btnAumentar = document.getElementById('btnAumentar');
+        const loadingState = document.getElementById('loadingState');
+        const contentDiv = document.getElementById('excursaoContent');
 
-        if (img) img.src = exc.imagemCapa || '/images/default.jpg';
+        // Preencher dados
+        if (mainImage) mainImage.src = exc.imagemCapa || '/images/default.jpg';
+        if (breadcrumbTitle) breadcrumbTitle.textContent = exc.titulo;
         if (titulo) titulo.textContent = exc.titulo;
         if (subtitulo) subtitulo.textContent = exc.subtitulo || '';
-        if (preco) preco.textContent = exc.preco.toFixed(2);
-        if (local) local.textContent = exc.local || 'Não informado';
         if (duracao) duracao.textContent = exc.duracao || 'Não informado';
+        if (local) local.textContent = exc.local || 'Não informado';
         if (horario) horario.textContent = exc.horario || 'Não informado';
-        if (descricao) descricao.innerHTML = exc.descricao || '';
+        if (preco) preco.textContent = 'R$ ' + exc.preco.toFixed(2).replace('.', ',');
+        
+        if (descricao) descricao.innerHTML = exc.descricao || '<p>Descrição não disponível</p>';
+        if (inclusos) inclusos.innerHTML = exc.inclusos || '<p>Inclusos não informados</p>';
+        if (recomendacoes) recomendacoes.innerHTML = exc.recomendacoes || '<p>Recomendações não informadas</p>';
+        
+        if (infoLocal) infoLocal.textContent = exc.local || 'Não informado';
+        if (infoHorario) infoHorario.textContent = exc.horario || 'Não informado';
+        if (infoDuracao) infoDuracao.textContent = exc.duracao || 'Não informado';
 
-        if (loading) loading.style.display = 'none';
-        if (content) content.style.display = 'block';
+        // Carregar galeria (se houver múltiplas imagens)
+        const galleryThumbs = document.getElementById('galleryThumbs');
+        if (galleryThumbs && exc.imagemCapa) {
+            galleryThumbs.innerHTML = `<img src="${exc.imagemCapa}" alt="Galeria" class="thumb active">`;
+        }
 
-        // Listeners para controle de quantidade
+        // Mostrar conteúdo e esconder loading
+        if (loadingState) loadingState.style.display = 'none';
+        if (contentDiv) contentDiv.style.display = 'block';
+
+        // Event listeners para quantidade
         if (quantidade) {
             quantidade.addEventListener('input', calcularTotal);
         }
@@ -58,35 +87,59 @@
             });
         }
         
+        // Configurar tabs
+        setupTabs();
+        
+        // Calcular total inicial
         calcularTotal();
     }
 
     function calcularTotal() {
         if (!excursao) return;
-        const qtd = parseInt(document.getElementById('quantidade').value, 10) || 1;
-        const total = excursao.preco * qtd;
-        const el = document.getElementById('valorTotal');
-        if (el) el.textContent = total.toFixed(2);
+        const qtd = parseInt(document.getElementById('quantity').value, 10) || 1;
+        // Nota: Atualizamos apenas o display, o valor total será calculado no checkout
     }
 
     function irParaCheckout() {
         if (!excursao) return;
-        const quantidade = parseInt(document.getElementById('quantidade').value, 10) || 1;
+        const quantidade = parseInt(document.getElementById('quantity').value, 10) || 1;
         
         if (quantidade < 1) {
             alert('⚠️ A quantidade mínima é 1 pessoa');
-            document.getElementById('quantidade').value = 1;
+            document.getElementById('quantity').value = 1;
             return;
         }
         
         if (quantidade > 50) {
             alert('⚠️ A quantidade máxima é 50 pessoas por reserva');
-            document.getElementById('quantidade').value = 50;
+            document.getElementById('quantity').value = 50;
             return;
         }
         
         localStorage.setItem('checkout_excursao', JSON.stringify({ ...excursao, quantidade }));
         window.location.href = 'checkout.html';
+    }
+
+    function setupTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.getAttribute('data-tab');
+                
+                // Remover classe active de todos os botões e painéis
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanels.forEach(p => p.classList.remove('active'));
+                
+                // Adicionar classe active ao botão e painel clicados
+                btn.classList.add('active');
+                const activePanel = document.getElementById(`tab-${tabName}`);
+                if (activePanel) {
+                    activePanel.classList.add('active');
+                }
+            });
+        });
     }
 
     async function init() {
@@ -96,7 +149,7 @@
         const codigo = urlParams.get('codigo');
 
         if (!codigo) {
-            document.getElementById('loading').style.display = 'none';
+            document.getElementById('loadingState').style.display = 'none';
             document.getElementById('errorState').style.display = 'block';
             return;
         }
@@ -114,12 +167,13 @@
                 excursao = data.data;
                 exibirExcursao(excursao);
             } else {
-                document.getElementById('loading').style.display = 'none';
+                console.error('[Excursao] Resposta de erro:', data);
+                document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('errorState').style.display = 'block';
             }
         } catch (error) {
-            console.error('[Excursao] Erro:', error);
-            document.getElementById('loading').style.display = 'none';
+            console.error('[Excursao] Erro ao carregar:', error);
+            document.getElementById('loadingState').style.display = 'none';
             document.getElementById('errorState').style.display = 'block';
         }
     }

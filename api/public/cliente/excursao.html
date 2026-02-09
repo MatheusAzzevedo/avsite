@@ -14,7 +14,7 @@
         
         body { 
             font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
+            background: #f8f9fa;
             min-height: 100vh;
         }
         
@@ -63,329 +63,532 @@
             color: #ff5c00;
         }
         
-        /* CONTAINER */
-        .container { 
-            max-width: 1100px; 
-            margin: 3rem auto; 
+        /* PRODUCT HERO */
+        .product-hero {
+            background: #000;
+            color: #fff;
+            padding: 60px 0 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 92, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            z-index: 1;
+        }
+
+        .product-hero .hero-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 0 2rem;
         }
-        
-        .card { 
-            background: #ffffff; 
-            border-radius: 14px; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 0; 
-            overflow: hidden;
-            animation: slideUp 0.6s ease-out;
+
+        .product-breadcrumb {
+            margin-bottom: 20px;
+            text-align: center;
         }
-        
-        .excursao-image { 
-            width: 100%; 
-            height: 400px; 
+
+        .product-breadcrumb a {
+            color: #ff5c00;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .product-breadcrumb span {
+            color: #999;
+            margin: 0 10px;
+        }
+
+        .product-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ff5c00;
+            text-align: center;
+        }
+
+        .product-subtitle {
+            font-size: 1.25rem;
+            color: #ccc;
+            margin-bottom: 30px;
+            text-align: center;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meta-item i {
+            color: #ff5c00;
+            font-size: 20px;
+        }
+
+        .meta-item span {
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        /* PRODUCT CONTENT */
+        .product-content {
+            padding: 60px 0;
+            background: #fff;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .main-content {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .product-gallery {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
             object-fit: cover;
         }
-        
-        .card-content {
-            padding: 2.5rem;
+
+        .gallery-thumbs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 20px;
         }
-        
-        .excursao-title { 
-            font-size: 2.2rem; 
-            color: #101010;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-        
-        .excursao-subtitle { 
-            color: #666666; 
-            margin-bottom: 1.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-        
-        .excursao-preco { 
-            font-size: 2.8rem; 
-            color: #ff5c00; 
-            font-weight: 700; 
-            margin: 1.5rem 0;
-            display: flex;
-            align-items: baseline;
-            gap: 0.5rem;
-        }
-        
-        .excursao-preco small {
-            font-size: 1.1rem;
-            color: #666666;
-            font-weight: 500;
-        }
-        
-        .excursao-info { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 1.5rem; 
-            margin: 2rem 0;
-            padding: 2rem;
-            background: #f9f9f9;
-            border-radius: 12px;
-        }
-        
-        .info-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem;
-            font-weight: 600;
-            color: #333333;
-        }
-        
-        .info-item i {
-            font-size: 1.2rem;
-            color: #ff5c00;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            color: #101010;
-            font-weight: 700;
-            margin: 2rem 0 1rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-        
-        .section-title i {
-            color: #ff5c00;
-        }
-        
-        .excursao-descricao {
-            margin-top: 2rem;
-            line-height: 1.8;
-            color: #333333;
-            font-size: 1rem;
-        }
-        
-        /* QUANTIDADE SELECTOR */
-        .quantidade-card {
-            background: #f9f9f9;
-            border: 2px solid #e0e0e0;
-            border-radius: 14px;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-        
-        .quantidade-label {
-            display: block;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #101010;
-        }
-        
-        .quantidade-helper {
-            color: #666666;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .quantidade-helper i {
-            color: #ff5c00;
-        }
-        
-        .quantidade-controls {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .quantidade-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid #ff5c00;
-            background: #ffffff;
-            color: #ff5c00;
-            font-size: 1.3rem;
+
+        .thumb {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: 3px solid transparent;
+            transition: all 0.3s;
         }
-        
-        .quantidade-btn:hover {
-            background: #ff5c00;
-            color: #ffffff;
-            transform: scale(1.1);
-        }
-        
-        .quantidade-input {
-            width: 100px;
-            padding: 1rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            text-align: center;
-            color: #101010;
-        }
-        
-        .quantidade-input:focus {
-            outline: none;
+
+        .thumb:hover,
+        .thumb.active {
             border-color: #ff5c00;
         }
-        
-        .valor-total-box {
-            background: #ffffff;
-            padding: 1.5rem;
-            border-radius: 10px;
-            border-left: 4px solid #ff5c00;
+
+        /* TABS */
+        .product-info-tabs {
+            border-top: 1px solid #e5e7eb;
         }
-        
-        .valor-total-label {
-            font-size: 0.9rem;
-            color: #666666;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            border-bottom: 2px solid #e5e7eb;
+            background: #f9fafb;
         }
-        
-        .valor-total {
-            font-size: 2rem;
-            color: #ff5c00;
-            font-weight: 700;
-        }
-        
-        /* BOTÃO CHECKOUT */
-        .btn-checkout {
-            width: 100%;
-            padding: 1.2rem;
-            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
-            color: white;
+
+        .tab-btn {
+            padding: 18px 30px;
             border: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: 700;
+            background: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .tab-btn:hover {
+            color: #000;
+            background: rgba(255, 92, 0, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #000;
+            border-bottom-color: #ff5c00;
+            background: #fff;
+        }
+
+        .tab-content-area {
+            padding: 30px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .tab-panel h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #000;
+            text-align: center;
+        }
+
+        .tab-panel h4 {
+            font-size: 1.125rem;
+            margin: 25px 0 15px;
+            color: #e55200;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .tab-panel p {
+            line-height: 1.8;
+            color: #4b5563;
+            margin-bottom: 15px;
+            text-align: center;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab-panel ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab-panel ul li {
+            padding: 8px 0 8px 25px;
+            position: relative;
+            color: #4b5563;
+        }
+
+        .tab-panel ul li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: #e55200;
+            font-weight: bold;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 560px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-item h5 {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .info-item p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            margin: 0;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .tag {
+            background: rgba(255, 92, 0, 0.1);
+            color: #e55200;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* PURCHASE CARD (Sidebar) */
+        .purchase-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .price-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .price-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff5c00;
+            margin-bottom: 5px;
+        }
+
+        .price-note {
+            font-size: 13px;
+            color: #ff5c00;
+            font-weight: 500;
+        }
+
+        .quantity-section {
+            margin-bottom: 25px;
+        }
+
+        .quantity-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .qty-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e5e7eb;
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            transition: all 0.3s;
+        }
+
+        .qty-btn:hover {
+            border-color: #ff5c00;
+            background: #ff5c00;
+            color: #fff;
+        }
+
+        .qty-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .btn-add-cart {
+            width: 100%;
+            padding: 16px;
+            background: #ff5c00;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            margin-top: 2rem;
+            gap: 10px;
         }
-        
-        .btn-checkout:hover {
+
+        .btn-add-cart:hover {
+            background: #e55200;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 92, 0, 0.4);
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
         }
-        
-        .btn-checkout:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        /* LOADING */
-        .loading { 
-            text-align: center; 
-            padding: 5rem 2rem;
-        }
-        
-        .loading i {
-            font-size: 3rem;
+
+        .btn-buy-now {
+            width: 100%;
+            padding: 16px;
+            background: #000;
             color: #ff5c00;
-            margin-bottom: 1rem;
-        }
-        
-        .loading p {
-            font-size: 1.1rem;
+            border: 2px solid #ff5c00;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
-            color: #666666;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        
+
+        .btn-buy-now:hover {
+            background: #ff5c00;
+            color: #fff;
+        }
+
+        .highlights {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .highlight-item i {
+            color: #ff5c00;
+            font-size: 20px;
+        }
+
+        .highlight-item span {
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        /* LOADING & ERROR */
+        .loading-state {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
         .error-state {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 100px 20px;
         }
-        
+
         .error-state i {
             font-size: 3.5rem;
             color: #dc2626;
             margin-bottom: 1rem;
         }
-        
+
         .error-state h2 {
             font-size: 1.5rem;
             color: #101010;
             margin-bottom: 0.5rem;
         }
-        
+
         .error-state p {
             color: #666666;
             margin-bottom: 1.5rem;
         }
-        
-        /* ANIMATIONS */
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+
+        .error-state a {
+            color: #ff5c00;
+            text-decoration: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .content-grid {
+                grid-template-columns: 1fr;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .purchase-card {
+                position: static;
+            }
+
+            .product-title {
+                font-size: 2rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
             }
         }
-        
-        /* RESPONSIVE */
+
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
                 padding: 1rem;
                 gap: 1rem;
             }
-            
+
             .navbar-left {
                 width: 100%;
                 justify-content: space-between;
             }
-            
-            .container {
-                margin: 2rem auto;
-                padding: 0 1rem;
+
+            .product-hero {
+                padding: 40px 0 30px;
             }
-            
-            .excursao-image {
-                height: 250px;
+
+            .product-title {
+                font-size: 1.8rem;
             }
-            
-            .card-content {
-                padding: 1.5rem;
+
+            .tab-navigation {
+                overflow-x: auto;
             }
-            
-            .excursao-title {
-                font-size: 1.6rem;
+
+            .tab-btn {
+                white-space: nowrap;
+                padding: 15px 20px;
             }
-            
-            .excursao-preco {
-                font-size: 2rem;
+
+            .gallery-thumbs {
+                grid-template-columns: repeat(2, 1fr);
             }
-            
-            .excursao-info {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                padding: 1.5rem;
+
+            .product-meta {
+                flex-direction: column;
+                gap: 15px;
             }
-            
-            .quantidade-card {
-                padding: 1.5rem;
-            }
-            
-            .quantidade-controls {
-                justify-content: center;
+
+            .main-image {
+                height: 300px;
             }
         }
     </style>
@@ -402,94 +605,165 @@
         </div>
     </nav>
 
-    <div class="container">
-        <div id="loading" class="loading">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Carregando excursão...</p>
-        </div>
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-state">
+        <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #ff5c00; margin-bottom: 1rem;"></i>
+        <p style="color: #888;">Carregando excursão...</p>
+    </div>
 
-        <div id="errorState" class="error-state" style="display: none;">
-            <i class="fas fa-exclamation-circle"></i>
-            <h2>Excursão não encontrada</h2>
-            <p>Não foi possível carregar os detalhes da excursão.</p>
-            <a href="dashboard.html" class="btn-checkout" style="max-width: 300px; margin: 0 auto;">
-                <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
-            </a>
-        </div>
+    <!-- Error State -->
+    <div id="errorState" class="error-state" style="display: none;">
+        <i class="fas fa-exclamation-circle"></i>
+        <h2>Excursão não encontrada</h2>
+        <p>A excursão que você procura não existe ou foi removida.</p>
+        <a href="dashboard.html" style="color: #ff5c00; text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+        </a>
+    </div>
 
-        <div id="content" style="display: none;">
-            <div class="card">
-                <img id="excursaoImage" class="excursao-image" src="" alt="Excursão">
-                
-                <div class="card-content">
-                    <h1 id="excursaoTitulo" class="excursao-title"></h1>
-                    <p id="excursaoSubtitulo" class="excursao-subtitle"></p>
-                    
-                    <div class="excursao-preco">
-                        R$ <span id="excursaoPreco">0</span>
-                        <small>/por pessoa</small>
+    <!-- Product Content (hidden initially) -->
+    <div id="excursaoContent" style="display: none;">
+        <!-- Product Hero -->
+        <section class="product-hero">
+            <div class="hero-container">
+                <div class="product-breadcrumb">
+                    <a href="dashboard.html">Dashboard</a>
+                    <span>/</span>
+                    <span id="breadcrumbTitle">-</span>
+                </div>
+                <h1 class="product-title" id="excursaoTitulo">-</h1>
+                <p class="product-subtitle" id="excursaoSubtitulo">-</p>
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span id="excursaoDuracao">-</span>
                     </div>
-
-                    <div class="excursao-info">
-                        <div class="info-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span id="excursaoLocal">Carregando...</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-clock"></i>
-                            <span id="excursaoDuracao">Carregando...</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-calendar"></i>
-                            <span id="excursaoHorario">Carregando...</span>
-                        </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span>Excursão Pedagógica</span>
                     </div>
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="excursaoLocal">-</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                    <h2 class="section-title">
-                        <i class="fas fa-info-circle"></i>
-                        Sobre esta Excursão
-                    </h2>
-                    <div id="excursaoDescricao" class="excursao-descricao"></div>
-
-                    <div class="quantidade-card">
-                        <label class="quantidade-label">
-                            <i class="fas fa-users"></i> Quantas pessoas?
-                        </label>
-                        <p class="quantidade-helper">
-                            <i class="fas fa-lightbulb"></i>
-                            Selecione o número de participantes
-                        </p>
-                        
-                        <div class="quantidade-controls">
-                            <button type="button" class="quantidade-btn" id="btnDiminuir">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <input 
-                                type="number" 
-                                id="quantidade" 
-                                class="quantidade-input" 
-                                min="1" 
-                                max="50" 
-                                value="1"
-                            >
-                            <button type="button" class="quantidade-btn" id="btnAumentar">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-
-                        <div class="valor-total-box">
-                            <div class="valor-total-label">Valor Total</div>
-                            <div class="valor-total">R$ <span id="valorTotal">0,00</span></div>
+        <!-- Product Content -->
+        <section class="product-content">
+            <div class="content-grid">
+                <!-- Main Content -->
+                <div class="main-content">
+                    <!-- Gallery -->
+                    <div class="product-gallery">
+                        <img src="" alt="" class="main-image" id="mainImage">
+                        <div class="gallery-thumbs" id="galleryThumbs">
+                            <!-- Galeria será carregada dinamicamente -->
                         </div>
                     </div>
 
-                    <button type="button" class="btn-checkout" id="btnCheckout">
+                    <!-- Tabs -->
+                    <div class="product-info-tabs">
+                        <div class="tab-navigation">
+                            <button type="button" class="tab-btn active" data-tab="description">Descrição</button>
+                            <button type="button" class="tab-btn" data-tab="includes">O que está incluso</button>
+                            <button type="button" class="tab-btn" data-tab="info">Informações</button>
+                        </div>
+
+                        <div class="tab-content-area">
+                            <!-- Descrição -->
+                            <div id="tab-description" class="tab-panel active">
+                                <h3>Sobre esta Excursão</h3>
+                                <div id="excursaoDescricao">
+                                    <!-- Conteúdo será carregado dinamicamente -->
+                                </div>
+                            </div>
+
+                            <!-- Inclusos -->
+                            <div id="tab-includes" class="tab-panel">
+                                <h3>O que está incluso</h3>
+                                <div id="excursaoInclusos">
+                                    <!-- Conteúdo será carregado dinamicamente -->
+                                </div>
+
+                                <h4 style="margin-top: 30px;">Recomendações</h4>
+                                <div id="excursaoRecomendacoes">
+                                    <!-- Conteúdo será carregado dinamicamente -->
+                                </div>
+                            </div>
+
+                            <!-- Informações Adicionais -->
+                            <div id="tab-info" class="tab-panel">
+                                <h3>Informações Importantes</h3>
+                                
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <h5>Local de Saída</h5>
+                                        <p id="infoLocal">-</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <h5>Horário</h5>
+                                        <p id="infoHorario">-</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <h5>Duração</h5>
+                                        <p id="infoDuracao">-</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <h5>Categoria</h5>
+                                        <p id="infoCategoria">Pedagógica</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchase Card -->
+                <div class="purchase-card">
+                    <div class="price-section">
+                        <div class="price-label">A partir de</div>
+                        <div class="price" id="excursaoPreco">R$ 0,00</div>
+                        <div class="price-note">✓ Desconto de 3% no PIX</div>
+                    </div>
+
+                    <div class="quantity-section">
+                        <div class="quantity-label">Quantidade de Pessoas</div>
+                        <div class="quantity-control">
+                            <button type="button" class="qty-btn" aria-label="Diminuir" id="btnDiminuir">−</button>
+                            <input type="number" id="quantity" class="qty-input" value="1" min="1" max="50">
+                            <button type="button" class="qty-btn" aria-label="Aumentar" id="btnAumentar">+</button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-add-cart" id="btnCheckout">
                         <i class="fas fa-shopping-cart"></i>
                         Continuar para Checkout
                     </button>
+
+                    <button type="button" class="btn-buy-now">
+                        <i class="fas fa-check-circle"></i>
+                        Reservar via WhatsApp
+                    </button>
+
+                    <div class="highlights">
+                        <div class="highlight-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Pagamento 100% seguro</span>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-undo"></i>
+                            <span>Política de cancelamento</span>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-headset"></i>
+                            <span>Suporte dedicado</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <script src="js/auth-manager.js"></script>
