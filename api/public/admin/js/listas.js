@@ -92,7 +92,7 @@ function renderExcursoes() {
             .join('');
 
         return `
-            <div class="excursao-card" onclick="abrirListaAlunos('${excursao.id}')">
+            <div class="excursao-card">
                 <div class="excursao-header">
                     <div class="excursao-info">
                         <h3>${escapeHtml(excursao.titulo)}</h3>
@@ -130,6 +130,15 @@ function renderExcursoes() {
                         ${statusBadges}
                     </div>
                 ` : ''}
+
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--light-border);">
+                    <button class="btn btn-primary" onclick="event.stopPropagation(); abrirListaAlunos('${excursao.id}')" style="flex: 1;">
+                        <i class="fas fa-users"></i> Ver Alunos
+                    </button>
+                    <button class="btn btn-danger" onclick="event.stopPropagation(); deletarExcursao('${excursao.id}', '${escapeHtml(excursao.titulo).replace(/'/g, "\\'")}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
         `;
     }).join('');
@@ -395,6 +404,53 @@ function showError(message) {
  */
 function showSuccess(message) {
     alert(message); // TODO: Implementar toast/notification melhor
+}
+
+/**
+ * Explicação da função [deletarExcursao]
+ * Deleta uma excursão pedagógica após confirmação
+ */
+async function deletarExcursao(excursaoId, titulo) {
+    if (!confirm(`Tem certeza que deseja deletar a excursão "${titulo}"?\n\nIsso também removerá todos os pedidos e alunos associados!`)) {
+        return;
+    }
+
+    try {
+        console.log('[Listas] Deletando excursão:', excursaoId);
+
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            console.error('[Listas] Token não encontrado');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const response = await fetch(`/api/excursoes-pedagogicas/${excursaoId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                console.error('[Listas] Não autorizado');
+                window.location.href = 'login.html';
+                return;
+            }
+            throw new Error(`Erro ao deletar excursão: ${response.status}`);
+        }
+
+        console.log('[Listas] Excursão deletada com sucesso');
+        showSuccess('Excursão deletada com sucesso!');
+        
+        // Recarrega lista
+        await loadExcursoes();
+        
+    } catch (error) {
+        console.error('[Listas] Erro ao deletar excursão:', error);
+        showError('Erro ao deletar excursão. Tente novamente.');
+    }
 }
 
 // Inicialização
