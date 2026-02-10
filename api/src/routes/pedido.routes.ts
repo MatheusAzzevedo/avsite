@@ -705,7 +705,7 @@ router.post('/convencional',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { excursaoSlug, quantidade, dadosPassageiros, observacoes } = req.body;
-      const clienteId = req.clienteId!;
+      const clienteId = req.cliente!.id;
 
       logger.info('[Pedidos] Criando pedido convencional', {
         context: { clienteId, excursaoSlug, quantidade, passageiros: dadosPassageiros.length }
@@ -778,7 +778,7 @@ router.post('/convencional',
       logger.error('[Pedidos] Erro ao criar pedido convencional', {
         context: { 
           error: error instanceof Error ? error.message : 'Unknown error',
-          clienteId: req.clienteId
+          clienteId: req.cliente?.id
         }
       });
       next(error);
