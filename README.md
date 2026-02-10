@@ -4,7 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-08) - Sistema de Listas de Alunos por Excursão Pedagógica
+### Última atualização (2026-02-10) - Fix: validação de telefone removendo formatação
+- **api/public/cliente/js/checkout.js** [Removido `onlyDigits()` do telefone do responsável financeiro na coleta de dados; o telefone agora é enviado com formatação original]
+
+Resumo: O telefone do responsável financeiro estava sendo removido de formatação antes do envio, causando erro de validação mesmo com formato correto no input. Agora a formatação original é preservada e a validação passa corretamente.
+
+### Versão anterior (2026-02-10) - Campos médicos do aluno opcionais no checkout
+- **api/public/cliente/js/checkout.js**, **cliente/js/checkout.js** [Removidos `required` e asterisco dos campos Plano de saúde do aluno, Medicamentos em caso de febre/dor e Medicamentos em caso de alergia; os três passam a ser opcionais no formulário de dados do aluno]
+
+Resumo: No checkout, os três campos médicos do aluno (plano de saúde, medicamentos febre/dor, medicamentos alergia) deixaram de ser obrigatórios. Apenas a validação HTML e a indicação visual de obrigatório foram removidas; o backend já aceitava valores vazios.
+
+### Versão anterior (2026-02-08) - Sistema de Listas de Alunos por Excursão Pedagógica
 - **api/src/routes/lista-alunos.routes.ts** [Novas rotas admin: GET /excursoes (lista excursões com contagem de alunos), GET /excursao/:id/alunos (lista alunos de uma excursão), GET /excursao/:id/exportar (gera Excel); estatísticas por status de pedido; filtros por status]
 - **api/public/admin/listas.html** [Nova página com duas views: lista de excursões pedagógicas com stats e lista detalhada de alunos; filtros por status; botão exportar Excel; design responsivo com cards]
 - **api/public/admin/js/listas.js** [Gerenciamento completo: carrega excursões com contagem, exibe alunos com filtros, exporta Excel com download automático; estados de loading e empty state]

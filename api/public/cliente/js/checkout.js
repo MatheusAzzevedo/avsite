@@ -133,7 +133,8 @@
             container.innerHTML +=
                 '<details class="aluno-dropdown form-section-aluno" data-aluno="' + i + '">' +
                 '<summary class="aluno-dropdown-header">' +
-                '<span><i class="fas fa-user-graduate"></i> Aluno ' + i + ' – Informações do estudante</span>' +
+                '<span class="aluno-summary-text"><i class="fas fa-user-graduate"></i> Aluno ' + i + ' – Informações do estudante</span>' +
+                '<span class="aluno-summary-hint">Clique para preencher os dados do aluno</span>' +
                 '<i class="fas fa-chevron-down"></i>' +
                 '</summary>' +
                 '<div class="aluno-dropdown-content">' +
@@ -158,10 +159,10 @@
                 '<h3 class="form-section-subtitle"><i class="fas fa-heartbeat"></i> Informações médicas</h3>' +
                 '<div class="form-group"><label for="alergiasCuidados_' + i + '">Alergias ou cuidados especiais? <span class="required">*</span></label><textarea id="alergiasCuidados_' + i + '" name="alergiasCuidados_' + i + '" rows="3" required placeholder="Descreva alergias, restrições ou cuidados especiais"></textarea></div>' +
                 '<div class="form-grid">' +
-                '<div class="form-group"><label for="planoSaude_' + i + '">Plano de saúde do aluno <span class="required">*</span></label><input type="text" id="planoSaude_' + i + '" name="planoSaude_' + i + '" required placeholder="Nome do plano"></div>' +
-                '<div class="form-group"><label for="medicamentosFebre_' + i + '">Medicamentos em caso de febre/dor <span class="required">*</span></label><input type="text" id="medicamentosFebre_' + i + '" name="medicamentosFebre_' + i + '" required placeholder="Ex.: Paracetamol"></div>' +
+                '<div class="form-group"><label for="planoSaude_' + i + '">Plano de saúde do aluno</label><input type="text" id="planoSaude_' + i + '" name="planoSaude_' + i + '" placeholder="Nome do plano"></div>' +
+                '<div class="form-group"><label for="medicamentosFebre_' + i + '">Medicamentos em caso de febre/dor</label><input type="text" id="medicamentosFebre_' + i + '" name="medicamentosFebre_' + i + '" placeholder="Ex.: Paracetamol"></div>' +
                 '</div>' +
-                '<div class="form-group"><label for="medicamentosAlergia_' + i + '">Medicamentos em caso de alergia <span class="required">*</span></label><input type="text" id="medicamentosAlergia_' + i + '" name="medicamentosAlergia_' + i + '" required placeholder="Ex.: Antialérgico"></div>' +
+                '<div class="form-group"><label for="medicamentosAlergia_' + i + '">Medicamentos em caso de alergia</label><input type="text" id="medicamentosAlergia_' + i + '" name="medicamentosAlergia_' + i + '" placeholder="Ex.: Antialérgico"></div>' +
                 '</div>' +
                 '</details>';
         }
@@ -573,7 +574,7 @@
                 cidade: getFormValue(form, 'respCidade'),
                 estado: getFormValue(form, 'respEstado'),
                 bairro: getFormValue(form, 'respBairro') || undefined,
-                telefone: onlyDigits(getFormValue(form, 'respTelefone')),
+                telefone: getFormValue(form, 'respTelefone'),
                 email: getFormValue(form, 'respEmail')
             };
 
