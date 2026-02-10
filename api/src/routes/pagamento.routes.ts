@@ -66,7 +66,7 @@ router.post('/pix',
         throw ApiError.internal('Gateway de pagamento não configurado');
       }
 
-      // Busca pedido
+      // Busca pedido com seus itens para extrair dados do responsável
       const pedido = await prisma.pedido.findFirst({
         where: {
           id: pedidoId,
@@ -74,6 +74,7 @@ router.post('/pix',
         },
         include: {
           cliente: true,
+          itens: true, // Incluir itens para acessar dados do responsável
           excursaoPedagogica: true,
           excursao: true
         }
@@ -93,22 +94,36 @@ router.post('/pix',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
-      // Asaas exige CPF/CNPJ do cliente para criar cobrança PIX
-      const cpfLimpo = pedido.cliente.cpf?.replace(/\D/g, '');
-      if (!cpfLimpo || cpfLimpo.length < 11) {
-        logger.warn('[Pagamento PIX] Cliente sem CPF válido', { context: { pedidoId, clienteId } });
+      // Extrai dados do responsável do primeiro item do pedido
+      // No fluxo convencional, cpfAluno = CPF do responsável financeiro
+      const primeiroItem = pedido.itens?.[0];
+      if (!primeiroItem) {
+        logger.error('[Pagamento PIX] Pedido sem itens', { context: { pedidoId } });
+        throw ApiError.internal('Pedido não possui itens associados');
+      }
+
+      const cpfResponsavel = primeiroItem.cpfAluno?.replace(/\D/g, '');
+      const nomeResponsavel = primeiroItem.nomeAluno;
+      const emailResponsavel = primeiroItem.emailResponsavel;
+      const telefoneResponsavel = primeiroItem.telefoneResponsavel;
+
+      // Validação: Asaas exige CPF/CNPJ para criar cobrança PIX
+      if (!cpfResponsavel || cpfResponsavel.length < 11) {
+        logger.warn('[Pagamento PIX] Responsável sem CPF válido', {
+          context: { pedidoId, temCpf: !!primeiroItem.cpfAluno }
+        });
         return res.status(400).json({
           success: false,
-          error: 'CPF é obrigatório para pagamento via PIX. Atualize seus dados no cadastro.'
+          error: 'CPF do responsável é obrigatório. Verifique os dados preenchidos no pedido.'
         });
       }
 
-      // Cria cobrança no Asaas
+      // Cria cobrança no Asaas com dados do responsável (e-mail do responsável)
       const cobranca = await criarCobrancaAsaas({
-        clienteEmail: pedido.cliente.email,
-        clienteNome: pedido.cliente.nome,
-        clienteCpf: pedido.cliente.cpf || undefined,
-        clienteTelefone: pedido.cliente.telefone || undefined,
+        clienteEmail: emailResponsavel || pedido.cliente.email, // Email do responsável ou fallback
+        clienteNome: nomeResponsavel,
+        clienteCpf: cpfResponsavel,
+        clienteTelefone: telefoneResponsavel || undefined,
         valor: Number(pedido.valorTotal),
         descricao: `Excursão: ${pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão'} - ${pedido.quantidade}x passagens`,
         metodoPagamento: 'PIX',
