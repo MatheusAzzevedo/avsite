@@ -66,7 +66,12 @@ function contactWhatsApp() {
 }
 
 function buyNow() {
-    window.location.href = 'admin/checkout.html';
+    var slug = getSlugFromURL();
+    var qtyInput = document.getElementById('quantity');
+    var quantidade = qtyInput ? qtyInput.value : '1';
+    
+    // Redireciona para checkout convencional com parâmetros
+    window.location.href = '/cliente/checkout-convencional.html?viagem=' + slug + '&quantidade=' + quantidade;
 }
 
 function renderExcursao(excursao) {

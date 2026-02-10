@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-02-10 - Checkout convencional: novo fluxo de compra para viagens
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Adicionado campo `tipo` (PedidoTipo: PEDAGOGICA | CONVENCIONAL) ao modelo Pedido com default PEDAGOGICA]
+- `api/prisma/migration-add-tipo-pedido.sql` [Migration SQL manual para criar enum PedidoTipo e adicionar coluna tipo à tabela Pedido no Railway]
+- `api/src/schemas/pedido.schema.ts` [Novos schemas: dadosPassageiroSchema (dados pessoais sem informações escolares/médicas) e createPedidoConvencionalSchema; exportado tipo CreatePedidoConvencionalInput]
+- `api/src/routes/pedido.routes.ts` [Nova rota POST /api/cliente/pedidos/convencional: valida dados de passageiros via createPedidoConvencionalSchema, busca excursão por slug, cria pedido tipo CONVENCIONAL com itens mapeando passageiros]
+- `api/public/portfolio-single.html` [Texto do botão WhatsApp alterado de "Reservar pelo WhatsApp" para "Saiba mais pelo WhatsApp"; adicionado botão "Comprar Agora" com id btnComprarAgora]
+- `api/public/js/portfolio-single.js` [Função buyNow() atualizada para redirecionar para /cliente/checkout-convencional.html?viagem={slug}&quantidade={qty}]
+- `api/public/cliente/checkout-convencional.html` [Nova página de checkout para viagens convencionais: layout simplificado com formulário dinâmico gerando campos de dados pessoais por passageiro, resumo do pedido lateral, validação frontend]
+- `api/public/cliente/js/checkout-convencional.js` [Lógica do checkout convencional: lê parâmetros URL (viagem, quantidade), carrega dados da excursão via API, renderiza formulário com campos por passageiro (Nome, Sobrenome, CPF, País, CEP, Endereço, Número, Complemento, Cidade, Estado, Bairro, Telefone, Email), aplica máscaras, valida dados, envia POST /api/cliente/pedidos/convencional com authFetch]
+
+### Alterações
+- Implementado fluxo completo de compra para viagens convencionais (sem código, sem dados de aluno/escola). O usuário clica em "Comprar Agora" na página do pacote (portfolio-single.html), é redirecionado para checkout-convencional.html com slug da viagem e quantidade, preenche dados pessoais de cada passageiro (sem informações médicas ou educacionais), e o pedido é criado via nova rota /api/cliente/pedidos/convencional com tipo CONVENCIONAL. O campo `tipo` diferencia pedidos pedagógicos (PEDAGOGICA) de convencionais (CONVENCIONAL) na mesma tabela Pedido. Migration SQL manual documentada para aplicar no banco Railway. O botão WhatsApp na página do pacote agora exibe "Saiba mais pelo WhatsApp" para diferenciar do novo botão "Comprar Agora".
+
+---
+
+## 2026-02-10 - Menu: item "Nossos Roteiros" com link para flipbook
+
+### Arquivos Modificados
+- `api/public/index-10.html`, `api/public/index-11.html`, `api/public/blog.html`, `api/public/blog-single.html`, `api/public/contact.html`, `api/public/about.html`, `api/public/portfolio.html`, `api/public/portfolio-single.html`, `api/public/includes/footer.html` [Inserido item "Nossos Roteiros" após "Viagens" no menu principal, menu mobile, ícones da seção 1 (index-10) e links rápidos do rodapé; link externo para https://heyzine.com/flip-book/00c4b77d8b.html#page/1 com target="_blank" e rel="noopener noreferrer"]
+
+### Alterações
+- Novo item de navegação "Nossos Roteiros" em todas as páginas públicas (api/public), abrindo em nova aba o flipbook Heyzine. Incluído nos headers, menus mobile e rodapés; na home (index-10) também na barra de ícones da primeira seção, com ícone fa-book-open.
+
+---
+
+## 2026-02-10 - Navegação: Excursões para Viagens
+
+### Arquivos Modificados
+- `api/public/index-10.html`, `api/public/index-11.html`, `api/public/blog.html`, `api/public/blog-single.html`, `api/public/contact.html`, `api/public/about.html`, `api/public/portfolio.html`, `api/public/portfolio-single.html`, `api/public/includes/footer.html` [Rótulo de menu e links rápidos alterados de "Excursões" para "Viagens", mantendo as URLs `/excursoes`]
+
+### Alterações
+- Unificação da nomenclatura de navegação pública: em todas as páginas servidas via `/api/public`, o item de menu e os links de rodapé que apontam para `/excursoes` agora exibem o texto "Viagens" em vez de "Excursões", garantindo consistência visual com a marca e evitando termos diferentes para o mesmo destino.
+
+---
+
 ## 2026-02-10 - Fix: validação de telefone removendo formatação
 
 ### Arquivos Modificados

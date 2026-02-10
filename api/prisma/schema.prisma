@@ -291,6 +291,7 @@ model Pedido {
   valorUnitario        Decimal      @db.Decimal(10, 2) // Preço no momento da compra
   valorTotal           Decimal      @db.Decimal(10, 2) // valorUnitario * quantidade
   status               PedidoStatus @default(PENDENTE)
+  tipo                 PedidoTipo   @default(PEDAGOGICA) // pedagogica ou convencional
   codigoPagamento      String? // ID do pagamento no gateway
   metodoPagamento      String? // pix, cartao, boleto
   observacoes                String?      @db.Text
@@ -315,6 +316,11 @@ model Pedido {
   @@index([codigoPagamento])
   @@index([createdAt])
   @@map("pedidos")
+}
+
+enum PedidoTipo {
+  PEDAGOGICA // Excursão pedagógica com código
+  CONVENCIONAL // Viagem convencional com slug
 }
 
 enum PedidoStatus {

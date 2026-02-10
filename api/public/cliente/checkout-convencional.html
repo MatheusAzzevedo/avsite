@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Viagem Convencional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #EA580C;
+            --primary-dark: #C2410C;
+            --primary-light: #FB923C;
+            --light-bg: #f8fafc;
+            --light-border: #e2e8f0;
+            --text-light: #64748b;
+            --text-dark: #0f172a;
+            --danger-color: #dc2626;
+            --danger-bg: #fee2e2;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: var(--text-dark); }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-brand { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        .navbar-brand:hover { color: var(--primary-dark); }
+
+        .checkout-container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; }
+
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.06); padding: 2rem; margin-bottom: 1.5rem; }
+        .card-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--light-border); }
+        .card-header h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+
+        .page-title { font-size: 1.75rem; color: var(--text-dark); margin-bottom: 0.25rem; }
+        .subtitle { color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+        .passageiro-dropdown {
+            margin-bottom: 0.75rem;
+            border: 2px solid var(--light-border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+        }
+        .passageiro-dropdown:hover { border-color: var(--primary-light); }
+        .passageiro-dropdown[open] { border-color: var(--primary-color); }
+        .passageiro-dropdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+        .passageiro-dropdown-header::-webkit-details-marker { display: none; }
+        .passageiro-dropdown-header::marker { content: none; }
+        .passageiro-summary-text { display: block; }
+        .passageiro-summary-hint { display: block; font-size: 0.8rem; color: var(--primary-color); font-weight: 600; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.03em; }
+        .passageiro-dropdown-header i.fa-chevron-down {
+            color: var(--primary-color);
+            transition: transform 0.2s;
+        }
+        .passageiro-dropdown[open] .passageiro-dropdown-header i.fa-chevron-down { transform: rotate(180deg); }
+        .passageiro-dropdown-content {
+            padding: 1rem 1.25rem 1.25rem 1.25rem;
+            border-top: 1px solid var(--light-border);
+        }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+        .form-grid-full { grid-column: 1 / -1; }
+        .form-group { margin-bottom: 0; }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+        .form-group label .required { color: var(--danger-color); }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--light-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        .form-group input.input-invalid {
+            border-color: var(--danger-color);
+            background-color: #fef2f2;
+        }
+        .form-group .field-error-msg {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--danger-color);
+            margin-top: 0.35rem;
+        }
+
+        .btn-finalizar {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(180deg, var(--primary-light) 0%, var(--primary-color) 50%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-finalizar:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35); }
+        .btn-finalizar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .error {
+            color: var(--danger-color);
+            background: var(--danger-bg);
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+            border: 1px solid #fecaca;
+        }
+        .error.show { display: block; }
+        .error-summary-title { font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        .error-summary-list { margin: 0; padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.6; }
+        .error-summary-list li { margin-bottom: 0.25rem; }
+
+        .order-summary { background: var(--light-bg); padding: 2rem; border-radius: 12px; height: fit-content; position: sticky; top: 2rem; }
+        .order-summary h2 { margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+        .order-summary .price-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.95rem; }
+        .order-summary .price-row.total { font-size: 1.125rem; font-weight: 700; border-top: 2px solid var(--light-border); margin-top: 0.5rem; padding-top: 1rem; color: var(--primary-color); }
+
+        @media (max-width: 992px) {
+            .checkout-grid { grid-template-columns: 1fr; }
+            .order-summary { position: static; margin-bottom: 2rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">Avoar Turismo</a>
+    </nav>
+
+    <div class="checkout-container">
+        <h1 class="page-title">Finalizar Compra</h1>
+        <p class="subtitle">Preencha os dados dos passageiros para concluir sua reserva.</p>
+
+        <div class="checkout-grid">
+            <div class="checkout-main">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-users"></i> Dados dos Passageiros</h2>
+                    </div>
+
+                    <div id="errorSummary" class="error">
+                        <div class="error-summary-title"><i class="fas fa-exclamation-circle"></i> Corrija os erros abaixo:</div>
+                        <ul class="error-summary-list" id="errorList"></ul>
+                    </div>
+
+                    <form id="checkoutForm">
+                        <div id="passageirosContainer"></div>
+
+                        <button type="submit" class="btn-finalizar" id="btnFinalizar">
+                            <i class="fas fa-check-circle"></i> Finalizar Pedido
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <aside class="order-summary">
+                <h2>Resumo do Pedido</h2>
+                <div id="viagemInfo">
+                    <p><strong id="viagemTitulo">Carregando...</strong></p>
+                    <div class="price-row">
+                        <span>Quantidade:</span>
+                        <span id="resumoQuantidade">0</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Valor unitário:</span>
+                        <span id="resumoValorUnitario">R$ 0,00</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Total:</span>
+                        <span id="resumoTotal">R$ 0,00</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="../js/api-client.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="js/checkout-convencional.js"></script>
+</body>
+</html>

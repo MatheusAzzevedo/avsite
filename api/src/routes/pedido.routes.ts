@@ -21,6 +21,7 @@ import { validateBody } from '../middleware/validate.middleware';
 import { 
   createPedidoSchema,
   createPedidoExcursaoSchema,
+  createPedidoConvencionalSchema,
   updatePedidoStatusSchema,
   filterPedidosSchema
 } from '../schemas/pedido.schema';
@@ -684,6 +685,102 @@ router.post('/excursao-normal',
 
       res.status(201).json({ success: true, data: pedido });
     } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/cliente/pedidos/convencional]
+ * 
+ * Cria pedido de viagem convencional (sem dados de alunos).
+ * Cliente informa slug da excursão, quantidade e dados dos passageiros.
+ * 
+ * Body: { excursaoSlug, quantidade, dadosPassageiros: [{ nome, sobrenome, cpf, ... }] }
+ * Response: { success, data: { pedido com itens } }
+ */
+router.post('/convencional',
+  clienteAuthMiddleware,
+  validateBody(createPedidoConvencionalSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { excursaoSlug, quantidade, dadosPassageiros, observacoes } = req.body;
+      const clienteId = req.clienteId!;
+
+      logger.info('[Pedidos] Criando pedido convencional', {
+        context: { clienteId, excursaoSlug, quantidade, passageiros: dadosPassageiros.length }
+      });
+
+      // Busca excursão ativa por slug
+      const excursao = await prisma.excursao.findFirst({
+        where: {
+          slug: excursaoSlug,
+          status: ExcursaoStatus.ATIVO
+        }
+      });
+
+      if (!excursao) {
+        logger.warn('[Pedidos] Excursão convencional não encontrada', {
+          context: { excursaoSlug }
+        });
+        throw ApiError.notFound('Viagem não encontrada ou inativa');
+      }
+
+      const valorUnitario = Number(excursao.preco);
+      const valorTotal = valorUnitario * quantidade;
+
+      // Cria pedido + itens (cada passageiro vira um item)
+      const pedido = await prisma.$transaction(async (tx) => {
+        const novoPedido = await tx.pedido.create({
+          data: {
+            clienteId,
+            excursaoId: excursao.id,
+            quantidade,
+            valorUnitario,
+            valorTotal,
+            tipo: 'CONVENCIONAL',
+            status: 'PENDENTE',
+            observacoes,
+            itens: {
+              create: dadosPassageiros.map((dados: any) => ({
+                // Armazena dados do passageiro como se fosse "aluno" (reutiliza estrutura)
+                nomeAluno: `${dados.nome} ${dados.sobrenome}`,
+                cpfAluno: dados.cpf,
+                escolaAluno: null,
+                serieAluno: null,
+                responsavel: null,
+                telefoneResponsavel: dados.telefone,
+                emailResponsavel: dados.email,
+                observacoes: JSON.stringify({
+                  pais: dados.pais,
+                  cep: dados.cep,
+                  endereco: dados.endereco,
+                  complemento: dados.complemento,
+                  numero: dados.numero,
+                  cidade: dados.cidade,
+                  estado: dados.estado,
+                  bairro: dados.bairro
+                })
+              }))
+            }
+          },
+          include: { excursao: true, itens: true }
+        });
+        return novoPedido;
+      });
+
+      logger.info('[Pedidos] Pedido convencional criado', {
+        context: { pedidoId: pedido.id, valorTotal: pedido.valorTotal }
+      });
+
+      res.status(201).json({ success: true, data: pedido });
+    } catch (error) {
+      logger.error('[Pedidos] Erro ao criar pedido convencional', {
+        context: { 
+          error: error instanceof Error ? error.message : 'Unknown error',
+          clienteId: req.clienteId
+        }
+      });
       next(error);
     }
   }

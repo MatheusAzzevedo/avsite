@@ -4,7 +4,26 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Fix: validação de telefone removendo formatação
+### Última atualização (2026-02-10) - Checkout convencional: novo fluxo de compra para viagens
+- **api/prisma/schema.prisma**, **api/prisma/migration-add-tipo-pedido.sql** [Campo tipo adicionado ao modelo Pedido; enum PedidoTipo (PEDAGOGICA | CONVENCIONAL); migration SQL para Railway]
+- **api/src/schemas/pedido.schema.ts** [Novos schemas: dadosPassageiroSchema e createPedidoConvencionalSchema para validação de pedidos convencionais sem dados de aluno]
+- **api/src/routes/pedido.routes.ts** [Nova rota POST /api/cliente/pedidos/convencional: cria pedidos tipo CONVENCIONAL com dados de passageiros]
+- **api/public/portfolio-single.html**, **api/public/js/portfolio-single.js** [Botão WhatsApp renomeado para "Saiba mais pelo WhatsApp"; novo botão "Comprar Agora" redireciona para checkout convencional com slug e quantidade]
+- **api/public/cliente/checkout-convencional.html**, **api/public/cliente/js/checkout-convencional.js** [Nova página de checkout: formulário dinâmico gerando campos de dados pessoais por passageiro (Nome, Sobrenome, CPF, País, CEP, Endereço, Cidade, Estado, Telefone, Email); máscaras, validação, envio via API]
+
+Resumo: Implementado fluxo completo de compra para viagens convencionais. Na página do pacote, botão "Comprar Agora" redireciona para checkout-convencional.html. O cliente preenche apenas dados pessoais de cada passageiro (sem informações escolares/médicas). Pedido criado via rota /api/cliente/pedidos/convencional com tipo CONVENCIONAL. Campo tipo diferencia pedidos pedagógicos (PEDAGOGICA) de convencionais na mesma tabela Pedido.
+
+### Versão anterior (2026-02-10) - Menu: item "Nossos Roteiros"
+- **api/public/index-10.html**, **api/public/index-11.html**, **api/public/blog.html**, **api/public/blog-single.html**, **api/public/contact.html**, **api/public/about.html**, **api/public/portfolio.html**, **api/public/portfolio-single.html**, **api/public/includes/footer.html** [Adicionado item "Nossos Roteiros" após "Viagens" em todos os menus e rodapés; link para flipbook Heyzine em nova aba]
+
+Resumo: Novo item "Nossos Roteiros" no menu (e rodapé) de todas as páginas públicas, apontando para o flipbook em https://heyzine.com/flip-book/00c4b77d8b.html#page/1, abrindo em nova aba. Na home, também incluído na barra de ícones da primeira seção.
+
+### Versão anterior (2026-02-10) - Navegação: Excursões para Viagens
+- **api/public/...** [Todos os itens de menu e links rápidos que apontam para `/excursoes` passaram a exibir "Viagens"; URLs permanecem as mesmas]
+
+Resumo: A navegação pública passou a usar o rótulo "Viagens" em vez de "Excursões" em menus e rodapés que apontam para `/excursoes`.
+
+### Versão anterior (2026-02-10) - Fix: validação de telefone removendo formatação
 - **api/public/cliente/js/checkout.js** [Removido `onlyDigits()` do telefone do responsável financeiro na coleta de dados; o telefone agora é enviado com formatação original]
 
 Resumo: O telefone do responsável financeiro estava sendo removido de formatação antes do envio, causando erro de validação mesmo com formato correto no input. Agora a formatação original é preservada e a validação passa corretamente.

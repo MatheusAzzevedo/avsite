@@ -248,11 +248,75 @@ export const buscarPorCodigoSchema = z.object({
     .trim()
 });
 
+/**
+ * Schema para dados de passageiro em viagem convencional
+ * Apenas dados pessoais (sem informações escolares ou médicas)
+ */
+export const dadosPassageiroSchema = z.object({
+  nome: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100).trim(),
+  sobrenome: z.string().min(2, 'Sobrenome deve ter no mínimo 2 caracteres').max(100).trim(),
+  cpf: z
+    .string()
+    .refine(
+      (val) => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val) || /^\d{11}$/.test(val),
+      'CPF inválido. Use formato: 000.000.000-00'
+    ),
+  pais: z.string().min(2).max(50).trim(),
+  cep: z.string().trim().regex(/^\d{5}-?\d{3}$/, 'CEP inválido. Use formato: 00000-000'),
+  endereco: z.string().min(3, 'Endereço obrigatório').max(200).trim(),
+  complemento: z.string().max(100).trim().optional(),
+  numero: z.string().min(1, 'Número obrigatório').max(20).trim(),
+  cidade: z.string().min(2).max(100).trim(),
+  estado: z.string().length(2, 'Estado deve ser sigla (ex: SP)').trim(),
+  bairro: z.string().max(100).trim().optional(),
+  telefone: z
+    .string()
+    .refine(
+      (val) => /^\(\d{2}\)\s?\d{4,5}-?\d{4}$/.test(val),
+      'Telefone inválido. Use formato: (11) 98888-8888'
+    ),
+  email: z.string().email('Email inválido').toLowerCase().trim()
+});
+
+/**
+ * Schema para criar pedido de viagem convencional (sem dados de alunos)
+ * Cliente informa slug da excursão, quantidade e dados dos passageiros
+ */
+export const createPedidoConvencionalSchema = z.object({
+  excursaoSlug: z
+    .string({ required_error: 'Identificador da viagem é obrigatório' })
+    .min(1, 'Identificador da viagem é obrigatório')
+    .trim(),
+  quantidade: z
+    .coerce
+    .number({ required_error: 'Quantidade é obrigatória' })
+    .int('Quantidade deve ser um número inteiro')
+    .min(1, 'Quantidade deve ser no mínimo 1')
+    .max(50, 'Quantidade máxima é 50 passagens por pedido'),
+  dadosPassageiros: z
+    .array(dadosPassageiroSchema)
+    .min(1, 'É necessário informar dados de pelo menos 1 passageiro')
+    .max(50, 'Máximo de 50 passageiros por pedido'),
+  observacoes: z
+    .string()
+    .max(1000, 'Observações devem ter no máximo 1000 caracteres')
+    .trim()
+    .optional()
+}).refine(
+  (data) => data.quantidade === data.dadosPassageiros.length,
+  {
+    message: 'Quantidade de passageiros informada deve corresponder ao número de dados fornecidos',
+    path: ['dadosPassageiros']
+  }
+);
+
 // Tipos inferidos dos schemas para uso no TypeScript
 export type DadosResponsavelFinanceiroInput = z.infer<typeof dadosResponsavelFinanceiroSchema>;
 export type DadosAlunoInput = z.infer<typeof dadosAlunoSchema>;
+export type DadosPassageiroInput = z.infer<typeof dadosPassageiroSchema>;
 export type CreatePedidoInput = z.infer<typeof createPedidoSchema>;
 export type CreatePedidoExcursaoInput = z.infer<typeof createPedidoExcursaoSchema>;
+export type CreatePedidoConvencionalInput = z.infer<typeof createPedidoConvencionalSchema>;
 export type UpdatePedidoStatusInput = z.infer<typeof updatePedidoStatusSchema>;
 export type FilterPedidosInput = z.infer<typeof filterPedidosSchema>;
 export type BuscarPorCodigoInput = z.infer<typeof buscarPorCodigoSchema>;
