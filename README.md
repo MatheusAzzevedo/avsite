@@ -4,7 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Fix: título admin e debug categorias
+### Última atualização (2026-02-10) - Página de pagamento PIX/Cartão no checkout convencional
+- **api/public/cliente/pagamento.html** [Nova página de pagamento com opções PIX (QR Code) e Cartão de Crédito; resumo do pedido; tela de sucesso]
+- **api/public/cliente/js/pagamento.js** [Lógica completa: gerar PIX, polling de status, formulário de cartão com máscaras, pré-preenchimento de dados do cliente]
+- **api/public/cliente/js/checkout-convencional.js** [Redirecionamento pós-pedido: agora vai para pagamento.html?pedidoId={id} em vez de pedidos.html]
+- **api/public/cliente/pedidos.html** [Botão "Pagar" em pedidos pendentes; novos estilos de status; labels traduzidos]
+
+Resumo: O fluxo de compra convencional agora inclui a etapa de pagamento. Após preencher dados dos passageiros, o cliente é redirecionado para página de pagamento onde escolhe PIX (QR Code com copia-e-cola e verificação automática) ou Cartão de Crédito. Após confirmação, pedido aparece em "Meus Pedidos" com status atualizado. Pedidos pendentes têm botão "Pagar" para retornar ao pagamento.
+
+### Versão anterior (2026-02-10) - Fix: título admin e debug categorias
 - **api/public/admin/*.html** [Corrigido título de "Avorar Admin" para "Avoar Admin" em todas as páginas do painel administrativo]
 - **api/public/admin/js/categorias.js** [Adicionados logs de debug detalhados para diagnosticar problema do botão Nova Categoria; validação de elementos DOM]
 
@@ -28,16 +36,6 @@ Resumo: Botão "+ Nova categoria" não abria o modal porque showCategoriaToast t
 - **api/public/js/custom-script.js** [Scrollbar: wheelEventTarget substituído por delegateTo]
 
 Resumo: O frame do Heyzine em /nossos-roteiros não carregava por bloqueio da CSP (frame-src). Foi permitido frame-src para https://heyzine.com. O script inline do formulário foi externalizado em nossos-roteiros.js. Aviso de depreciação do smooth-scrollbar corrigido.
-
-### Versão anterior (2026-02-10) - Categorias de Viagens controladas pelo admin
-- **api/prisma** [Model CategoriaExcursao; migration SQL e seed para categorias padrão]
-- **api/src/routes/categorias-excursao.routes.ts** [CRUD admin: GET/POST/PUT/DELETE categorias]
-- **api/src/routes/public.routes.ts** [GET /categorias retorna categorias da tabela]
-- **api/public/admin/categorias.html**, **js/categorias.js** [Página Categorias: listar, criar, editar, excluir; nomes refletem na página Viagens]
-- **api/public/admin/excursao-editor**, **excursoes** [Select/filtro de categoria preenchidos pela API]
-- **api/public/portfolio.html**, **js/portfolio-excursoes.js** [Filtros da página Viagens montados dinamicamente a partir da API]
-
-Resumo: O admin passa a controlar os nomes das categorias de excursão em uma nova página "Categorias". Esses nomes aparecem na página Viagens do site (filtros) e no editor de excursões. Rodar a migration SQL e o seed para criar a tabela e as categorias iniciais.
 
 ### Versão anterior (2026-02-10) - Nossos Roteiros: página com embed e formulário
 - **api/public/nossos-roteiros.html** [Nova página: 1ª seção com iframe do flipbook Heyzine (6c8ed3a45c); 2ª seção com texto "Quer saber mais sobre nossos roteiros, preencha o formulário" e formulário (nome, e-mail, telefone, mensagem) que ao enviar abre WhatsApp]

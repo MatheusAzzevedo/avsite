@@ -197,6 +197,45 @@
             color: #ff5c00; 
             font-weight: 700;
         }
+
+        .btn-pagar {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-pagar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
+            color: white;
+        }
+        
+        .status-AGUARDANDO_PAGAMENTO {
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fdba74;
+        }
+        
+        .status-EXPIRADO {
+            background: #f3f4f6;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+        
+        .status-CANCELADO {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+        }
         
         .loading { 
             text-align: center; 
@@ -354,11 +393,29 @@
                                 ? pedido.excursao.titulo
                                 : 'Viagem';
                         const tipoLabel = pedido.tipo === 'CONVENCIONAL' ? 'Viagem convencional' : 'Excursão pedagógica';
+                        
+                        // Mapa de status para texto amigável
+                        const statusLabels = {
+                            'PENDENTE': 'Pendente',
+                            'AGUARDANDO_PAGAMENTO': 'Aguardando Pagamento',
+                            'PAGO': 'Pago',
+                            'CONFIRMADO': 'Confirmado',
+                            'EXPIRADO': 'Expirado',
+                            'CANCELADO': 'Cancelado'
+                        };
+                        const statusLabel = statusLabels[pedido.status] || pedido.status;
+                        
+                        // Mostra botão "Pagar" para pedidos pendentes ou aguardando pagamento
+                        const showPayButton = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
+                        const payButtonHtml = showPayButton 
+                            ? `<a href="/cliente/pagamento.html?pedidoId=${pedido.id}" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar</a>` 
+                            : '';
+                        
                         containerEl.innerHTML += `
                             <div class="pedido-card">
                                 <div class="pedido-header">
                                     <div class="pedido-titulo">${titulo}</div>
-                                    <div class="pedido-status status-${pedido.status}">${pedido.status}</div>
+                                    <div class="pedido-status status-${pedido.status}">${statusLabel}</div>
                                 </div>
                                 <div class="pedido-info">
                                     <span class="pedido-tipo">${tipoLabel}</span>
@@ -367,6 +424,7 @@
                                 </div>
                                 <div class="pedido-footer">
                                     <div class="pedido-valor">R$ <span>${pedido.valorTotal.toFixed(2)}</span></div>
+                                    ${payButtonHtml}
                                 </div>
                             </div>
                         `;

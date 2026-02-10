@@ -291,9 +291,18 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
         const result = await response.json();
         console.log('[Checkout Convencional] Pedido criado:', result);
 
-        alert('Pedido criado com sucesso! Você será redirecionado para a página de pagamento.');
-        // TODO: Redirecionar para página de pagamento com ID do pedido
-        window.location.href = `/cliente/pedidos.html`;
+        // Extrai ID do pedido criado para redirecionar ao pagamento
+        const novoPedidoId = result.data?.id || result.id;
+        
+        if (!novoPedidoId) {
+            console.error('[Checkout Convencional] ID do pedido não retornado pela API:', result);
+            alert('Pedido criado, mas não foi possível redirecionar ao pagamento. Acesse "Meus Pedidos".');
+            window.location.href = '/cliente/pedidos.html';
+            return;
+        }
+
+        console.log('[Checkout Convencional] Redirecionando para pagamento, pedidoId:', novoPedidoId);
+        window.location.href = `/cliente/pagamento.html?pedidoId=${novoPedidoId}`;
     } catch (error) {
         console.error('[Checkout Convencional] Erro ao criar pedido:', error);
         showError(error.message || 'Erro ao processar pedido. Tente novamente.');

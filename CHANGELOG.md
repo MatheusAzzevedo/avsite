@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-02-10 - feat: página de pagamento PIX/Cartão no checkout convencional
+
+### Arquivos Modificados
+- `api/public/cliente/pagamento.html` [Nova página de pagamento: opções PIX (QR Code com copia-e-cola) e Cartão de Crédito (formulário completo com dados do titular); exibe resumo do pedido; polling automático de status PIX; tela de sucesso após confirmação]
+- `api/public/cliente/js/pagamento.js` [Lógica da página de pagamento: carrega pedido por ID, gera cobrança PIX via API Asaas, exibe QR Code, polling de status a cada 5s, formulário de cartão com máscaras e envio, pré-preenchimento com dados do cliente logado, tratamento de erros e reconciliação]
+- `api/public/cliente/js/checkout-convencional.js` [Redirecionamento pós-criação do pedido: em vez de ir para pedidos.html, agora redireciona para pagamento.html?pedidoId={id} para o cliente realizar o pagamento imediatamente]
+- `api/public/cliente/pedidos.html` [Adicionado botão "Pagar" nos pedidos com status PENDENTE ou AGUARDANDO_PAGAMENTO; novos estilos para status AGUARDANDO_PAGAMENTO, EXPIRADO e CANCELADO; labels de status traduzidos]
+
+### Alterações
+- O fluxo de compra de pacotes de viagem convencional estava incompleto: após criar o pedido, o cliente era redirecionado para "Meus Pedidos" sem opção de pagamento. Agora, após criar o pedido no checkout, o cliente é redirecionado automaticamente para a nova página de pagamento (pagamento.html) onde pode escolher PIX ou Cartão de Crédito. O PIX gera QR Code via API Asaas com verificação automática de status a cada 5 segundos. O cartão envia dados para processamento imediato. Após pagamento confirmado, exibe tela de sucesso com link para "Meus Pedidos". Na listagem de pedidos, pedidos pendentes agora têm botão "Pagar" para retornar à página de pagamento.
+
+---
+
 ## 2026-02-10 - Fix: título admin e debug para botão Nova Categoria
 
 ### Arquivos Modificados
@@ -42,10 +55,6 @@
 
 ### Alterações
 - O iframe do Heyzine na página /nossos-roteiros deixava de carregar porque a CSP (default-src 'self') bloqueava frame-src. Foi adicionado frame-src permitindo https://heyzine.com. O script inline do formulário (linha 214) era bloqueado por script-src 'self'; a lógica foi movida para nossos-roteiros.js. Aviso de depreciação do smooth-scrollbar (wheelEventTarget) foi resolvido usando delegateTo.
-
----
-
-## 2026-02-10 - Categorias de Viagens controladas pelo admin
 
 ### Arquivos Modificados
 - `api/prisma/schema.prisma` [Novo model CategoriaExcursao (slug, nome, ordem)]
