@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-02-10 - Página inicial: novos backgrounds das seções 1, 3, 4 e 5
+
+### Arquivos Modificados
+- `api/public/index-10.html` [background-image das seções 1, 3, 4 e 5 alterados para imagens da pasta FOTOS AVOAR PREFERIDAS]
+
+### Alterações
+- Seção 1: ©Alexandre Nery_Avoar_Bernoulli_SP_14.08.2025-180.jpg (museu/visita educativa). Seção 3: IMG_1011.jpg. Seção 4: DSC00349.JPG (portal Grande Sertão). Seção 5: Utilizar essa daqui.jpg (caverna). Seção 2 permanece inalterada.
+
+---
+
+## 2026-02-10 - Histórico do cliente: exibir pedidos convencionais
+
+### Arquivos Modificados
+- `api/src/routes/pedido.routes.ts` [GET /api/cliente/pedidos passa a incluir relação excursao (viagem convencional) além de excursaoPedagogica]
+- `api/public/cliente/pedidos.html`, `cliente/pedidos.html` [Título do pedido usa excursaoPedagogica ou excursao conforme tipo; exibido rótulo "Excursão pedagógica" / "Viagem convencional"; estilo .pedido-tipo]
+
+### Alterações
+- Na tela "Meus Pedidos" do painel do cliente, passam a aparecer também as compras convencionais (viagens compradas pelo fluxo "Comprar Agora"). A API já retornava todos os pedidos do cliente; agora inclui os dados da excursão convencional (excursao) para pedidos tipo CONVENCIONAL. O frontend exibe o título da viagem e um rótulo indicando se é "Excursão pedagógica" ou "Viagem convencional".
+
+---
+
 ## 2026-02-10 - Login com Google no painel do cliente visível e configurável
 
 ### Arquivos Modificados

@@ -4,7 +4,18 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Login com Google no painel do cliente
+### Última atualização (2026-02-10) - Página inicial: novos backgrounds das seções 1, 3, 4 e 5
+- **api/public/index-10.html** [background-image das seções 1, 3, 4 e 5 trocados para imagens da pasta FOTOS AVOAR PREFERIDAS: seção 1 (Alexandre Nery Bernoulli), 3 (IMG_1011), 4 (DSC00349 – portal Grande Sertão), 5 (Utilizar essa daqui – caverna)]
+
+Resumo: Na página inicial (index-10), as seções 1, 3, 4 e 5 passaram a usar imagens da pasta "FOTOS AVOAR PREFERIDAS". A seção 2 não foi alterada.
+
+### Versão anterior (2026-02-10) - Histórico do cliente com pedidos convencionais
+- **api/src/routes/pedido.routes.ts** [Listagem GET /api/cliente/pedidos inclui excursao para pedidos convencionais]
+- **api/public/cliente/pedidos.html**, **cliente/pedidos.html** [Exibição de título por tipo (pedagógica/convencional); rótulo "Excursão pedagógica" / "Viagem convencional"]
+
+Resumo: Na tela "Meus Pedidos" do painel do cliente, passam a aparecer também as compras convencionais (viagens do fluxo "Comprar Agora"). A API inclui a relação excursao na listagem; o frontend mostra o título da viagem e um rótulo indicando o tipo do pedido.
+
+### Versão anterior (2026-02-10) - Login com Google no painel do cliente
 - **api/public/cliente/login.html**, **cliente/login.html** [Botão "Continuar com Google" tornado visível; seção .google-login-section exibida]
 - **api/.env.example** [Exemplo de GOOGLE_CLIENT_ID e comentário de GOOGLE_REDIRECT_URI para produção]
 
