@@ -752,7 +752,7 @@ router.get('/google/callback',
       // Redireciona para frontend com token
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       const state = req.query.state as string | undefined;
-      const redirectUrl = state || '/cliente/dashboard';
+      const redirectUrl = state || '/cliente/login.html';
       
       res.redirect(`${frontendUrl}${redirectUrl}?token=${token}`);
     } catch (error) {
