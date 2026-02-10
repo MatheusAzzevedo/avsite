@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Checkout convencional: novo fluxo de compra para viagens
+### Última atualização (2026-02-10) - Login com Google no painel do cliente
+- **api/public/cliente/login.html**, **cliente/login.html** [Botão "Continuar com Google" tornado visível; seção .google-login-section exibida]
+- **api/.env.example** [Exemplo de GOOGLE_CLIENT_ID e comentário de GOOGLE_REDIRECT_URI para produção]
+
+Resumo: Login com Google no painel do cliente ativado na interface. Configurar GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET e GOOGLE_REDIRECT_URI no ambiente; no Google Cloud Console, registrar a URI de redirecionamento (ex.: .../api/cliente/auth/google/callback).
+
+### Versão anterior (2026-02-10) - Checkout convencional: novo fluxo de compra para viagens
 - **api/prisma/schema.prisma**, **api/prisma/migration-add-tipo-pedido.sql** [Campo tipo adicionado ao modelo Pedido; enum PedidoTipo (PEDAGOGICA | CONVENCIONAL); migration SQL para Railway]
 - **api/src/schemas/pedido.schema.ts** [Novos schemas: dadosPassageiroSchema e createPedidoConvencionalSchema para validação de pedidos convencionais sem dados de aluno]
 - **api/src/routes/pedido.routes.ts** [Nova rota POST /api/cliente/pedidos/convencional: cria pedidos tipo CONVENCIONAL com dados de passageiros]

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-10 - Login com Google no painel do cliente visível e configurável
+
+### Arquivos Modificados
+- `api/public/cliente/login.html`, `cliente/login.html` [Seção .google-login-section exibida (display: block); comentário "oculto" removido]
+- `api/.env.example` [GOOGLE_CLIENT_ID de exemplo com ID informado; GOOGLE_REDIRECT_URI com comentário para produção Railway]
+
+### Alterações
+- Botão "Continuar com Google" na tela de login do cliente deixou de estar oculto. Basta configurar GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET e GOOGLE_REDIRECT_URI no .env (e no Railway em produção). No Google Cloud Console, adicionar a URI de redirecionamento autorizada (ex.: https://avoarturismo.up.railway.app/api/cliente/auth/google/callback para produção).
+
+---
+
 ## 2026-02-10 - Checkout convencional: novo fluxo de compra para viagens
 
 ### Arquivos Modificados
