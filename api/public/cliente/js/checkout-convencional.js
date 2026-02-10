@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!getURLParams()) return;
 
     // Verifica autenticação
-    authManager.requireAuth(function() {
+    clienteAuth.requireAuth(function() {
         loadExcursao();
     });
 });
