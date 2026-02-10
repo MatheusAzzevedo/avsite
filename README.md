@@ -4,7 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Categorias de Viagens controladas pelo admin
+### Última atualização (2026-02-10) - Fix: botão Nova Categoria e dependência exceljs
+- **api/public/admin/js/categorias.js** [showCategoriaToast corrigida: chamava recursivamente showCategoriaToast em vez de showToast]
+- **api/package.json** [Instalada dependência exceljs para exportação de listas de alunos em Excel]
+
+Resumo: Botão "+ Nova categoria" não abria o modal porque showCategoriaToast tinha erro recursivo. Dependência exceljs instalada para o sistema de listas funcionar corretamente.
+
+### Versão anterior (2026-02-10) - CSP: iframe Heyzine e script em Nossos Roteiros
+- **api/src/server.ts** [CSP do Helmet: frame-src permite https://heyzine.com para o iframe da página Nossos Roteiros]
+- **api/public/nossos-roteiros.html** [Script inline removido; carregamento de js/nossos-roteiros.js]
+- **api/public/js/nossos-roteiros.js** [Novo: submit do formulário (WhatsApp) externalizado para compatibilidade com CSP]
+- **api/public/js/custom-script.js** [Scrollbar: wheelEventTarget substituído por delegateTo]
+
+Resumo: O frame do Heyzine em /nossos-roteiros não carregava por bloqueio da CSP (frame-src). Foi permitido frame-src para https://heyzine.com. O script inline do formulário foi externalizado em nossos-roteiros.js. Aviso de depreciação do smooth-scrollbar corrigido.
+
+### Versão anterior (2026-02-10) - Categorias de Viagens controladas pelo admin
 - **api/prisma** [Model CategoriaExcursao; migration SQL e seed para categorias padrão]
 - **api/src/routes/categorias-excursao.routes.ts** [CRUD admin: GET/POST/PUT/DELETE categorias]
 - **api/src/routes/public.routes.ts** [GET /categorias retorna categorias da tabela]

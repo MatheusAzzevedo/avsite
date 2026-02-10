@@ -6,7 +6,7 @@
 const API_CATEGORIAS = '/admin/categorias-excursao';
 
 function showCategoriaToast(msg, type) {
-  if (typeof window.showToast !== 'undefined') window.showCategoriaToast(msg, type);
+  if (typeof window.showToast !== 'undefined') window.showToast(msg, type);
   else alert(msg);
 }
 

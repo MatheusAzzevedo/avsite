@@ -211,17 +211,6 @@
   <script src="js/cursor-script.js"></script>
   <script src="js/wow.js"></script>
   <script src="js/custom-script.js"></script>
-  <script>
-    (function() {
-      document.getElementById('roteiros-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var nome = document.getElementById('roteiros-nome').value.trim();
-        var msg = document.getElementById('roteiros-mensagem').value.trim();
-        var text = 'Olá! Gostaria de saber mais sobre os roteiros. Meu nome é ' + encodeURIComponent(nome);
-        if (msg) text += '. ' + encodeURIComponent(msg);
-        window.open('https://wa.me/553125147884?text=' + text, '_blank', 'noopener,noreferrer');
-      });
-    })();
-  </script>
+  <script src="js/nossos-roteiros.js"></script>
 </body>
 </html>

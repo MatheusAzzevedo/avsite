@@ -14,7 +14,7 @@
 
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
+import helmet, { contentSecurityPolicy } from 'helmet';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -56,9 +56,15 @@ const PORT = process.env.PORT || 3001;
 // Isso permite que o Express reconheça o IP real do cliente através do header X-Forwarded-For
 app.set('trust proxy', 1);
 
-// Helmet para segurança
+// Helmet para segurança (CSP com frame-src para permitir iframe Heyzine em /nossos-roteiros)
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: {
+    directives: {
+      ...contentSecurityPolicy.getDefaultDirectives(),
+      "frame-src": ["'self'", "https://heyzine.com"],
+    },
+  },
 }));
 
 // CORS configurado

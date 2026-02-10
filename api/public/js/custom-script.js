@@ -98,9 +98,8 @@
 		  continuousScrolling: 'auto',
 		  // Keep scrollbar tracks always visible.
 		  alwaysShowTracks: false,
-		  // Element to be used as a listener for mouse wheel scroll events. 
-		  // By default, the container element is used.
-		  wheelEventTarget: null,
+		  // Element to delegate wheel/touch scroll events to (substitui wheelEventTarget deprecado).
+		  delegateTo: null,
 		  // plugins
 		  plugins: {}
 		  

@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-02-10 - Fix: botão Nova Categoria e dependência exceljs
+
+### Arquivos Modificados
+- `api/public/admin/js/categorias.js` [Função showCategoriaToast corrigida: chamava recursivamente window.showCategoriaToast em vez de window.showToast]
+- `api/package.json` [Instalada dependência exceljs (^4.x) para geração de arquivos Excel no sistema de listas de alunos]
+
+### Alterações
+- O botão "+ Nova categoria" na página /admin/categorias não abria o modal devido a erro recursivo na função showCategoriaToast. A função estava chamando window.showCategoriaToast(msg, type) dentro de si mesma, causando loop infinito. Corrigido para chamar window.showToast(msg, type) corretamente. Instalada dependência exceljs que faltava, impedindo o servidor de iniciar devido a erro "Cannot find module 'exceljs'" ao carregar o módulo de exportação de listas.
+
+---
+
+## 2026-02-10 - CSP: iframe Heyzine e script inline em Nossos Roteiros
+
+### Arquivos Modificados
+- `api/src/server.ts` [Helmet: contentSecurityPolicy com frame-src 'self' e https://heyzine.com para permitir iframe na página Nossos Roteiros]
+- `api/public/nossos-roteiros.html` [Script inline do formulário removido; carregamento de js/nossos-roteiros.js]
+- `api/public/js/nossos-roteiros.js` [Novo: lógica do submit do formulário (abre WhatsApp) externalizada para compatibilidade com CSP]
+- `api/public/js/custom-script.js` [Scrollbar: wheelEventTarget substituído por delegateTo (depreciação smooth-scrollbar)]
+
+### Alterações
+- O iframe do Heyzine na página /nossos-roteiros deixava de carregar porque a CSP (default-src 'self') bloqueava frame-src. Foi adicionado frame-src permitindo https://heyzine.com. O script inline do formulário (linha 214) era bloqueado por script-src 'self'; a lógica foi movida para nossos-roteiros.js. Aviso de depreciação do smooth-scrollbar (wheelEventTarget) foi resolvido usando delegateTo.
+
+---
+
 ## 2026-02-10 - Categorias de Viagens controladas pelo admin
 
 ### Arquivos Modificados
