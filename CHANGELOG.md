@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-10 - Fix: checkout convencional não carregava formulário e preço
+
+### Arquivos Modificados
+- `api/public/cliente/js/checkout-convencional.js` [Corrigida inicialização da página: requireAuth() retorna Promise, não aceita callback; mudado para async/await; substituído authFetch (inexistente) por clienteAuth.fetchAuth; adicionados logs detalhados para debug do carregamento]
+
+### Alterações
+- Na página de checkout convencional (/cliente/checkout-convencional.html), o formulário de dados dos passageiros não era renderizado e o preço aparecia como R$ 0,00. O problema era que a função clienteAuth.requireAuth() retorna uma Promise, mas estava sendo chamada com callback (estilo antigo). A correção foi mudar para async/await na inicialização. Além disso, authFetch não existia; o correto é clienteAuth.fetchAuth. Foram adicionados logs detalhados em loadExcursao() para facilitar debug (status da resposta, dados recebidos, validação de dados).
+
+---
+
 ## 2026-02-10 - Fix: botão Nova Categoria e dependência exceljs
 
 ### Arquivos Modificados

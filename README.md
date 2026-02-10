@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Fix: botão Nova Categoria e dependência exceljs
+### Última atualização (2026-02-10) - Fix: checkout convencional não carregava formulário
+- **api/public/cliente/js/checkout-convencional.js** [Corrigida inicialização: requireAuth agora é async/await em vez de callback; authFetch substituído por clienteAuth.fetchAuth; logs adicionais para debug]
+
+Resumo: Página de checkout convencional não carregava formulário nem preço. requireAuth era chamado com callback mas retorna Promise. authFetch não existia, substituído por clienteAuth.fetchAuth. Logs de debug adicionados para rastrear carregamento.
+
+### Versão anterior (2026-02-10) - Fix: botão Nova Categoria e dependência exceljs
 - **api/public/admin/js/categorias.js** [showCategoriaToast corrigida: chamava recursivamente showCategoriaToast em vez de showToast]
 - **api/package.json** [Instalada dependência exceljs para exportação de listas de alunos em Excel]
 

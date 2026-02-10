@@ -26,11 +26,23 @@ function getURLParams() {
 // Carrega dados da viagem (usa mesma API pública da página de listagem)
 async function loadExcursao() {
     try {
+        console.log('[Checkout Convencional] Carregando excursão:', viagemSlug);
         const response = await fetch(`/api/public/excursoes/${viagemSlug}`);
+        
+        console.log('[Checkout Convencional] Resposta da API:', response.status);
+        
         if (!response.ok) throw new Error('Viagem não encontrada');
 
         const json = await response.json();
+        console.log('[Checkout Convencional] Dados recebidos:', json);
+        
         excursaoData = json.data || json;
+        
+        if (!excursaoData || !excursaoData.titulo) {
+            throw new Error('Dados da viagem inválidos');
+        }
+        
+        console.log('[Checkout Convencional] Excursão carregada:', excursaoData.titulo);
         renderResumo();
         renderPassageirosForm();
     } catch (error) {
@@ -265,7 +277,7 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
         const payload = collectFormData();
         console.log('[Checkout Convencional] Enviando pedido:', payload);
 
-        const response = await authFetch('/api/cliente/pedidos/convencional', {
+        const response = await clienteAuth.fetchAuth('/cliente/pedidos/convencional', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -300,13 +312,16 @@ function showError(msg) {
 }
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log('[Checkout Convencional] Inicializando...');
 
     if (!getURLParams()) return;
 
     // Verifica autenticação
-    clienteAuth.requireAuth(function() {
-        loadExcursao();
-    });
+    const isAuth = await clienteAuth.requireAuth();
+    
+    if (isAuth) {
+        console.log('[Checkout Convencional] Cliente autenticado, carregando excursão...');
+        await loadExcursao();
+    }
 });
