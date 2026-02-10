@@ -81,14 +81,32 @@ function attachRowListeners() {
 }
 
 function openModal(id, slug, nome, ordem) {
-  document.getElementById('modalCategoriaTitle').textContent = id ? 'Editar categoria' : 'Nova categoria';
-  document.getElementById('categoriaId').value = id || '';
-  document.getElementById('categoriaSlug').value = slug || '';
-  document.getElementById('categoriaSlug').readOnly = !!id;
-  document.getElementById('categoriaNome').value = nome || '';
-  document.getElementById('categoriaOrdem').value = ordem !== undefined && ordem !== '' ? ordem : '0';
-  document.getElementById('modalCategoria').classList.remove('hidden');
+  console.log('[Categorias] openModal chamada:', { id, slug, nome, ordem });
+  
+  const modalTitle = document.getElementById('modalCategoriaTitle');
+  const categoriaId = document.getElementById('categoriaId');
+  const categoriaSlug = document.getElementById('categoriaSlug');
+  const categoriaNome = document.getElementById('categoriaNome');
+  const categoriaOrdem = document.getElementById('categoriaOrdem');
+  const modal = document.getElementById('modalCategoria');
+  
+  if (!modalTitle || !categoriaId || !categoriaSlug || !categoriaNome || !categoriaOrdem || !modal) {
+    console.error('[Categorias] ERRO: Elementos do modal não encontrados!', {
+      modalTitle, categoriaId, categoriaSlug, categoriaNome, categoriaOrdem, modal
+    });
+    return;
+  }
+  
+  modalTitle.textContent = id ? 'Editar categoria' : 'Nova categoria';
+  categoriaId.value = id || '';
+  categoriaSlug.value = slug || '';
+  categoriaSlug.readOnly = !!id;
+  categoriaNome.value = nome || '';
+  categoriaOrdem.value = ordem !== undefined && ordem !== '' ? ordem : '0';
+  modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+  
+  console.log('[Categorias] Modal aberto com sucesso');
 }
 
 function closeModal() {
@@ -150,17 +168,50 @@ async function deleteCategoria(id) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  console.log('[Categorias] Inicializando...');
+  
   loadCategorias();
 
-  document.getElementById('btnNovaCategoria').addEventListener('click', function () {
-    openModal(null, '', '', 0);
-  });
+  const btnNovaCategoria = document.getElementById('btnNovaCategoria');
+  console.log('[Categorias] Botão Nova Categoria:', btnNovaCategoria);
+  
+  if (btnNovaCategoria) {
+    btnNovaCategoria.addEventListener('click', function () {
+      console.log('[Categorias] Botão clicado!');
+      openModal(null, '', '', 0);
+    });
+    console.log('[Categorias] Event listener anexado ao botão');
+  } else {
+    console.error('[Categorias] ERRO: Botão btnNovaCategoria não encontrado!');
+  }
 
-  document.querySelector('#modalCategoria .modal-close').addEventListener('click', closeModal);
-  document.getElementById('modalCategoriaCancel').addEventListener('click', closeModal);
-  document.getElementById('modalCategoriaSave').addEventListener('click', saveCategoria);
+  const modalClose = document.querySelector('#modalCategoria .modal-close');
+  if (modalClose) {
+    modalClose.addEventListener('click', closeModal);
+  } else {
+    console.error('[Categorias] ERRO: .modal-close não encontrado!');
+  }
+  
+  const btnCancel = document.getElementById('modalCategoriaCancel');
+  if (btnCancel) {
+    btnCancel.addEventListener('click', closeModal);
+  } else {
+    console.error('[Categorias] ERRO: modalCategoriaCancel não encontrado!');
+  }
+  
+  const btnSave = document.getElementById('modalCategoriaSave');
+  if (btnSave) {
+    btnSave.addEventListener('click', saveCategoria);
+  } else {
+    console.error('[Categorias] ERRO: modalCategoriaSave não encontrado!');
+  }
 
-  document.getElementById('modalCategoria').addEventListener('click', function (e) {
-    if (e.target === this) closeModal();
-  });
+  const modal = document.getElementById('modalCategoria');
+  if (modal) {
+    modal.addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+  } else {
+    console.error('[Categorias] ERRO: modalCategoria não encontrado!');
+  }
 });

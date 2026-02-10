@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Fix: checkout convencional não carregava formulário
+### Última atualização (2026-02-10) - Fix: título admin e debug categorias
+- **api/public/admin/*.html** [Corrigido título de "Avorar Admin" para "Avoar Admin" em todas as páginas do painel administrativo]
+- **api/public/admin/js/categorias.js** [Adicionados logs de debug detalhados para diagnosticar problema do botão Nova Categoria; validação de elementos DOM]
+
+Resumo: Título do admin corrigido de "Avorar" para "Avoar". Logs de debug adicionados em categorias.js para identificar se botão e modal existem e se event listeners são anexados corretamente.
+
+### Versão anterior (2026-02-10) - Fix: checkout convencional não carregava formulário
 - **api/public/cliente/js/checkout-convencional.js** [Corrigida inicialização: requireAuth agora é async/await em vez de callback; authFetch substituído por clienteAuth.fetchAuth; logs adicionais para debug]
 
 Resumo: Página de checkout convencional não carregava formulário nem preço. requireAuth era chamado com callback mas retorna Promise. authFetch não existia, substituído por clienteAuth.fetchAuth. Logs de debug adicionados para rastrear carregamento.

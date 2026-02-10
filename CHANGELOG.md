@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-10 - Fix: título admin e debug para botão Nova Categoria
+
+### Arquivos Modificados
+- `api/public/admin/*.html` (11 arquivos) [Corrigido título da sidebar de "Avorar Admin" para "Avoar Admin" em todas as páginas administrativas]
+- `api/public/admin/js/categorias.js` [Adicionados logs detalhados de debug na inicialização e em openModal(); validação de existência de elementos DOM antes de anexar event listeners; console.log e console.error para diagnosticar problema do botão]
+
+### Alterações
+- Título do painel administrativo estava incorreto ("Avorar" em vez de "Avoar"). Corrigido em todos os arquivos HTML do admin. Para diagnosticar o problema do botão "+ Nova categoria" que não responde ao clique, foram adicionados logs de debug extensivos: verificação se botão btnNovaCategoria existe, se event listener é anexado, log quando botão é clicado, validação de todos elementos do modal, logs na função openModal(). Isso permitirá identificar exatamente onde o fluxo está falhando.
+
+---
+
 ## 2026-02-10 - Fix: checkout convencional não carregava formulário e preço
 
 ### Arquivos Modificados

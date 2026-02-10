@@ -57,12 +57,15 @@ const PORT = process.env.PORT || 3001;
 app.set('trust proxy', 1);
 
 // Helmet para segurança (CSP com frame-src para permitir iframe Heyzine em /nossos-roteiros)
+const defaultDirectives = contentSecurityPolicy.getDefaultDirectives();
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   contentSecurityPolicy: {
     directives: {
-      ...contentSecurityPolicy.getDefaultDirectives(),
-      "frame-src": ["'self'", "https://heyzine.com"],
+      ...defaultDirectives,
+      "frame-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com"],
+      "child-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com"],
+      "script-src": [...(defaultDirectives["script-src"] || []), "'sha256-Ew7NVX5Yr58KbeiZir/ChTfyxGLuqd/yGYxo/ZlGhCU='"],
     },
   },
 }));
