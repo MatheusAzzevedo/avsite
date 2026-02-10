@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Nossos Roteiros - Avoar Turismo</title>
+<!-- Stylesheets -->
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<link href="css/avoar-custom.css" rel="stylesheet">
+<link href="css/consultant-form.css" rel="stylesheet">
+<link href="css/avoar-top-header.css" rel="stylesheet">
+<link href="css/footer.css" rel="stylesheet">
+<link rel="shortcut icon" href="images/favicon%20avoar.png" type="image/png">
+<link rel="icon" href="images/favicon%20avoar.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Responsive -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link href="css/responsive.css" rel="stylesheet">
+<style>
+  .roteiros-page { background: #1a1a1a; min-height: 100vh; }
+  .roteiros-embed-section { padding: 100px 0 80px; }
+  .roteiros-embed-section .auto-container { max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
+  .roteiros-embed-section .section-heading { text-align: center; margin-bottom: 2rem; }
+  .roteiros-embed-section .section-heading h1 { font-family: 'Montserrat', sans-serif; font-size: 2rem; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .roteiros-embed-section .embed-wrapper { border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .roteiros-embed-section .fp-iframe { display: block; }
+  .roteiros-form-section { padding: 60px 0 100px; }
+  .roteiros-form-section .form-intro-text { font-size: 1.125rem; color: rgba(255,255,255,0.9); text-align: center; margin-bottom: 2rem; line-height: 1.6; max-width: 560px; margin-left: auto; margin-right: auto; }
+</style>
+<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
+</head>
+
+<body class="roteiros-page">
+  <div class="site-container">
+    <div class="cursor"></div>
+    <div class="preloader"></div>
+
+    <a href="https://wa.me/553125147884" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
+
+    <div class="menu-backdrop"></div>
+
+    <!-- Top Header (Desktop) -->
+    <header class="avoar-top-header">
+        <div class="header-logo">
+            <a href="/"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a>
+        </div>
+        <nav class="header-nav">
+            <a href="/">Início</a>
+            <a href="/biologia-marinha">Biologia Marinha</a>
+            <a href="/excursoes">Viagens</a>
+            <a href="/nossos-roteiros" class="active">Nossos Roteiros</a>
+            <a href="/sobre-nos">Sobre Nós</a>
+            <a href="/blog">Blog</a>
+            <a href="/contato">Contato</a>
+        </nav>
+        <div class="header-login">
+            <a href="/admin/login.html" class="btn-administrativo">Administrativo</a>
+            <a href="/cliente/login.html" class="btn-login" style="text-decoration: none;">Login</a>
+        </div>
+    </header>
+
+    <!-- Main Header Bar (Mobile) -->
+    <header class="main-header-bar alt-logo">
+        <div class="line-one"></div>
+        <div class="line-two"></div>
+        <div class="header-bar-inner">
+            <div class="outer-box clearfix">
+                <div class="nav-toggler"><button class="toggler-btn"><span class="bar bar-one"></span><span class="bar bar-two"></span><span class="bar bar-three"></span></button></div>
+                <div class="social-links">
+                    <ul class="clearfix">
+                        <li><a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener"><span class="fab fa-instagram"></span></a></li>
+                    </ul>
+                </div>
+                <div class="copyright">&copy; Avoar Turismo 2026</div>
+            </div>
+            <div class="alt-logo-box"><a href="/"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
+            <div class="nav-bg-box"></div>
+            <div class="main-nav-outer">
+                <div class="nav-closer"><img src="images/icons/close-icon.png" alt=""></div>
+                <div class="outer-nav-box">
+                    <div class="top-bg"></div>
+                    <div class="bottom-bg"></div>
+                    <div class="main-nav-box" data-scrollbar="">
+                        <div class="main-logo-box"><a href="/"><img src="images/Logo Branca.png" alt="Avoar Turismo"></a></div>
+                        <div class="main-nav">
+                            <ul class="navigation">
+                                <li><a href="/">Início</a></li>
+                                <li><a href="/biologia-marinha">Projeto Biologia Marinha</a></li>
+                                <li class="menu-item-hidden"><a href="/excursoes">Viagens</a></li>
+                                <li class="current"><a href="/nossos-roteiros">Nossos Roteiros</a></li>
+                                <li><a href="/sobre-nos">Sobre Nós</a></li>
+                                <li class="menu-item-hidden"><a href="/blog">Blog</a></li>
+                                <li><a href="/contato">Contato</a></li>
+                                <li><a href="/admin/login.html">Administrativo</a></li>
+                                <li><a href="/cliente/login.html">Login</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="scroll-container">
+        <div class="main-content-container" id="scroll-container">
+
+            <!-- Seção 1: Embed do flipbook -->
+            <section class="roteiros-embed-section" id="to-top-div">
+                <div class="auto-container">
+                    <div class="section-heading">
+                        <h1>Nossos Roteiros</h1>
+                    </div>
+                    <div class="embed-wrapper">
+                        <iframe allowfullscreen="allowfullscreen" allow="clipboard-write" scrolling="no" class="fp-iframe" src="https://heyzine.com/flip-book/6c8ed3a45c.html" style="border: 1px solid lightgray; width: 100%; height: 400px;"></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção 2: Texto + Formulário -->
+            <section class="consultant-form-section roteiros-form-section">
+                <div class="auto-container">
+                    <p class="form-intro-text">Quer saber mais sobre nossos roteiros? Preencha o formulário.</p>
+                    <div class="consultant-form-card">
+                        <h2 class="form-title">Solicitar informações sobre roteiros</h2>
+                        <p class="form-intro">Deixe seus dados e nossa equipe entrará em contato para enviar mais informações sobre os roteiros.</p>
+                        <form class="consultant-form" action="#" method="post" id="roteiros-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="roteiros-nome">Nome <span class="required">*</span></label>
+                                    <input type="text" id="roteiros-nome" name="nome" placeholder="Nome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="roteiros-email">E-mail <span class="required">*</span></label>
+                                    <input type="email" id="roteiros-email" name="email" placeholder="Seu melhor e-mail" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="roteiros-telefone">Telefone <span class="required">*</span></label>
+                                <input type="tel" id="roteiros-telefone" name="telefone" placeholder="Telefone para contato" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="roteiros-mensagem">Mensagem</label>
+                                <textarea id="roteiros-mensagem" name="mensagem" placeholder="Conte-nos em qual roteiro tem interesse ou tire suas dúvidas." rows="4"></textarea>
+                            </div>
+                            <div class="form-submit">
+                                <button type="submit" class="theme-btn btn-style-one">Enviar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="auto-container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <img src="images/Logo Branca.png" alt="Avoar Turismo">
+            <h3>Avoar Turismo Pedagógico e Viagens</h3>
+            <p>Transformamos viagens em experiências educativas que conectam aprendizado, cultura e vivências reais.</p>
+          </div>
+          <div class="footer-nav">
+            <h4>Links Rápidos</h4>
+            <ul>
+              <li><a href="/">Início</a></li>
+              <li><a href="/biologia-marinha">Biologia Marinha</a></li>
+              <li><a href="/excursoes">Viagens</a></li>
+              <li><a href="/nossos-roteiros">Nossos Roteiros</a></li>
+              <li><a href="/blog">Blog</a></li>
+            </ul>
+          </div>
+          <div class="footer-info footer-contact">
+            <h4>Contato</h4>
+            <ul>
+              <li><strong>Telefone:</strong> <a href="https://wa.me/553125147884" target="_blank" rel="noopener">(31) 2514-7884</a></li>
+              <li><strong>E-mail:</strong> <a href="mailto:contato@avoar.com.br">contato@avoar.com.br</a></li>
+              <li><strong>Localização:</strong> Belo Horizonte, MG</li>
+            </ul>
+          </div>
+          <div class="footer-social">
+            <h4>Redes Sociais</h4>
+            <div class="footer-social-links">
+              <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-copyright">&copy; 2026 Avoar Turismo. Todos os direitos reservados.</p>
+          <div class="footer-legal-links">
+            <span>Criado por: </span>
+            <a href="https://wa.me/5511962605997" target="_blank" rel="noopener noreferrer">Matheus Azevedo</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="js/jquery.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.fancybox.js"></script>
+  <script src="js/smooth-scrollbar.js"></script>
+  <script src="js/owl.js"></script>
+  <script src="js/cursor-script.js"></script>
+  <script src="js/wow.js"></script>
+  <script src="js/custom-script.js"></script>
+  <script>
+    (function() {
+      document.getElementById('roteiros-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var nome = document.getElementById('roteiros-nome').value.trim();
+        var msg = document.getElementById('roteiros-mensagem').value.trim();
+        var text = 'Olá! Gostaria de saber mais sobre os roteiros. Meu nome é ' + encodeURIComponent(nome);
+        if (msg) text += '. ' + encodeURIComponent(msg);
+        window.open('https://wa.me/553125147884?text=' + text, '_blank', 'noopener,noreferrer');
+      });
+    })();
+  </script>
+</body>
+</html>

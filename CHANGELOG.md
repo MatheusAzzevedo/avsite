@@ -1,5 +1,54 @@
 # Changelog
 
+## 2026-02-10 - Categorias de Viagens controladas pelo admin
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Novo model CategoriaExcursao (slug, nome, ordem)]
+- `api/prisma/migration-add-categoria-excursao.sql` [Migration SQL para criar tabela e dados iniciais]
+- `api/prisma/seed.ts` [Upsert das categorias padrão: natureza, cultura, aventura, marítimo]
+- `api/src/routes/categorias-excursao.routes.ts` [Novo: GET/POST/PUT/DELETE /api/admin/categorias-excursao]
+- `api/src/routes/public.routes.ts` [GET /categorias passa a retornar categorias da tabela CategoriaExcursao]
+- `api/src/server.ts` [Registro da rota /api/admin/categorias-excursao]
+- `api/public/admin/categorias.html`, `api/public/admin/js/categorias.js` [Nova página e CRUD de categorias]
+- `api/public/admin/excursao-editor.html`, `api/public/admin/js/excursao-editor.js` [Select de categoria preenchido pela API]
+- `api/public/admin/excursoes.html`, `api/public/admin/js/excursoes.js` [Filtro de categoria preenchido pela API; link Categorias no menu]
+- `api/public/portfolio.html`, `api/public/js/portfolio-excursoes.js` [Filtros da página Viagens montados dinamicamente a partir da API]
+- `api/public/admin/dashboard.html`, `api/public/admin/listas.html`, `api/public/admin/excursoes-pedagogicas.html`, `api/public/admin/excursao-pedagogica-editor.html` [Link Categorias no menu lateral]
+
+### Alterações
+- No painel admin é possível controlar os nomes das categorias de excursão (Viagens). Nova página "Categorias" no menu: listar, criar, editar e excluir categorias (slug, nome exibido, ordem). O slug é usado internamente nas excursões; o nome é o que aparece na página Viagens do site. A exclusão é bloqueada se houver excursões usando a categoria. O editor de excursão e o filtro da listagem de excursões passam a carregar as categorias da API. Na página pública Viagens (/excursoes), os botões de filtro (Todas, Natureza, Cultura, etc.) são montados dinamicamente a partir de GET /api/public/categorias, refletindo os nomes definidos no admin. É necessário rodar a migration SQL (categoria_excursao) e, se desejar, o seed para garantir as categorias iniciais.
+
+---
+
+## 2026-02-10 - Nossos Roteiros: nova página com embed e formulário
+
+### Arquivos Modificados
+- `api/public/nossos-roteiros.html` [Nova página: seção 1 com iframe Heyzine (flip-book/6c8ed3a45c.html); seção 2 com texto "Quer saber mais sobre nossos roteiros, preencha o formulário" e formulário Nome, E-mail, Telefone, Mensagem; envio abre WhatsApp]
+- `api/src/server.ts` [Rota /nossos-roteiros adicionada ao siteRoutes e app.get]
+- `api/public/index-10.html`, `api/public/index-11.html`, `api/public/about.html`, `api/public/contact.html`, `api/public/portfolio.html`, `api/public/portfolio-single.html`, `api/public/blog.html`, `api/public/blog-single.html`, `api/public/includes/footer.html` [Links "Nossos Roteiros" alterados de Heyzine (target _blank) para /nossos-roteiros]
+
+### Alterações
+- O menu "Nossos Roteiros" passa a abrir uma página interna do site em vez do flipbook em nova aba. A nova página contém: (1) primeira seção com o embed do flipbook Heyzine (URL 6c8ed3a45c); (2) segunda seção com o texto "Quer saber mais sobre nossos roteiros? Preencha o formulário" e um formulário (nome, e-mail, telefone, mensagem). Ao enviar, o formulário abre o WhatsApp com mensagem pré-preenchida. Header e footer seguem o padrão do site; link ativo no menu na própria página.
+
+---
+
+## 2026-02-10 - Cliente: nova página Início com Turismo Pedagógico e Pacotes de Viagens
+
+### Arquivos Modificados
+- `cliente/inicio.html` [Nova página: primeira tela após login; dois frames clicáveis]
+- `cliente/js/inicio.js` [Novo script: requireAuth, nome do cliente, logout, evitar clique no "!" abrir link]
+- `cliente/js/login.js` [Redirecionamento pós-login alterado de dashboard.html para inicio.html]
+- `cliente/dashboard.html` [Link "Início" e marca apontam para inicio.html]
+- `cliente/pedidos.html`, `cliente/configuracoes.html` [Link "Início" apontando para inicio.html]
+- `api/public/cliente/inicio.html`, `api/public/cliente/js/inicio.js` [Réplicas da nova página e script]
+- `api/public/cliente/js/login.js` [Redirecionamento pós-login para inicio.html]
+- `api/public/cliente/dashboard.html`, `api/public/cliente/pedidos.html`, `api/public/cliente/configuracoes.html` [Link "Início" para inicio.html]
+
+### Alterações
+- Após o login, o cliente passa a cair na nova página "Início" em vez do dashboard. A página Início exibe dois cards: "Turismo Pedagógico" (leva ao dashboard onde se insere o código da excursão pedagógica) e "Pacotes de Viagens" (redireciona para /portfolio.html – listagem de turismo convencional). Cada card tem um ícone "!" com tooltip explicando o uso: turismo pedagógico para pais acessarem a viagem pelo código da escola; pacotes para listagem de turismo convencional. O item de menu "Início" em todas as páginas do cliente agora aponta para inicio.html.
+
+---
+
 ## 2026-02-10 - Página inicial: novos backgrounds das seções 1, 3, 4 e 5
 
 ### Arquivos Modificados

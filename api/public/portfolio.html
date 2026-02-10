@@ -14,6 +14,29 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <link href="css/responsive.css" rel="stylesheet">
+<style>
+  /* Grid de excursões: imagens em proporção 4:5 (crop) e card inteiro clicável */
+  .portfolio-block .excursao-image-4-5 {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    position: relative;
+  }
+  .portfolio-block .excursao-image-4-5 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .portfolio-block .inner-box.excursao-card-link {
+    cursor: pointer;
+  }
+  .portfolio-block .inner-box.excursao-card-link h5 span {
+    color: #ffffff;
+  }
+  .portfolio-block:hover .inner-box.excursao-card-link h5 span {
+    color: #292c30;
+  }
+</style>
 <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]--> 
 
 </head>
@@ -37,7 +60,7 @@
             <a href="/">Início</a>
             <a href="/biologia-marinha">Biologia Marinha</a>
             <a href="/excursoes" class="active">Viagens</a>
-            <a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a>
+            <a href="/nossos-roteiros">Nossos Roteiros</a>
             <a href="/sobre-nos">Sobre Nós</a>
             <a href="/blog">Blog</a>
             <a href="/contato">Contato</a>
@@ -93,7 +116,7 @@
                                 <li><a href="/">Início</a></li>
                                 <li><a href="/biologia-marinha">Projeto Biologia Marinha</a></li>
                                 <li class="current menu-item-hidden"><a href="/excursoes">Viagens</a></li>
-                                <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a></li>
+                                <li><a href="/nossos-roteiros">Nossos Roteiros</a></li>
                                 <li><a href="about.html">Sobre Nós</a></li>
                                 <li class="menu-item-hidden"><a href="/blog">Blog</a></li>
                                 <li><a href="/contato">Contato</a></li>
@@ -111,7 +134,7 @@
 
     <div class="scroll-container">
         <div class="main-content-container" id="scroll-container" style="background-color: #000000;">
-            <div class="body-bg-layer" style="background-image: url(images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg); opacity: 0.2;"></div>
+            <div class="body-bg-layer" style="background-image: url(images/FOTOS%20AVOAR%20PREFERIDAS/roger-nobles-yv4jTtDXviw-unsplash.jpg); opacity: 0.2;"></div>
             <!-- Page Title -->
             <section class="page-title" id="to-top-div">
                 <div class="auto-container">
@@ -133,14 +156,10 @@
 
                     <div class="mixitup-gallery">
 
-                        <!--Filter-->
+                        <!--Filter (preenchido dinamicamente por portfolio-excursoes.js a partir da API)-->
                         <div class="gallery-filters centered clearfix">
                             <ul class="filter-tabs filter-btns clearfix" id="filterTabs">
                                 <li class="active filter" data-role="button" data-filter="all">Todas</li>
-                                <li class="filter" data-role="button" data-filter="natureza">Natureza</li>
-                                <li class="filter" data-role="button" data-filter="cultura">Cultura</li>
-                                <li class="filter" data-role="button" data-filter="aventura">Aventura</li>
-                                <li class="filter" data-role="button" data-filter="marítimo">Marítimo</li>
                             </ul>
                         </div>
 
@@ -181,7 +200,7 @@
           <li><a href="/">Início</a></li>
           <li><a href="/biologia-marinha">Biologia Marinha</a></li>
           <li><a href="/excursoes">Viagens</a></li>
-          <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a></li>
+          <li><a href="/nossos-roteiros">Nossos Roteiros</a></li>
           <li><a href="/blog">Blog</a></li>
         </ul>
       </div>

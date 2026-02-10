@@ -4,7 +4,30 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Página inicial: novos backgrounds das seções 1, 3, 4 e 5
+### Última atualização (2026-02-10) - Categorias de Viagens controladas pelo admin
+- **api/prisma** [Model CategoriaExcursao; migration SQL e seed para categorias padrão]
+- **api/src/routes/categorias-excursao.routes.ts** [CRUD admin: GET/POST/PUT/DELETE categorias]
+- **api/src/routes/public.routes.ts** [GET /categorias retorna categorias da tabela]
+- **api/public/admin/categorias.html**, **js/categorias.js** [Página Categorias: listar, criar, editar, excluir; nomes refletem na página Viagens]
+- **api/public/admin/excursao-editor**, **excursoes** [Select/filtro de categoria preenchidos pela API]
+- **api/public/portfolio.html**, **js/portfolio-excursoes.js** [Filtros da página Viagens montados dinamicamente a partir da API]
+
+Resumo: O admin passa a controlar os nomes das categorias de excursão em uma nova página "Categorias". Esses nomes aparecem na página Viagens do site (filtros) e no editor de excursões. Rodar a migration SQL e o seed para criar a tabela e as categorias iniciais.
+
+### Versão anterior (2026-02-10) - Nossos Roteiros: página com embed e formulário
+- **api/public/nossos-roteiros.html** [Nova página: 1ª seção com iframe do flipbook Heyzine (6c8ed3a45c); 2ª seção com texto "Quer saber mais sobre nossos roteiros, preencha o formulário" e formulário (nome, e-mail, telefone, mensagem) que ao enviar abre WhatsApp]
+- **api/src/server.ts** [Rota /nossos-roteiros registrada]
+- **api/public/** [Todos os links do menu "Nossos Roteiros" passam a apontar para /nossos-roteiros em vez do link externo Heyzine]
+
+Resumo: O item de menu "Nossos Roteiros" agora abre uma página do site. A página tem o embed do flipbook na primeira seção e, na segunda, o texto solicitado e um formulário para solicitar informações; o envio redireciona para o WhatsApp.
+
+### Versão anterior (2026-02-10) - Cliente: página Início com dois frames
+- **cliente/inicio.html**, **cliente/js/inicio.js** [Nova página Início: primeira tela após login com dois cards – Turismo Pedagógico e Pacotes de Viagens; cada card com "!" explicativo]
+- **cliente/js/login.js**, **dashboard.html**, **pedidos.html**, **configuracoes.html**, **api/public/cliente/** [Links e redirecionamento para inicio.html]
+
+Resumo: O cliente passa primeiro pela página "Início", com dois frames (Turismo Pedagógico e Pacotes de Viagens), antes do dashboard.
+
+### Versão anterior (2026-02-10) - Página inicial: novos backgrounds das seções 1, 3, 4 e 5
 - **api/public/index-10.html** [background-image das seções 1, 3, 4 e 5 trocados para imagens da pasta FOTOS AVOAR PREFERIDAS: seção 1 (Alexandre Nery Bernoulli), 3 (IMG_1011), 4 (DSC00349 – portal Grande Sertão), 5 (Utilizar essa daqui – caverna)]
 
 Resumo: Na página inicial (index-10), as seções 1, 3, 4 e 5 passaram a usar imagens da pasta "FOTOS AVOAR PREFERIDAS". A seção 2 não foi alterada.

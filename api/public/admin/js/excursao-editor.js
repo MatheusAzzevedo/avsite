@@ -25,9 +25,31 @@ let currentExcursaoId = null;
 let galeriaImages = [];
 
 /**
+ * Carrega categorias da API e preenche o select (nomes controlados pelo admin).
+ */
+async function loadCategoriasSelect() {
+  const select = document.getElementById('excursaoCategoria');
+  if (!select) return;
+  try {
+    const res = await apiRequest('/admin/categorias-excursao');
+    const list = Array.isArray(res?.data) ? res.data : [];
+    select.innerHTML = list.length
+      ? list.map(function (c) { return '<option value="' + escapeAttr(c.slug) + '">' + escapeHtml(c.nome) + '</option>'; }).join('')
+      : '<option value="">Nenhuma categoria</option>';
+  } catch (e) {
+    console.error('[Excursão Editor] Erro ao carregar categorias:', e);
+    select.innerHTML = '<option value="">Erro ao carregar</option>';
+  }
+}
+function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t == null ? '' : t; return d.innerHTML; }
+function escapeAttr(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+/**
  * Inicializa o editor quando a página carrega
  */
 async function initEditor() {
+  await loadCategoriasSelect();
+
   const params = new URLSearchParams(window.location.search);
   const excursaoId = params.get('id');
 

@@ -40,6 +40,24 @@ async function main() {
   console.log(`   🔑 Senha: admin123\n`);
 
   // ===========================================
+  // CATEGORIAS DE EXCURSÃO (Viagens) - padrão
+  // ===========================================
+  const categoriasPadrao = [
+    { slug: 'natureza', nome: 'Natureza', ordem: 1 },
+    { slug: 'cultura', nome: 'Cultura', ordem: 2 },
+    { slug: 'aventura', nome: 'Aventura', ordem: 3 },
+    { slug: 'marítimo', nome: 'Marítimo', ordem: 4 }
+  ];
+  for (const c of categoriasPadrao) {
+    await prisma.categoriaExcursao.upsert({
+      where: { slug: c.slug },
+      update: { nome: c.nome, ordem: c.ordem },
+      create: c
+    });
+  }
+  console.log('   ✅ Categorias de excursão garantidas (natureza, cultura, aventura, marítimo)\n');
+
+  // ===========================================
   // VERIFICAR SE JÁ EXISTEM DADOS
   // ===========================================
   

@@ -36,6 +36,7 @@ import paymentConfigRoutes from './routes/payment-config.routes';
 import adminPaymentRoutes from './routes/admin-payment.routes';
 import publicRoutes from './routes/public.routes';
 import listaAlunosRoutes from './routes/lista-alunos.routes';
+import categoriasExcursaoRoutes from './routes/categorias-excursao.routes';
 
 // Importa utilitários
 import { prisma } from './config/database';
@@ -107,7 +108,8 @@ const siteRoutes: Record<string, string> = {
   '/sobre-nos': 'about.html',
   '/blog': 'blog.html',
   '/contato': 'contact.html',
-  '/excursoes': 'portfolio.html'
+  '/excursoes': 'portfolio.html',
+  '/nossos-roteiros': 'nossos-roteiros.html'
 };
 
 /** Serve uma página do site por path amigável */
@@ -134,6 +136,7 @@ app.get('/sobre-nos', (_req: Request, res: Response) => serveSitePage('/sobre-no
 app.get('/blog', (_req: Request, res: Response) => serveSitePage('/blog', res));
 app.get('/contato', (_req: Request, res: Response) => serveSitePage('/contato', res));
 app.get('/excursoes', (_req: Request, res: Response) => serveSitePage('/excursoes', res));
+app.get('/nossos-roteiros', (_req: Request, res: Response) => serveSitePage('/nossos-roteiros', res));
 
 // Redirect: URLs antigas (.html) → URLs amigáveis
 app.get('/index-10.html', (_req: Request, res: Response) => res.redirect(301, '/inicio'));
@@ -179,6 +182,7 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/payment-config', paymentConfigRoutes);
 app.use('/api/admin/payment', adminPaymentRoutes);
 app.use('/api/admin/listas', listaAlunosRoutes);
+app.use('/api/admin/categorias-excursao', categoriasExcursaoRoutes);
 
 // ===========================================
 // TRATAMENTO DE ERROS

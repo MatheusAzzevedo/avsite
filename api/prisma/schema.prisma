@@ -76,6 +76,18 @@ enum PostStatus {
 }
 
 // ===========================================
+// CATEGORIAS DE EXCURSÃO (Viagens) - nomes controlados pelo admin
+// ===========================================
+
+model CategoriaExcursao {
+  id     String @id @default(uuid())
+  slug   String @unique
+  nome   String
+  ordem  Int    @default(0)
+  @@map("categoria_excursao")
+}
+
+// ===========================================
 // MODELO DE EXCURSÃO
 // ===========================================
 

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início - Avorar Turismo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        * {
+            cursor: auto !important;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
+            min-height: 100vh;
+            cursor: default !important;
+        }
+
+        a, button {
+            cursor: pointer !important;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #ff5c00;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff5c00;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .navbar-link {
+            text-decoration: none;
+            color: #333333;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.3rem;
+        }
+
+        .navbar-link:hover, .navbar-link.active {
+            color: #ff5c00;
+            border-bottom-color: #ff5c00;
+        }
+
+        .btn-logout {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .welcome h1 {
+            font-size: 2.5rem;
+            color: #101010;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .welcome p {
+            color: #666666;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* FRAMES GRID */
+        .frames-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .frame-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-top: 4px solid #ff5c00;
+            padding: 2.5rem;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .frame-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .frame-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .frame-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #101010;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .frame-title i {
+            color: #ff5c00;
+        }
+
+        .frame-info {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #fff3eb;
+            color: #ff5c00;
+            border: 1px solid rgba(255, 92, 0, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: help;
+            position: relative;
+        }
+
+        .frame-info:hover {
+            background: #ff5c00;
+            color: white;
+        }
+
+        .frame-info[title] {
+            cursor: help;
+        }
+
+        .frame-desc {
+            color: #666666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .navbar-menu {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .navbar-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-logout {
+                width: 100%;
+            }
+
+            .container {
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .welcome h1 {
+                font-size: 1.8rem;
+            }
+
+            .frames-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="inicio.html" class="navbar-brand">
+            <i class="fas fa-plane-departure"></i> Avorar Turismo
+        </a>
+        <div class="navbar-menu">
+            <a href="inicio.html" class="navbar-link active"><i class="fas fa-home"></i> Início</a>
+            <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
+            <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome">
+            <h1>Bem-vindo, <span id="clienteNome">Cliente</span>!</h1>
+            <p>Escolha como deseja continuar</p>
+        </div>
+
+        <div class="frames-grid">
+            <a href="dashboard.html" class="frame-card" id="frameTurismoPedagogico">
+                <div class="frame-header">
+                    <h2 class="frame-title"><i class="fas fa-graduation-cap"></i> Turismo Pedagógico</h2>
+                    <span class="frame-info" id="infoTurismo" title="Para pais acessarem a viagem através do código fornecido pela escola ou instituição." aria-label="Informação">!</span>
+                </div>
+                <p class="frame-desc">Acesse a excursão pedagógica usando o código fornecido pela escola ou instituição.</p>
+            </a>
+
+            <a href="/portfolio.html" class="frame-card" id="framePacotesViagens" target="_self">
+                <div class="frame-header">
+                    <h2 class="frame-title"><i class="fas fa-suitcase"></i> Pacotes de Viagens</h2>
+                    <span class="frame-info" id="infoPacotes" title="Para acessar a listagem de turismo convencional (pacotes de viagens)." aria-label="Informação">!</span>
+                </div>
+                <p class="frame-desc">Confira a listagem de pacotes de viagens e turismo convencional do site.</p>
+            </a>
+        </div>
+    </div>
+
+    <script src="js/auth-manager.js"></script>
+    <script src="js/inicio.js"></script>
+</body>
+</html>

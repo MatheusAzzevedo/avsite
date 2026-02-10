@@ -11,13 +11,37 @@ let allExcursoes = [];
 let currentFilter = 'all';
 
 /**
+ * Carrega categorias da API (nomes controlados pelo admin) e preenche os botões de filtro.
+ */
+async function loadCategoriasFilter() {
+    const filterTabs = document.getElementById('filterTabs');
+    if (!filterTabs) return;
+    try {
+        const res = await apiRequest('/public/categorias');
+        const list = Array.isArray(res?.data) ? res.data : [];
+        var html = '<li class="active filter" data-role="button" data-filter="all">Todas</li>';
+        list.forEach(function (c) {
+            html += '<li class="filter" data-role="button" data-filter="' + escapeAttr(c.slug) + '">' + escapeHtml(c.nome) + '</li>';
+        });
+        filterTabs.innerHTML = html;
+    } catch (e) {
+        console.warn('[Portfolio] Erro ao carregar categorias (usando só Todas):', e);
+        filterTabs.innerHTML = '<li class="active filter" data-role="button" data-filter="all">Todas</li>';
+    }
+}
+function escapeAttr(t) {
+    if (t == null) return '';
+    return String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/**
  * Explicação da função [loadExcursoes]
- * Carrega as excursões ativas da API e renderiza na página.
+ * Carrega categorias (filtros), depois excursões ativas da API e renderiza na página.
  */
 async function loadExcursoes() {
-    console.log('[Portfolio] Carregando excursões da API...');
+    console.log('[Portfolio] Carregando categorias e excursões da API...');
 
-    if (typeof ExcursaoManager === 'undefined') {
+    if (typeof ExcursaoManager === 'undefined' || typeof apiRequest === 'undefined') {
         setTimeout(loadExcursoes, 100);
         return;
     }
@@ -38,6 +62,8 @@ async function loadExcursoes() {
     }
 
     try {
+        await loadCategoriasFilter();
+
         allExcursoes = await ExcursaoManager.getAll(true);
         if (!Array.isArray(allExcursoes)) {
             allExcursoes = [];
@@ -70,25 +96,26 @@ function renderExcursoes(excursoes) {
 
     emptyState.style.display = 'none';
 
+    var detailBase = 'portfolio-single.html';
     grid.innerHTML = excursoes.map(function(excursao) {
         var image = excursao.imagemCapa || 'images/background/Queda de agua.webp';
         var categoria = excursao.categoria || 'natureza';
         var preco = ExcursaoManager.formatPrice(excursao.preco);
+        var slug = encodeURIComponent(excursao.slug || '');
+        var detailUrl = detailBase + '?slug=' + slug;
         return (
             '<div class="portfolio-block mix all ' + categoria + ' col-xl-4 col-lg-4 col-md-6 col-sm-12" data-categoria="' + categoria + '">' +
-            '<div class="inner-box">' +
-            '<div class="image">' +
+            '<a href="' + detailUrl + '" class="inner-box excursao-card-link" style="text-decoration: none; color: inherit;">' +
+            '<div class="image excursao-image-4-5">' +
             '<img src="' + image + '" alt="' + escapeHtml(excursao.titulo) + '" onerror="this.src=\'images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg\'">' +
             '</div>' +
             '<div class="overlay">' +
-            '<div class="more-link">' +
-            '<a href="portfolio-single.html?slug=' + excursao.slug + '" class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></a>' +
-            '</div>' +
+            '<div class="more-link"><span class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></span></div>' +
             '<div class="inner">' +
-            '<div class="cat"><span>' + capitalizeFirst(categoria) + '</span></div>' +
-            '<h5><a href="portfolio-single.html?slug=' + excursao.slug + '">' + escapeHtml(excursao.titulo) + '</a></h5>' +
+            '<div class="cat"><span>Viagens</span></div>' +
+            '<h5><span>' + escapeHtml(excursao.titulo) + '</span></h5>' +
             '<div class="price" style="color: #ff5c00; font-weight: bold; margin-top: 0.5rem;">' + preco + '</div>' +
-            '</div></div></div></div>'
+            '</div></div></a></div>'
         );
     }).join('');
 

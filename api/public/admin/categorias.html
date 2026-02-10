@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorias de Viagens - Avoar Admin</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header"><h2>Avorar Admin</h2></div>
+            <nav class="sidebar-nav">
+                <div class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></div>
+                <div class="nav-item"><a href="blog.html" class="nav-link"><i class="fas fa-blog"></i> Blog</a></div>
+                <div class="nav-item"><a href="excursoes.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Excursões</a></div>
+                <div class="nav-item"><a href="categorias.html" class="nav-link active"><i class="fas fa-tags"></i> Categorias</a></div>
+                <div class="nav-item"><a href="excursoes-pedagogicas.html" class="nav-link"><i class="fas fa-graduation-cap"></i> Excursões Pedagógicas</a></div>
+                <div class="nav-item"><a href="listas.html" class="nav-link"><i class="fas fa-list-alt"></i> Listas de Alunos</a></div>
+                <div class="nav-item" style="margin-top: 2rem;"><a href="#" class="nav-link" id="navLogout"><i class="fas fa-sign-out-alt"></i> Sair</a></div>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <button id="sidebarToggle" class="btn btn-secondary btn-sm" style="margin-right: 1rem; display: none;"><i class="fas fa-bars"></i></button>
+                    <h1>Categorias de Viagens</h1>
+                </div>
+                <div class="user-menu">
+                    <span id="userName">Administrador</span>
+                    <div class="user-avatar">AD</div>
+                </div>
+            </div>
+            <p style="color: var(--text-light); margin-bottom: 1.5rem;">Os nomes aqui definidos aparecem na página <strong>Viagens</strong> do site (filtros e listagem). O <strong>slug</strong> é usado internamente; não altere o slug de uma categoria já usada em excursões.</p>
+            <div class="card">
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <span id="loadingCategorias" style="color: var(--text-light);">Carregando...</span>
+                        <button type="button" class="btn btn-success" id="btnNovaCategoria"><i class="fas fa-plus"></i> Nova categoria</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="categoriasTable">
+                            <thead>
+                                <tr>
+                                    <th>Ordem</th>
+                                    <th>Slug</th>
+                                    <th>Nome (exibido no site)</th>
+                                    <th style="width: 120px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriasBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="emptyCategorias" style="display: none; text-align: center; padding: 2rem; color: var(--text-light);">Nenhuma categoria. Clique em &quot;Nova categoria&quot;.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalCategoria" class="modal-overlay hidden">
+        <div class="modal-box" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3 id="modalCategoriaTitle">Nova categoria</h3>
+                <button type="button" class="modal-close" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="categoriaId" value="">
+                <div class="form-group">
+                    <label for="categoriaSlug">Slug *</label>
+                    <input type="text" id="categoriaSlug" class="form-control" placeholder="ex: natureza" pattern="[a-zA-Z0-9\-áéíóúâêôãõç]+">
+                    <small style="color: var(--text-light);">Apenas letras, números e hífen. Usado na URL e no filtro.</small>
+                </div>
+                <div class="form-group">
+                    <label for="categoriaNome">Nome (exibido no site) *</label>
+                    <input type="text" id="categoriaNome" class="form-control" placeholder="ex: Natureza">
+                </div>
+                <div class="form-group">
+                    <label for="categoriaOrdem">Ordem</label>
+                    <input type="number" id="categoriaOrdem" class="form-control" value="0" min="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modalCategoriaCancel">Cancelar</button>
+                <button type="button" class="btn btn-success" id="modalCategoriaSave"><i class="fas fa-check"></i> Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-client.js"></script>
+    <script src="js/admin-main.js"></script>
+    <script src="js/categorias.js"></script>
+</body>
+</html>

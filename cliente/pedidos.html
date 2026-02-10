@@ -177,6 +177,14 @@
             font-size: 1rem;
         }
         
+        .pedido-tipo {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.25rem;
+        }
+        
         .pedido-footer {
             display: flex;
             justify-content: space-between;
@@ -299,7 +307,7 @@
             <i class="fas fa-plane-departure"></i> Avorar Turismo
         </div>
         <div class="navbar-menu">
-            <a href="dashboard.html"><i class="fas fa-home"></i> Início</a>
+            <a href="inicio.html"><i class="fas fa-home"></i> Início</a>
             <a href="pedidos.html" class="active"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
         </div>
@@ -333,13 +341,20 @@
                 if (data.success && data.data.length > 0) {
                     const container = document.getElementById('pedidosContainer');
                     data.data.forEach(pedido => {
+                        const titulo = (pedido.excursaoPedagogica && pedido.excursaoPedagogica.titulo)
+                            ? pedido.excursaoPedagogica.titulo
+                            : (pedido.excursao && pedido.excursao.titulo)
+                                ? pedido.excursao.titulo
+                                : 'Viagem';
+                        const tipoLabel = pedido.tipo === 'CONVENCIONAL' ? 'Viagem convencional' : 'Excursão pedagógica';
                         container.innerHTML += `
                             <div class="pedido-card">
                                 <div class="pedido-header">
-                                    <div class="pedido-titulo">${pedido.excursaoPedagogica.titulo}</div>
+                                    <div class="pedido-titulo">${titulo}</div>
                                     <div class="pedido-status status-${pedido.status}">${pedido.status}</div>
                                 </div>
                                 <div class="pedido-info">
+                                    <span class="pedido-tipo">${tipoLabel}</span>
                                     <div><i class="fas fa-calendar-alt"></i> ${new Date(pedido.createdAt).toLocaleDateString('pt-BR')}</div>
                                     <div><i class="fas fa-users"></i> ${pedido.quantidade} pessoa(s)</div>
                                 </div>

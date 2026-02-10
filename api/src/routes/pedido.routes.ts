@@ -341,6 +341,17 @@ router.get('/',
                 horario: true
               }
             },
+            excursao: {
+              select: {
+                id: true,
+                titulo: true,
+                slug: true,
+                subtitulo: true,
+                imagemCapa: true,
+                local: true,
+                horario: true
+              }
+            },
             itens: {
               select: {
                 id: true,

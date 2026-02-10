@@ -33,6 +33,19 @@
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
+  async function loadCategoriasSelect() {
+    var sel = document.getElementById('filterCategoria');
+    if (!sel) return;
+    try {
+      var res = await apiRequest('/admin/categorias-excursao');
+      var list = Array.isArray(res && res.data) ? res.data : [];
+      sel.innerHTML = '<option value="todos">Todas as Categorias</option>' +
+        list.map(function(c) { return '<option value="' + escapeHtml(c.slug) + '">' + escapeHtml(c.nome) + '</option>'; }).join('');
+    } catch (e) {
+      sel.innerHTML = '<option value="todos">Todas as Categorias</option>';
+    }
+  }
+
   async function loadExcursoes() {
     console.log('[Excursões Admin] 🚀 INICIANDO CARREGAMENTO...');
     try {
@@ -212,7 +225,7 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     initSidebarToggle();
-    loadExcursoes();
+    loadCategoriasSelect().then(loadExcursoes);
 
     var navLogout = document.getElementById('navLogout');
     if (navLogout && typeof window.logout === 'function') {

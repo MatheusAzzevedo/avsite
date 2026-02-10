@@ -581,21 +581,18 @@ router.get('/excursoes-pedagogicas/codigo/:codigo',
 
 /**
  * GET /api/public/categorias
- * Lista categorias disponíveis
+ * Lista categorias de excursão (nomes controlados pelo admin) para filtro na página Viagens.
  */
 router.get('/categorias',
   async (_req: Request, res: Response, next: NextFunction) => {
     try {
-      const categorias = await prisma.excursao.groupBy({
-        by: ['categoria'],
-        where: { status: 'ATIVO' },
-        _count: true
+      const categorias = await prisma.categoriaExcursao.findMany({
+        orderBy: [{ ordem: 'asc' }, { nome: 'asc' }]
       });
 
       const data = categorias.map(c => ({
-        nome: c.categoria,
-        slug: c.categoria.toLowerCase(),
-        quantidade: c._count
+        slug: c.slug,
+        nome: c.nome
       }));
 
       res.json({
