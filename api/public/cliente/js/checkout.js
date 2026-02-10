@@ -273,7 +273,9 @@
                 pixQrCode = data.data.qrCode || '';
                 var html = '';
                 if (data.data.qrCodeImage) {
-                    html += '<img src="' + String(data.data.qrCodeImage).replace(/"/g, '&quot;') + '" alt="QR Code PIX">';
+                    var imgBase64 = String(data.data.qrCodeImage).trim();
+                    var imgSrc = imgBase64.indexOf('data:') === 0 ? imgBase64 : ('data:image/png;base64,' + imgBase64);
+                    html += '<img src="' + imgSrc.replace(/"/g, '&quot;') + '" alt="QR Code PIX">';
                 }
                 if (pixQrCode) {
                     html += '<p class="pix-code-text" style="margin-top: 0.75rem;">Ou copie o código PIX com o botão abaixo.</p>';
