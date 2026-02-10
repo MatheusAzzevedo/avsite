@@ -66,12 +66,16 @@ function contactWhatsApp() {
 }
 
 function buyNow() {
-    var slug = getSlugFromURL();
+    var slug = (currentExcursao && currentExcursao.slug) || new URLSearchParams(window.location.search).get('slug') || '';
     var qtyInput = document.getElementById('quantity');
     var quantidade = qtyInput ? qtyInput.value : '1';
-    
-    // Redireciona para checkout convencional com parâmetros
-    window.location.href = '/cliente/checkout-convencional.html?viagem=' + slug + '&quantidade=' + quantidade;
+
+    if (!slug) {
+        console.warn('[Portfolio Single] Slug não encontrado para Comprar Agora');
+        return;
+    }
+
+    window.location.href = '/cliente/checkout-convencional.html?viagem=' + encodeURIComponent(slug) + '&quantidade=' + quantidade;
 }
 
 function renderExcursao(excursao) {
