@@ -76,11 +76,12 @@ export async function criarCobrancaAsaas(dados: {
       }
     });
 
-    // 1. Criar ou buscar cliente no Asaas (IAsaasCustomer exige cpfCnpj: string)
+    // 1. Criar ou buscar cliente no Asaas (IAsaasCustomer exige cpfCnpj: string, apenas dígitos)
+    const cpfCnpjDigits = dados.clienteCpf ? String(dados.clienteCpf).replace(/\D/g, '') : '';
     const customerData = {
       name: dados.clienteNome,
       email: dados.clienteEmail,
-      cpfCnpj: String(dados.clienteCpf ?? ''),
+      cpfCnpj: cpfCnpjDigits,
       phone: String(dados.clienteTelefone ?? '')
     };
 
@@ -112,14 +113,16 @@ export async function criarCobrancaAsaas(dados: {
       });
     }
 
-    // 2. Criar cobrança
+    // 2. Criar cobrança — Asaas exige dueDate no formato "yyyy-MM-dd"
+    const dueDateObj = dados.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const dueDateStr = dueDateObj instanceof Date ? dueDateObj.toISOString().split('T')[0] : String(dueDateObj).split('T')[0];
     const paymentData: any = {
       customer: asaasCustomer.id,
       billingType: dados.metodoPagamento,
       value: dados.valor,
       description: dados.descricao,
       externalReference: dados.externalReference,
-      dueDate: dados.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias se não informado
+      dueDate: dueDateStr
     };
 
     logger.info('[Asaas] Criando cobrança', {

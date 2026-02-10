@@ -93,6 +93,16 @@ router.post('/pix',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
+      // Asaas exige CPF/CNPJ do cliente para criar cobrança PIX
+      const cpfLimpo = pedido.cliente.cpf?.replace(/\D/g, '');
+      if (!cpfLimpo || cpfLimpo.length < 11) {
+        logger.warn('[Pagamento PIX] Cliente sem CPF válido', { context: { pedidoId, clienteId } });
+        return res.status(400).json({
+          success: false,
+          error: 'CPF é obrigatório para pagamento via PIX. Atualize seus dados no cadastro.'
+        });
+      }
+
       // Cria cobrança no Asaas
       const cobranca = await criarCobrancaAsaas({
         clienteEmail: pedido.cliente.email,
@@ -206,9 +216,16 @@ router.post('/pix',
         }
       }
 
-      // Erros de validação do Asaas (valor mínimo, etc.) retornam 400 para o cliente
-      if (error instanceof Error && /valor mínimo|mínimo|invalid|erro/i.test(message)) {
+      // Erros de validação do Asaas (valor mínimo, CPF, dueDate, etc.) retornam 400
+      const asaasValidationPattern = /valor mínimo|mínimo|invalid|erro|cpfCnpj|cpf|cnpj|dueDate|required/i;
+      if (error instanceof Error && asaasValidationPattern.test(message)) {
         return res.status(400).json({ success: false, error: message });
+      }
+      // Se o erro tiver response do axios (Asaas retornou 4xx), repassar como 400 quando fizer sentido
+      const axiosErr = error as { response?: { status: number; data?: { errors?: Array<{ description?: string }> } } };
+      if (axiosErr.response && axiosErr.response.status >= 400 && axiosErr.response.status < 500) {
+        const desc = axiosErr.response.data?.errors?.[0]?.description || message;
+        return res.status(400).json({ success: false, error: desc });
       }
       next(error);
     }
