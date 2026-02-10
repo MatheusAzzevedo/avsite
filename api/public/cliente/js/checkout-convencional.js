@@ -23,13 +23,14 @@ function getURLParams() {
     return true;
 }
 
-// Carrega dados da viagem
+// Carrega dados da viagem (usa mesma API pública da página de listagem)
 async function loadExcursao() {
     try {
-        const response = await fetch(`/api/excursoes/slug/${viagemSlug}`);
+        const response = await fetch(`/api/public/excursoes/${viagemSlug}`);
         if (!response.ok) throw new Error('Viagem não encontrada');
 
-        excursaoData = await response.json();
+        const json = await response.json();
+        excursaoData = json.data || json;
         renderResumo();
         renderPassageirosForm();
     } catch (error) {
