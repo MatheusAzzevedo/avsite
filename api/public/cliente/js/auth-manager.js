@@ -269,3 +269,14 @@ class ClienteAuthManager {
 
 // Instância global
 window.clienteAuth = new ClienteAuthManager();
+
+// Bind global do botão Sair (todas as páginas do cliente)
+document.addEventListener('DOMContentLoaded', function () {
+    const logoutBtn = document.getElementById('logoutBtn') || document.querySelector('.btn-logout');
+    if (logoutBtn && window.clienteAuth) {
+        logoutBtn.addEventListener('click', function () {
+            window.clienteAuth.logout();
+            window.location.href = '/cliente/login.html';
+        });
+    }
+});

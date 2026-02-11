@@ -512,7 +512,7 @@
         var data = localStorage.getItem('checkout_excursao');
         if (!data) {
             showToast('Nenhuma excursão selecionada. Redirecionando...', 'error');
-            setTimeout(function () { window.location.href = 'dashboard.html'; }, 1500);
+            setTimeout(function () { window.location.href = 'inicio.html'; }, 1500);
             return;
         }
 
@@ -521,13 +521,13 @@
         } catch (e) {
             console.error('[Checkout] Erro ao ler excursão:', e);
             showToast('Dados da excursão inválidos. Redirecionando...', 'error');
-            setTimeout(function () { window.location.href = 'dashboard.html'; }, 1500);
+            setTimeout(function () { window.location.href = 'inicio.html'; }, 1500);
             return;
         }
 
         if (!excursao.codigo || !excursao.quantidade) {
             showToast('Nenhuma excursão selecionada. Redirecionando...', 'error');
-            setTimeout(function () { window.location.href = 'dashboard.html'; }, 1500);
+            setTimeout(function () { window.location.href = 'inicio.html'; }, 1500);
             return;
         }
 

@@ -56,15 +56,15 @@ const PORT = process.env.PORT || 3001;
 // Isso permite que o Express reconheça o IP real do cliente através do header X-Forwarded-For
 app.set('trust proxy', 1);
 
-// Helmet para segurança (CSP com frame-src para permitir iframe Heyzine em /nossos-roteiros)
+// Helmet para segurança (CSP: frame-src para Heyzine e YouTube embed em /biologia-marinha)
 const defaultDirectives = contentSecurityPolicy.getDefaultDirectives();
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   contentSecurityPolicy: {
     directives: {
       ...defaultDirectives,
-      "frame-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com"],
-      "child-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com"],
+      "frame-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
+      "child-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
       "script-src": [...(defaultDirectives["script-src"] || []), "'sha256-Ew7NVX5Yr58KbeiZir/ChTfyxGLuqd/yGYxo/ZlGhCU='"],
     },
   },

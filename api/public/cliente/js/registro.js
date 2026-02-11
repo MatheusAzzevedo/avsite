@@ -33,7 +33,7 @@ function setLoading(isLoading) {
 
 // Se já autenticado, redireciona
 if (clienteAuth.isAuthenticated()) {
-    window.location.href = '/cliente/dashboard.html';
+    window.location.href = '/cliente/inicio.html';
 }
 
 registerForm.addEventListener('submit', async (e) => {
