@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-11 - Fix: botão Nova Categoria (SyntaxError por aspas Unicode)
+
+### Arquivos Modificados
+- `api/public/admin/js/categorias.js` [Linha 77: removidas aspas curvas Unicode (U+201C, U+2018, U+201D) na mensagem do confirm(); substituídas por aspas retas ASCII. Listener do botão anexado antes de loadCategorias().]
+
+### Alterações
+- O botão "+ Nova categoria" não respondia e não aparecia nenhum log porque categorias.js tinha SyntaxError na linha 77: a mensagem do confirm() usava aspas curvas (" " e ' ') em vez de aspas retas, quebrando o parser e impedindo todo o script de executar. Corrigido para usar apenas aspas ASCII. Listener do botão passou a ser anexado no início do DOMContentLoaded. Alterações estão na pasta api/public/admin/ (servidas pelo Express em /admin).
+
+---
+
 ## 2026-02-10 - feat: página de pagamento PIX/Cartão no checkout convencional
 
 ### Arquivos Modificados

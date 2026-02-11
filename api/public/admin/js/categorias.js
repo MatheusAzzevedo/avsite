@@ -74,7 +74,7 @@ function attachRowListeners() {
   });
   document.querySelectorAll('.btn-delete-categoria').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      if (!confirm('Excluir a categoria “‘ + btn.dataset.nome + '”? Excursões que a usam precisarão ser alteradas antes.')) return;
+      var nomeCat = btn.dataset.nome || ''; if (!confirm('Excluir a categoria "' + nomeCat + '"? Excursões que a usam precisarão ser alteradas antes.')) return;
       deleteCategoria(btn.dataset.id);
     });
   });
@@ -169,21 +169,15 @@ async function deleteCategoria(id) {
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('[Categorias] Inicializando...');
-  
-  loadCategorias();
 
-  const btnNovaCategoria = document.getElementById('btnNovaCategoria');
-  console.log('[Categorias] Botão Nova Categoria:', btnNovaCategoria);
-  
+  var btnNovaCategoria = document.getElementById('btnNovaCategoria');
   if (btnNovaCategoria) {
     btnNovaCategoria.addEventListener('click', function () {
-      console.log('[Categorias] Botão clicado!');
       openModal(null, '', '', 0);
     });
-    console.log('[Categorias] Event listener anexado ao botão');
-  } else {
-    console.error('[Categorias] ERRO: Botão btnNovaCategoria não encontrado!');
   }
+
+  loadCategorias();
 
   const modalClose = document.querySelector('#modalCategoria .modal-close');
   if (modalClose) {

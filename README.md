@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Página de pagamento PIX/Cartão no checkout convencional
+### Última atualização (2026-02-11) - Fix: botão Nova Categoria (sintaxe em api/public/admin)
+- **api/public/admin/js/categorias.js** [Corrigido SyntaxError na linha 77: aspas curvas Unicode no confirm() substituídas por aspas ASCII; listener do botão anexado antes de loadCategorias()]
+
+Resumo: Botão "+ Nova categoria" não funcionava e não havia logs porque o script tinha erro de sintaxe (aspas "" ''). Alterações estão em api/public/admin/ (servidas em /admin).
+
+### Versão anterior (2026-02-10) - Página de pagamento PIX/Cartão no checkout convencional
 - **api/public/cliente/pagamento.html** [Nova página de pagamento com opções PIX (QR Code) e Cartão de Crédito; resumo do pedido; tela de sucesso]
 - **api/public/cliente/js/pagamento.js** [Lógica completa: gerar PIX, polling de status, formulário de cartão com máscaras, pré-preenchimento de dados do cliente]
 - **api/public/cliente/js/checkout-convencional.js** [Redirecionamento pós-pedido: agora vai para pagamento.html?pedidoId={id} em vez de pedidos.html]
