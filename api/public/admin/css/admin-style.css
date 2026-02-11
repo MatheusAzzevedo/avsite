@@ -552,65 +552,164 @@ a[href="config-pagamento.html"] {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2000;
-    animation: fadeIn 0.3s ease;
+    padding: 1.5rem;
+    animation: modalFadeIn 0.25s ease;
 }
 
-@keyframes fadeIn {
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
     from {
         opacity: 0;
+        transform: translateY(-20px) scale(0.98);
     }
     to {
         opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 
-.modal {
-    background-color: white;
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
-    width: 90%;
-    max-width: 600px;
+.modal,
+.modal-box {
+    background-color: var(--light-surface);
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 440px;
     max-height: 90vh;
-    overflow-y: auto;
-    animation: slideUp 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideUp 0.3s ease;
+}
+
+.modal {
+    max-width: 600px;
+}
+
+.modal-box {
+    max-width: 440px;
 }
 
 .modal-header {
-    padding: 1.5rem 2rem;
-    border-bottom: 2px solid var(--light-border);
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--light-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: linear-gradient(to bottom, var(--light-surface) 0%, var(--light-bg) 100%);
 }
 
 .modal-header h3 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-header h3::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    background: linear-gradient(180deg, var(--primary-light), var(--primary-color));
+    border-radius: 2px;
+    flex-shrink: 0;
 }
 
 .modal-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--light-bg);
+    border: 1px solid var(--light-border);
+    border-radius: var(--radius-md);
+    font-size: 1.35rem;
+    line-height: 1;
     cursor: pointer;
     color: var(--text-light);
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    background: var(--light-border);
+    color: var(--text-dark);
 }
 
 .modal-body {
-    padding: 2rem;
+    padding: 1.5rem 1.5rem 1.25rem;
+    overflow-y: auto;
+}
+
+.modal-body .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.modal-body .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.modal-body .form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.4rem;
+}
+
+.modal-body .form-group label .required {
+    color: var(--danger-color);
+}
+
+.modal-body .form-control {
+    padding: 0.65rem 0.875rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+}
+
+.modal-body .form-group small {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--text-light);
+    line-height: 1.4;
 }
 
 .modal-footer {
-    padding: 1.5rem 2rem;
-    border-top: 2px solid var(--light-border);
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--light-border);
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 0.75rem;
+    background: var(--light-bg);
+}
+
+.modal-footer .btn-secondary {
+    background: var(--light-surface);
+    color: var(--text-dark);
+    border: 1px solid var(--light-border);
+}
+
+.modal-footer .btn-secondary:hover {
+    background: var(--light-border);
+}
+
+.modal-footer .btn-success {
+    min-width: 7rem;
 }
 
 /* ============================================
