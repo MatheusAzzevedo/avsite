@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-11) - Fix: botão Nova Categoria (sintaxe em api/public/admin)
+### Última atualização (2026-02-10) - Favicon Avoar nas telas de login
+- **api/public/admin/login.html** [Adicionados link shortcut icon e icon apontando para ../images/favicon-avoar.png]
+- **api/public/cliente/login.html** [Adicionados link shortcut icon e icon apontando para ../images/favicon-avoar.png]
+- **cliente/login.html** [Adicionados link shortcut icon e icon apontando para ../api/public/images/favicon-avoar.png]
+
+Resumo: As páginas de login do admin e do cliente passam a exibir o favicon oficial da Avoar (favicon-avoar.png) na aba do navegador, em vez do ícone genérico.
+
+### Versão anterior (2026-02-11) - Fix: botão Nova Categoria (sintaxe em api/public/admin)
 - **api/public/admin/js/categorias.js** [Corrigido SyntaxError na linha 77: aspas curvas Unicode no confirm() substituídas por aspas ASCII; listener do botão anexado antes de loadCategorias()]
 
 Resumo: Botão "+ Nova categoria" não funcionava e não havia logs porque o script tinha erro de sintaxe (aspas "" ''). Alterações estão em api/public/admin/ (servidas em /admin).

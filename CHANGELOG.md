@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-02-10 - feat: favicon Avoar nas telas de login (cliente e admin)
+
+### Arquivos Modificados
+- `api/public/admin/login.html` [Adicionados <link rel="shortcut icon"> e <link rel="icon"> para ../images/favicon-avoar.png]
+- `api/public/cliente/login.html` [Adicionados <link rel="shortcut icon"> e <link rel="icon"> para ../images/favicon-avoar.png]
+- `cliente/login.html` [Adicionados <link rel="shortcut icon"> e <link rel="icon"> para ../api/public/images/favicon-avoar.png]
+
+### Alterações
+- As telas de login do cliente e do admin não exibiam o favicon da Avoar na aba do navegador (aparecia ícone genérico). Incluídos os links para favicon-avoar.png no <head> de cada página de login.
+
+---
+
 ## 2026-02-11 - Fix: botão Nova Categoria (SyntaxError por aspas Unicode)
 
 ### Arquivos Modificados
