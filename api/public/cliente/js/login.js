@@ -44,7 +44,7 @@ function setLoading(isLoading) {
 // Verificar se já está autenticado
 if (clienteAuth.isAuthenticated()) {
     console.log('[Login] Cliente já autenticado, redirecionando...');
-    window.location.href = '/cliente/inicio.html';
+    window.location.href = '/cliente/dashboard.html';
 }
 
 // Processar OAuth callback (se vier da URL)
@@ -53,7 +53,7 @@ if (clienteAuth.isAuthenticated()) {
     if (result.success) {
         showSuccess('Login realizado com sucesso!');
         setTimeout(() => {
-            window.location.href = '/cliente/inicio.html';
+            window.location.href = '/cliente/dashboard.html';
         }, 1000);
     } else if (result.error) {
         showError(result.error);
@@ -86,7 +86,7 @@ loginForm.addEventListener('submit', async (e) => {
             
             // Aguarda um pouco para mostrar mensagem
             setTimeout(() => {
-                window.location.href = '/cliente/inicio.html';
+                window.location.href = '/cliente/dashboard.html';
             }, 1000);
         } else {
             console.error('[Login] Falha no login:', result.error);
