@@ -8,6 +8,8 @@
  * - GET /api/admin/listas/excursoes - Listar excursões pedagógicas com contagem de alunos
  * - GET /api/admin/listas/excursao/:id/alunos - Buscar alunos de uma excursão específica
  * - GET /api/admin/listas/excursao/:id/exportar - Exportar Excel de alunos
+ * - POST /api/admin/listas/atualizar-pagamentos-todas - Atualizar status de pagamento de todas as listas (consulta Asaas)
+ * - POST /api/admin/listas/excursao/:id/atualizar-pagamentos - Atualizar status de pagamento de uma excursão
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
@@ -260,6 +262,85 @@ router.get('/excursao/:id/alunos',
         context: { 
           error: error instanceof Error ? error.message : 'Unknown error',
           excursaoId: req.params.id,
+          adminId: req.user?.id
+        }
+      });
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/admin/listas/atualizar-pagamentos-todas]
+ *
+ * Sincroniza status de pagamento com o Asaas para TODOS os pedidos de excursões
+ * pedagógicas que estão AGUARDANDO_PAGAMENTO ou PENDENTE. Consulta o Asaas e
+ * atualiza para PAGO quando a cobrança foi confirmada. Permite ao admin forçar
+ * atualização imediata de todas as listas de uma vez.
+ *
+ * Response: { success, data: { atualizados, total } }
+ */
+router.post('/atualizar-pagamentos-todas',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      logger.info('[Listas] Admin solicitando atualização de pagamentos de todas as listas', {
+        context: { adminId: req.user!.id }
+      });
+
+      if (!verificarConfigAsaas()) {
+        throw ApiError.internal('Gateway de pagamento não configurado');
+      }
+
+      const pedidos = await prisma.pedido.findMany({
+        where: {
+          excursaoPedagogicaId: { not: null },
+          status: { in: ['PENDENTE', 'AGUARDANDO_PAGAMENTO'] },
+          codigoPagamento: { not: null }
+        },
+        select: { id: true, codigoPagamento: true, status: true, dataPagamento: true }
+      });
+
+      let atualizados = 0;
+
+      for (const pedido of pedidos) {
+        if (!pedido.codigoPagamento) continue;
+
+        try {
+          const asaasResult = await consultarPagamentoAsaas(pedido.codigoPagamento);
+          const statusAsaasPago = ['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH', 'CONFIRMED_BY_CUSTOMER'];
+
+          if (asaasResult?.status && statusAsaasPago.includes(asaasResult.status)) {
+            await prisma.pedido.update({
+              where: { id: pedido.id },
+              data: {
+                status: 'PAGO',
+                dataPagamento: pedido.dataPagamento || new Date()
+              }
+            });
+            atualizados++;
+
+            logger.info('[Listas] Pagamento confirmado no Asaas; pedido atualizado', {
+              context: { pedidoId: pedido.id, cobrancaId: pedido.codigoPagamento }
+            });
+          }
+        } catch (err) {
+          logger.warn('[Listas] Erro ao consultar Asaas para pedido', {
+            context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+          });
+        }
+      }
+
+      res.json({
+        success: true,
+        data: {
+          atualizados,
+          total: pedidos.length
+        }
+      });
+    } catch (error) {
+      logger.error('[Listas] Erro ao atualizar pagamentos de todas as listas', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown',
           adminId: req.user?.id
         }
       });

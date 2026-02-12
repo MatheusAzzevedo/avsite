@@ -131,7 +131,7 @@
         var i;
         for (i = 1; i <= qtd; i++) {
             container.innerHTML +=
-                '<details class="aluno-dropdown form-section-aluno" data-aluno="' + i + '">' +
+                '<details class="aluno-dropdown form-section-aluno" data-aluno="' + i + '" open>' +
                 '<summary class="aluno-dropdown-header">' +
                 '<span class="aluno-summary-text"><i class="fas fa-user-graduate"></i> Aluno ' + i + ' – Informações do estudante</span>' +
                 '<span class="aluno-summary-hint">Clique para preencher os dados do aluno</span>' +

@@ -165,9 +165,9 @@ function applyMasks() {
 
     document.querySelectorAll('input[data-field="cep"]').forEach(input => {
         input.addEventListener('input', function(e) {
-            let val = e.target.value.replace(/\D/g, '');
-            if (val.length <= 8) {
-                val = val.replace(/(\d{5})(\d)/, '$1-$2');
+            let val = e.target.value.replace(/\D/g, '').slice(0, 8);
+            if (val.length > 5) {
+                val = val.slice(0, 5) + '-' + val.slice(5, 8);
             }
             e.target.value = val;
         });

@@ -810,6 +810,16 @@
 		background: transparent !important;
 	}
 
+	/* Esconder copyright "© Avoar Turismo 2026" somente no mobile */
+	.main-header-bar .copyright {
+		display: none !important;
+	}
+
+	/* Reduzir padding entre logo e item "Início" no menu lateral mobile */
+	.main-nav-outer .main-nav-box .main-nav {
+		padding-top: 45px;
+	}
+
 	.banner-section .slide-item h1{
 		font-size: 28px;
 	}

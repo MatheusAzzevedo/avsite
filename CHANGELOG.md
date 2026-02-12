@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-02-12 - feat: máscara automática CEP (00000-000) no checkout
+
+### Arquivos Modificados
+- `api/public/cliente/js/checkout.js` [Funções formatCepBr e applyCepMask; aplicadas em respCep e cardHolderCep do fluxo pedagógico]
+- `api/public/cliente/js/checkout-convencional.js` [Máscara CEP ajustada para formatação consistente XXXXX-XXX durante digitação]
+- `api/public/cliente/js/pagamento.js` [Máscara CEP padronizada no formulário de cartão]
+
+### Alterações
+- O campo CEP no checkout (pedagógico e convencional) e na página de pagamento passa a formatar automaticamente durante a digitação, exibindo o hífen no formato brasileiro 00000-000.
+
+---
+
+## 2026-02-12 - feat: botão Atualizar na página geral, atualiza todas as listas
+
+### Arquivos Modificados
+- `api/public/admin/listas.html` [Botão "Atualizar" movido para a página geral (lista de excursões), ao lado do filtro Status, com tamanho btn-sm]
+- `api/public/admin/js/listas.js` [Função atualizarPagamentosTodas: chama API que atualiza pagamentos de todas as excursões pedagógicas]
+- `api/src/routes/lista-alunos.routes.ts` [Nova rota POST /atualizar-pagamentos-todas: sincroniza status com Asaas para todos os pedidos de excursões pedagógicas]
+
+### Alterações
+- O botão "Atualizar" estava na view de alunos (ao abrir uma excursão específica) e atualizava apenas aquela lista. Agora fica na página geral de Listas de Alunos, ao lado do filtro Status, e ao clicar atualiza os pagamentos de todas as excursões pedagógicas de uma vez.
+
+---
+
 ## 2026-02-12 - fix: botão Atualizar ao lado de Exportar Excel
 
 ### Arquivos Modificados

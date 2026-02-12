@@ -4,12 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-12) - fix: botão Atualizar ao lado de Exportar Excel
-- **api/public/admin/listas.html** [Botão "Atualizar" movido da coluna "Data Pedido" para a área de ações, ao lado do botão "Exportar Excel"]
+### Última atualização (2026-02-12) - feat: máscara automática CEP no checkout
+- **api/public/cliente/js/checkout.js** [Máscara CEP (00000-000) em respCep e cardHolderCep]
+- **api/public/cliente/js/checkout-convencional.js** [Máscara CEP padronizada]
+- **api/public/cliente/js/pagamento.js** [Máscara CEP no formulário de cartão]
 
-Resumo: O botão "Atualizar" estava no cabeçalho da tabela. Agora fica junto ao botão "Exportar Excel" na área de ações do card, melhorando a usabilidade.
+Resumo: O campo CEP nos checkouts (pedagógico e convencional) e na página de pagamento agora formata automaticamente durante a digitação, exibindo o hífen no formato 00000-000.
 
-### Versão anterior (2026-02-12) - fix: polling 20 min + 4h + botão Atualizar
+### Versão anterior (2026-02-12) - feat: botão Atualizar na página geral, atualiza todas as listas
+- **api/public/admin/listas.html** [Botão "Atualizar" na página geral, ao lado do filtro Status, tamanho btn-sm]
+- **api/public/admin/js/listas.js** [Função atualizarPagamentosTodas: chama API que atualiza pagamentos de todas as excursões]
+- **api/src/routes/lista-alunos.routes.ts** [Nova rota POST /atualizar-pagamentos-todas]
+
+Resumo: O botão "Atualizar" agora fica na página geral de Listas de Alunos (ao lado do Status) e ao clicar atualiza os pagamentos de todas as excursões pedagógicas de uma vez, consultando o Asaas.
+
+### Versão anterior (2026-02-12) - fix: botão Atualizar ao lado de Exportar Excel
 - **api/public/cliente/js/checkout.js**, **api/public/cliente/js/pagamento.js**, **cliente/js/checkout.js** [Polling de status PIX alterado de 3-5s para 4 horas]
 - **api/public/admin/js/listas.js** [Exibe "atualização a cada 4 horas" abaixo de "Aguardando Pagamento" na coluna Status Pedido]
 

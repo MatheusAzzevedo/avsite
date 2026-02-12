@@ -270,7 +270,7 @@ function renderAlunos() {
                 <td>${aluno.telefoneResponsavel ? escapeHtml(aluno.telefoneResponsavel) : '-'}</td>
                 <td>
                     <span class="badge ${statusClass}">${formatStatusPedido(aluno.statusPedido)}</span>
-                    ${aluno.statusPedido === 'AGUARDANDO_PAGAMENTO' ? '<br><small style="color: var(--text-light); font-size: 0.75rem;">1ª verificação em 20 min, depois a cada 4h. Use o botão Atualizar para forçar.</small>' : ''}
+                    ${aluno.statusPedido === 'AGUARDANDO_PAGAMENTO' ? '<br><small style="color: var(--text-light); font-size: 0.75rem;">1ª verificação em 20 min, depois a cada 4h. Use o botão Atualizar na página de listas para forçar.</small>' : ''}
                 </td>
                 <td>${dataPedido}</td>
             </tr>
@@ -279,19 +279,17 @@ function renderAlunos() {
 }
 
 /**
- * Explicação da função [atualizarPagamentos]
- * Consulta o Asaas para pedidos em aguardando pagamento e atualiza o status.
- * Permite ao admin forçar a verificação imediata sem aguardar o polling de 4 horas.
+ * Explicação da função [atualizarPagamentosTodas]
+ * Consulta o Asaas para TODOS os pedidos de excursões pedagógicas em aguardando
+ * pagamento e atualiza o status. Permite ao admin forçar a verificação imediata
+ * de todas as listas sem aguardar o polling de 4 horas.
  */
-async function atualizarPagamentos() {
-    if (!currentExcursaoId) return;
-
-    const btn = document.getElementById('btnAtualizarPagamentos');
+async function atualizarPagamentosTodas() {
+    const btn = document.getElementById('btnAtualizarPagamentosTodas');
     if (btn) {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
     }
-
 
     try {
         const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
@@ -300,7 +298,9 @@ async function atualizarPagamentos() {
             return;
         }
 
-        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/atualizar-pagamentos`, {
+        console.log('[Listas] Atualizando pagamentos de todas as listas...');
+
+        const response = await fetch('/api/admin/listas/atualizar-pagamentos-todas', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -320,14 +320,17 @@ async function atualizarPagamentos() {
         const { atualizados, total } = result.data || {};
 
         if (atualizados > 0) {
-            showSuccess(`${atualizados} pedido(s) atualizado(s) para Pago.`);
+            showSuccess(`${atualizados} pedido(s) atualizado(s) para Pago em todas as listas.`);
         } else if (total === 0) {
             showSuccess('Nenhum pedido aguardando pagamento para verificar.');
         } else {
             showSuccess('Nenhum pagamento novo confirmado no Asaas.');
         }
 
-        await loadAlunos();
+        await loadExcursoes();
+        if (currentExcursaoId) {
+            await loadAlunos();
+        }
     } catch (error) {
         console.error('[Listas] Erro ao atualizar pagamentos:', error);
         showError('Erro ao atualizar pagamentos. Tente novamente.');
@@ -569,8 +572,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnExportar = document.getElementById('btnExportar');
     if (btnExportar) btnExportar.addEventListener('click', exportarExcel);
 
-    const btnAtualizarPagamentos = document.getElementById('btnAtualizarPagamentos');
-    if (btnAtualizarPagamentos) btnAtualizarPagamentos.addEventListener('click', atualizarPagamentos);
+    const btnAtualizarPagamentosTodas = document.getElementById('btnAtualizarPagamentosTodas');
+    if (btnAtualizarPagamentosTodas) btnAtualizarPagamentosTodas.addEventListener('click', atualizarPagamentosTodas);
 
     const filterStatusPedido = document.getElementById('filterStatusPedido');
     if (filterStatusPedido) filterStatusPedido.addEventListener('change', loadAlunos);

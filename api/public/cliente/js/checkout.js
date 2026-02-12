@@ -131,7 +131,7 @@
         var i;
         for (i = 1; i <= qtd; i++) {
             container.innerHTML +=
-                '<details class="aluno-dropdown form-section-aluno" data-aluno="' + i + '">' +
+                '<details class="aluno-dropdown form-section-aluno" data-aluno="' + i + '" open>' +
                 '<summary class="aluno-dropdown-header">' +
                 '<span class="aluno-summary-text"><i class="fas fa-user-graduate"></i> Aluno ' + i + ' – Informações do estudante</span>' +
                 '<span class="aluno-summary-hint">Clique para preencher os dados do aluno</span>' +
@@ -365,6 +365,24 @@
         });
     }
 
+    /** Formata CEP como 00000-000 (8 dígitos). */
+    function formatCepBr(value) {
+        var d = String(value).replace(/\D/g, '').slice(0, 8);
+        if (d.length <= 5) return d;
+        return d.slice(0, 5) + '-' + d.slice(5, 8);
+    }
+
+    /** Aplica máscara de CEP no input: usuário só digita, campo exibe hífen automaticamente. */
+    function applyCepMask(inputEl) {
+        if (!inputEl) return;
+        inputEl.addEventListener('input', function () {
+            var digits = inputEl.value.replace(/\D/g, '').slice(0, 8);
+            var formatted = formatCepBr(digits);
+            inputEl.value = formatted;
+            inputEl.setSelectionRange(formatted.length, formatted.length);
+        });
+    }
+
     function pagarComCartao() {
         var btn = document.getElementById('btnPagarCartao');
         var num = onlyDigits(document.getElementById('cardNumber').value);
@@ -556,6 +574,8 @@
 
         applyCpfMask(document.getElementById('respCpf'));
         applyCpfMask(document.getElementById('cardHolderCpf'));
+        applyCepMask(document.getElementById('respCep'));
+        applyCepMask(document.getElementById('cardHolderCep'));
         var qtdAlunos = Math.max(1, Math.min(50, parseInt(excursao.quantidade, 10) || 1));
         for (var a = 1; a <= qtdAlunos; a++) {
             var cpfAlunoEl = document.getElementById('cpfAluno_' + a);

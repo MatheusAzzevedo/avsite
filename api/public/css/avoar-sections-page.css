@@ -259,7 +259,12 @@
         justify-content: center;
         align-self: center;
         gap: 1.5rem;
+        row-gap: 1.8rem; /* 20% maior que 1.5rem apenas no mobile */
         margin-top: 1.5rem;
+    }
+
+    .section-nav-icons .nav-icon-link {
+        gap: 0.6rem; /* 20% maior que 0.5rem - altura da linha ícone+label */
     }
 
     .section-nav-icons .nav-icon-link i {
@@ -327,7 +332,12 @@
         justify-content: center;
         align-self: center;
         gap: 1rem;
+        row-gap: 1.2rem; /* 20% maior que 1rem apenas no mobile */
         margin-top: 1.25rem;
+    }
+
+    .section-nav-icons .nav-icon-link {
+        gap: 0.6rem; /* 20% maior que 0.5rem - altura da linha ícone+label */
     }
 
     .section-nav-icons .nav-icon-link i {

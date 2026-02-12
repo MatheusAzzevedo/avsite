@@ -422,14 +422,17 @@ function setupCardMasks() {
         e.target.value = val;
     });
 
-    // Máscara CEP: 00000-000
-    document.getElementById('holderPostalCode').addEventListener('input', function(e) {
-        let val = e.target.value.replace(/\D/g, '');
-        if (val.length <= 8) {
-            val = val.replace(/(\d{5})(\d)/, '$1-$2');
-        }
-        e.target.value = val;
-    });
+    // Máscara CEP: 00000-000 (formatação automática na digitação)
+    const holderPostalCode = document.getElementById('holderPostalCode');
+    if (holderPostalCode) {
+        holderPostalCode.addEventListener('input', function(e) {
+            let val = e.target.value.replace(/\D/g, '').slice(0, 8);
+            if (val.length > 5) {
+                val = val.slice(0, 5) + '-' + val.slice(5, 8);
+            }
+            e.target.value = val;
+        });
+    }
 
     // Máscara telefone: (00) 00000-0000
     document.getElementById('holderPhone').addEventListener('input', function(e) {
