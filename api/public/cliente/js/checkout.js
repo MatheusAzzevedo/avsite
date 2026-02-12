@@ -177,6 +177,7 @@
     var valorPagamento = 0;
     var pixQrCode = null;
     var pollStatusInterval = null;
+    var pollStatusTimeout = null;
     var pagamentoListenersAdded = false;
 
     function mostrarEtapaPagamento(pedidoId, valorTotal) {
@@ -294,17 +295,31 @@
 
     function iniciarPollStatus() {
         if (pollStatusInterval) clearInterval(pollStatusInterval);
-        pollStatusInterval = setInterval(function () {
+        if (pollStatusTimeout) clearTimeout(pollStatusTimeout);
+
+        function pararPolling() {
+            if (pollStatusInterval) { clearInterval(pollStatusInterval); pollStatusInterval = null; }
+            if (pollStatusTimeout) { clearTimeout(pollStatusTimeout); pollStatusTimeout = null; }
+        }
+
+        function doCheck() {
             if (!pedidoIdPagamento) return;
             clienteAuth.fetchAuth('/cliente/pagamento/' + pedidoIdPagamento + '/status').then(function (r) { return r.json(); }).then(function (data) {
                 if (data.success && data.data && (data.data.status === 'PAGO' || data.data.status === 'CONFIRMADO')) {
-                    clearInterval(pollStatusInterval);
-                    pollStatusInterval = null;
+                    pararPolling();
                     showToast('Pagamento confirmado! Redirecionando...', 'success');
                     window.location.href = 'pedidos.html';
                 }
             }).catch(function () {});
-        }, 4 * 60 * 60 * 1000); // 4 horas
+        }
+
+        // Primeira verificação: 20 minutos após a compra
+        pollStatusTimeout = setTimeout(function () {
+            pollStatusTimeout = null;
+            doCheck();
+            // Depois: a cada 4 horas
+            pollStatusInterval = setInterval(doCheck, 4 * 60 * 60 * 1000);
+        }, 20 * 60 * 1000);
     }
 
     function onlyDigits(s) {

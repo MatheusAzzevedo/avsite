@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-02-12 - fix: polling 20 min + 4h + botão Atualizar
+
+### Arquivos Modificados
+- `api/public/cliente/js/checkout.js` [Polling: primeira verificação 20 min após compra, depois a cada 4h]
+- `api/public/cliente/js/pagamento.js` [Idem]
+- `cliente/js/checkout.js` [Idem]
+- `api/public/admin/js/listas.js` [Texto atualizado: "1ª verificação em 20 min, depois a cada 4h. Use o botão Atualizar para forçar."]
+
+### Alterações
+- Verificação de pagamento PIX: primeira consulta ao Asaas 20 minutos após a compra; em seguida, a cada 4 horas. O botão "Atualizar" na Lista de Alunos permanece para o admin forçar a verificação quando quiser.
+
+---
+
 ## 2026-02-12 - fix: polling de status a cada 4 horas + info no admin
 
 ### Arquivos Modificados

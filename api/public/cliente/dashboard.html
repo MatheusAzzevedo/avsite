@@ -51,6 +51,7 @@
             align-items: center;
             gap: 0.5rem;
         }
+        .navbar-logo { height: 36px; width: auto; display: block; }
         
         .navbar-menu { 
             display: flex; 
@@ -293,11 +294,11 @@
 <body>
     <nav class="navbar">
         <a href="inicio.html" class="navbar-brand" style="text-decoration: none;">
-            <i class="fas fa-plane-departure"></i> Avorar Turismo
+            <img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo">
         </a>
         <div class="navbar-menu">
-            <a href="inicio.html" class="navbar-link"><i class="fas fa-th-large"></i> Dashboard</a>
             <a href="dashboard.html" class="navbar-link active"><i class="fas fa-home"></i> Início</a>
+            <a href="inicio.html" class="navbar-link"><i class="fas fa-th-large"></i> Dashboard</a>
             <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
             <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>

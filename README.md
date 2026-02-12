@@ -4,11 +4,11 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-12) - fix: polling a cada 4 horas + info no admin
+### Última atualização (2026-02-12) - fix: polling 20 min + 4h + botão Atualizar
 - **api/public/cliente/js/checkout.js**, **api/public/cliente/js/pagamento.js**, **cliente/js/checkout.js** [Polling de status PIX alterado de 3-5s para 4 horas]
 - **api/public/admin/js/listas.js** [Exibe "atualização a cada 4 horas" abaixo de "Aguardando Pagamento" na coluna Status Pedido]
 
-Resumo: Polling de confirmação reduzido de 3-5s para 4 horas para evitar custo excessivo no servidor. Na Lista de Alunos, o status "Aguardando Pagamento" mostra abaixo a informação "atualização a cada 4 horas".
+Resumo: Verificação de pagamento: 1ª em 20 min após compra, depois a cada 4h. Botão "Atualizar" na Lista de Alunos permite forçar a verificação a qualquer momento.
 
 ### Versão anterior (2026-02-12) - fix: confirmação de pagamento na Lista de Alunos
 - **api/src/routes/pagamento.routes.ts** [GET /status: sincroniza status com Asaas; quando pagamento confirmado na Asaas e pedido ainda aguardando, atualiza para PAGO]

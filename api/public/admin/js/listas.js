@@ -270,12 +270,73 @@ function renderAlunos() {
                 <td>${aluno.telefoneResponsavel ? escapeHtml(aluno.telefoneResponsavel) : '-'}</td>
                 <td>
                     <span class="badge ${statusClass}">${formatStatusPedido(aluno.statusPedido)}</span>
-                    ${aluno.statusPedido === 'AGUARDANDO_PAGAMENTO' ? '<br><small style="color: var(--text-light); font-size: 0.75rem;">atualização a cada 4 horas</small>' : ''}
+                    ${aluno.statusPedido === 'AGUARDANDO_PAGAMENTO' ? '<br><small style="color: var(--text-light); font-size: 0.75rem;">1ª verificação em 20 min, depois a cada 4h. Use o botão Atualizar para forçar.</small>' : ''}
                 </td>
                 <td>${dataPedido}</td>
             </tr>
         `;
     }).join('');
+}
+
+/**
+ * Explicação da função [atualizarPagamentos]
+ * Consulta o Asaas para pedidos em aguardando pagamento e atualiza o status.
+ * Permite ao admin forçar a verificação imediata sem aguardar o polling de 4 horas.
+ */
+async function atualizarPagamentos() {
+    if (!currentExcursaoId) return;
+
+    const btn = document.getElementById('btnAtualizarPagamentos');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
+    }
+
+
+    try {
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/atualizar-pagamentos`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = 'login.html';
+                return;
+            }
+            throw new Error('Erro ao atualizar pagamentos');
+        }
+
+        const result = await response.json();
+        const { atualizados, total } = result.data || {};
+
+        if (atualizados > 0) {
+            showSuccess(`${atualizados} pedido(s) atualizado(s) para Pago.`);
+        } else if (total === 0) {
+            showSuccess('Nenhum pedido aguardando pagamento para verificar.');
+        } else {
+            showSuccess('Nenhum pagamento novo confirmado no Asaas.');
+        }
+
+        await loadAlunos();
+    } catch (error) {
+        console.error('[Listas] Erro ao atualizar pagamentos:', error);
+        showError('Erro ao atualizar pagamentos. Tente novamente.');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar';
+        }
+    }
 }
 
 /**
@@ -507,6 +568,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnExportar = document.getElementById('btnExportar');
     if (btnExportar) btnExportar.addEventListener('click', exportarExcel);
+
+    const btnAtualizarPagamentos = document.getElementById('btnAtualizarPagamentos');
+    if (btnAtualizarPagamentos) btnAtualizarPagamentos.addEventListener('click', atualizarPagamentos);
 
     const filterStatusPedido = document.getElementById('filterStatusPedido');
     if (filterStatusPedido) filterStatusPedido.addEventListener('change', loadAlunos);

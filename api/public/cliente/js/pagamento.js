@@ -16,6 +16,7 @@
 let pedidoId = '';
 let pedidoData = null;
 let pixPollingInterval = null;
+let pixPollingTimeout = null;
 
 // ============================================================
 // Inicialização
@@ -259,41 +260,47 @@ function displayPixQrCode(data) {
 /**
  * Explicação da função [startPixPolling]:
  * Inicia verificação periódica do status do pagamento PIX.
- * A cada 5 segundos consulta a API para ver se o pagamento foi confirmado.
+ * Primeira verificação: 20 minutos após a compra.
+ * Depois: a cada 4 horas.
  * Quando confirmado, para o polling e mostra tela de sucesso.
  */
 function startPixPolling() {
-    console.log('[Pagamento PIX] Iniciando polling de status...');
+    console.log('[Pagamento PIX] Iniciando polling de status (1ª verificação em 20 min, depois a cada 4h)...');
 
-    // Limpa polling anterior se existir
-    if (pixPollingInterval) {
-        clearInterval(pixPollingInterval);
+    if (pixPollingInterval) clearInterval(pixPollingInterval);
+    if (pixPollingTimeout) clearTimeout(pixPollingTimeout);
+
+    function stopPolling() {
+        if (pixPollingInterval) { clearInterval(pixPollingInterval); pixPollingInterval = null; }
+        if (pixPollingTimeout) { clearTimeout(pixPollingTimeout); pixPollingTimeout = null; }
     }
 
-    pixPollingInterval = setInterval(async () => {
+    async function doCheck() {
         try {
             console.log('[Pagamento PIX] Verificando status do pagamento...');
-
             const response = await clienteAuth.fetchAuth(`/cliente/pagamento/${pedidoId}/status`);
             const result = await response.json();
 
-            console.log('[Pagamento PIX] Status atual:', result.data?.status);
-
             if (result.success && result.data) {
                 const status = result.data.status;
-
                 if (status === 'PAGO' || status === 'CONFIRMADO') {
                     console.log('[Pagamento PIX] Pagamento confirmado!');
-                    clearInterval(pixPollingInterval);
-                    pixPollingInterval = null;
+                    stopPolling();
                     showSuccess('Pagamento PIX confirmado com sucesso!');
                 }
             }
         } catch (error) {
             console.error('[Pagamento PIX] Erro no polling:', error);
-            // Não para o polling por erro temporário
         }
-    }, 4 * 60 * 60 * 1000); // A cada 4 horas
+    }
+
+    // Primeira verificação: 20 minutos após a compra
+    pixPollingTimeout = setTimeout(async () => {
+        pixPollingTimeout = null;
+        await doCheck();
+        // Depois: a cada 4 horas
+        pixPollingInterval = setInterval(doCheck, 4 * 60 * 60 * 1000);
+    }, 20 * 60 * 1000);
 }
 
 // ============================================================
