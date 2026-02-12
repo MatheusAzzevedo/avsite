@@ -124,8 +124,8 @@ router.post('/pix',
         // Convencional: passageiro é o pagador
         cpfResponsavel = primeiroItem.cpfAluno?.replace(/\D/g, '') ?? '';
         nomeResponsavel = primeiroItem.nomeAluno;
-        emailResponsavel = primeiroItem.emailResponsavel;
-        telefoneResponsavel = primeiroItem.telefoneResponsavel;
+        emailResponsavel = primeiroItem.emailResponsavel ?? undefined;
+        telefoneResponsavel = primeiroItem.telefoneResponsavel ?? undefined;
 
         logger.info('[Pagamento PIX] Usando dados do passageiro (excursão convencional)', {
           context: { pedidoId }
@@ -529,7 +529,7 @@ router.get('/:pedidoId/status',
           const statusAsaasPago = ['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH', 'CONFIRMED_BY_CUSTOMER'];
           const pedidoAguardando = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
 
-          if (statusAsaasPago.includes(asaasStatus?.status) && pedidoAguardando) {
+          if (asaasStatus?.status && statusAsaasPago.includes(asaasStatus.status) && pedidoAguardando) {
             await prisma.pedido.update({
               where: { id: pedido.id },
               data: {
