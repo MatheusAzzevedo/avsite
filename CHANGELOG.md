@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-12 - fix: botão Atualizar ao lado de Exportar Excel
+
+### Arquivos Modificados
+- `api/public/admin/listas.html` [Botão "Atualizar" movido do cabeçalho da coluna "Data Pedido" para a área de ações, ao lado do botão "Exportar Excel"]
+
+### Alterações
+- O botão "Atualizar" (consulta Asaas e atualiza status de pagamento) ficava no canto direito da tabela, longe do botão "Exportar Excel". Agora ambos ficam juntos na área de ações do card, facilitando o uso.
+
+---
+
 ## 2026-02-12 - fix: polling 20 min + 4h + botão Atualizar
 
 ### Arquivos Modificados

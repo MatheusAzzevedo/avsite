@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-12) - fix: polling 20 min + 4h + botão Atualizar
+### Última atualização (2026-02-12) - fix: botão Atualizar ao lado de Exportar Excel
+- **api/public/admin/listas.html** [Botão "Atualizar" movido da coluna "Data Pedido" para a área de ações, ao lado do botão "Exportar Excel"]
+
+Resumo: O botão "Atualizar" estava no cabeçalho da tabela. Agora fica junto ao botão "Exportar Excel" na área de ações do card, melhorando a usabilidade.
+
+### Versão anterior (2026-02-12) - fix: polling 20 min + 4h + botão Atualizar
 - **api/public/cliente/js/checkout.js**, **api/public/cliente/js/pagamento.js**, **cliente/js/checkout.js** [Polling de status PIX alterado de 3-5s para 4 horas]
 - **api/public/admin/js/listas.js** [Exibe "atualização a cada 4 horas" abaixo de "Aguardando Pagamento" na coluna Status Pedido]
 
