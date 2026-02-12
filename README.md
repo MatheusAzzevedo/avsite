@@ -4,7 +4,23 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-10) - Favicon Avoar nas telas de login
+### Última atualização (2026-02-12) - fix: polling a cada 4 horas + info no admin
+- **api/public/cliente/js/checkout.js**, **api/public/cliente/js/pagamento.js**, **cliente/js/checkout.js** [Polling de status PIX alterado de 3-5s para 4 horas]
+- **api/public/admin/js/listas.js** [Exibe "atualização a cada 4 horas" abaixo de "Aguardando Pagamento" na coluna Status Pedido]
+
+Resumo: Polling de confirmação reduzido de 3-5s para 4 horas para evitar custo excessivo no servidor. Na Lista de Alunos, o status "Aguardando Pagamento" mostra abaixo a informação "atualização a cada 4 horas".
+
+### Versão anterior (2026-02-12) - fix: confirmação de pagamento na Lista de Alunos
+- **api/src/routes/pagamento.routes.ts** [GET /status: sincroniza status com Asaas; quando pagamento confirmado na Asaas e pedido ainda aguardando, atualiza para PAGO]
+
+Resumo: A Lista de Alunos (admin) não refletia o status "Pago" após pagamento PIX/cartão. O webhook pode falhar. Agora o polling do status consulta a Asaas e, ao detectar pagamento confirmado, atualiza o pedido para PAGO no banco, garantindo que a Lista de Alunos mostre corretamente.
+
+### Versão anterior (2026-02-12) - fix: CPF do responsável no checkout pedagógico
+- **api/src/routes/pagamento.routes.ts** [PIX e Cartão: excursão pedagógica usa dadosResponsavelFinanceiro (CPF do responsável) em vez de cpfAluno (CPF do aluno) ao enviar para Asaas]
+
+Resumo: O checkout de excursões pedagógicas enviava o CPF do aluno para a Asaas. Ajustado para usar o CPF do responsável financeiro (dadosResponsavelFinanceiro no pedido). Excursão convencional mantém uso dos dados do passageiro.
+
+### Versão anterior (2026-02-10) - Favicon Avoar nas telas de login
 - **api/public/admin/login.html** [Adicionados link shortcut icon e icon apontando para ../images/favicon-avoar.png]
 - **api/public/cliente/login.html** [Adicionados link shortcut icon e icon apontando para ../images/favicon-avoar.png]
 - **cliente/login.html** [Adicionados link shortcut icon e icon apontando para ../api/public/images/favicon-avoar.png]

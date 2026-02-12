@@ -304,7 +304,7 @@
                     window.location.href = 'pedidos.html';
                 }
             }).catch(function () {});
-        }, 3000);
+        }, 4 * 60 * 60 * 1000); // 4 horas
     }
 
     function onlyDigits(s) {

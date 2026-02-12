@@ -94,27 +94,54 @@ router.post('/pix',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
-      // Extrai dados do responsável do primeiro item do pedido
-      // No fluxo convencional, cpfAluno = CPF do responsável financeiro
+      // Extrai dados do PAGADOR (responsável financeiro) para enviar ao Asaas.
+      // Excursão pedagógica: usa dadosResponsavelFinanceiro (CPF do responsável, NÃO do aluno).
+      // Excursão convencional: usa dados do primeiro passageiro (passageiro = pagador).
       const primeiroItem = pedido.itens?.[0];
       if (!primeiroItem) {
         logger.error('[Pagamento PIX] Pedido sem itens', { context: { pedidoId } });
         throw ApiError.internal('Pedido não possui itens associados');
       }
 
-      const cpfResponsavel = primeiroItem.cpfAluno?.replace(/\D/g, '');
-      const nomeResponsavel = primeiroItem.nomeAluno;
-      const emailResponsavel = primeiroItem.emailResponsavel;
-      const telefoneResponsavel = primeiroItem.telefoneResponsavel;
+      const dadosResp = pedido.dadosResponsavelFinanceiro as { cpf?: string; nome?: string; sobrenome?: string; email?: string; telefone?: string } | null;
+      const isPedagogica = !!pedido.excursaoPedagogicaId;
+
+      let cpfResponsavel: string;
+      let nomeResponsavel: string;
+      let emailResponsavel: string | undefined;
+      let telefoneResponsavel: string | undefined;
+
+      if (isPedagogica && dadosResp?.cpf) {
+        cpfResponsavel = String(dadosResp.cpf).replace(/\D/g, '');
+        nomeResponsavel = [dadosResp.nome, dadosResp.sobrenome].filter(Boolean).join(' ').trim() || pedido.cliente.nome;
+        emailResponsavel = dadosResp.email;
+        telefoneResponsavel = dadosResp.telefone;
+
+        logger.info('[Pagamento PIX] Usando dados do responsável financeiro (excursão pedagógica)', {
+          context: { pedidoId, temCpf: cpfResponsavel.length >= 11 }
+        });
+      } else {
+        // Convencional: passageiro é o pagador
+        cpfResponsavel = primeiroItem.cpfAluno?.replace(/\D/g, '') ?? '';
+        nomeResponsavel = primeiroItem.nomeAluno;
+        emailResponsavel = primeiroItem.emailResponsavel;
+        telefoneResponsavel = primeiroItem.telefoneResponsavel;
+
+        logger.info('[Pagamento PIX] Usando dados do passageiro (excursão convencional)', {
+          context: { pedidoId }
+        });
+      }
 
       // Validação: Asaas exige CPF/CNPJ para criar cobrança PIX
       if (!cpfResponsavel || cpfResponsavel.length < 11) {
-        logger.warn('[Pagamento PIX] Responsável sem CPF válido', {
-          context: { pedidoId, temCpf: !!primeiroItem.cpfAluno }
+        logger.warn('[Pagamento PIX] Pagador sem CPF válido', {
+          context: { pedidoId, isPedagogica, temDadosResp: !!dadosResp?.cpf }
         });
         return res.status(400).json({
           success: false,
-          error: 'CPF do responsável é obrigatório. Verifique os dados preenchidos no pedido.'
+          error: isPedagogica
+            ? 'CPF do responsável financeiro é obrigatório. Verifique os dados preenchidos no pedido.'
+            : 'CPF do passageiro é obrigatório. Verifique os dados preenchidos no pedido.'
         });
       }
 
@@ -272,10 +299,10 @@ router.post('/cartao',
         throw ApiError.internal('Gateway de pagamento não configurado');
       }
 
-      // Busca pedido
+      // Busca pedido com itens e dados do responsável
       const pedido = await prisma.pedido.findFirst({
         where: { id: pedidoId, clienteId },
-        include: { cliente: true, excursaoPedagogica: true, excursao: true }
+        include: { cliente: true, excursaoPedagogica: true, excursao: true, itens: true }
       });
 
       if (!pedido) {
@@ -284,6 +311,32 @@ router.post('/cartao',
 
       if (pedido.status !== 'PENDENTE' && pedido.status !== 'AGUARDANDO_PAGAMENTO') {
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
+      }
+
+      // Excursão pedagógica: usa dados do responsável financeiro (CPF do pagador, NÃO do aluno)
+      const dadosResp = pedido.dadosResponsavelFinanceiro as { cpf?: string; nome?: string; sobrenome?: string; email?: string; telefone?: string } | null;
+      const isPedagogica = !!pedido.excursaoPedagogicaId;
+      const primeiroItem = pedido.itens?.[0];
+
+      let clienteEmail: string;
+      let clienteNome: string;
+      let clienteCpf: string | undefined;
+      let clienteTelefone: string | undefined;
+
+      if (isPedagogica && dadosResp?.cpf) {
+        clienteEmail = dadosResp.email || pedido.cliente.email;
+        clienteNome = [dadosResp.nome, dadosResp.sobrenome].filter(Boolean).join(' ').trim() || pedido.cliente.nome;
+        clienteCpf = String(dadosResp.cpf).replace(/\D/g, '');
+        clienteTelefone = dadosResp.telefone || pedido.cliente.telefone || undefined;
+
+        logger.info('[Pagamento Cartão] Usando dados do responsável financeiro (excursão pedagógica)', {
+          context: { pedidoId }
+        });
+      } else {
+        clienteEmail = pedido.cliente.email;
+        clienteNome = pedido.cliente.nome;
+        clienteCpf = pedido.cliente.cpf?.replace(/\D/g, '') || primeiroItem?.cpfAluno?.replace(/\D/g, '') || undefined;
+        clienteTelefone = pedido.cliente.telefone || primeiroItem?.telefoneResponsavel || undefined;
       }
 
       const valorTotal = Number(pedido.valorTotal);
@@ -299,10 +352,10 @@ router.post('/cartao',
       const descricao = `Excursão: ${tituloExcursao} - ${pedido.quantidade}x passagens`;
 
       const cobranca = await criarCobrancaCartaoAsaas({
-        clienteEmail: pedido.cliente.email,
-        clienteNome: pedido.cliente.nome,
-        clienteCpf: pedido.cliente.cpf || undefined,
-        clienteTelefone: pedido.cliente.telefone || undefined,
+        clienteEmail,
+        clienteNome,
+        clienteCpf: clienteCpf && clienteCpf.length >= 11 ? clienteCpf : undefined,
+        clienteTelefone,
         valor: valorTotal,
         descricao,
         externalReference: pedido.id,
@@ -456,18 +509,40 @@ router.get('/:pedidoId/status',
         throw ApiError.notFound('Pedido não encontrado');
       }
 
-      // Se tem código de pagamento, consulta Asaas
+      // Se tem código de pagamento, consulta Asaas e confirma o pagamento
       let asaasStatus = null;
+      let statusFinal = pedido.status;
+
       if (pedido.codigoPagamento && verificarConfigAsaas()) {
         try {
           asaasStatus = await consultarPagamentoAsaas(pedido.codigoPagamento);
-          
+
           logger.info('[Pagamento Status] Status consultado no Asaas', {
             context: {
               pedidoId,
-              asaasStatus: asaasStatus.status
+              asaasStatus: asaasStatus.status,
+              statusPedido: pedido.status
             }
           });
+
+          // Confirma pagamento: se Asaas indica PAGO mas nosso pedido ainda aguarda, atualiza
+          const statusAsaasPago = ['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH', 'CONFIRMED_BY_CUSTOMER'];
+          const pedidoAguardando = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
+
+          if (statusAsaasPago.includes(asaasStatus?.status) && pedidoAguardando) {
+            await prisma.pedido.update({
+              where: { id: pedido.id },
+              data: {
+                status: 'PAGO',
+                dataPagamento: pedido.dataPagamento || new Date()
+              }
+            });
+            statusFinal = 'PAGO';
+
+            logger.info('[Pagamento Status] Pagamento confirmado no Asaas; pedido atualizado para PAGO', {
+              context: { pedidoId, asaasStatus: asaasStatus.status }
+            });
+          }
         } catch (error) {
           logger.error('[Pagamento Status] Erro ao consultar Asaas', {
             context: { error: error instanceof Error ? error.message : 'Unknown' }
@@ -479,7 +554,7 @@ router.get('/:pedidoId/status',
         success: true,
         data: {
           pedidoId: pedido.id,
-          status: pedido.status,
+          status: statusFinal,
           codigoPagamento: pedido.codigoPagamento,
           metodoPagamento: pedido.metodoPagamento,
           valorTotal: Number(pedido.valorTotal),

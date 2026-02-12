@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-02-12 - fix: polling de status a cada 4 horas + info no admin
+
+### Arquivos Modificados
+- `api/public/cliente/js/checkout.js` [Polling de status PIX alterado de 3s para 4 horas (4*60*60*1000 ms)]
+- `api/public/cliente/js/pagamento.js` [Polling de status PIX alterado de 5s para 4 horas]
+- `cliente/js/checkout.js` [Polling de status PIX alterado de 3s para 4 horas]
+- `api/public/admin/js/listas.js` [Coluna Status Pedido: exibe "atualização a cada 4 horas" abaixo de "Aguardando Pagamento"]
+
+### Alterações
+- O polling de confirmação de pagamento (PIX/cartão) consumia o servidor a cada 3-5 segundos, encarecendo a operação. Alterado para verificação a cada 4 horas. Na Lista de Alunos (admin), status "Aguardando Pagamento" passa a exibir abaixo a informação "atualização a cada 4 horas" para orientar o administrador.
+
+---
+
+## 2026-02-12 - fix: confirmação de pagamento atualiza status na Lista de Alunos
+
+### Arquivos Modificados
+- `api/src/routes/pagamento.routes.ts` [GET /status: ao consultar Asaas, se o pagamento está RECEIVED/CONFIRMED/RECEIVED_IN_CASH/CONFIRMED_BY_CUSTOMER e o pedido ainda PENDENTE ou AGUARDANDO_PAGAMENTO, atualiza o pedido para PAGO. Garante que o polling confirme o pagamento mesmo se o webhook falhar.]
+
+### Alterações
+- A Lista de Alunos exibia "Aguardando Pagamento" mesmo após o cliente pagar (PIX ou cartão). O webhook do Asaas atualiza o pedido, mas pode falhar (URL não configurada, firewall). Agora o endpoint GET /cliente/pagamento/:pedidoId/status sincroniza: ao consultar o Asaas e detectar pagamento confirmado, atualiza o pedido para PAGO. O polling (a cada 3–5s) passa a funcionar como confirmação adicional, garantindo que a Lista de Alunos mostre "Pago" após o pagamento.
+
+---
+
+## 2026-02-12 - fix: CPF do responsável (não do aluno) enviado ao Asaas no checkout pedagógico
+
+### Arquivos Modificados
+- `api/src/routes/pagamento.routes.ts` [PIX e Cartão: excursão pedagógica passa a usar dadosResponsavelFinanceiro do pedido (CPF, nome, email, telefone do responsável) em vez de cpfAluno/nomeAluno do item (dados do aluno). Excursão convencional continua usando dados do passageiro/item.]
+
+### Alterações
+- O fluxo de pagamento PIX e Cartão de excursões pedagógicas enviava o CPF do aluno para a API Asaas. A Lei exige que o pagador (responsável financeiro) seja identificado na cobrança. Ajuste: excursão pedagógica usa dadosResponsavelFinanceiro (CPF do responsável); excursão convencional mantém uso dos dados do passageiro/item.
+
+---
+
 ## 2026-02-10 - feat: favicon Avoar nas telas de login (cliente e admin)
 
 ### Arquivos Modificados

@@ -293,7 +293,7 @@ function startPixPolling() {
             console.error('[Pagamento PIX] Erro no polling:', error);
             // Não para o polling por erro temporário
         }
-    }, 5000); // A cada 5 segundos
+    }, 4 * 60 * 60 * 1000); // A cada 4 horas
 }
 
 // ============================================================

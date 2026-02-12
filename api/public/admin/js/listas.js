@@ -268,7 +268,10 @@ function renderAlunos() {
                 <td>${aluno.serieAluno ? escapeHtml(aluno.serieAluno) : '-'}</td>
                 <td>${aluno.cpfAluno ? escapeHtml(aluno.cpfAluno) : '-'}</td>
                 <td>${aluno.telefoneResponsavel ? escapeHtml(aluno.telefoneResponsavel) : '-'}</td>
-                <td><span class="badge ${statusClass}">${formatStatusPedido(aluno.statusPedido)}</span></td>
+                <td>
+                    <span class="badge ${statusClass}">${formatStatusPedido(aluno.statusPedido)}</span>
+                    ${aluno.statusPedido === 'AGUARDANDO_PAGAMENTO' ? '<br><small style="color: var(--text-light); font-size: 0.75rem;">atualização a cada 4 horas</small>' : ''}
+                </td>
                 <td>${dataPedido}</td>
             </tr>
         `;
