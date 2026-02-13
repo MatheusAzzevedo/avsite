@@ -4,11 +4,11 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-13) - feat: página inicial do cliente com código da excursão
-- **api/public/cliente/inicio.html** [Campo de busca de código da excursão pedagógica na página inicial]
-- **api/public/cliente/js/inicio.js** [Lógica de busca por código integrada]
+### Última atualização (2026-02-13) - feat: menu hamburger mobile no cliente
+- **api/public/cliente/inicio.html** [Menu hamburger no mobile; sidebar lateral; card Buscar Excursão centralizado; removido link "Ou confira os Pacotes de Viagens"]
+- **api/public/cliente/js/inicio.js** [Logout em ambos os botões (navbar e sidebar)]
 
-Resumo: A página inicial do cliente exibe diretamente o campo para digitar o código da excursão pedagógica; Pacotes de Viagens continua acessível pelo menu e link secundário.
+Resumo: No mobile, o menu passa a ser ícone hamburger; ao clicar, o menu abre pela lateral esquerda. O card de busca de código fica centralizado. Removido o link "Ou confira os Pacotes de Viagens".
 
 ### Versão anterior (2026-02-13) - feat: dashboard admin — bignumbers e ações
 - **api/src/routes/dashboard.routes.ts** [Novo: stats e excursões ativas]

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-13 - feat: menu hamburger mobile, centralização e remoção de link secundário
+
+### Arquivos Modificados
+- `api/public/cliente/inicio.html` [Menu hamburger no mobile; sidebar lateral deslizante; centralização do card Buscar Excursão; removido "Ou confira os Pacotes de Viagens"]
+- `api/public/cliente/js/inicio.js` [Logout em ambos os botões (navbar e sidebar)]
+
+### Alterações
+- Na versão mobile do cliente: menu vira ícone hamburger; ao clicar, sidebar desliza da esquerda com overlay; card de código fica centralizado na tela; removido o link "Ou confira os Pacotes de Viagens".
+
+---
+
 ## 2026-02-13 - feat: página inicial do cliente com campo de código da excursão
 
 ### Arquivos Modificados
@@ -9,7 +20,7 @@
 - `api/public/cliente/dashboard.html` [Meta refresh redireciona para inicio.html; mantido para compatibilidade]
 
 ### Alterações
-- A página inicial do cliente (inicio.html) passa a exibir diretamente o campo para digitar o código da excursão pedagógica, em vez dos dois cards (Turismo Pedagógico e Pacotes de Viagens). Link "Ou confira os Pacotes de Viagens" mantido abaixo do campo. Dashboard redireciona para inicio.
+- A página inicial do cliente (inicio.html) passa a exibir diretamente o campo para digitar o código da excursão pedagógica, em vez dos dois cards (Turismo Pedagógico e Pacotes de Viagens). Dashboard redireciona para inicio.
 
 ---
 

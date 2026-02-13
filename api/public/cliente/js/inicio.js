@@ -14,13 +14,12 @@
             if (el) el.textContent = cliente.nome.split(' ')[0];
         }
 
-        const logoutBtn = document.querySelector('.btn-logout') || document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function () {
+        document.querySelectorAll('.btn-logout').forEach(function (btn) {
+            btn.addEventListener('click', function () {
                 clienteAuth.logout();
                 window.location.href = '/cliente/login.html';
             });
-        }
+        });
 
         const searchForm = document.getElementById('searchForm');
         const codigoInput = document.getElementById('codigoInput');
