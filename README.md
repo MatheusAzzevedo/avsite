@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-13) - feat: menu hamburger mobile no cliente
+### Última atualização (2026-02-13) - feat: mosaico login padronizado
+- **api/public/cliente/login.html** [Grid 4x3 inspirado em login-mosaico; imagens FOTOS AVOAR PREFERIDAS; overlay com cores Avoar; Logo Branca.png]
+
+Resumo: Mosaico de fundo do login reorganizado conforme exemplo api/login-mosaico. Grid uniforme 4x3, imagens da pasta FOTOS AVOAR PREFERIDAS, overlay com gradiente laranja (cores Avoar), logo Logo Branca.png.
+
+### Versão anterior (2026-02-13) - feat: menu hamburger mobile no cliente
 - **api/public/cliente/inicio.html** [Menu hamburger no mobile; sidebar lateral; card Buscar Excursão centralizado; removido link "Ou confira os Pacotes de Viagens"]
 - **api/public/cliente/js/inicio.js** [Logout em ambos os botões (navbar e sidebar)]
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-13 - feat: mosaico login no padrão do exemplo, Logo Branca e cores Avoar
+
+### Arquivos Modificados
+- `api/public/cliente/login.html` [Mosaico reorganizado com grid 4x3 inspirado em login-mosaico; imagens de FOTOS AVOAR PREFERIDAS; overlay com gradiente laranja; Logo Branca.png]
+
+### Alterações
+- Mosaico de fundo do login segue a estrutura do exemplo api/login-mosaico: grid uniforme 4x3 (12 células), gap 4px. Imagens da pasta FOTOS AVOAR PREFERIDAS. Overlay com cores Avoar (gradiente laranja). Logo substituída por Logo Branca.png.
+
+---
+
 ## 2026-02-13 - feat: menu hamburger mobile, centralização e remoção de link secundário
 
 ### Arquivos Modificados
