@@ -97,9 +97,15 @@
             background: none;
             border: none;
             padding: 0.5rem;
+            min-width: 44px;
+            min-height: 44px;
             cursor: pointer;
             color: #333;
             font-size: 1.5rem;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         /* Sidebar lateral */
@@ -111,10 +117,12 @@
             z-index: 1998;
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .sidebar-overlay.open {
             opacity: 1;
+            pointer-events: auto;
         }
 
         .sidebar {
@@ -530,36 +538,53 @@
     <script src="js/inicio.js"></script>
     <script>
         (function () {
-            var sidebar = document.getElementById('sidebar');
-            var overlay = document.getElementById('sidebarOverlay');
-            var hamburgerBtn = document.getElementById('hamburgerBtn');
-            var closeBtn = document.getElementById('closeSidebarBtn');
+            function initMobileMenu() {
+                var sidebar = document.getElementById('sidebar');
+                var overlay = document.getElementById('sidebarOverlay');
+                var hamburgerBtn = document.getElementById('hamburgerBtn');
+                var closeBtn = document.getElementById('closeSidebarBtn');
 
-            function openSidebar() {
-                if (sidebar && overlay) {
-                    sidebar.classList.add('open');
-                    overlay.classList.add('open');
-                    overlay.style.display = 'block';
-                    document.body.style.overflow = 'hidden';
+                function openSidebar(e) {
+                    if (e && e.type === 'touchend') e.preventDefault();
+                    if (sidebar && overlay) {
+                        sidebar.classList.add('open');
+                        overlay.classList.add('open');
+                        overlay.style.display = 'block';
+                        document.body.style.overflow = 'hidden';
+                    }
                 }
-            }
 
-            function closeSidebar() {
-                if (sidebar && overlay) {
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('open');
-                    overlay.style.display = '';
-                    document.body.style.overflow = '';
+                function closeSidebar(e) {
+                    if (e && e.type === 'touchend') e.preventDefault();
+                    if (sidebar && overlay) {
+                        sidebar.classList.remove('open');
+                        overlay.classList.remove('open');
+                        overlay.style.display = '';
+                        document.body.style.overflow = '';
+                    }
                 }
+
+                if (hamburgerBtn) {
+                    hamburgerBtn.addEventListener('click', openSidebar);
+                    hamburgerBtn.addEventListener('touchend', openSidebar, { passive: false });
+                }
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', closeSidebar);
+                    closeBtn.addEventListener('touchend', closeSidebar, { passive: false });
+                }
+                if (overlay) {
+                    overlay.addEventListener('click', closeSidebar);
+                    overlay.addEventListener('touchend', closeSidebar, { passive: false });
+                }
+                document.querySelectorAll('.sidebar-link').forEach(function (link) {
+                    link.addEventListener('click', closeSidebar);
+                });
             }
-
-            if (hamburgerBtn) hamburgerBtn.addEventListener('click', openSidebar);
-            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-            if (overlay) overlay.addEventListener('click', closeSidebar);
-
-            document.querySelectorAll('.sidebar-link').forEach(function (link) {
-                link.addEventListener('click', closeSidebar);
-            });
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMobileMenu);
+            } else {
+                initMobileMenu();
+            }
         })();
     </script>
 </body>
