@@ -14,55 +14,57 @@
  * - SMTP_FROM_EMAIL: E-mail do remetente (deve ser igual ao SMTP_USER)
  */
 
+import dns from 'dns';
 import nodemailer from 'nodemailer';
 import { logger } from '../utils/logger';
 
+const { lookup } = dns.promises;
+
+let _transporter: nodemailer.Transporter | null = null;
+
 /**
- * Explicação da função [createTransporter]:
- * Cria e retorna o transporter do Nodemailer configurado com as variáveis de ambiente.
- * O transporter é reutilizado para todos os envios de e-mail.
- * 
- * @returns nodemailer.Transporter configurado
+ * Explicação da função [getTransporter]:
+ * Retorna o transporter SMTP, resolvendo o host para IPv4 antes de conectar.
+ * Força uso de IPv4 para evitar ENETUNREACH no Railway (que não suporta IPv6).
  */
-function createTransporter(): nodemailer.Transporter {
+export async function getTransporter(): Promise<nodemailer.Transporter> {
+  if (_transporter) return _transporter;
+
   const host = process.env.SMTP_HOST || 'smtp.hostinger.com';
   const port = parseInt(process.env.SMTP_PORT || '465', 10);
-  const secure = process.env.SMTP_SECURE !== 'false'; // true por padrão (SSL na porta 465)
+  const secure = process.env.SMTP_SECURE !== 'false';
   const user = process.env.SMTP_USER || '';
   const pass = process.env.SMTP_PASS || '';
 
+  let connectHost = host;
+  try {
+    const { address } = await lookup(host, { family: 4 });
+    connectHost = address;
+    logger.info('[Email] Resolvido host para IPv4', { context: { host, ipv4: connectHost } });
+  } catch (err) {
+    logger.warn('[Email] Falha ao resolver IPv4, usando hostname', { context: { host, err } });
+  }
+
   if (!user || !pass) {
-    logger.warn('[Email] ⚠️ SMTP_USER ou SMTP_PASS não definidos. E-mails não serão enviados.', {
-      context: { host, port, secure, hasUser: !!user, hasPass: !!pass }
-    });
+    logger.warn('[Email] ⚠️ SMTP_USER ou SMTP_PASS não definidos. E-mails não serão enviados.');
   } else {
     logger.info('[Email] ✅ Configuração SMTP carregada', {
-      context: { host, port, secure, user }
+      context: { host: connectHost, port, secure, user }
     });
   }
 
-  return nodemailer.createTransport({
-    host,
+  _transporter = nodemailer.createTransport({
+    host: connectHost,
     port,
     secure,
-    auth: {
-      user,
-      pass
-    },
-    // Timeout de 30 segundos para conexão
+    auth: { user, pass },
     connectionTimeout: 30000,
-    // Timeout de 30 segundos para resposta do servidor
     greetingTimeout: 30000,
-    // Força uso de IPv4 (resolve problema ENETUNREACH com IPv6)
-    tls: {
-      rejectUnauthorized: true
-    },
-    // @ts-ignore - family não está na tipagem oficial mas é suportado pelo Nodemailer
-    family: 4
-  } as any);
-}
+    tls: { rejectUnauthorized: true }
+  });
 
-export const transporter = createTransporter();
+  return _transporter;
+}
 
 /**
  * Explicação da função [getFromAddress]:
@@ -115,7 +117,8 @@ export async function healthCheckEmail(): Promise<{ ok: boolean; error?: string 
   }
 
   try {
-    await transporter.verify();
+    const t = await getTransporter();
+    await t.verify();
     logger.info('[Email] ✅ Health check OK — conexão SMTP funcionando', {
       context: {
         host: process.env.SMTP_HOST || 'smtp.hostinger.com',

@@ -10,7 +10,7 @@
  * - Validação de configuração antes do envio
  */
 
-import { transporter, getFromAddress, verificarConfigEmail } from '../config/email';
+import { getTransporter, getFromAddress, verificarConfigEmail } from '../config/email';
 import { logger } from './logger';
 
 /**
@@ -79,7 +79,8 @@ export async function enviarEmail(params: EnviarEmailParams): Promise<{
       context: { de: from, para, assunto }
     });
 
-    const resultado = await transporter.sendMail({
+    const t = await getTransporter();
+    const resultado = await t.sendMail({
       from,
       to: para,
       subject: assunto,
