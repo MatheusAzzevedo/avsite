@@ -49,6 +49,8 @@ function createTransporter(): nodemailer.Transporter {
       user,
       pass
     },
+    // Força uso de IPv4 (resolve problema ENETUNREACH com IPv6)
+    family: 4,
     // Timeout de 30 segundos para conexão
     connectionTimeout: 30000,
     // Timeout de 30 segundos para resposta do servidor
