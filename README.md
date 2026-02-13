@@ -4,7 +4,29 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-12) - feat: menu Dashboard → Pacotes de Viagens com grid
+### Última atualização (2026-02-13) - feat: página inicial do cliente com código da excursão
+- **api/public/cliente/inicio.html** [Campo de busca de código da excursão pedagógica na página inicial]
+- **api/public/cliente/js/inicio.js** [Lógica de busca por código integrada]
+
+Resumo: A página inicial do cliente exibe diretamente o campo para digitar o código da excursão pedagógica; Pacotes de Viagens continua acessível pelo menu e link secundário.
+
+### Versão anterior (2026-02-13) - feat: dashboard admin — bignumbers e ações
+- **api/src/routes/dashboard.routes.ts** [Novo: stats e excursões ativas]
+- **api/public/admin/dashboard.html** [Bignumbers: Pedagógicos Ativos, Convencionais Ativos, Reservas; + Nova Excursão Pedagógica; 2 últimas excursões ativas]
+
+Resumo: Dashboard admin com bignumbers reais (pedagógicos ativos, convencionais ativos, reservas/alunos). Botão Nova Excursão Pedagógica. Seção Excursões Ativas mostra as 2 últimas excursões cadastradas que estão ativas.
+
+### Versão anterior (2026-02-13) - feat: e-mail de confirmação de inscrição + polling 3 min
+- **api/src/config/email.ts** [Configuração SMTP Hostinger via Nodemailer]
+- **api/src/utils/email-service.ts** [Serviço genérico de envio de e-mail]
+- **api/src/templates/email-confirmacao-pedido.ts** [Template HTML do e-mail de confirmação]
+- **api/src/utils/enviar-email-confirmacao.ts** [Orquestrador: busca pedido e dispara e-mail]
+- **api/src/routes/webhook.routes.ts**, **pagamento.routes.ts** [Integração: envio de e-mail ao confirmar pagamento]
+- **api/public/cliente/js/pagamento.js**, **checkout.js** [Polling: 20 min reduzido para 3 min]
+
+Resumo: Após pagamento confirmado (webhook Asaas ou polling), o sistema envia e-mail de "Confirmação de Inscrição" com detalhes do pedido, dados do estudante e endereço. SMTP via Hostinger (porta 465 SSL). Polling de verificação reduzido de 20 para 3 minutos.
+
+### Versão anterior (2026-02-12) - feat: menu Dashboard → Pacotes de Viagens com grid
 - **api/public/cliente/pacotes-viagens.html** [Nova página com grid de pacotes e filtros por categoria]
 - **api/public/cliente/js/pacotes-viagens.js** [Lógica: carrega excursões e categorias da API, renderiza grid]
 - **api/public/cliente/*.html** [Menu: Dashboard renomeado para Pacotes de Viagens; link para pacotes-viagens.html]
@@ -420,7 +442,8 @@ Resumo: Correção do login do cliente (auth-manager) e editor completo de excur
 6. **Upload de Imagens**: Sistema de upload com processamento via Sharp
 7. **Sistema de Pedidos**: Clientes podem criar pedidos com dados de múltiplos alunos
 8. **Gateway de Pagamento**: Integração completa com Asaas (PIX + Webhook)
-9. **Integração Externa**: API pública documentada para outros sistemas
+9. **E-mail Transacional**: E-mail de confirmação de inscrição via SMTP Hostinger (Nodemailer)
+10. **Integração Externa**: API pública documentada para outros sistemas
 
 ## Como Executar
 

@@ -12,6 +12,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
 import { processarWebhookAsaas } from '../config/asaas';
+import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 
 const router = Router();
 
@@ -109,6 +110,43 @@ router.post('/asaas',
         where: { id: pedido.id },
         data: updateData
       });
+
+      // Envia e-mail de confirmação quando pagamento é confirmado (PAGO)
+      // Só envia se o status mudou para PAGO e antes não era PAGO/CONFIRMADO
+      const statusAnteriorNaoPago = pedido.status !== 'PAGO' && pedido.status !== 'CONFIRMADO';
+      const statusNovoIsPago = resultado.statusPedido === 'PAGO' || resultado.statusPedido === 'CONFIRMADO';
+
+      logger.info('[Webhook Asaas] Avaliando envio de e-mail de confirmação', {
+        context: {
+          pedidoId: pedido.id,
+          statusAnterior: pedido.status,
+          statusNovo: resultado.statusPedido,
+          statusAnteriorNaoPago,
+          statusNovoIsPago,
+          deveEnviarEmail: statusAnteriorNaoPago && statusNovoIsPago
+        }
+      });
+
+      if (statusAnteriorNaoPago && statusNovoIsPago) {
+        logger.info('[Webhook Asaas] ✉️ Disparando e-mail de confirmação para pedido', {
+          context: { pedidoId: pedido.id, clienteEmail: pedido.cliente.email }
+        });
+        // Fire-and-forget: não bloqueia a resposta do webhook
+        enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+          logger.error('[Webhook Asaas] ❌ Erro ao disparar e-mail de confirmação (catch externo)', {
+            context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+          });
+        });
+      } else {
+        logger.info('[Webhook Asaas] ⏭️ E-mail de confirmação NÃO enviado (condição não atendida)', {
+          context: {
+            pedidoId: pedido.id,
+            motivo: !statusNovoIsPago
+              ? `Status novo (${resultado.statusPedido}) não é PAGO/CONFIRMADO`
+              : `Status anterior (${pedido.status}) já era PAGO/CONFIRMADO`
+          }
+        });
+      }
 
       // Registra atividade
       await prisma.activityLog.create({

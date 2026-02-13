@@ -270,7 +270,7 @@ function renderAlunos() {
                 <td>${aluno.telefoneResponsavel ? escapeHtml(aluno.telefoneResponsavel) : '-'}</td>
                 <td>
                     <span class="badge ${statusClass}">${formatStatusPedido(aluno.statusPedido)}</span>
-                    ${aluno.statusPedido === 'AGUARDANDO_PAGAMENTO' ? '<br><small style="color: var(--text-light); font-size: 0.75rem;">1ª verificação em 20 min, depois a cada 4h. Use o botão Atualizar na página de listas para forçar.</small>' : ''}
+                    ${aluno.statusPedido === 'AGUARDANDO_PAGAMENTO' ? '<br><small style="color: var(--text-light); font-size: 0.75rem;">1ª verificação em 3 min, depois a cada 4h. Use o botão Atualizar na página de listas para forçar.</small>' : ''}
                 </td>
                 <td>${dataPedido}</td>
             </tr>

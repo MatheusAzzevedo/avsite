@@ -745,7 +745,8 @@ const PaymentConfigManager = {
 
 /**
  * Explicação do objeto [DashboardStats]
- * Busca estatísticas para o dashboard.
+ * Busca estatísticas para o dashboard admin.
+ * Usa GET /api/admin/dashboard/stats
  */
 const DashboardStats = {
   /**
@@ -754,34 +755,32 @@ const DashboardStats = {
    */
   async getStats() {
     try {
-      // Busca dados das duas rotas
-      const [excursoes, posts] = await Promise.all([
-        ExcursaoManager.getAll(false),
-        BlogManager.getAll(false)
-      ]);
-
-      return {
-        totalPosts: posts.length,
-        postsPublicados: posts.filter(p => p.status === 'PUBLICADO').length,
-        postsRascunho: posts.filter(p => p.status === 'RASCUNHO').length,
-        totalExcursoes: excursoes.length,
-        excursoesAtivas: excursoes.filter(e => e.status === 'ATIVO').length,
-        excursoesInativas: excursoes.filter(e => e.status === 'INATIVO').length,
-        reservas: Math.floor(Math.random() * 50) + 100,
-        visitantes: (Math.random() * 3 + 1).toFixed(1) + 'k'
+      const response = await apiRequest('/admin/dashboard/stats');
+      return response.data || {
+        pedagogicosAtivos: 0,
+        convencionaisAtivos: 0,
+        reservas: 0
       };
     } catch (error) {
       console.error('[DashboardStats] Erro:', error);
       return {
-        totalPosts: 0,
-        postsPublicados: 0,
-        postsRascunho: 0,
-        totalExcursoes: 0,
-        excursoesAtivas: 0,
-        excursoesInativas: 0,
-        reservas: 0,
-        visitantes: '0'
+        pedagogicosAtivos: 0,
+        convencionaisAtivos: 0,
+        reservas: 0
       };
+    }
+  },
+  /**
+   * Retorna as 2 últimas excursões ativas (pedagógicas + convencionais)
+   * @returns {Promise<Array>}
+   */
+  async getExcursoesAtivas() {
+    try {
+      const response = await apiRequest('/admin/dashboard/excursoes-ativas');
+      return response.data || [];
+    } catch (error) {
+      console.error('[DashboardStats] Erro ao carregar excursões ativas:', error);
+      return [];
     }
   }
 };

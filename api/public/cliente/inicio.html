@@ -197,6 +197,120 @@
             font-weight: 500;
         }
 
+        /* SEARCH BOX */
+        .search-box {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            border-top: 4px solid #ff5c00;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .search-box h2 {
+            color: #ff5c00;
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .search-box p {
+            color: #666666;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff5c00;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.1);
+        }
+
+        .btn-search {
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 92, 0, 0.4);
+        }
+
+        .btn-search:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message, .loading-message {
+            margin-top: 2rem;
+            padding: 1.2rem 1.5rem;
+            border-radius: 10px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #c2410c;
+            border-left: 4px solid #dc2626;
+        }
+
+        .error-message.show, .loading-message.show {
+            display: block;
+        }
+
+        .loading-message {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #2563eb;
+        }
+
+        .secondary-link {
+            margin-top: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .secondary-link a {
+            color: #ff5c00;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .secondary-link a:hover {
+            text-decoration: underline;
+        }
+
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -242,6 +356,18 @@
             .frames-grid {
                 grid-template-columns: 1fr;
             }
+
+            .search-box {
+                padding: 2rem;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .btn-search {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -262,25 +388,34 @@
     <div class="container">
         <div class="welcome">
             <h1>Bem-vindo, <span id="clienteNome">Cliente</span>!</h1>
-            <p>Escolha como deseja continuar</p>
+            <p>Digite o código da sua excursão para começar</p>
         </div>
 
-        <div class="frames-grid">
-            <a href="dashboard.html" class="frame-card" id="frameTurismoPedagogico">
-                <div class="frame-header">
-                    <h2 class="frame-title"><i class="fas fa-graduation-cap"></i> Turismo Pedagógico</h2>
-                    <span class="frame-info" id="infoTurismo" title="Para pais acessarem a viagem através do código fornecido pela escola ou instituição." aria-label="Informação">!</span>
-                </div>
-                <p class="frame-desc">Acesse a excursão pedagógica usando o código fornecido pela escola ou instituição.</p>
-            </a>
+        <div class="search-box">
+            <h2><i class="fas fa-search"></i> Buscar Excursão</h2>
+            <p>Insira o código fornecido pela escola ou instituição</p>
 
-            <a href="pacotes-viagens.html" class="frame-card" id="framePacotesViagens">
-                <div class="frame-header">
-                    <h2 class="frame-title"><i class="fas fa-suitcase"></i> Pacotes de Viagens</h2>
-                    <span class="frame-info" id="infoPacotes" title="Para acessar a listagem de turismo convencional (pacotes de viagens)." aria-label="Informação">!</span>
-                </div>
-                <p class="frame-desc">Confira a listagem de pacotes de viagens e turismo convencional do site.</p>
-            </a>
+            <form id="searchForm" class="search-form">
+                <input
+                    type="text"
+                    id="codigoInput"
+                    class="search-input"
+                    placeholder="Ex: ABC-2024-001"
+                    required
+                >
+                <button type="submit" class="btn-search" id="searchBtn">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </form>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="loadingMessage" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i> Buscando excursão...
+            </div>
+
+            <p class="secondary-link">
+                Ou confira os <a href="pacotes-viagens.html"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            </p>
         </div>
     </div>
 

@@ -30,6 +30,7 @@ import {
   listarPagamentosPorReferencia
 } from '../config/asaas';
 import { logger } from '../utils/logger';
+import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 
 const router = Router();
 
@@ -541,6 +542,16 @@ router.get('/:pedidoId/status',
 
             logger.info('[Pagamento Status] Pagamento confirmado no Asaas; pedido atualizado para PAGO', {
               context: { pedidoId, asaasStatus: asaasStatus.status }
+            });
+
+            // Envia e-mail de confirmação (fire-and-forget)
+            logger.info('[Pagamento Status] ✉️ Disparando e-mail de confirmação para pedido', {
+              context: { pedidoId: pedido.id, clienteId }
+            });
+            enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+              logger.error('[Pagamento Status] ❌ Erro ao disparar e-mail de confirmação (catch externo)', {
+                context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+              });
             });
           }
         } catch (error) {

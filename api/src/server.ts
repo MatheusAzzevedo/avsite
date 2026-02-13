@@ -37,6 +37,7 @@ import adminPaymentRoutes from './routes/admin-payment.routes';
 import publicRoutes from './routes/public.routes';
 import listaAlunosRoutes from './routes/lista-alunos.routes';
 import categoriasExcursaoRoutes from './routes/categorias-excursao.routes';
+import dashboardRoutes from './routes/dashboard.routes';
 
 // Importa utilitários
 import { prisma } from './config/database';
@@ -44,6 +45,7 @@ import { logger } from './utils/logger';
 import { ApiError } from './utils/api-error';
 import requestLoggerMiddleware from './middleware/request-logger.middleware';
 import { healthCheckAsaas } from './config/asaas';
+import { healthCheckEmail } from './config/email';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -192,6 +194,7 @@ app.use('/api/payment-config', paymentConfigRoutes);
 app.use('/api/admin/payment', adminPaymentRoutes);
 app.use('/api/admin/listas', listaAlunosRoutes);
 app.use('/api/admin/categorias-excursao', categoriasExcursaoRoutes);
+app.use('/api/admin/dashboard', dashboardRoutes);
 
 // ===========================================
 // TRATAMENTO DE ERROS
@@ -269,6 +272,16 @@ async function startServer() {
         }
       }).catch((err) => {
         logger.warn(`⚠️ Erro ao executar health check Asaas: ${err instanceof Error ? err.message : err}`);
+      });
+
+      // Health check Email SMTP (não bloqueia o startup, roda em background)
+      healthCheckEmail().then((result) => {
+        if (!result.ok) {
+          logger.warn(`⚠️ Email SMTP health check falhou: ${result.error}`);
+          logger.warn('⚠️ E-mails de confirmação NÃO serão enviados até resolver o problema acima.');
+        }
+      }).catch((err) => {
+        logger.warn(`⚠️ Erro ao executar health check Email: ${err instanceof Error ? err.message : err}`);
       });
     });
   } catch (error) {

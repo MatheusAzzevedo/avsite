@@ -1,5 +1,53 @@
 # Changelog
 
+## 2026-02-13 - feat: página inicial do cliente com campo de código da excursão
+
+### Arquivos Modificados
+- `api/public/cliente/inicio.html` [Substituídos dois cards por campo de busca de código; página inicial passa a ser onde o cliente digita o código da excursão pedagógica]
+- `api/public/cliente/js/inicio.js` [Adicionada lógica de submit do formulário de busca por código; redireciona para excursao.html quando encontrado]
+- `api/public/cliente/excursao.html` [Links de "Voltar" e "Busca" alterados de dashboard.html para inicio.html]
+- `api/public/cliente/dashboard.html` [Meta refresh redireciona para inicio.html; mantido para compatibilidade]
+
+### Alterações
+- A página inicial do cliente (inicio.html) passa a exibir diretamente o campo para digitar o código da excursão pedagógica, em vez dos dois cards (Turismo Pedagógico e Pacotes de Viagens). Link "Ou confira os Pacotes de Viagens" mantido abaixo do campo. Dashboard redireciona para inicio.
+
+---
+
+## 2026-02-13 - feat: dashboard admin — bignumbers, ações rápidas, excursões ativas
+
+### Arquivos Modificados
+- `api/src/routes/dashboard.routes.ts` [Novo: GET /api/admin/dashboard/stats (pedagogicosAtivos, convencionaisAtivos, reservas) e GET /api/admin/dashboard/excursoes-ativas (2 últimas excursões ativas)]
+- `api/src/server.ts` [Registro da rota /api/admin/dashboard]
+- `api/public/js/api-client.js` [DashboardStats.getStats() e getExcursoesAtivas() usam novos endpoints]
+- `api/public/admin/dashboard.html` [Bignumbers: Pedagógicos Ativos, Convencionais Ativos, Reservas (removido Visitantes); Ações Rápidas: + Nova Excursão Pedagógica; Excursões Ativas: 2 últimas cadastradas]
+
+### Alterações
+- Bignumbers do dashboard passam a exibir: Pedagógicos Ativos (excursões pedagógicas ativas), Convencionais Ativos (excursões convencionais ativas), Reservas (número de alunos em pedidos PAGO/CONFIRMADO). Visitantes removido. Ações Rápidas ganhou botão "+ Nova Excursão Pedagógica". Seção Excursões Ativas exibe as 2 últimas excursões cadastradas (pedagógicas + convencionais) com status ativo, ordenadas por data de criação.
+
+---
+
+## 2026-02-13 - feat: e-mail de confirmação de inscrição após pagamento + polling 3 min
+
+### Arquivos Modificados
+- `api/src/config/email.ts` [Novo: configuração SMTP Hostinger via Nodemailer; transporter, healthCheck, verificação de config]
+- `api/src/utils/email-service.ts` [Novo: serviço genérico de envio de e-mail com logs detalhados]
+- `api/src/templates/email-confirmacao-pedido.ts` [Novo: template HTML do e-mail de confirmação com detalhes do pedido, dados do estudante, endereço e rodapé]
+- `api/src/utils/enviar-email-confirmacao.ts` [Novo: função que busca dados do pedido e dispara e-mail de confirmação; fire-and-forget]
+- `api/src/routes/webhook.routes.ts` [Integrado envio de e-mail após pagamento confirmado via webhook Asaas]
+- `api/src/routes/pagamento.routes.ts` [Integrado envio de e-mail após pagamento confirmado via polling de status]
+- `api/src/server.ts` [Health check SMTP na inicialização do servidor]
+- `api/.env.example` [Variáveis SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, SMTP_FROM_NAME, SMTP_FROM_EMAIL]
+- `api/package.json` [Instalado nodemailer e @types/nodemailer]
+- `api/public/cliente/js/pagamento.js` [Polling de 20 min para 3 min]
+- `api/public/cliente/js/checkout.js` [Polling de 20 min para 3 min]
+- `cliente/js/checkout.js` [Polling de 20 min para 3 min]
+- `api/public/admin/js/listas.js` [Texto "1ª verificação em 3 min" atualizado]
+
+### Alterações
+- Após pagamento confirmado (via webhook Asaas ou polling de status), o sistema envia automaticamente um e-mail de "Confirmação de Inscrição" para o cliente. O e-mail inclui: logo, mensagem de sucesso, detalhes do pedido (produto, quantidade, preço), dados do estudante (nome, série, turma, alergias), endereço de cobrança e rodapé com redes sociais. SMTP configurado via Hostinger (smtp.hostinger.com, porta 465 SSL). Polling de verificação de pagamento reduzido de 20 minutos para 3 minutos.
+
+---
+
 ## 2026-02-12 - feat: menu Dashboard → Pacotes de Viagens com grid e filtros
 
 ### Arquivos Modificados
@@ -52,7 +100,7 @@
 
 ---
 
-## 2026-02-12 - fix: botão Atualizar ao lado de Exportar Excel
+**Mantidas apenas as últimas 5 versões conforme regra do projeto**
 
 ### Arquivos Modificados
 - `api/public/admin/listas.html` [Botão "Atualizar" movido do cabeçalho da coluna "Data Pedido" para a área de ações, ao lado do botão "Exportar Excel"]

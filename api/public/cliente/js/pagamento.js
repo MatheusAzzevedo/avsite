@@ -260,12 +260,12 @@ function displayPixQrCode(data) {
 /**
  * Explicação da função [startPixPolling]:
  * Inicia verificação periódica do status do pagamento PIX.
- * Primeira verificação: 20 minutos após a compra.
+ * Primeira verificação: 3 minutos após a compra.
  * Depois: a cada 4 horas.
  * Quando confirmado, para o polling e mostra tela de sucesso.
  */
 function startPixPolling() {
-    console.log('[Pagamento PIX] Iniciando polling de status (1ª verificação em 20 min, depois a cada 4h)...');
+    console.log('[Pagamento PIX] Iniciando polling de status (1ª verificação em 3 min, depois a cada 4h)...');
 
     if (pixPollingInterval) clearInterval(pixPollingInterval);
     if (pixPollingTimeout) clearTimeout(pixPollingTimeout);
@@ -294,13 +294,13 @@ function startPixPolling() {
         }
     }
 
-    // Primeira verificação: 20 minutos após a compra
+    // Primeira verificação: 3 minutos após a compra
     pixPollingTimeout = setTimeout(async () => {
         pixPollingTimeout = null;
         await doCheck();
         // Depois: a cada 4 horas
         pixPollingInterval = setInterval(doCheck, 4 * 60 * 60 * 1000);
-    }, 20 * 60 * 1000);
+    }, 3 * 60 * 1000);
 }
 
 // ============================================================

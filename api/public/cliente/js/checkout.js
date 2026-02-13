@@ -313,13 +313,13 @@
             }).catch(function () {});
         }
 
-        // Primeira verificação: 20 minutos após a compra
+        // Primeira verificação: 3 minutos após a compra
         pollStatusTimeout = setTimeout(function () {
             pollStatusTimeout = null;
             doCheck();
             // Depois: a cada 4 horas
             pollStatusInterval = setInterval(doCheck, 4 * 60 * 60 * 1000);
-        }, 20 * 60 * 1000);
+        }, 3 * 60 * 1000);
     }
 
     function onlyDigits(s) {
