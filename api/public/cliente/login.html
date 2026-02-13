@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avorar Turismo - Login Cliente</title>
+    <title>Avoar Turismo - Login Cliente</title>
     <link rel="shortcut icon" href="../images/favicon-avoar.png" type="image/png">
     <link rel="icon" href="../images/favicon-avoar.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,74 +18,41 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
             display: flex;
+            overflow: hidden;
+        }
+
+        /* Painel esquerdo - imagem com overlay */
+        .login-left {
+            flex: 1;
+            min-height: 100vh;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg');
+        }
+
+        .login-left::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Painel direito - formulário */
+        .login-right {
+            flex: 1;
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            background: linear-gradient(
-                to right,
-                #7C2D12 0%,
-                #9A3412 35%,
-                #C2410C 65%,
-                #EA580C 100%
-            );
-            background-image: 
-                radial-gradient(
-                    ellipse 80% 50% at 100% 0%,
-                    rgba(251, 146, 60, 0.4) 0%,
-                    transparent 50%
-                ),
-                linear-gradient(
-                    to right,
-                    #7C2D12 0%,
-                    #9A3412 35%,
-                    #C2410C 65%,
-                    #EA580C 100%
-                );
+            background: linear-gradient(135deg, #EA580C 0%, #C2410C 50%, #9A3412 100%);
         }
 
-        .login-wrapper {
+        .login-form-wrapper {
             width: 100%;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 1.5rem;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .logo i {
-            font-size: 3rem;
-            color: #EA580C;
-        }
-
-        .login-title {
-            color: white;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .login-subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .login-form {
-            width: 100%;
+            max-width: 360px;
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
@@ -94,7 +61,7 @@
         .form-input {
             width: 100%;
             padding: 1rem 1.25rem;
-            background: #E8E8E8;
+            background: rgba(255, 255, 255, 0.95);
             border: none;
             border-radius: 8px;
             font-size: 1rem;
@@ -108,13 +75,13 @@
 
         .form-input:focus {
             outline: none;
-            background: #E0E0E0;
+            background: #fff;
         }
 
         .btn-login {
             width: 100%;
             padding: 1rem 1.5rem;
-            background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%);
+            background: linear-gradient(135deg, #FB923C 0%, #EA580C 50%, #C2410C 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -130,7 +97,7 @@
 
         .btn-login:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.5);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
         }
 
         .btn-login:active:not(:disabled) {
@@ -145,9 +112,9 @@
         .btn-google {
             width: 100%;
             padding: 1rem 1.5rem;
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             color: #333;
-            border: 2px solid #E8E8E8;
+            border: 2px solid rgba(255, 255, 255, 0.6);
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
@@ -160,15 +127,16 @@
         }
 
         .btn-google:hover {
-            background: #f8f8f8;
-            border-color: #ddd;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border-color: #fff;
+            color: #333;
         }
 
-        .btn-google img {
-            width: 20px;
-            height: 20px;
+        .login-logo {
+            width: 140px;
+            height: auto;
+            margin-bottom: 1.5rem;
+            object-fit: contain;
         }
 
         .divider {
@@ -176,20 +144,18 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin: 0.5rem 0;
         }
 
         .divider-line {
             flex: 1;
             height: 1px;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.4);
         }
 
         .divider-text {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .spinner {
@@ -213,30 +179,29 @@
         .links {
             width: 100%;
             display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .links a {
-            color: white;
+            color: #fff;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: opacity 0.2s ease;
         }
 
         .links a:hover {
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .error-message {
             width: 100%;
-            background-color: rgba(254, 226, 226, 0.95);
+            background-color: #fef2f2;
             color: #dc2626;
             padding: 1rem;
             border-radius: 8px;
-            margin-bottom: 1rem;
             display: none;
             font-size: 0.875rem;
             align-items: center;
@@ -249,11 +214,10 @@
 
         .success-message {
             width: 100%;
-            background-color: rgba(220, 252, 231, 0.95);
+            background-color: #f0fdf4;
             color: #16a34a;
             padding: 1rem;
             border-radius: 8px;
-            margin-bottom: 1rem;
             display: none;
             font-size: 0.875rem;
             align-items: center;
@@ -264,37 +228,44 @@
             display: flex;
         }
 
-        .google-login-section {
-            display: block;
-            margin-bottom: 1rem;
-        }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Responsivo - empilha em mobile */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .login-left {
+                min-height: 30vh;
+            }
+
+            .login-right {
+                min-height: auto;
+                padding: 2rem 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-wrapper">
-        <div class="logo">
-            <i class="fas fa-plane-departure"></i>
-        </div>
-        
-        <h1 class="login-title">Bem-vindo!</h1>
-        <p class="login-subtitle">Faça login para acessar suas excursões</p>
+    <div class="login-left" aria-hidden="true"></div>
 
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-circle"></i>
-            <span id="errorText"></span>
-        </div>
+    <div class="login-right">
+        <div class="login-form-wrapper">
+            <div id="errorMessage" class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
 
-        <div id="successMessage" class="success-message">
-            <i class="fas fa-check-circle"></i>
-            <span id="successText"></span>
-        </div>
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i>
+                <span id="successText"></span>
+            </div>
 
-        <!-- Botão Google OAuth -->
-        <div class="google-login-section">
+            <img src="../images/background/Logo%20avorar.webp" alt="Avoar Turismo" class="login-logo">
+
             <button type="button" class="btn-google" id="googleLoginBtn">
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -310,37 +281,36 @@
                 <span class="divider-text">ou</span>
                 <div class="divider-line"></div>
             </div>
-        </div>
 
-        <!-- Form de Login Tradicional -->
-        <form id="loginForm" class="login-form">
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                class="form-input"
-                placeholder="Email"
-                required
-                autocomplete="email"
-            >
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                class="form-input"
-                placeholder="Senha"
-                required
-                autocomplete="current-password"
-            >
-            <button type="submit" class="btn-login" id="loginBtn">
-                <div class="spinner"></div>
-                <span class="btn-text">Entrar</span>
-            </button>
-        </form>
+            <form id="loginForm" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    class="form-input"
+                    placeholder="Email"
+                    required
+                    autocomplete="email"
+                >
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-input"
+                    placeholder="Senha"
+                    required
+                    autocomplete="current-password"
+                >
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <div class="spinner"></div>
+                    <span class="btn-text">Entrar</span>
+                </button>
+            </form>
 
-        <div class="links">
-            <a href="registro.html">Criar uma conta</a>
-            <a href="/">Voltar para o site</a>
+            <div class="links">
+                <a href="registro.html">Criar conta</a>
+                <a href="/" title="Voltar para a página inicial">Voltar</a>
+            </div>
         </div>
     </div>
 

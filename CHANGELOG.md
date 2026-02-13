@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-02-12 - feat: menu Dashboard → Pacotes de Viagens com grid e filtros
+
+### Arquivos Modificados
+- `api/public/cliente/pacotes-viagens.html` [Nova página: grid de pacotes com filtros por categoria, igual à página Pacote de Viagens do site; navbar cliente]
+- `api/public/cliente/js/pacotes-viagens.js` [Carrega excursões da API, categorias para filtros, renderiza cards; requireAuth; links para ../portfolio-single.html]
+- `api/public/cliente/inicio.html` [Menu: Dashboard → Pacotes de Viagens; card Pacotes aponta para pacotes-viagens.html]
+- `api/public/cliente/dashboard.html` [Menu: Dashboard → Pacotes de Viagens]
+- `api/public/cliente/pedidos.html` [Menu: Dashboard → Pacotes de Viagens; Início → inicio.html]
+- `api/public/cliente/configuracoes.html` [Menu: Dashboard → Pacotes de Viagens; Início → inicio.html]
+- `api/public/cliente/excursao.html` [Links ajustados; breadcrumb Busca]
+- `api/public/cliente/js/login.js` [Redirect pós-login para inicio.html]
+- `api/public/cliente/js/registro.js` [Redirect quando já autenticado para inicio.html]
+
+### Alterações
+- O item do menu "Dashboard" foi renomeado para "Pacotes de Viagens" e passou a exibir uma página com grid de pacotes (excursões convencionais) e filtros por categoria, no mesmo padrão da página "Pacote de Viagens" do site público. Nova página pacotes-viagens.html. Fluxo: Início (dois cards) → Pacotes de Viagens (grid) ou Turismo Pedagógico (busca por código). Login e registro redirecionam para inicio.html.
+
+---
+
+## 2026-02-12 - feat: redesign da página de login do cliente
+
+### Arquivos Modificados
+- `api/public/cliente/login.html` [Layout dois painéis: painel esquerdo com imagem IMG-20251119-WA0021.jpg e overlay escuro 60%; painel direito branco com formulário minimalista (Google, email, senha, entrar); cores Avoar; sem texto extra; responsivo]
+
+### Alterações
+- A página de login do cliente passa a seguir o padrão de layout dividido (imagem à esquerda, formulário à direita). A imagem da excursão com estudantes em frente à igreja é exibida no painel esquerdo com overlay escuro de 60% de opacidade. O painel direito contém apenas os campos de preenchimento (Email, Senha), botão "Continuar com Google", divisor "ou" e botão "Entrar", com links "Criar conta" e "Voltar". Paleta de cores da Avoar (laranja #EA580C, #C2410C, #FB923C) mantida.
+
+---
+
 ## 2026-02-12 - feat: máscara automática CEP (00000-000) no checkout
 
 ### Arquivos Modificados

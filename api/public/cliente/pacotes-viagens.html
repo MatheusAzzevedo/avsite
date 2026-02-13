@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacotes de Viagens - Avoar Turismo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        * {
+            cursor: auto !important;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
+            min-height: 100vh;
+            cursor: default !important;
+        }
+
+        a, button {
+            cursor: pointer !important;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #ff5c00;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff5c00;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .navbar-logo { height: 36px; width: auto; display: block; }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .navbar-link {
+            text-decoration: none;
+            color: #333333;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.3rem;
+        }
+
+        .navbar-link:hover, .navbar-link.active {
+            color: #ff5c00;
+            border-bottom-color: #ff5c00;
+        }
+
+        .btn-logout {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
+        }
+
+        /* PAGE CONTENT */
+        .page-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            color: #101010;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .page-header .breadcrumb {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .page-header .breadcrumb a {
+            color: #ff5c00;
+            text-decoration: none;
+        }
+
+        .page-header .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* FILTERS */
+        .gallery-filters {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .filter-tabs {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            padding: 0;
+            margin: 0;
+        }
+
+        .filter-tabs .filter {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .filter-tabs .filter:hover {
+            color: #ff5c00;
+        }
+
+        .filter-tabs .filter.active {
+            color: #ff5c00;
+            border-bottom-color: #ff5c00;
+        }
+
+        /* GRID */
+        .excursoes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .portfolio-block {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .portfolio-block:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .portfolio-block .excursao-image-4-5 {
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .portfolio-block .excursao-image-4-5 img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .portfolio-block .inner-box {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .portfolio-block .overlay {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            padding: 1.5rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: #fff;
+        }
+
+        .portfolio-block .overlay .cat {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 0.25rem;
+        }
+
+        .portfolio-block .overlay h5 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .portfolio-block .overlay .price {
+            color: #ff5c00;
+            font-weight: 700;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .loading-state, .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .navbar-menu {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .navbar-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-logout {
+                width: 100%;
+            }
+
+            .page-content {
+                padding: 1rem;
+            }
+
+            .excursoes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="inicio.html" class="navbar-brand">
+            <img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo">
+        </a>
+        <div class="navbar-menu">
+            <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="pacotes-viagens.html" class="navbar-link active"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
+            <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="page-header">
+            <h1>Pacotes de Viagens</h1>
+            <p class="breadcrumb">
+                <a href="inicio.html">Nossos Roteiros</a> &gt; Pacotes de Viagens
+            </p>
+        </div>
+
+        <div class="mixitup-gallery">
+            <div class="gallery-filters centered clearfix">
+                <ul class="filter-tabs filter-btns clearfix" id="filterTabs">
+                    <li class="active filter" data-role="button" data-filter="all">Todas</li>
+                </ul>
+            </div>
+
+            <div class="excursoes-grid row clearfix" id="excursoesGrid">
+                <div class="loading-state" id="loadingState">
+                    <i class="fas fa-spinner fa-spin fa-2x" style="color: #ff5c00; margin-bottom: 1rem;"></i>
+                    <p>Carregando pacotes...</p>
+                </div>
+            </div>
+
+            <div id="emptyState" class="empty-state">
+                <h3>Em breve novas excursões</h3>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-client.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="js/pacotes-viagens.js"></script>
+</body>
+</html>

@@ -4,7 +4,19 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-12) - feat: máscara automática CEP no checkout
+### Última atualização (2026-02-12) - feat: menu Dashboard → Pacotes de Viagens com grid
+- **api/public/cliente/pacotes-viagens.html** [Nova página com grid de pacotes e filtros por categoria]
+- **api/public/cliente/js/pacotes-viagens.js** [Lógica: carrega excursões e categorias da API, renderiza grid]
+- **api/public/cliente/*.html** [Menu: Dashboard renomeado para Pacotes de Viagens; link para pacotes-viagens.html]
+
+Resumo: O item do menu "Dashboard" foi renomeado para "Pacotes de Viagens". Ao clicar, o cliente vê uma página com grid de pacotes (excursões convencionais) e filtros por categoria, no mesmo padrão da página "Pacote de Viagens" do site público.
+
+### Versão anterior (2026-02-12) - feat: redesign da página de login do cliente
+- **api/public/cliente/login.html** [Layout dois painéis: imagem à esquerda com overlay 60%, formulário à direita; cores Avoar; só campos, Google e botão Entrar]
+
+Resumo: Login do cliente redesenhado com layout dividido (imagem IMG-20251119-WA0021.jpg com overlay escuro no painel esquerdo; formulário minimalista no painel direito). Sem texto extra, apenas campos Email/Senha, botão Google e Entrar.
+
+### Versão anterior (2026-02-12) - feat: máscara automática CEP no checkout
 - **api/public/cliente/js/checkout.js** [Máscara CEP (00000-000) em respCep e cardHolderCep]
 - **api/public/cliente/js/checkout-convencional.js** [Máscara CEP padronizada]
 - **api/public/cliente/js/pagamento.js** [Máscara CEP no formulário de cartão]
