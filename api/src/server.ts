@@ -12,6 +12,10 @@
  * - Conectar ao banco de dados via Prisma
  */
 
+// Força IPv4 na resolução DNS (resolve ENETUNREACH com IPv6 no Railway)
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
+
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet, { contentSecurityPolicy } from 'helmet';
