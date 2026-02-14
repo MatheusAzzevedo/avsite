@@ -144,7 +144,7 @@
                 '</div>' +
                 '<div class="form-grid">' +
                 '<div class="form-group"><label for="cpfAluno_' + i + '">CPF do estudante <span class="required">*</span></label><span class="label-hint">000.000.000-00</span><input type="text" id="cpfAluno_' + i + '" name="cpfAluno_' + i + '" required placeholder="000.000.000-00"></div>' +
-                '<div class="form-group"><label for="rgAluno_' + i + '">RG do aluno <span class="required">*</span></label><input type="text" id="rgAluno_' + i + '" name="rgAluno_' + i + '" required placeholder="MG 14.123.456"></div>' +
+                '<div class="form-group"><label for="rgAluno_' + i + '">RG do aluno</label><input type="text" id="rgAluno_' + i + '" name="rgAluno_' + i + '" placeholder="MG 14.123.456"></div>' +
                 '</div>' +
                 '<div class="form-grid">' +
                 '<div class="form-group"><label for="idadeAluno_' + i + '">Idade</label><input type="number" id="idadeAluno_' + i + '" name="idadeAluno_' + i + '" min="1" max="120" placeholder="Ex.: 14"></div>' +
