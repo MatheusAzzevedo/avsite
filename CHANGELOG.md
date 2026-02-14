@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-14 - feat: logar erros da API Asaas no catch de criar cobrança
+
+### Arquivos Modificados
+- `api/src/config/asaas.ts` [No catch de criarCobrancaAsaas: loga response.data.errors da API Asaas para diagnóstico de 400]
+
+### Alterações
+- Quando a API Asaas retorna 400, o log agora inclui o array de erros retornado pela API, permitindo identificar a causa exata (ex.: CPF inválido, valor mínimo).
+
+---
+
 ## 2026-02-14 - fix: checkout pedagógico — PROIBIDO enviar dados do aluno à Asaas
 
 ### Arquivos Modificados

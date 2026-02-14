@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-14) - fix: PROIBIDO dados do aluno na Asaas
+### Última atualização (2026-02-14) - feat: log de erros Asaas
+- **api/src/config/asaas.ts** [No catch de criar cobrança: loga response.data.errors da API Asaas para diagnóstico de 400]
+
+Resumo: Quando a API Asaas retorna 400, o log agora inclui o array de erros retornado pela API, permitindo identificar a causa exata (ex.: CPF inválido, valor mínimo).
+
+### Versão anterior (2026-02-14) - fix: PROIBIDO dados do aluno na Asaas
 - **api/src/routes/pagamento.routes.ts** [PIX e Cartão: excursão pedagógica usa apenas dadosResponsavelFinanceiro; nunca cpfAluno/nomeAluno; holderName do responsável]
 - **api/public/cliente/js/checkout.js** [Pré-preenche titular do cartão com dados do responsável]
 - **api/public/cliente/checkout.html** [Aviso: dados do titular devem ser do responsável financeiro]
