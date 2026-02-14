@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-02-14 - fix: checkout pedagógico — PROIBIDO enviar dados do aluno à Asaas
+
+### Arquivos Modificados
+- `api/src/routes/pagamento.routes.ts` [PIX e Cartão: excursão pedagógica usa EXCLUSIVAMENTE dadosResponsavelFinanceiro; nunca primeiroItem (cpfAluno, nomeAluno); PIX falha 400 se dadosResp incompleto; Cartão: holderName e creditCardHolderInfo do responsável; ignora formulário]
+- `api/public/cliente/js/checkout.js`, `cliente/js/checkout.js` [Pré-preenche campos do titular do cartão com dados do responsável]
+- `api/public/cliente/checkout.html`, `cliente/checkout.html` [Aviso: dados do titular devem ser do responsável financeiro]
+
+### Alterações
+- Excursão pedagógica: em nenhuma hipótese dados do aluno (nomeAluno, cpfAluno, etc.) são enviados à Asaas. PIX e cartão usam apenas dadosResponsavelFinanceiro. Se CPF do responsável ausente, retorna 400. Cartão: holderName (nome no cartão) e creditCardHolderInfo vêm do responsável; formulário ignorado.
+
+---
+
 ## 2026-02-13 - feat: mosaico login no padrão do exemplo, Logo Branca e cores Avoar
 
 ### Arquivos Modificados

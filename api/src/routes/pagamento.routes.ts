@@ -95,9 +95,9 @@ router.post('/pix',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
-      // Extrai dados do PAGADOR (responsável financeiro) para enviar ao Asaas.
-      // Excursão pedagógica: usa dadosResponsavelFinanceiro (CPF do responsável, NÃO do aluno).
-      // Excursão convencional: usa dados do primeiro passageiro (passageiro = pagador).
+      // Extrai dados do PAGADOR para enviar ao Asaas.
+      // Excursão pedagógica: EXCLUSIVAMENTE dadosResponsavelFinanceiro (NUNCA dados do aluno).
+      // Excursão convencional: dados do primeiro passageiro (passageiro = pagador).
       const primeiroItem = pedido.itens?.[0];
       if (!primeiroItem) {
         logger.error('[Pagamento PIX] Pedido sem itens', { context: { pedidoId } });
@@ -112,17 +112,25 @@ router.post('/pix',
       let emailResponsavel: string | undefined;
       let telefoneResponsavel: string | undefined;
 
-      if (isPedagogica && dadosResp?.cpf) {
+      if (isPedagogica) {
+        // Excursão pedagógica: PROIBIDO usar dados do aluno. Apenas dadosResponsavelFinanceiro.
+        if (!dadosResp?.cpf || String(dadosResp.cpf).replace(/\D/g, '').length < 11) {
+          logger.warn('[Pagamento PIX] Excursão pedagógica sem CPF do responsável', { context: { pedidoId } });
+          return res.status(400).json({
+            success: false,
+            error: 'CPF do responsável financeiro é obrigatório. Verifique os dados preenchidos no pedido.'
+          });
+        }
         cpfResponsavel = String(dadosResp.cpf).replace(/\D/g, '');
         nomeResponsavel = [dadosResp.nome, dadosResp.sobrenome].filter(Boolean).join(' ').trim() || pedido.cliente.nome;
         emailResponsavel = dadosResp.email;
         telefoneResponsavel = dadosResp.telefone;
 
-        logger.info('[Pagamento PIX] Usando dados do responsável financeiro (excursão pedagógica)', {
+        logger.info('[Pagamento PIX] Usando dados do responsável financeiro (excursão pedagógica) — NUNCA dados do aluno', {
           context: { pedidoId, temCpf: cpfResponsavel.length >= 11 }
         });
       } else {
-        // Convencional: passageiro é o pagador
+        // Convencional: passageiro é o pagador (não é "aluno" no sentido pedagógico)
         cpfResponsavel = primeiroItem.cpfAluno?.replace(/\D/g, '') ?? '';
         nomeResponsavel = primeiroItem.nomeAluno;
         emailResponsavel = primeiroItem.emailResponsavel ?? undefined;
@@ -314,8 +322,11 @@ router.post('/cartao',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
-      // Excursão pedagógica: usa dados do responsável financeiro (CPF do pagador, NÃO do aluno)
-      const dadosResp = pedido.dadosResponsavelFinanceiro as { cpf?: string; nome?: string; sobrenome?: string; email?: string; telefone?: string } | null;
+      // Excursão pedagógica: TODOS os dados enviados ao Asaas são do RESPONSÁVEL FINANCEIRO (PROIBIDO usar dados do aluno).
+      const dadosResp = pedido.dadosResponsavelFinanceiro as {
+        cpf?: string; nome?: string; sobrenome?: string; email?: string; telefone?: string;
+        cep?: string; numero?: string; endereco?: string;
+      } | null;
       const isPedagogica = !!pedido.excursaoPedagogicaId;
       const primeiroItem = pedido.itens?.[0];
 
@@ -323,14 +334,45 @@ router.post('/cartao',
       let clienteNome: string;
       let clienteCpf: string | undefined;
       let clienteTelefone: string | undefined;
+      let creditCardHolderNameFinal: string;
+      // creditCardHolderInfo: para pedagógica, SEMPRE do responsável (ignora formulário)
+      let creditCardHolderInfoFinal: {
+        name: string;
+        email: string;
+        cpfCnpj: string;
+        postalCode: string;
+        addressNumber: string;
+        phone: string;
+      };
 
-      if (isPedagogica && dadosResp?.cpf) {
+      if (isPedagogica) {
+        // Excursão pedagógica: PROIBIDO usar dados do aluno (cpfAluno, nomeAluno, etc.). Apenas dadosResponsavelFinanceiro.
+        if (!dadosResp?.cpf || String(dadosResp.cpf).replace(/\D/g, '').length < 11) {
+          return res.status(400).json({
+            success: false,
+            error: 'CPF do responsável financeiro é obrigatório. Verifique os dados preenchidos no pedido.'
+          });
+        }
         clienteEmail = dadosResp.email || pedido.cliente.email;
         clienteNome = [dadosResp.nome, dadosResp.sobrenome].filter(Boolean).join(' ').trim() || pedido.cliente.nome;
         clienteCpf = String(dadosResp.cpf).replace(/\D/g, '');
         clienteTelefone = dadosResp.telefone || pedido.cliente.telefone || undefined;
+        // Nome no cartão: responsável (nunca do aluno)
+        creditCardHolderNameFinal = clienteNome;
 
-        logger.info('[Pagamento Cartão] Usando dados do responsável financeiro (excursão pedagógica)', {
+        const cpfDigits = String(dadosResp.cpf || '').replace(/\D/g, '');
+        const cepDigits = String(dadosResp.cep || '').replace(/\D/g, '');
+        const phoneDigits = String(dadosResp.telefone || '').replace(/\D/g, '');
+        creditCardHolderInfoFinal = {
+          name: clienteNome,
+          email: clienteEmail,
+          cpfCnpj: cpfDigits,
+          postalCode: cepDigits,
+          addressNumber: String(dadosResp.numero || '').trim() || 'S/N',
+          phone: phoneDigits
+        };
+
+        logger.info('[Pagamento Cartão] Usando dados do responsável financeiro (excursão pedagógica) — NUNCA dados do aluno', {
           context: { pedidoId }
         });
       } else {
@@ -338,6 +380,15 @@ router.post('/cartao',
         clienteNome = pedido.cliente.nome;
         clienteCpf = pedido.cliente.cpf?.replace(/\D/g, '') || primeiroItem?.cpfAluno?.replace(/\D/g, '') || undefined;
         clienteTelefone = pedido.cliente.telefone || primeiroItem?.telefoneResponsavel || undefined;
+        creditCardHolderNameFinal = creditCard.holderName;
+        creditCardHolderInfoFinal = {
+          name: creditCardHolderInfo.name,
+          email: creditCardHolderInfo.email,
+          cpfCnpj: String(creditCardHolderInfo.cpfCnpj || '').replace(/\D/g, ''),
+          postalCode: String(creditCardHolderInfo.postalCode || '').replace(/\D/g, ''),
+          addressNumber: String(creditCardHolderInfo.addressNumber || '').trim() || 'S/N',
+          phone: String(creditCardHolderInfo.phone || '').replace(/\D/g, '')
+        };
       }
 
       const valorTotal = Number(pedido.valorTotal);
@@ -361,20 +412,13 @@ router.post('/cartao',
         descricao,
         externalReference: pedido.id,
         creditCard: {
-          holderName: creditCard.holderName,
+          holderName: creditCardHolderNameFinal, // Pedagógica: nome do responsável (nunca do aluno)
           number: creditCard.number,
           expiryMonth: creditCard.expiryMonth,
           expiryYear: creditCard.expiryYear,
           ccv: creditCard.ccv
         },
-        creditCardHolderInfo: {
-          name: creditCardHolderInfo.name,
-          email: creditCardHolderInfo.email,
-          cpfCnpj: creditCardHolderInfo.cpfCnpj,
-          postalCode: creditCardHolderInfo.postalCode,
-          addressNumber: creditCardHolderInfo.addressNumber,
-          phone: creditCardHolderInfo.phone
-        }
+        creditCardHolderInfo: creditCardHolderInfoFinal
       });
 
       const statusPedido = cobranca.status === 'CONFIRMED' || cobranca.status === 'RECEIVED'

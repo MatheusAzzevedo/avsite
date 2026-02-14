@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-13) - feat: mosaico login padronizado
+### Última atualização (2026-02-14) - fix: PROIBIDO dados do aluno na Asaas
+- **api/src/routes/pagamento.routes.ts** [PIX e Cartão: excursão pedagógica usa apenas dadosResponsavelFinanceiro; nunca cpfAluno/nomeAluno; holderName do responsável]
+- **api/public/cliente/js/checkout.js** [Pré-preenche titular do cartão com dados do responsável]
+- **api/public/cliente/checkout.html** [Aviso: dados do titular devem ser do responsável financeiro]
+
+Resumo: Em excursões pedagógicas, dados do aluno (nomeAluno, cpfAluno, etc.) NUNCA são enviados à Asaas. PIX e cartão usam exclusivamente dadosResponsavelFinanceiro. Se dados do responsável incompletos, retorna 400.
+
+### Versão anterior (2026-02-13) - feat: mosaico login padronizado
 - **api/public/cliente/login.html** [Grid 4x3 inspirado em login-mosaico; imagens FOTOS AVOAR PREFERIDAS; overlay com cores Avoar; Logo Branca.png]
 
 Resumo: Mosaico de fundo do login reorganizado conforme exemplo api/login-mosaico. Grid uniforme 4x3, imagens da pasta FOTOS AVOAR PREFERIDAS, overlay com gradiente laranja (cores Avoar), logo Logo Branca.png.

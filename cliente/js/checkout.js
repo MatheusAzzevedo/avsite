@@ -186,6 +186,31 @@
         var form = document.getElementById('checkoutForm');
         var stepPag = document.getElementById('checkoutStepPagamento');
         var finalizarBtn = document.getElementById('finalizarBtn');
+
+        // Pré-preenche dados do titular do cartão com dados do RESPONSÁVEL (nunca do aluno)
+        var respNome = (document.getElementById('respNome') && document.getElementById('respNome').value) || '';
+        var respSobrenome = (document.getElementById('respSobrenome') && document.getElementById('respSobrenome').value) || '';
+        var respCpf = (document.getElementById('respCpf') && document.getElementById('respCpf').value) || '';
+        var respCep = (document.getElementById('respCep') && document.getElementById('respCep').value) || '';
+        var respNumero = (document.getElementById('respNumero') && document.getElementById('respNumero').value) || '';
+        var respTelefone = (document.getElementById('respTelefone') && document.getElementById('respTelefone').value) || '';
+        var respEmail = (document.getElementById('respEmail') && document.getElementById('respEmail').value) || '';
+        var nomeCompletoResp = [respNome, respSobrenome].filter(Boolean).join(' ').trim();
+        var cardHolder = document.getElementById('cardHolder');
+        var cardHolderName = document.getElementById('cardHolderName');
+        var cardHolderEmail = document.getElementById('cardHolderEmail');
+        var cardHolderCpf = document.getElementById('cardHolderCpf');
+        var cardHolderCep = document.getElementById('cardHolderCep');
+        var cardHolderAddressNumber = document.getElementById('cardHolderAddressNumber');
+        var cardHolderPhone = document.getElementById('cardHolderPhone');
+        if (cardHolder && nomeCompletoResp) cardHolder.value = nomeCompletoResp;
+        if (cardHolderName && nomeCompletoResp) cardHolderName.value = nomeCompletoResp;
+        if (cardHolderEmail && respEmail) cardHolderEmail.value = respEmail;
+        if (cardHolderCpf && respCpf) cardHolderCpf.value = respCpf;
+        if (cardHolderCep && respCep) cardHolderCep.value = respCep;
+        if (cardHolderAddressNumber && respNumero) cardHolderAddressNumber.value = respNumero;
+        if (cardHolderPhone && respTelefone) cardHolderPhone.value = respTelefone;
+
         if (form) form.style.display = 'none';
         if (finalizarBtn) finalizarBtn.style.display = 'none';
         if (stepPag) {
