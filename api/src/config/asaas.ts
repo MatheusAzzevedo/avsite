@@ -185,6 +185,7 @@ export async function criarCobrancaAsaas(dados: {
       dueDate: payment.dueDate
     };
   } catch (error) {
+    const axiosErr = error as { response?: { data?: { errors?: Array<{ description?: string }> } } };
     logger.error('[Asaas] Erro ao criar cobrança', {
       context: {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -195,6 +196,9 @@ export async function criarCobrancaAsaas(dados: {
           metodo: dados.metodoPagamento
         }
       }
+    });
+    logger.error('[Asaas] Erros da API', {
+      context: { errors: axiosErr.response?.data?.errors }
     });
     throw error;
   }
