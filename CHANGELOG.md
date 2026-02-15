@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-02-14 - feat: logo para página inicial do site e header completo no checkout
+
+### Arquivos Modificados
+- `api/public/cliente/inicio.html` [Logo navbar e sidebar: href alterado de inicio.html para ../index-10.html (página inicial do site)]
+- `api/public/cliente/pacotes-viagens.html`, `dashboard.html`, `excursao.html`, `configuracoes.html`, `pedidos.html` [Logo: href para ../index-10.html]
+- `api/public/cliente/checkout.html`, `checkout-convencional.html`, `pagamento.html` [Header completo: Início, Pacotes de Viagens, Meus Pedidos, Configurações, Sair; logo para ../index-10.html; estilos navbar-menu e btn-logout]
+
+### Alterações
+- Logotipo Avoar em todas as páginas do cliente passa a redirecionar para a página inicial do site (index-10.html). Checkout e pagamento passam a exibir o menu completo do cliente (Início, Pacotes, Meus Pedidos, Configurações, Sair) em todas as etapas.
+
+---
+
 ## 2026-02-14 - feat: logar erros da API Asaas no catch de criar cobrança
 
 ### Arquivos Modificados

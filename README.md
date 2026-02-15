@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-14) - feat: log de erros Asaas
+### Última atualização (2026-02-14) - feat: logo para página inicial e header no checkout
+- **api/public/cliente/inicio.html, pacotes-viagens.html, dashboard.html, excursao.html, configuracoes.html, pedidos.html** [Logo passa a linkar para ../index-10.html (página inicial do site)]
+- **api/public/cliente/checkout.html, checkout-convencional.html, pagamento.html** [Header completo: menu Início, Pacotes, Meus Pedidos, Configurações, Sair em todas as etapas do checkout]
+
+Resumo: O logotipo Avoar em todas as páginas do cliente agora redireciona para a página inicial do site. As páginas de checkout e pagamento passam a exibir o menu completo do cliente (Início, Pacotes de Viagens, Meus Pedidos, Configurações, Sair) em todas as etapas.
+
+### Versão anterior (2026-02-14) - feat: log de erros Asaas
 - **api/src/config/asaas.ts** [No catch de criar cobrança: loga response.data.errors da API Asaas para diagnóstico de 400]
 
 Resumo: Quando a API Asaas retorna 400, o log agora inclui o array de erros retornado pela API, permitindo identificar a causa exata (ex.: CPF inválido, valor mínimo).

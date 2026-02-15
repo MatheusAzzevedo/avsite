@@ -27,13 +27,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--primary-color);
         }
-        .navbar-brand { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        .navbar-brand { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-decoration: none; display: flex; align-items: center; }
         .navbar-brand:hover { color: var(--primary-dark); }
         .navbar-logo { height: 36px; width: auto; display: block; }
         .navbar-left { display: flex; align-items: center; gap: 1.5rem; }
-        .navbar-link { text-decoration: none; color: #333; transition: color 0.2s; font-size: 0.95rem; }
+        .navbar-menu { display: flex; gap: 1.5rem; align-items: center; }
+        .navbar-link { text-decoration: none; color: #333; transition: color 0.2s; font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; }
         .navbar-link:hover { color: var(--primary-color); }
+        .btn-logout {
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .btn-logout:hover { opacity: 0.95; transform: translateY(-1px); }
 
         .checkout-container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
         .checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; }
@@ -238,6 +255,7 @@
                 gap: 0.5rem;
             }
             .navbar-left { gap: 0.75rem; flex-wrap: wrap; }
+            .navbar-menu { gap: 0.75rem; flex-wrap: wrap; }
             .navbar-brand { font-size: 1.1rem; }
             .navbar-link {
                 font-size: 0.9rem;
@@ -332,11 +350,15 @@
 <body>
     <nav class="navbar">
         <div class="navbar-left">
-            <a href="inicio.html" class="navbar-brand"><img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo"></a>
+            <a href="../index-10.html" class="navbar-brand"><img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo"></a>
             <a href="#" id="voltarLink" class="navbar-link"><i class="fas fa-arrow-left"></i> Voltar</a>
         </div>
-        <div>
+        <div class="navbar-menu">
+            <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="pacotes-viagens.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
             <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
+            <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
     </nav>
 
