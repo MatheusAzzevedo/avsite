@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-14) - feat: mosaico login 20 imagens
+### Última atualização (2026-02-14) - fix: menu hamburger bloqueado por CSP
+- **api/public/cliente/inicio.html** [Removido script inline do menu mobile]
+- **api/public/cliente/js/inicio.js** [initMobileMenu externalizado para compatibilidade com CSP]
+
+Resumo: O botão hamburger não funcionava em produção porque o CSP bloqueava o script inline. Lógica do menu movida para inicio.js.
+
+### Versão anterior (2026-02-14) - feat: mosaico login 20 imagens
 - **api/public/cliente/login.html** [Mosaico com 20 imagens distintas (FOTOS AVOAR + Imagens para o site); grid 4x5; ordem aleatória]
 
 Resumo: Mosaico da página de login atualizado com 20 imagens sem repetição, em ordem aleatória. Grid 4x5 no desktop, 2x10 no mobile.

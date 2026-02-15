@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-14 - fix: menu hamburger bloqueado por CSP - script inline externalizado
+
+### Arquivos Modificados
+- `api/public/cliente/inicio.html` [Removido script inline do menu mobile]
+- `api/public/cliente/js/inicio.js` [initMobileMenu externalizado para compatibilidade com CSP]
+
+### Alterações
+- O botão hamburger do menu lateral não funcionava em produção porque o CSP (Content-Security-Policy) bloqueava o script inline. A lógica do menu foi movida para inicio.js, permitindo que o menu abra corretamente no mobile.
+
+---
+
 ## 2026-02-14 - feat: mosaico login com 20 imagens sem repetição
 
 ### Arquivos Modificados
