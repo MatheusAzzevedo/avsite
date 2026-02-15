@@ -106,6 +106,8 @@
             justify-content: center;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+            position: relative;
+            z-index: 1001;
         }
 
         /* Sidebar lateral */
@@ -139,10 +141,12 @@
             transition: transform 0.3s ease;
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
             overflow-y: auto;
+            pointer-events: none;
         }
 
         .sidebar.open {
             transform: translateX(0);
+            pointer-events: auto;
         }
 
         .sidebar-header {
@@ -423,7 +427,7 @@
             }
 
             .btn-hamburger {
-                display: block;
+                display: flex;
             }
 
             .navbar-menu {
@@ -566,7 +570,10 @@
 
                 if (hamburgerBtn) {
                     hamburgerBtn.addEventListener('click', openSidebar);
-                    hamburgerBtn.addEventListener('touchend', openSidebar, { passive: false });
+                    hamburgerBtn.addEventListener('touchend', function (e) {
+                        e.preventDefault();
+                        openSidebar(e);
+                    }, { passive: false });
                 }
                 if (closeBtn) {
                     closeBtn.addEventListener('click', closeSidebar);

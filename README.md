@@ -4,7 +4,22 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-14) - feat: logo para página inicial e header no checkout
+### Última atualização (2026-02-14) - feat: mosaico login 20 imagens
+- **api/public/cliente/login.html** [Mosaico com 20 imagens distintas (FOTOS AVOAR + Imagens para o site); grid 4x5; ordem aleatória]
+
+Resumo: Mosaico da página de login atualizado com 20 imagens sem repetição, em ordem aleatória. Grid 4x5 no desktop, 2x10 no mobile.
+
+### Versão anterior (2026-02-14) - fix: botão X do menu lateral
+- **api/public/css/style.css** [nav-closer: posição acima do logo, centralizado; tamanho 28px; img com object-fit]
+
+Resumo: Botão X de fechar o menu lateral passou a ficar acima do logotipo, centralizado e menor (28px).
+
+### Versão anterior (2026-02-14) - fix: menu hamburger mobile
+- **api/public/cliente/inicio.html** [Sidebar com pointer-events none quando fechada; botão hamburger com z-index e display flex; touchend com preventDefault]
+
+Resumo: Menu hamburger no mobile passou a abrir corretamente ao toque. Sidebar fechada não bloqueia mais cliques; botão com área de toque adequada.
+
+### Versão anterior (2026-02-14) - feat: logo para página inicial e header no checkout
 - **api/public/cliente/inicio.html, pacotes-viagens.html, dashboard.html, excursao.html, configuracoes.html, pedidos.html** [Logo passa a linkar para ../index-10.html (página inicial do site)]
 - **api/public/cliente/checkout.html, checkout-convencional.html, pagamento.html** [Header completo: menu Início, Pacotes, Meus Pedidos, Configurações, Sair em todas as etapas do checkout]
 

@@ -1037,30 +1037,37 @@ form label.error{
 
 .main-nav-outer .nav-closer{
   position: absolute;
-  right: -23px;
-  top: 90px;
-  width: 46px;
-  height: 46px;
+  top: 12px;
+  left: 50%;
+  -ms-transform: translateX(-50%) scale(0.25);
+  transform: translateX(-50%) scale(0.25);
+  width: 28px;
+  height: 28px;
   opacity: 0;
   visibility: hidden;
-  -ms-transform: scale(0);
-  transform: scale(0);
   transition:all 700ms ease 0ms;
   -moz-transition:all 700ms ease 0ms;
   -webkit-transition:all 700ms ease 0ms;
   -ms-transition:all 700ms ease 0ms;
   -o-transition:all 700ms ease 0ms;
   cursor: pointer;
-  transform: scale(0.25);
-  -ms-transform: scale(0.25);
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-nav-outer .nav-closer img{
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .main-nav-outer.now-visible .nav-closer{
   opacity: 1;
   visibility: visible;
-  transform: scale(1);
-  -ms-transform: scale(1);
+  -ms-transform: translateX(-50%) scale(1);
+  transform: translateX(-50%) scale(1);
   transition:all 500ms ease 700ms;
   -moz-transition:all 500ms ease 700ms;
   -webkit-transition:all 500ms ease 700ms;

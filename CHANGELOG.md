@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-02-14 - feat: mosaico login com 20 imagens sem repetição
+
+### Arquivos Modificados
+- `api/public/cliente/login.html` [Mosaico: 20 imagens (FOTOS AVOAR PREFERIDAS + Imagens para o site); grid 4x5; ordem aleatória; sem repetição]
+
+### Alterações
+- Mosaico da página de login do cliente atualizado com 20 imagens distintas em ordem aleatória. Grid 4x5 no desktop, 2x10 no mobile.
+
+---
+
+## 2026-02-14 - fix: botão X do menu lateral acima do logo e menor
+
+### Arquivos Modificados
+- `api/public/css/style.css` [nav-closer: posição top 12px e centralizado; tamanho 28x28px; img com object-fit contain]
+
+### Alterações
+- Botão X de fechar o menu lateral do site passou a ficar acima do logotipo, centralizado e com tamanho reduzido (28px em vez de 46px).
+
+---
+
+## 2026-02-14 - fix: menu hamburger mobile não abria ao toque
+
+### Arquivos Modificados
+- `api/public/cliente/inicio.html` [Sidebar: pointer-events none quando fechado; btn-hamburger: z-index 1001, display flex no mobile; touchend com preventDefault]
+
+### Alterações
+- Menu hamburger no mobile passou a abrir corretamente ao toque. Sidebar fechada não captura mais eventos (pointer-events: none). Botão com z-index elevado e área de toque adequada.
+
+---
+
 ## 2026-02-14 - feat: logo para página inicial do site e header completo no checkout
 
 ### Arquivos Modificados

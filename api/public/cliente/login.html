@@ -26,14 +26,14 @@
             padding: 2rem 1rem;
         }
 
-        /* Mosaico de fundo - estrutura inspirada no exemplo login-mosaico */
+        /* Mosaico de fundo - 4x5 = 20 imagens */
         .login-bg {
             position: fixed;
             inset: 0;
             z-index: 0;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(3, 1fr);
+            grid-template-rows: repeat(5, 1fr);
             gap: 4px;
             overflow: hidden;
             background: #1a1a1a;
@@ -46,18 +46,26 @@
             animation: fadeInImg 1s ease-in-out forwards;
         }
 
-        .login-bg .mosaico-item:nth-child(1) { animation-delay: 0.05s; }
-        .login-bg .mosaico-item:nth-child(2) { animation-delay: 0.1s; }
-        .login-bg .mosaico-item:nth-child(3) { animation-delay: 0.15s; }
-        .login-bg .mosaico-item:nth-child(4) { animation-delay: 0.2s; }
-        .login-bg .mosaico-item:nth-child(5) { animation-delay: 0.25s; }
-        .login-bg .mosaico-item:nth-child(6) { animation-delay: 0.3s; }
-        .login-bg .mosaico-item:nth-child(7) { animation-delay: 0.35s; }
-        .login-bg .mosaico-item:nth-child(8) { animation-delay: 0.4s; }
-        .login-bg .mosaico-item:nth-child(9) { animation-delay: 0.45s; }
-        .login-bg .mosaico-item:nth-child(10) { animation-delay: 0.5s; }
-        .login-bg .mosaico-item:nth-child(11) { animation-delay: 0.55s; }
-        .login-bg .mosaico-item:nth-child(12) { animation-delay: 0.6s; }
+        .login-bg .mosaico-item:nth-child(1) { animation-delay: 0.03s; }
+        .login-bg .mosaico-item:nth-child(2) { animation-delay: 0.06s; }
+        .login-bg .mosaico-item:nth-child(3) { animation-delay: 0.09s; }
+        .login-bg .mosaico-item:nth-child(4) { animation-delay: 0.12s; }
+        .login-bg .mosaico-item:nth-child(5) { animation-delay: 0.15s; }
+        .login-bg .mosaico-item:nth-child(6) { animation-delay: 0.18s; }
+        .login-bg .mosaico-item:nth-child(7) { animation-delay: 0.21s; }
+        .login-bg .mosaico-item:nth-child(8) { animation-delay: 0.24s; }
+        .login-bg .mosaico-item:nth-child(9) { animation-delay: 0.27s; }
+        .login-bg .mosaico-item:nth-child(10) { animation-delay: 0.3s; }
+        .login-bg .mosaico-item:nth-child(11) { animation-delay: 0.33s; }
+        .login-bg .mosaico-item:nth-child(12) { animation-delay: 0.36s; }
+        .login-bg .mosaico-item:nth-child(13) { animation-delay: 0.39s; }
+        .login-bg .mosaico-item:nth-child(14) { animation-delay: 0.42s; }
+        .login-bg .mosaico-item:nth-child(15) { animation-delay: 0.45s; }
+        .login-bg .mosaico-item:nth-child(16) { animation-delay: 0.48s; }
+        .login-bg .mosaico-item:nth-child(17) { animation-delay: 0.51s; }
+        .login-bg .mosaico-item:nth-child(18) { animation-delay: 0.54s; }
+        .login-bg .mosaico-item:nth-child(19) { animation-delay: 0.57s; }
+        .login-bg .mosaico-item:nth-child(20) { animation-delay: 0.6s; }
 
         /* Overlay com cores Avoar (laranja) */
         .login-bg::after {
@@ -268,11 +276,11 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Responsivo - mesmo padrão do exemplo login-mosaico */
+        /* Responsivo - 20 imagens */
         @media (max-width: 768px) {
             .login-bg {
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(4, 1fr);
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(5, 1fr);
             }
             
             .login-right {
@@ -284,7 +292,7 @@
         @media (max-width: 480px) {
             .login-bg {
                 grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(6, 1fr);
+                grid-template-rows: repeat(10, 1fr);
             }
             
             .login-right {
@@ -295,18 +303,26 @@
 </head>
 <body>
     <div class="login-bg" id="loginBg" aria-hidden="true">
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/Utilizar%20essa%20daqui.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_0974.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1011.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1775.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/%C2%A9Alexandre%20Nery_Avoar_Bernoulli_SP_14.08.2025-180.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg')"></div>
         <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1839.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_2295.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/DSC00349.JPG')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg')"></div>
         <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/roger-nobles-yv4jTtDXviw-unsplash.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/Utilizar%20essa%20daqui.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG-20251119-WA0010.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1775.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/DSC00349.JPG')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg')"></div>
         <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_0974.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/Utilizar%20essa%20daqui.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_2295.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg')"></div>
         <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1011.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG-20251119-WA0010.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg')"></div>
     </div>
 
     <div class="login-right">
