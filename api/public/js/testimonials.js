@@ -223,10 +223,16 @@ class TestimonialsCarousel {
     // Limpar itens existentes
     carousel.querySelectorAll('.testimonial-item').forEach(item => item.remove());
 
+    const GOOGLE_REVIEWS_URL = 'https://www.google.com/search?q=avoar+turismo#lrd=0xa691e2a44f5587:0x4ba6942977995055,1,,,,';
+
     // Renderizar depoimentos
     this.testimonials.forEach((testimonial, index) => {
-      const item = document.createElement('div');
+      const item = document.createElement('a');
       item.className = `testimonial-item ${index === this.currentIndex ? 'active' : ''}`;
+      item.href = GOOGLE_REVIEWS_URL;
+      item.target = '_blank';
+      item.rel = 'noopener noreferrer';
+      item.title = 'Ver todas as avaliações no Google';
 
       item.innerHTML = `
         <div class="testimonial-stars">

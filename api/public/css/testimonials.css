@@ -133,6 +133,9 @@ a.google-rating-badge:hover,
 
 /* Testimonial Item - CORRIGIDO PARA TRANSIÇÃO FUNCIONAR */
 .testimonial-item {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
   position: absolute;
   top: 0;
   left: 0;
@@ -160,6 +163,11 @@ a.google-rating-badge:hover,
   transition: opacity 0.7s ease, transform 0.7s ease, visibility 0s 0s;
   pointer-events: auto;
   z-index: 2;
+}
+
+.testimonial-item.active:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
 }
 
 .testimonial-item.prev {
