@@ -13,6 +13,17 @@
 
 ---
 
+## 2026-02-18 - feat: polling agressivo de pagamento PIX (imediato → 1min → 3min → 5min → 4h)
+
+### Arquivos Modificados
+- `api/public/cliente/js/pagamento.js` [startPixPolling: verificação imediata + 1min + 3min + 5min + 4h; stopPolling limpa todos os timeouts pendentes]
+- `api/public/cliente/js/checkout.js` [iniciarPollStatus: mesma sequência imediata + 1min + 3min + 5min + 4h para checkout pedagógico]
+
+### Alterações
+- O polling de status de pagamento PIX verificava pela primeira vez apenas após 3 minutos, fazendo com que o e-mail de confirmação demorasse. Agora a verificação é feita imediatamente após a compra, depois em 1 min, 3 min e 5 min, e só então a cada 4 horas. Quando a verificação detecta pagamento confirmado no Asaas, o backend atualiza o pedido e dispara o e-mail de confirmação. Isso garante que o cliente receba o e-mail na caixa de entrada o mais rápido possível.
+
+---
+
 ## 2026-02-18 - feat: responsividade mobile no fluxo de compra de excursões convencionais
 
 ### Arquivos Modificados

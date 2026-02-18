@@ -259,23 +259,37 @@ function displayPixQrCode(data) {
 
 /**
  * Explicação da função [startPixPolling]:
- * Inicia verificação periódica do status do pagamento PIX.
- * Primeira verificação: 3 minutos após a compra.
- * Depois: a cada 4 horas.
+ * Inicia verificação agressiva do status do pagamento PIX para que o
+ * e-mail de confirmação chegue o mais rápido possível ao cliente.
+ *
+ * Sequência de verificações:
+ * 1. Imediata (logo após gerar QR Code)
+ * 2. 1 minuto depois
+ * 3. 3 minutos depois
+ * 4. 5 minutos depois
+ * 5. A cada 4 horas (long polling)
+ *
  * Quando confirmado, para o polling e mostra tela de sucesso.
  */
 function startPixPolling() {
-    console.log('[Pagamento PIX] Iniciando polling de status (1ª verificação em 3 min, depois a cada 4h)...');
+    console.log('[Pagamento PIX] Iniciando polling de status (imediato → 1min → 3min → 5min → 4h)...');
 
     if (pixPollingInterval) clearInterval(pixPollingInterval);
     if (pixPollingTimeout) clearTimeout(pixPollingTimeout);
 
+    let stopped = false;
+    const pendingTimeouts = [];
+
     function stopPolling() {
+        stopped = true;
+        pendingTimeouts.forEach(t => clearTimeout(t));
+        pendingTimeouts.length = 0;
         if (pixPollingInterval) { clearInterval(pixPollingInterval); pixPollingInterval = null; }
         if (pixPollingTimeout) { clearTimeout(pixPollingTimeout); pixPollingTimeout = null; }
     }
 
     async function doCheck() {
+        if (stopped) return;
         try {
             console.log('[Pagamento PIX] Verificando status do pagamento...');
             const response = await clienteAuth.fetchAuth(`/cliente/pagamento/${pedidoId}/status`);
@@ -294,13 +308,23 @@ function startPixPolling() {
         }
     }
 
-    // Primeira verificação: 3 minutos após a compra
-    pixPollingTimeout = setTimeout(async () => {
-        pixPollingTimeout = null;
-        await doCheck();
-        // Depois: a cada 4 horas
-        pixPollingInterval = setInterval(doCheck, 4 * 60 * 60 * 1000);
-    }, 3 * 60 * 1000);
+    // Verificação imediata
+    doCheck();
+
+    // Verificações rápidas: 1 min, 3 min, 5 min
+    const quickChecks = [1 * 60 * 1000, 3 * 60 * 1000, 5 * 60 * 1000];
+    quickChecks.forEach(delay => {
+        pendingTimeouts.push(setTimeout(() => {
+            if (!stopped) doCheck();
+        }, delay));
+    });
+
+    // Após 5 min, inicia long polling a cada 4 horas
+    pendingTimeouts.push(setTimeout(() => {
+        if (!stopped) {
+            pixPollingInterval = setInterval(doCheck, 4 * 60 * 60 * 1000);
+        }
+    }, 5 * 60 * 1000 + 1000));
 }
 
 // ============================================================

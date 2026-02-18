@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: imagem Quem Confia maior e tela cheia
+### Última atualização (2026-02-18) - feat: polling agressivo de pagamento PIX
+- **api/public/cliente/js/pagamento.js** [Polling: imediato → 1min → 3min → 5min → 4h]
+- **api/public/cliente/js/checkout.js** [Polling pedagógico: mesma sequência agressiva]
+
+Resumo: Verificação de pagamento PIX agora é feita imediatamente após a compra, depois em 1, 3 e 5 minutos, e só então a cada 4 horas. O e-mail de confirmação chega ao cliente o mais rápido possível.
+
+### Versão anterior (2026-02-18) - feat: imagem Quem Confia maior e tela cheia
 - **api/public/about.html**, **about.html** [Imagem parceiros clicável; overlay fullscreen; script abrir/fechar com ESC]
 - **api/public/css/about-page.css**, **css/about-page.css** [Imagem maior no desktop (1200px); cursor pointer; hint "Clique para ampliar"; estilos overlay]
 

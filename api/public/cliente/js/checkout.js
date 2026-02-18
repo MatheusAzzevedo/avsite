@@ -322,13 +322,19 @@
         if (pollStatusInterval) clearInterval(pollStatusInterval);
         if (pollStatusTimeout) clearTimeout(pollStatusTimeout);
 
+        var stopped = false;
+        var pendingTimeouts = [];
+
         function pararPolling() {
+            stopped = true;
+            pendingTimeouts.forEach(function (t) { clearTimeout(t); });
+            pendingTimeouts.length = 0;
             if (pollStatusInterval) { clearInterval(pollStatusInterval); pollStatusInterval = null; }
             if (pollStatusTimeout) { clearTimeout(pollStatusTimeout); pollStatusTimeout = null; }
         }
 
         function doCheck() {
-            if (!pedidoIdPagamento) return;
+            if (stopped || !pedidoIdPagamento) return;
             clienteAuth.fetchAuth('/cliente/pagamento/' + pedidoIdPagamento + '/status').then(function (r) { return r.json(); }).then(function (data) {
                 if (data.success && data.data && (data.data.status === 'PAGO' || data.data.status === 'CONFIRMADO')) {
                     pararPolling();
@@ -338,13 +344,22 @@
             }).catch(function () {});
         }
 
-        // Primeira verificação: 3 minutos após a compra
-        pollStatusTimeout = setTimeout(function () {
-            pollStatusTimeout = null;
-            doCheck();
-            // Depois: a cada 4 horas
-            pollStatusInterval = setInterval(doCheck, 4 * 60 * 60 * 1000);
-        }, 3 * 60 * 1000);
+        // Verificação imediata
+        doCheck();
+
+        // Verificações rápidas: 1 min, 3 min, 5 min
+        [1 * 60 * 1000, 3 * 60 * 1000, 5 * 60 * 1000].forEach(function (delay) {
+            pendingTimeouts.push(setTimeout(function () {
+                if (!stopped) doCheck();
+            }, delay));
+        });
+
+        // Após 5 min, long polling a cada 4 horas
+        pendingTimeouts.push(setTimeout(function () {
+            if (!stopped) {
+                pollStatusInterval = setInterval(doCheck, 4 * 60 * 60 * 1000);
+            }
+        }, 5 * 60 * 1000 + 1000));
     }
 
     function onlyDigits(s) {
