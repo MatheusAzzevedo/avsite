@@ -156,6 +156,7 @@
                             <button type="button" id="btnTesteEmail" class="btn btn-secondary" style="text-align: center;">
                                 <i class="fas fa-envelope"></i> Testar E-mail Confirmação
                             </button>
+                            <div id="msgTesteEmail" role="alert" aria-live="polite" style="display: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.9rem; margin-top: 0.5rem; animation: slideIn 0.3s ease;"></div>
                         </div>
                     </div>
                 </div>
@@ -302,34 +303,58 @@
         }
 
         /**
+         * Explicação da função [mostrarMsgTesteEmail]
+         * Exibe mensagem de feedback (sucesso ou erro) abaixo do botão de teste de e-mail.
+         */
+        function mostrarMsgTesteEmail(texto, sucesso) {
+            var el = document.getElementById('msgTesteEmail');
+            if (!el) return;
+            if (!texto) {
+                el.style.display = 'none';
+                return;
+            }
+            el.innerHTML = (sucesso ? '<i class="fas fa-check-circle"></i> ' : '<i class="fas fa-exclamation-circle"></i> ') + texto;
+            el.style.display = 'block';
+            el.style.background = sucesso ? '#dcfce7' : '#fee2e2';
+            el.style.color = sucesso ? '#166534' : '#991b1b';
+            el.style.border = '1px solid ' + (sucesso ? '#86efac' : '#fecaca');
+            clearTimeout(el._hideTimer);
+            el._hideTimer = setTimeout(function() {
+                el.style.display = 'none';
+            }, 6000);
+        }
+
+        /**
          * Explicação da função [enviarEmailTeste]
          * Dispara envio de e-mail de confirmação de inscrição (dados mock) para
          * azetus.io@gmail.com e dantydias@yahoo.com.br. Usado para testar API Brevo.
          */
         async function enviarEmailTeste() {
-            const btn = document.getElementById('btnTesteEmail');
+            var btn = document.getElementById('btnTesteEmail');
             if (!btn) return;
             if (typeof apiRequest !== 'function') {
-                alert('Erro: apiRequest não disponível. Recarregue a página.');
+                mostrarMsgTesteEmail('Erro: apiRequest não disponível. Recarregue a página.', false);
                 return;
             }
-            const textoOriginal = btn.innerHTML;
+            var textoOriginal = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            mostrarMsgTesteEmail('', true);
+            document.getElementById('msgTesteEmail').style.display = 'none';
             try {
-                const res = await apiRequest('/admin/email/teste-confirmacao', {
+                var res = await apiRequest('/admin/email/teste-confirmacao', {
                     method: 'POST'
                 });
                 if (res && res.success) {
-                    alert('E-mails de teste enviados com sucesso para azetus.io@gmail.com e dantydias@yahoo.com.br.');
+                    mostrarMsgTesteEmail('E-mails de teste enviados com sucesso para azetus.io@gmail.com e dantydias@yahoo.com.br. Verifique as caixas de entrada.', true);
                 } else {
-                    const erros = (res && res.data && res.data.resultados)
-                        ? res.data.resultados.filter(function(r) { return !r.success; }).map(function(r) { return r.email + ': ' + (r.error || 'erro'); }).join('\n')
+                    var erros = (res && res.data && res.data.resultados)
+                        ? res.data.resultados.filter(function(r) { return !r.success; }).map(function(r) { return r.email + ': ' + (r.error || 'erro'); }).join('; ')
                         : (res && res.message) || 'Falha desconhecida';
-                    alert('Falha ao enviar e-mails:\n' + erros);
+                    mostrarMsgTesteEmail('Falha ao enviar: ' + erros, false);
                 }
             } catch (err) {
-                alert('Erro: ' + (err && err.message ? err.message : 'Não foi possível enviar os e-mails de teste. Verifique se está logado como admin.'));
+                mostrarMsgTesteEmail((err && err.message ? err.message : 'Não foi possível enviar. Verifique se está logado como admin.'), false);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = textoOriginal;
