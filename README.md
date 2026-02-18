@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: botão renomeado para "Comprar"
+### Última atualização (2026-02-18) - feat: mosaico no checkout
+- **api/public/cliente/checkout.html** [Mosaico de fundo na seção de informações da excursão: 20 imagens de Imagens para o site, grid 4x5, overlay gradiente laranja, estilo igual ao login]
+
+Resumo: A tela de checkout de excursões pedagógicas passou a exibir mosaico de fundo na primeira seção (Resumo do Pedido, formulário e Dados da viagem), usando imagens do diretório Imagens para o site, no mesmo estilo da tela de login.
+
+### Versão anterior (2026-02-18) - feat: botão renomeado para "Comprar"
 - **api/public/cliente/excursao.html**, **cliente/excursao.html** [Botão de compra: "Continuar para Checkout" → "Comprar"]
 
 Resumo: O botão na página de excursão pedagógica passou a exibir "Comprar" em vez de "Continuar para Checkout".

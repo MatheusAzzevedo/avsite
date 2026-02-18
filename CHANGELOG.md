@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-18 - feat: mosaico de fundo na tela de checkout (excursões pedagógicas)
+
+### Arquivos Modificados
+- `api/public/cliente/checkout.html` [Mosaico de fundo igual ao login: grid 4x5 com 20 imagens de Imagens para o site; overlay gradiente laranja Avoar; animação fadeIn; responsivo 2x10 no mobile]
+
+### Alterações
+- A primeira seção do checkout (Resumo do Pedido, formulário e Dados da viagem) passou a exibir mosaico de fundo com imagens do diretório "Imagens para o site", no mesmo estilo da tela de login do cliente. Overlay com gradiente laranja para legibilidade. Grid 4x5 no desktop, 2x10 no mobile.
+
+---
+
 ## 2026-02-18 - feat: botão "Continuar para Checkout" renomeado para "Comprar"
 
 ### Arquivos Modificados
