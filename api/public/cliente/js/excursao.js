@@ -100,6 +100,30 @@
         // Nota: Atualizamos apenas o display, o valor total será calculado no checkout
     }
 
+    /**
+     * Extrai apenas os campos essenciais para o checkout, evitando QuotaExceededError.
+     * localStorage tem limite ~5MB; imagens base64 e textos longos excedem facilmente.
+     * Campos excluídos: imagemCapa, imagemPrincipal, galeria, id, slug, etc.
+     */
+    function payloadCheckout(exc, qtd) {
+        var trunc = function (s, max) {
+            if (!s || typeof s !== 'string') return s || '';
+            return s.length > max ? s.substring(0, max) : s;
+        };
+        return {
+            codigo: exc.codigo,
+            quantidade: qtd,
+            preco: exc.preco,
+            titulo: exc.titulo || '',
+            subtitulo: trunc(exc.subtitulo, 200),
+            descricao: trunc(exc.descricao, 2000),
+            inclusos: trunc(exc.inclusos, 2000),
+            recomendacoes: trunc(exc.recomendacoes, 2000),
+            local: trunc(exc.local, 200),
+            horario: trunc(exc.horario, 100)
+        };
+    }
+
     function irParaCheckout() {
         if (!excursao) return;
         const quantidade = parseInt(document.getElementById('quantity').value, 10) || 1;
@@ -116,8 +140,18 @@
             return;
         }
         
-        localStorage.setItem('checkout_excursao', JSON.stringify({ ...excursao, quantidade }));
-        window.location.href = 'checkout.html';
+        try {
+            var payload = payloadCheckout(excursao, quantidade);
+            localStorage.setItem('checkout_excursao', JSON.stringify(payload));
+            window.location.href = 'checkout.html';
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                console.error('[Excursao] localStorage cheio. Limpe dados do site e tente novamente.');
+                alert('Não foi possível prosseguir. O armazenamento do navegador está cheio. Tente limpar dados do site e recarregar.');
+            } else {
+                throw e;
+            }
+        }
     }
 
     function setupTabs() {

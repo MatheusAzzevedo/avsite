@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-18 - fix: QuotaExceededError no botão de compra de excursões pedagógicas
+
+### Arquivos Modificados
+- `api/public/cliente/js/excursao.js` [payloadCheckout: salva apenas campos essenciais (codigo, quantidade, preco, titulo, descricao/inclusos/recomendacoes truncados, local, horario); exclui imagemCapa, galeria e demais campos grandes; try/catch para QuotaExceededError com mensagem ao usuário]
+- `cliente/js/excursao.js` [Mesma alteração]
+
+### Alterações
+- O botão de compra em excursões pedagógicas falhava com QuotaExceededError ao salvar o objeto completo no localStorage (imagemCapa base64, galeria, textos longos excedem ~5MB). Agora apenas os dados necessários ao checkout são salvos, com truncamento de textos. Tratamento de erro exibe mensagem clara quando o armazenamento está cheio.
+
+---
+
 ## 2026-02-18 - feat: corpo do e-mail de confirmação com contato, agradecimento e emojis
 
 ### Arquivos Modificados
