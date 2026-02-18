@@ -222,6 +222,14 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
                       <a href="https://wa.me/553125147884" target="_blank" rel="noopener noreferrer" style="color: #EA580C; text-decoration: none;">(31) 2514-7884 (WhatsApp)</a>
                     </td>
                   </tr>
+                  <tr>
+                    <td style="padding: 6px 12px 6px 0; vertical-align: middle;">
+                      <img src="https://img.icons8.com/fluency/24/marker.png" alt="Endereço" width="20" height="20" style="vertical-align: middle;" />
+                    </td>
+                    <td style="padding: 6px 0; color: #555555;">
+                      Avenida do Contorno 9681 sala 504 - Prado - Belo Horizonte - MG
+                    </td>
+                  </tr>
                 </table>
               </div>
             </td>
@@ -426,6 +434,7 @@ Caso tenha alguma dúvida ou precise de mais informações, entre em contato:
 📞 Telefone: (31) 2514-7884
 📧 E-mail: contato@avoarturismo.com.br
 💬 WhatsApp: (31) 2514-7884 - https://wa.me/553125147884
+📍 Endereço: Avenida do Contorno 9681 sala 504 - Prado - Belo Horizonte - MG
 
 Agradecemos por escolher a Avoar Turismo.
 Atenciosamente,
