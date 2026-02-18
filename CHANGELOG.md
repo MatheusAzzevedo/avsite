@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-02-18 - feat: imagem Quem Confia maior no desktop e clique para tela cheia
+
+### Arquivos Modificados
+- `api/public/about.html` [partners-showcase clicável com id e aria-label; overlay fullscreen; script para abrir/fechar]
+- `api/public/css/about-page.css` [max-width 1200px no desktop; cursor pointer; hint "Clique para ampliar"; estilos do overlay fullscreen]
+- `about.html` [Mesmas alterações HTML e script]
+- `css/about-page.css` [Mesmas alterações CSS]
+
+### Alterações
+- Na seção "Quem confia" da página Sobre Nós, a imagem dos parceiros (grid de logos) passou a exibir maior no desktop (max-width 1200px em vez de 900px). Ao clicar na imagem, abre um overlay em tela cheia com fundo escuro. Clique no overlay ou tecla ESC fecha. Hint "Clique para ampliar" visível no desktop; em mobile o hint é ocultado. Acessibilidade: role="button", tabindex="0" e suporte a Enter/Espaço.
+
+---
+
+## 2026-02-18 - feat: responsividade mobile no fluxo de compra de excursões convencionais
+
+### Arquivos Modificados
+- `api/public/cliente/login.html` [Media queries para 480px e 360px: padding, logo, botões touch-friendly (min 48px)]
+- `api/public/cliente/registro.html` [Media queries para 480px e 360px: tipografia, inputs, botões e logo adaptados]
+- `api/public/cliente/pacotes-viagens.html` [Menu hamburger com sidebar lateral; grid 2 colunas em tablet, 1 em mobile; filtros compactos]
+- `api/public/cliente/excursao.html` [Título, galeria, thumbnails, purchase card e meta adaptados; breakpoints 768px e 480px]
+- `api/public/cliente/checkout-convencional.html` [Menu hamburger com sidebar; form-grid 1 coluna; resumo do pedido no topo em mobile]
+- `api/public/cliente/pagamento.html` [Menu hamburger com sidebar; tabs flexíveis; QR Code reduzido; formulário 1 coluna]
+
+### Alterações
+- Todas as telas do fluxo de compra do "Pacote de Viagens" (login, registro, listagem de pacotes, detalhe da excursão, checkout convencional e pagamento) foram revisadas para responsividade mobile. Navbars das páginas internas ganharam menu hamburger com sidebar deslizante (direita) com overlay e botões touch-friendly (min 44-48px). Formulários colapsam para 1 coluna. Grids e tipografia adaptados para telas de 768px, 480px e 360px.
+
+---
+
 ## 2026-02-18 - feat: botão enviar e-mail manual na lista de alunos
 
 ### Arquivos Modificados

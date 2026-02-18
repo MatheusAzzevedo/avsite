@@ -294,7 +294,7 @@
                 <div class="auto-container">
                     <div class="proof-layout proof-layout-stacked">
                         <div class="proof-visual">
-                            <div class="partners-showcase">
+                            <div class="partners-showcase" id="partners-showcase" role="button" tabindex="0" aria-label="Clique para ampliar em tela cheia">
                                 <img src="images/Imagens%20para%20o%20site/parceiros.jpeg" alt="Colégios parceiros da Avoar Turismo">
                             </div>
                         </div>
@@ -565,6 +565,12 @@
   </div>
 </footer>
 
+<!-- Overlay fullscreen para imagem Quem Confia -->
+<div class="partners-fullscreen-overlay" id="partners-fullscreen-overlay" aria-hidden="true">
+    <img src="images/Imagens%20para%20o%20site/parceiros.jpeg" alt="Colégios parceiros da Avoar Turismo">
+    <span class="close-hint">Clique ou pressione ESC para fechar</span>
+</div>
+
 </div>
 <!--End Site Container--> 
 
@@ -579,5 +585,40 @@
 <script src="js/wow.js"></script>
 <script src="js/custom-script.js"></script>
 <script src="js/testimonials.js"></script>
+<script>
+(function() {
+  var showcase = document.getElementById('partners-showcase');
+  var overlay = document.getElementById('partners-fullscreen-overlay');
+  if (!showcase || !overlay) return;
+
+  function openFullscreen() {
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeFullscreen() {
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  showcase.addEventListener('click', openFullscreen);
+  overlay.addEventListener('click', closeFullscreen);
+
+  showcase.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openFullscreen();
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+      closeFullscreen();
+    }
+  });
+})();
+</script>
 </body>
 </html>

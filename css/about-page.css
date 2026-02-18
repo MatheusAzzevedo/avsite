@@ -444,6 +444,13 @@
   margin: 0 auto;
 }
 
+/* Desktop: imagem Quem Confia maior */
+@media (min-width: 992px) {
+  .about-social-proof .proof-layout-stacked .proof-visual {
+    max-width: 1200px;
+  }
+}
+
 .about-social-proof .proof-text .eyebrow {
   display: inline-block;
   text-transform: uppercase;
@@ -504,6 +511,29 @@
   border-radius: 20px;
   padding: 32px;
   overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-social-proof .partners-showcase:hover {
+  border-color: rgba(255, 92, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.about-social-proof .partners-showcase::after {
+  content: 'Clique para ampliar';
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 12px;
+  font-family: 'Cairo', sans-serif;
+}
+
+@media (max-width: 991px) {
+  .about-social-proof .partners-showcase::after {
+    display: none;
+  }
 }
 
 .about-social-proof .partners-showcase img {
@@ -516,6 +546,46 @@
 
 .about-social-proof .partners-showcase:hover img {
   opacity: 1;
+}
+
+/* Fullscreen overlay para imagem Quem Confia */
+.partners-fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.partners-fullscreen-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.partners-fullscreen-overlay img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.partners-fullscreen-overlay .close-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Cairo', sans-serif;
 }
 
 /* Testimonials Modern */

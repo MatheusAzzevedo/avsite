@@ -4,7 +4,23 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: botão enviar e-mail manual
+### Última atualização (2026-02-18) - feat: imagem Quem Confia maior e tela cheia
+- **api/public/about.html**, **about.html** [Imagem parceiros clicável; overlay fullscreen; script abrir/fechar com ESC]
+- **api/public/css/about-page.css**, **css/about-page.css** [Imagem maior no desktop (1200px); cursor pointer; hint "Clique para ampliar"; estilos overlay]
+
+Resumo: Na seção "Quem confia" (Sobre Nós), a imagem dos parceiros ficou maior no desktop e ao clicar abre em tela cheia. Clique ou ESC fecha.
+
+### Versão anterior (2026-02-18) - feat: responsividade mobile fluxo de compra
+- **api/public/cliente/login.html** [Media queries 480px/360px: padding, logo, botões touch-friendly]
+- **api/public/cliente/registro.html** [Media queries 480px/360px: tipografia, inputs e logo adaptados]
+- **api/public/cliente/pacotes-viagens.html** [Menu hamburger + sidebar; grid responsivo 2col/1col; filtros compactos]
+- **api/public/cliente/excursao.html** [Título, galeria, purchase card adaptados; breakpoints 768/480px]
+- **api/public/cliente/checkout-convencional.html** [Menu hamburger + sidebar; form 1 coluna; resumo no topo em mobile]
+- **api/public/cliente/pagamento.html** [Menu hamburger + sidebar; tabs flexíveis; QR reduzido; form 1 coluna]
+
+Resumo: Fluxo completo de compra de excursões convencionais revisado para mobile. Navbars com hamburger menu + sidebar deslizante. Formulários em 1 coluna. Grids, tipografia e botões adaptados para 768px, 480px e 360px com tamanhos touch-friendly.
+
+### Versão anterior (2026-02-18) - feat: botão enviar e-mail manual
 - **api/public/admin/listas.html** [Nova coluna "Ações" na tabela de alunos]
 - **api/public/admin/js/listas.js** [Botão "Enviar E-mail" em cada linha; funções attachEmailButtonListeners e enviarEmailManual]
 - **api/src/routes/pedido.routes.ts** [Nova rota POST /api/admin/pedidos/:id/enviar-email para envio manual]

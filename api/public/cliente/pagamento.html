@@ -37,6 +37,19 @@
         .navbar-brand { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-decoration: none; display: flex; align-items: center; }
         .navbar-brand:hover { color: var(--primary-dark); }
         .navbar-logo { height: 36px; width: auto; display: block; }
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+        }
         .navbar-menu { display: flex; gap: 1.5rem; align-items: center; }
         .navbar-link { text-decoration: none; color: #333; transition: color 0.2s; font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; }
         .navbar-link:hover { color: var(--primary-color); }
@@ -52,6 +65,86 @@
             transition: all 0.2s ease;
         }
         .btn-logout:hover { opacity: 0.95; transform: translateY(-1px); }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-overlay.active { display: block; opacity: 1; }
+
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100%;
+            background: #fff;
+            z-index: 1002;
+            transition: right 0.3s ease;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .mobile-sidebar.active { right: 0; }
+        .mobile-sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .mobile-sidebar-header img { height: 32px; width: auto; }
+        .mobile-sidebar-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mobile-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0;
+            flex: 1;
+        }
+        .mobile-sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s ease, color 0.2s ease;
+            min-height: 48px;
+        }
+        .mobile-sidebar-nav a:hover,
+        .mobile-sidebar-nav a.active { background: #fff7ed; color: var(--primary-color); }
+        .mobile-sidebar-nav a i { width: 20px; text-align: center; }
+        .mobile-sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--light-border);
+        }
+        .mobile-sidebar-footer .btn-logout {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 48px;
+        }
 
         .pagamento-container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
 
@@ -281,10 +374,36 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
-            .pagamento-container { margin: 1rem auto; }
+            .navbar { padding: 0.75rem 1rem; }
+            .navbar-menu { display: none; }
+            .hamburger-btn { display: flex; }
+
+            .pagamento-container { margin: 1rem auto; padding: 0 0.75rem; }
+            .page-title { font-size: 1.35rem; }
+            .subtitle { font-size: 0.875rem; }
+            .card { padding: 1.25rem; }
             .form-grid { grid-template-columns: 1fr; }
-            .method-tab { padding: 0.75rem 1rem; font-size: 0.9rem; }
+            .form-grid-full { grid-column: 1; }
+            .form-group input { padding: 0.7rem 0.875rem; font-size: 0.95rem; }
+            .method-tabs { margin-bottom: 1.5rem; }
+            .method-tab { padding: 0.75rem 1rem; font-size: 0.9rem; flex: 1; justify-content: center; }
             .order-summary-bar { flex-direction: column; align-items: flex-start; }
+            .order-summary-bar .order-total { font-size: 1.3rem; }
+            .pix-qrcode-wrapper img { width: 200px; height: 200px; }
+            .pix-copy-input { font-size: 0.75rem; padding: 0.6rem 0.75rem; }
+            .btn-pay, .btn-generate-pix { min-height: 48px; }
+            .btn-copy { min-height: 44px; }
+            .section-title { font-size: 0.95rem; }
+        }
+
+        @media (max-width: 480px) {
+            .page-title { font-size: 1.2rem; }
+            .card { padding: 1rem; border-radius: 10px; }
+            .pix-qrcode-wrapper { padding: 1rem; }
+            .pix-qrcode-wrapper img { width: 180px; height: 180px; }
+            .method-tab { font-size: 0.85rem; padding: 0.65rem 0.75rem; }
+            .payment-success i { font-size: 3rem; }
+            .payment-success h2 { font-size: 1.25rem; }
         }
     </style>
 </head>
@@ -299,7 +418,29 @@
             <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
             <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
+        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
     </nav>
+
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="mobile-sidebar-header">
+            <img src="../images/background/Logo.webp" alt="Avoar Turismo">
+            <button type="button" class="mobile-sidebar-close" id="sidebarClose" aria-label="Fechar menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-sidebar-nav">
+            <a href="inicio.html"><i class="fas fa-home"></i> Início</a>
+            <a href="pacotes-viagens.html"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            <a href="pedidos.html"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
+        </nav>
+        <div class="mobile-sidebar-footer">
+            <button type="button" class="btn-logout" id="logoutBtnMobile"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </div>
+    </div>
 
     <div class="pagamento-container">
         <!-- Loading inicial -->
@@ -449,5 +590,36 @@
 
     <script src="js/auth-manager.js"></script>
     <script src="js/pagamento.js"></script>
+    <script>
+    (function() {
+        const hamburger = document.getElementById('hamburgerBtn');
+        const sidebar = document.getElementById('mobileSidebar');
+        const overlay = document.getElementById('mobileOverlay');
+        const closeBtn = document.getElementById('sidebarClose');
+        const logoutMobile = document.getElementById('logoutBtnMobile');
+
+        function openMenu() {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        hamburger.addEventListener('click', openMenu);
+        closeBtn.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', closeMenu);
+
+        if (logoutMobile) {
+            logoutMobile.addEventListener('click', function() {
+                document.getElementById('logoutBtn').click();
+            });
+        }
+    })();
+    </script>
 </body>
 </html>
