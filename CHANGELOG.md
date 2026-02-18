@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-18 - feat: botão "Continuar para Checkout" renomeado para "Comprar"
+
+### Arquivos Modificados
+- `api/public/cliente/excursao.html` [Texto do botão alterado de "Continuar para Checkout" para "Comprar"]
+- `cliente/excursao.html` [Mesma alteração]
+
+### Alterações
+- O botão de compra na página de detalhes da excursão pedagógica passou a exibir "Comprar" em vez de "Continuar para Checkout".
+
+---
+
 ## 2026-02-18 - fix: QuotaExceededError no botão de compra de excursões pedagógicas
 
 ### Arquivos Modificados

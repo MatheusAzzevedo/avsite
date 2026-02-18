@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - fix: QuotaExceededError no botão de compra
+### Última atualização (2026-02-18) - feat: botão renomeado para "Comprar"
+- **api/public/cliente/excursao.html**, **cliente/excursao.html** [Botão de compra: "Continuar para Checkout" → "Comprar"]
+
+Resumo: O botão na página de excursão pedagógica passou a exibir "Comprar" em vez de "Continuar para Checkout".
+
+### Versão anterior (2026-02-18) - fix: QuotaExceededError no botão de compra
 - **api/public/cliente/js/excursao.js**, **cliente/js/excursao.js** [Salva apenas dados essenciais no localStorage; exclui imagens e textos longos; evita QuotaExceededError ao clicar em comprar excursão pedagógica]
 
 Resumo: O botão de compra em excursões pedagógicas falhava porque o objeto completo (imagens base64, galeria, descrições longas) excedia o limite do localStorage (~5MB). Agora apenas codigo, quantidade, preco, titulo e textos truncados são salvos. Tratamento de erro exibe mensagem clara quando o armazenamento está cheio.
