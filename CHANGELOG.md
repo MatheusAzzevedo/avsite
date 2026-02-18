@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-02-18 - fix: CSP dashboard — scripts e handlers externalizados
+
+### Arquivos Modificados
+- `api/public/admin/dashboard.html` [Removidos script inline e onclick; link Sair com id navLogout; carregamento de js/dashboard.js]
+- `api/public/admin/js/dashboard.js` [Novo: loadDashboard, loadStats, loadTopExcursoes, enviarEmailTeste, mostrarMsgTesteEmail, initDashboard; listener no btnTesteEmail]
+
+### Alterações
+- O dashboard administrativo gerava erros de CSP ao clicar no botão "Testar E-mail Confirmação" e no link "Sair". Script inline e handlers onclick foram externalizados para dashboard.js. O botão e o link passam a usar addEventListener, compatível com script-src 'self' e script-src-attr 'none'.
+
+---
+
+## 2026-02-18 - feat: card de depoimento clicável leva às avaliações Google
+
+### Arquivos Modificados
+- `api/public/js/testimonials.js` [testimonial-item passa a ser <a> com href para avaliações Google; target _blank; rel noopener]
+- `api/public/css/testimonials.css` [testimonial-item: text-decoration none, cursor pointer; hover sutil no active]
+- `js/testimonials.js`, `css/testimonials.css` [Mesmas alterações na raiz do projeto]
+
+### Alterações
+- Ao clicar na caixa do comentário (card de depoimento) na seção "Experiências Reais" da página Sobre Nós, o usuário é redirecionado para as avaliações do Google da Avoar Turismo. Link abre em nova aba. Hover sutil indica que o card é clicável.
+
+---
+
+## 2026-02-18 - feat: botão Voltar à página inicial no login e registro
+
+### Arquivos Modificados
+- `api/public/cliente/login.html` [Botão "Voltar à página inicial" com ícone seta; estilo btn-voltar; link para /]
+- `api/public/cliente/registro.html` [Botão "Voltar à página inicial" com ícone seta; estilo btn-voltar; link para /]
+
+### Alterações
+- Login e criar conta passaram a exibir um botão destacado "Voltar à página inicial" (com ícone fa-arrow-left) que redireciona para a página inicial do site (/). O botão tem estilo semitransparente com borda branca para boa visibilidade sobre o fundo.
+
+---
+
+## 2026-02-18 - feat: página de registro com background mosaico e logo Avoar
+
+### Arquivos Modificados
+- `api/public/cliente/registro.html` [Background mosaico igual ao login: 20 imagens em grid 4x5; overlay gradiente laranja; Logo Branca.png no lugar do ícone do avião; favicon; título corrigido Avoar]
+
+### Alterações
+- A página de criar conta passou a usar o mesmo mosaico de fundo da página de login (20 imagens FOTOS AVOAR + Imagens para o site, grid 4x5, overlay com cores Avoar). O ícone do avião foi substituído pela logo oficial (Logo Branca.png). Favicon e título corrigidos.
+
+---
+
 ## 2026-02-18 - fix: e-mail de confirmação garantido em todos os caminhos de pagamento + proteção contra duplicação
 
 ### Arquivos Modificados

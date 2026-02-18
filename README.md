@@ -4,7 +4,25 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: E-mail via API Brevo (HTTPS) para Railway Hobby
+### Última atualização (2026-02-18) - fix: CSP no dashboard admin
+- **api/public/admin/dashboard.html** [Removidos script inline e onclick; id navLogout no link Sair]
+- **api/public/admin/js/dashboard.js** [Novo: lógica do dashboard externalizada para compatibilidade com CSP]
+
+Resumo: Erros de CSP no dashboard (botão Testar E-mail e link Sair) corrigidos. Scripts e event handlers movidos para dashboard.js.
+
+### Versão anterior (2026-02-18) - feat: card de depoimento clicável
+- **api/public/js/testimonials.js**, **js/testimonials.js** [Cards de depoimento passam a ser links para avaliações Google]
+- **api/public/css/testimonials.css**, **css/testimonials.css** [Estilos para link (cursor, hover) no card]
+
+Resumo: Na página Sobre Nós, ao clicar no card de depoimento (Experiências Reais), o usuário é redirecionado para as avaliações do Google da Avoar Turismo em nova aba.
+
+### Versão anterior (2026-02-18) - feat: botão Voltar à página inicial
+- **api/public/cliente/login.html** [Botão "Voltar à página inicial" com ícone seta; estilo destacado]
+- **api/public/cliente/registro.html** [Botão "Voltar à página inicial" com ícone seta; estilo destacado]
+
+Resumo: Login e criar conta passaram a exibir um botão destacado "Voltar à página inicial" que redireciona para a página inicial do site (/).
+
+### Versão anterior (2026-02-18) - feat: E-mail via API Brevo (HTTPS) para Railway Hobby
 - **api/src/config/email.ts** [SMTP substituído por API Brevo; BREVO_API_KEY, BREVO_FROM_*]
 - **api/src/utils/email-service.ts** [Envio via fetch Brevo API]
 - **api/.env.example** [Variáveis BREVO_* em vez de SMTP_*]
