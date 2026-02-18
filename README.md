@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: polling agressivo de pagamento PIX
+### Última atualização (2026-02-18) - feat: corpo do e-mail com contato e agradecimento
+- **api/src/templates/email-confirmacao-pedido.ts** [Seção de contato (Telefone, E-mail, WhatsApp com ícones); agradecimento antes dos detalhes; emojis 🎉 ✨ 📋 🌟]
+
+Resumo: E-mail de confirmação ganha seção de contato da Avoar (telefone, e-mail, WhatsApp), bloco de agradecimento antes dos detalhes e emojis de comemoração no título e corpo.
+
+### Versão anterior (2026-02-18) - feat: polling agressivo de pagamento PIX
 - **api/public/cliente/js/pagamento.js** [Polling: imediato → 1min → 3min → 5min → 4h]
 - **api/public/cliente/js/checkout.js** [Polling pedagógico: mesma sequência agressiva]
 

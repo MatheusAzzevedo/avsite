@@ -104,7 +104,7 @@ function formatarMetodoPagamento(metodo: string): string {
  * O template segue o layout descrito nos prints de referência:
  * - Logo centralizada no topo
  * - Mensagem "Oba! Compra concluída com sucesso!"
- * - Título "Seu pedido {nome da excursão} foi concluído com sucesso"
+ * - Título "Inscrição C-O-N-F-I-R-M-A-D-A❤️ em {nome da excursão}. Ficamos felizes em avisar que seu pedido foi concluído!"
  * - Detalhes do pedido em tabela
  * - Dados dos estudantes
  * - Endereço de cobrança
@@ -169,9 +169,9 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
           </tr>
           <tr>
             <td align="center" style="padding: 0 30px;">
-              <p style="font-size: 16px; color: #666666; font-style: italic; margin: 0 0 10px;">Oba! Compra concluída com sucesso!</p>
+              <p style="font-size: 16px; color: #666666; font-style: italic; margin: 0 0 10px;">Oba! Compra concluída com sucesso! 🎉</p>
               <h1 style="font-size: 26px; font-weight: bold; color: #222222; margin: 0 0 20px; line-height: 1.3;">
-                Seu pedido ${dados.nomeProduto} foi concluído com sucesso
+                Inscrição C-O-N-F-I-R-M-A-D-A❤️ ✨ em ${dados.nomeProduto}. Ficamos felizes em avisar que seu pedido foi concluído!
               </h1>
             </td>
           </tr>
@@ -180,13 +180,64 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
           <!-- 2. TEXTO INTRODUTÓRIO -->
           <!-- ============================================ -->
           <tr>
-            <td style="padding: 0 30px 30px;">
+            <td style="padding: 0 30px 20px;">
               <p style="font-size: 14px; line-height: 1.6; color: #555555;">
                 Olá ${dados.nomeCliente}. Informamos que seu pedido em Avoar Turismo foi concluído com sucesso.
                 Segue os detalhes da compra da viagem:
               </p>
-              <p style="font-size: 14px; line-height: 1.6; color: #555555;">
-                Caso tenha alguma dúvida ou necessite de mais informações, entre em contato conosco.
+            </td>
+          </tr>
+
+          <!-- ============================================ -->
+          <!-- 2.1 SEÇÃO DE CONTATO -->
+          <!-- ============================================ -->
+          <tr>
+            <td style="padding: 0 30px 20px;">
+              <div style="background-color: #fafafa; border: 1px solid #eeeeee; border-radius: 8px; padding: 20px;">
+                <p style="font-size: 14px; line-height: 1.6; color: #555555; margin: 0 0 16px;">
+                  Caso tenha alguma dúvida ou precise de mais informações, entre em contato:
+                </p>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="font-size: 14px;">
+                  <tr>
+                    <td style="padding: 6px 12px 6px 0; vertical-align: middle;">
+                      <img src="https://img.icons8.com/fluency/24/phone.png" alt="Telefone" width="20" height="20" style="vertical-align: middle;" />
+                    </td>
+                    <td style="padding: 6px 0;">
+                      <a href="tel:+553125147884" style="color: #EA580C; text-decoration: none;">(31) 2514-7884</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 12px 6px 0; vertical-align: middle;">
+                      <img src="https://img.icons8.com/fluency/24/new-post.png" alt="E-mail" width="20" height="20" style="vertical-align: middle;" />
+                    </td>
+                    <td style="padding: 6px 0;">
+                      <a href="mailto:contato@avoarturismo.com.br" style="color: #EA580C; text-decoration: none;">contato@avoarturismo.com.br</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 12px 6px 0; vertical-align: middle;">
+                      <img src="https://img.icons8.com/fluency/24/whatsapp.png" alt="WhatsApp" width="20" height="20" style="vertical-align: middle;" />
+                    </td>
+                    <td style="padding: 6px 0;">
+                      <a href="https://wa.me/553125147884" target="_blank" rel="noopener noreferrer" style="color: #EA580C; text-decoration: none;">(31) 2514-7884 (WhatsApp)</a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ============================================ -->
+          <!-- 2.2 AGRADECIMENTO ANTES DOS DETALHES -->
+          <!-- ============================================ -->
+          <tr>
+            <td style="padding: 0 30px 24px;">
+              <p style="font-size: 14px; line-height: 1.6; color: #555555; margin: 0 0 8px;">
+                Agradecemos por escolher a Avoar Turismo.
+              </p>
+              <p style="font-size: 14px; line-height: 1.6; color: #555555; margin: 0;">
+                Atenciosamente,<br />
+                <strong>Equipe Avoar Turismo</strong>
               </p>
             </td>
           </tr>
@@ -197,7 +248,7 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
           <tr>
             <td style="padding: 0 30px;">
               <hr style="border: none; border-top: 1px solid #eeeeee; margin: 0 0 20px;" />
-              <h2 style="font-size: 22px; font-weight: bold; text-align: center; color: #222222; margin: 0 0 20px;">Detalhes do pedido</h2>
+              <h2 style="font-size: 22px; font-weight: bold; text-align: center; color: #222222; margin: 0 0 20px;">Detalhes do pedido 📋</h2>
 
               <!-- Número e Data -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
@@ -293,7 +344,7 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
           <tr>
             <td align="center" style="padding: 20px 30px 30px;">
               <p style="font-size: 15px; color: #555555; font-weight: 500;">
-                Estamos ansiosos para tê-lo conosco em breve!
+                Estamos ansiosos para tê-lo conosco em breve! 🌟
               </p>
             </td>
           </tr>
@@ -364,13 +415,23 @@ export function gerarTextoConfirmacaoPedido(dados: DadosEmailConfirmacao): strin
   }).join('\n');
 
   return `
-Oba! Compra concluída com sucesso!
+Oba! Compra concluída com sucesso! 🎉
 
-Seu pedido ${dados.nomeProduto} foi concluído com sucesso
+Inscrição C-O-N-F-I-R-M-A-D-A❤️ ✨ em ${dados.nomeProduto}. Ficamos felizes em avisar que seu pedido foi concluído!
 
 Olá ${dados.nomeCliente}. Informamos que seu pedido em Avoar Turismo foi concluído com sucesso.
+Segue os detalhes da compra da viagem:
 
-DETALHES DO PEDIDO
+Caso tenha alguma dúvida ou precise de mais informações, entre em contato:
+📞 Telefone: (31) 2514-7884
+📧 E-mail: contato@avoarturismo.com.br
+💬 WhatsApp: (31) 2514-7884 - https://wa.me/553125147884
+
+Agradecemos por escolher a Avoar Turismo.
+Atenciosamente,
+Equipe Avoar Turismo
+
+DETALHES DO PEDIDO 📋
 Número do pedido: ${dados.numeroPedido.substring(0, 8)}
 Data do pedido: ${formatarData(dados.dataPedido)}
 Produto: ${dados.nomeProduto}
@@ -383,7 +444,7 @@ ${dados.observacoes ? `Observações: ${dados.observacoes}` : ''}
 DADOS DOS ESTUDANTES
 ${estudantesTexto}
 
-Estamos ansiosos para tê-lo conosco em breve!
+Estamos ansiosos para tê-lo conosco em breve! 🌟
 
 Copyright © ${new Date().getFullYear()} Avoar Turismo, All rights reserved.
 `.trim();

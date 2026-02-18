@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-02-18 - feat: corpo do e-mail de confirmação com contato, agradecimento e emojis
+
+### Arquivos Modificados
+- `api/src/templates/email-confirmacao-pedido.ts` [Seção de contato com Telefone, E-mail e WhatsApp (ícones Icons8); agradecimento antes dos detalhes; emojis de comemoração no título e corpo (🎉 ✨ 📋 🌟)]
+
+### Alterações
+- Nova seção "Caso tenha alguma dúvida ou precise de mais informações, entre em contato" com ícones e links para Telefone (31) 2514-7884, E-mail contato@avoarturismo.com.br e WhatsApp. Bloco de agradecimento "Agradecemos por escolher a Avoar Turismo. Atenciosamente, Equipe Avoar Turismo." inserido antes dos detalhes do pedido. Emojis adicionados com moderação: 🎉 no subtítulo, ✨ no título, 📋 em "Detalhes do pedido", 🌟 na mensagem final.
+
+---
+
+## 2026-02-18 - feat: título do e-mail de confirmação com "Inscrição C-O-N-F-I-R-M-A-D-A"
+
+### Arquivos Modificados
+- `api/src/templates/email-confirmacao-pedido.ts` [Título alterado de "Seu pedido {excursão} foi concluído com sucesso" para "Inscrição C-O-N-F-I-R-M-A-D-A❤️ em {excursão}. Ficamos felizes em avisar que seu pedido foi concluído!" nas versões HTML e texto]
+
+### Alterações
+- O e-mail de confirmação de pedido passou a exibir o título "Inscrição C-O-N-F-I-R-M-A-D-A❤️ em {Nome da Excursão}. Ficamos felizes em avisar que seu pedido foi concluído!" em vez de "Seu pedido {excursão} foi concluído com sucesso", deixando a mensagem mais celebratória e clara.
+
+---
+
 ## 2026-02-18 - feat: imagem Quem Confia maior no desktop e clique para tela cheia
 
 ### Arquivos Modificados
