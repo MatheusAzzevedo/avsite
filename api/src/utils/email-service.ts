@@ -1,16 +1,16 @@
 /**
  * Explicação do Arquivo [email-service.ts]
- * 
- * Serviço de envio de e-mails transacionais.
- * Utiliza o transporter configurado em config/email.ts.
- * 
+ *
+ * Serviço de envio de e-mails transacionais via API Brevo (HTTPS).
+ * Usa a API REST do Brevo — compatível com Railway Hobby (SMTP bloqueado).
+ *
  * Funcionalidades:
  * - enviarEmail: Envio genérico de e-mail (HTML ou texto)
  * - Logs detalhados para debug de envio/falha
  * - Validação de configuração antes do envio
  */
 
-import { getTransporter, getFromAddress, verificarConfigEmail } from '../config/email';
+import { getFromAddress, verificarConfigEmail, enviarEmailViaBrevo } from '../config/email';
 import { logger } from './logger';
 
 /**
@@ -29,16 +29,13 @@ interface EnviarEmailParams {
 
 /**
  * Explicação da função [enviarEmail]:
- * Envia um e-mail usando o transporter SMTP configurado.
- * 
+ * Envia um e-mail usando a API Brevo (HTTPS).
+ *
  * Fluxo:
- * 1. Verifica se a configuração SMTP está completa
+ * 1. Verifica se a configuração está completa
  * 2. Monta o e-mail com remetente, destinatário, assunto e conteúdo
- * 3. Envia via transporter (Nodemailer)
+ * 3. Envia via API Brevo
  * 4. Registra log de sucesso ou falha
- * 
- * @param params - Dados do e-mail (para, assunto, html, texto)
- * @returns { success: boolean, messageId?: string, error?: string }
  */
 export async function enviarEmail(params: EnviarEmailParams): Promise<{
   success: boolean;
@@ -59,72 +56,65 @@ export async function enviarEmail(params: EnviarEmailParams): Promise<{
     }
   });
 
-  // Verifica configuração
   if (!verificarConfigEmail()) {
-    logger.error('[Email Service] ❌ Envio cancelado — configuração SMTP incompleta', {
+    logger.error('[Email Service] ❌ Envio cancelado — configuração incompleta', {
       context: {
         para,
         assunto,
-        SMTP_HOST: process.env.SMTP_HOST || 'NÃO DEFINIDO',
-        SMTP_PORT: process.env.SMTP_PORT || 'NÃO DEFINIDO',
-        SMTP_USER: process.env.SMTP_USER ? 'DEFINIDO' : 'NÃO DEFINIDO',
-        SMTP_PASS: process.env.SMTP_PASS ? 'DEFINIDO' : 'NÃO DEFINIDO'
+        BREVO_API_KEY: process.env.BREVO_API_KEY ? 'DEFINIDO' : 'NÃO DEFINIDO',
+        BREVO_FROM_EMAIL: process.env.BREVO_FROM_EMAIL ? 'DEFINIDO' : 'NÃO DEFINIDO'
       }
     });
-    return { success: false, error: 'Configuração SMTP incompleta. Configure SMTP_USER e SMTP_PASS no Railway.' };
+    return {
+      success: false,
+      error: 'Configuração incompleta. Configure BREVO_API_KEY e BREVO_FROM_EMAIL no Railway.'
+    };
   }
 
   try {
-    logger.info('[Email Service] 📤 Chamando transporter.sendMail()...', {
+    logger.info('[Email Service] 📤 Enviando via API Brevo...', {
       context: { de: from, para, assunto }
     });
 
-    const t = await getTransporter();
-    const resultado = await t.sendMail({
-      from,
-      to: para,
-      subject: assunto,
+    const resultado = await enviarEmailViaBrevo({
+      para,
+      assunto,
       html,
-      text: texto || assunto // Fallback: usa o assunto como texto puro se não fornecido
+      texto: texto || assunto
     });
 
-    logger.info('[Email Service] ✅ transporter.sendMail() retornou sucesso', {
+    if (resultado.success) {
+      logger.info('[Email Service] ✅ E-mail enviado com sucesso', {
+        context: {
+          de: from,
+          para,
+          assunto,
+          messageId: resultado.messageId
+        }
+      });
+      return { success: true, messageId: resultado.messageId };
+    }
+
+    logger.error('[Email Service] ❌ Falha no envio', {
       context: {
         de: from,
         para,
         assunto,
-        messageId: resultado.messageId,
-        response: resultado.response,
-        accepted: resultado.accepted,
-        rejected: resultado.rejected
+        error: resultado.error
       }
     });
-
-    return { success: true, messageId: resultado.messageId };
+    return { success: false, error: resultado.error };
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'Erro desconhecido';
-    const errorCode = (error as any)?.code || 'SEM_CODIGO';
-    const errorCommand = (error as any)?.command || 'SEM_COMANDO';
-
-    logger.error('[Email Service] ❌ transporter.sendMail() lançou exceção', {
+    logger.error('[Email Service] ❌ Exceção ao enviar e-mail', {
       context: {
         de: from,
         para,
         assunto,
         error: msg,
-        errorCode,
-        errorCommand,
-        errorType: error instanceof Error ? error.constructor.name : typeof error,
-        stack: error instanceof Error ? error.stack : undefined,
-        smtpConfig: {
-          host: process.env.SMTP_HOST || 'smtp.hostinger.com',
-          port: process.env.SMTP_PORT || '465',
-          secure: process.env.SMTP_SECURE !== 'false',
-          user: process.env.SMTP_USER || 'NÃO DEFINIDO'
-        }
+        stack: error instanceof Error ? error.stack : undefined
       }
     });
-
     return { success: false, error: msg };
   }
 }

@@ -4,11 +4,18 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: botão de teste de e-mail no dashboard admin
+### Última atualização (2026-02-18) - feat: E-mail via API Brevo (HTTPS) para Railway Hobby
+- **api/src/config/email.ts** [SMTP substituído por API Brevo; BREVO_API_KEY, BREVO_FROM_*]
+- **api/src/utils/email-service.ts** [Envio via fetch Brevo API]
+- **api/.env.example** [Variáveis BREVO_* em vez de SMTP_*]
+- **api/RAILWAY-VARIABLES.md** [Seção 6: configuração Brevo]
+- **api/prisma/schema.prisma** [Campo emailConfirmacaoEnviado no model Pedido]
+- **api/src/utils/enviar-email-confirmacao.ts** [Lock atômico; reversão em falha; etapas 1-6]
+- **api/src/routes/pagamento.routes.ts** [E-mail no cartão instantâneo e reconciliações PIX/Cartão]
 - **api/src/routes/admin-email.routes.ts** [Nova rota POST /api/admin/email/teste-confirmacao]
 - **api/public/admin/dashboard.html** [Botão "Testar E-mail Confirmação" em Ações Rápidas]
 
-Resumo: Botão no painel admin envia e-mail de confirmação de inscrição (dados mock) para azetus.io@gmail.com e dantydias@yahoo.com.br. Permite validar SMTP (Brevo) e o layout do e-mail sem realizar compra.
+Resumo: E-mail migrado para API Brevo (HTTPS). Compatível com Railway Hobby (SMTP bloqueado). Configure BREVO_API_KEY, BREVO_FROM_NAME, BREVO_FROM_EMAIL no Railway. Proteção contra duplicação. Botão de teste no admin.
 
 ### Versão anterior (2026-02-16) - feat: telefone obrigatório e máscara no registro
 - **api/public/cliente/registro.html** [Telefone obrigatório; placeholder com exemplo (11) 98888-8888]

@@ -94,16 +94,35 @@ Depois de salvar as variáveis no Railway, faça um novo deploy do **avsite**.
 
 ---
 
-## 6. Ordem sugerida
+## 6. E-mail via API Brevo (Plano Hobby — SMTP bloqueado)
+
+O plano Hobby do Railway **bloqueia SMTP**. Use a API HTTPS do Brevo em vez de SMTP.
+
+### Variáveis no Railway (avsite → Variables)
+
+| Variável | Valor |
+|----------|--------|
+| **`BREVO_API_KEY`** | Chave API do Brevo (obtenha em [app.brevo.com/settings/keys/api](https://app.brevo.com/settings/keys/api)) |
+| **`BREVO_FROM_NAME`** | `Avoar Turismo` |
+| **`BREVO_FROM_EMAIL`** | `contato@avoarturismo.com.br` |
+
+**Importante:** O e-mail em `BREVO_FROM_EMAIL` deve ser um **remetente verificado** no Brevo (Remetentes e Domínios). O domínio `avoarturismo.com.br` deve estar autenticado.
+
+**Nunca** commite a `BREVO_API_KEY` no repositório. Configure apenas nas Variables do Railway.
+
+---
+
+## 7. Ordem sugerida
 
 1. Clicar em **"Trying to connect a database? Add Variable"** → selecionar **psql-site** (assim a `DATABASE_URL` é configurada).
 2. Adicionar as variáveis da tabela acima (ou colar o bloco do Raw Editor).
 3. Se quiser login com Google: adicionar `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI` e `FRONTEND_URL` (ver seção 5).
-4. Salvar e dar **Deploy** de novo no **avsite**.
+4. **E-mail:** adicionar `BREVO_API_KEY`, `BREVO_FROM_NAME`, `BREVO_FROM_EMAIL` (ver seção 6).
+5. Salvar e dar **Deploy** de novo no **avsite**.
 
 ---
 
-## 7. Checklist
+## 8. Checklist
 
 - [ ] **Database:** clique em "Trying to connect a database? Add Variable" e escolha **psql-site**
 - [ ] **`DATABASE_URL`** existe em "8 variables added by Railway" (após conectar o DB)
@@ -112,4 +131,5 @@ Depois de salvar as variáveis no Railway, faça um novo deploy do **avsite**.
 - [ ] **`CORS_ORIGINS`** = `https://avoarturismo.up.railway.app` (com `https://`)
 - [ ] **`API_BASE_URL`** = `https://avoarturismo.up.railway.app`
 - [ ] **Login com Google (opcional):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `FRONTEND_URL` (ver seção 5)
+- [ ] **E-mail Brevo:** `BREVO_API_KEY`, `BREVO_FROM_NAME`, `BREVO_FROM_EMAIL` (ver seção 6)
 - [ ] Novo deploy do **avsite** após salvar as variáveis

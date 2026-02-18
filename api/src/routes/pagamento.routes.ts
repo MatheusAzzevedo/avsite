@@ -250,6 +250,12 @@ router.post('/pix',
               logger.info('[Pagamento PIX] Cobrança já existente no Asaas; pedido atualizado para PAGO', {
                 context: { pedidoId: pedido.id, cobrancaId: cobrancaConfirmada.id }
               });
+              // Dispara e-mail de confirmação (reconciliação)
+              enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+                logger.error('[Pagamento PIX] ❌ Erro ao disparar e-mail na reconciliação', {
+                  context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+                });
+              });
               return res.json({
                 success: true,
                 message: 'Pagamento já foi confirmado.',
@@ -439,6 +445,18 @@ router.post('/cartao',
         context: { pedidoId, cobrancaId: cobranca.id, status: cobranca.status }
       });
 
+      // Envia e-mail de confirmação quando cartão é aprovado instantaneamente
+      if (statusPedido === 'PAGO') {
+        logger.info('[Pagamento Cartão] ✉️ Cartão aprovado — disparando e-mail de confirmação', {
+          context: { pedidoId: pedido.id }
+        });
+        enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+          logger.error('[Pagamento Cartão] ❌ Erro ao disparar e-mail de confirmação', {
+            context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+          });
+        });
+      }
+
       res.json({
         success: true,
         message: statusPedido === 'PAGO' ? 'Pagamento aprovado' : 'Pagamento em processamento',
@@ -488,6 +506,12 @@ router.post('/cartao',
               });
               logger.info('[Pagamento Cartão] Cobrança encontrada no Asaas após erro; pedido atualizado para PAGO', {
                 context: { pedidoId: pedido.id, cobrancaId: cobrancaConfirmada.id }
+              });
+              // Dispara e-mail de confirmação (reconciliação)
+              enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+                logger.error('[Pagamento Cartão] ❌ Erro ao disparar e-mail na reconciliação', {
+                  context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+                });
               });
               return res.json({
                 success: true,

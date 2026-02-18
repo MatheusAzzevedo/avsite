@@ -312,8 +312,9 @@ model Pedido {
   updatedAt                  DateTime     @updatedAt
 
   // Data de pagamento e confirmação
-  dataPagamento   DateTime?
-  dataConfirmacao DateTime?
+  dataPagamento            DateTime?
+  dataConfirmacao          DateTime?
+  emailConfirmacaoEnviado  Boolean   @default(false)
 
   // Relacionamentos
   cliente            Cliente             @relation(fields: [clienteId], references: [id], onDelete: Cascade)

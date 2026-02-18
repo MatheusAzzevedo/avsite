@@ -280,10 +280,10 @@ async function startServer() {
         logger.warn(`⚠️ Erro ao executar health check Asaas: ${err instanceof Error ? err.message : err}`);
       });
 
-      // Health check Email SMTP (não bloqueia o startup, roda em background)
+      // Health check Email Brevo API (não bloqueia o startup, roda em background)
       healthCheckEmail().then((result) => {
         if (!result.ok) {
-          logger.warn(`⚠️ Email SMTP health check falhou: ${result.error}`);
+          logger.warn(`⚠️ Email Brevo API health check falhou: ${result.error}`);
           logger.warn('⚠️ E-mails de confirmação NÃO serão enviados até resolver o problema acima.');
         }
       }).catch((err) => {

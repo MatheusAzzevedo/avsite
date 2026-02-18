@@ -1,14 +1,21 @@
 # Changelog
 
-## 2026-02-18 - feat: botão de teste de e-mail de confirmação no dashboard admin
+## 2026-02-18 - fix: e-mail de confirmação garantido em todos os caminhos de pagamento + proteção contra duplicação
 
 ### Arquivos Modificados
-- `api/src/routes/admin-email.routes.ts` [Novo: rota POST /api/admin/email/teste-confirmacao; envia e-mail de confirmação com dados mock para azetus.io@gmail.com e dantydias@yahoo.com.br]
+- `api/src/config/email.ts` [Substituído SMTP por API Brevo (HTTPS); BREVO_API_KEY, BREVO_FROM_NAME, BREVO_FROM_EMAIL; health check via GET /account]
+- `api/src/utils/email-service.ts` [Envio via API Brevo em vez de Nodemailer]
+- `api/.env.example` [SMTP removido; BREVO_API_KEY, BREVO_FROM_NAME, BREVO_FROM_EMAIL]
+- `api/RAILWAY-VARIABLES.md` [Seção 6: variáveis Brevo para plano Hobby]
+- `api/prisma/schema.prisma` [Campo emailConfirmacaoEnviado (Boolean, default false) no model Pedido para lock atômico]
+- `api/src/utils/enviar-email-confirmacao.ts` [Lock atômico via updateMany (emailConfirmacaoEnviado); reversão do lock em caso de falha SMTP ou erro inesperado; etapas renumeradas 1-6]
+- `api/src/routes/pagamento.routes.ts` [Cartão: disparo de e-mail quando aprovação é instantânea; Reconciliação PIX/Cartão: disparo de e-mail nas reconciliações]
+- `api/src/routes/admin-email.routes.ts` [Novo: rota POST /api/admin/email/teste-confirmacao para teste de envio]
 - `api/src/server.ts` [Registro da rota /api/admin/email]
-- `api/public/admin/dashboard.html` [Botão "Testar E-mail Confirmação" em Ações Rápidas; handler enviarEmailTeste chama a API e exibe feedback]
+- `api/public/admin/dashboard.html` [Botão "Testar E-mail Confirmação" em Ações Rápidas]
 
 ### Alterações
-- Botão de teste no painel admin (Ações Rápidas) dispara envio do e-mail de confirmação de inscrição (template real, dados mock) para os endereços azetus.io@gmail.com e dantydias@yahoo.com.br. Permite validar SMTP (Brevo) e o layout do e-mail sem realizar compra real.
+- E-mail migrado de SMTP para API Brevo (HTTPS). Compatível com Railway Hobby (SMTP bloqueado). Variáveis: BREVO_API_KEY, BREVO_FROM_NAME, BREVO_FROM_EMAIL. Health check via GET /account. E-mail de confirmação em todos os caminhos de pagamento. Proteção contra duplicação via lock atômico. Botão de teste no admin.
 
 ---
 

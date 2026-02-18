@@ -1,101 +1,61 @@
 /**
  * Explicação do Arquivo [email.ts]
- * 
- * Configuração do serviço de e-mail SMTP via Nodemailer.
- * Utiliza o SMTP da Hostinger para envio de e-mails transacionais.
- * 
+ *
+ * Configuração do serviço de e-mail via API Brevo (HTTPS).
+ * Usa a API REST do Brevo em vez de SMTP — ideal para Railway Hobby (SMTP bloqueado).
+ *
  * Variáveis de ambiente necessárias (configurar no Railway):
- * - SMTP_HOST: Servidor SMTP (ex.: smtp.hostinger.com)
- * - SMTP_PORT: Porta SMTP (465 para SSL, 587 para TLS)
- * - SMTP_SECURE: true para SSL (porta 465), false para TLS (porta 587)
- * - SMTP_USER: E-mail completo (ex.: contato@avoarturismo.com.br)
- * - SMTP_PASS: Senha do e-mail
- * - SMTP_FROM_NAME: Nome exibido no remetente (ex.: Avoar Turismo)
- * - SMTP_FROM_EMAIL: E-mail do remetente (deve ser igual ao SMTP_USER)
+ * - BREVO_API_KEY: Chave API do Brevo (obtenha em https://app.brevo.com/settings/keys/api)
+ * - BREVO_FROM_NAME: Nome exibido no remetente (ex.: Avoar Turismo)
+ * - BREVO_FROM_EMAIL: E-mail do remetente (ex.: contato@avoarturismo.com.br)
  */
 
-import dns from 'dns';
-import nodemailer from 'nodemailer';
 import { logger } from '../utils/logger';
 
-const { lookup } = dns.promises;
-
-let _transporter: nodemailer.Transporter | null = null;
-
-/**
- * Explicação da função [getTransporter]:
- * Retorna o transporter SMTP, resolvendo o host para IPv4 antes de conectar.
- * Força uso de IPv4 para evitar ENETUNREACH no Railway (que não suporta IPv6).
- */
-export async function getTransporter(): Promise<nodemailer.Transporter> {
-  if (_transporter) return _transporter;
-
-  const host = process.env.SMTP_HOST || 'smtp.hostinger.com';
-  const port = parseInt(process.env.SMTP_PORT || '465', 10);
-  const secure = process.env.SMTP_SECURE !== 'false';
-  const user = process.env.SMTP_USER || '';
-  const pass = process.env.SMTP_PASS || '';
-
-  let connectHost = host;
-  try {
-    const { address } = await lookup(host, { family: 4 });
-    connectHost = address;
-    logger.info('[Email] Resolvido host para IPv4', { context: { host, ipv4: connectHost } });
-  } catch (err) {
-    logger.warn('[Email] Falha ao resolver IPv4, usando hostname', { context: { host, err } });
-  }
-
-  if (!user || !pass) {
-    logger.warn('[Email] ⚠️ SMTP_USER ou SMTP_PASS não definidos. E-mails não serão enviados.');
-  } else {
-    logger.info('[Email] ✅ Configuração SMTP carregada', {
-      context: { host: connectHost, port, secure, user }
-    });
-  }
-
-  _transporter = nodemailer.createTransport({
-    host: connectHost,
-    port,
-    secure,
-    auth: { user, pass },
-    connectionTimeout: 30000,
-    greetingTimeout: 30000,
-    tls: { rejectUnauthorized: true }
-  });
-
-  return _transporter;
-}
+const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
 /**
  * Explicação da função [getFromAddress]:
  * Retorna o endereço de e-mail do remetente formatado com nome.
  * Ex.: "Avoar Turismo <contato@avoarturismo.com.br>"
- * 
- * @returns String formatada com nome e e-mail do remetente
  */
 export function getFromAddress(): string {
-  const fromName = process.env.SMTP_FROM_NAME || 'Avoar Turismo';
-  const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || '';
+  const fromName = process.env.BREVO_FROM_NAME || 'Avoar Turismo';
+  const fromEmail = process.env.BREVO_FROM_EMAIL || '';
   return `"${fromName}" <${fromEmail}>`;
 }
 
 /**
+ * Explicação da função [getSender]:
+ * Retorna objeto sender para a API Brevo.
+ */
+export function getSender(): { name: string; email: string } {
+  const name = process.env.BREVO_FROM_NAME || 'Avoar Turismo';
+  const email = process.env.BREVO_FROM_EMAIL || '';
+  return { name, email };
+}
+
+/**
  * Explicação da função [verificarConfigEmail]:
- * Verifica se as variáveis de ambiente do SMTP estão configuradas.
- * 
- * @returns true se configurado corretamente
+ * Verifica se as variáveis de ambiente do Brevo estão configuradas.
  */
 export function verificarConfigEmail(): boolean {
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  const apiKey = process.env.BREVO_API_KEY;
+  const fromEmail = process.env.BREVO_FROM_EMAIL;
 
-  if (!user || !pass) {
-    logger.error('[Email] ❌ Configuração SMTP incompleta', {
+  if (!apiKey || !apiKey.trim()) {
+    logger.error('[Email] ❌ Configuração incompleta', {
       context: {
-        hasUser: !!user,
-        hasPass: !!pass,
-        solution: 'Configure SMTP_USER e SMTP_PASS nas Variables do Railway'
+        hasApiKey: !!apiKey,
+        solution: 'Configure BREVO_API_KEY nas Variables do Railway'
       }
+    });
+    return false;
+  }
+
+  if (!fromEmail || !fromEmail.trim()) {
+    logger.error('[Email] ❌ BREVO_FROM_EMAIL não definido', {
+      context: { solution: 'Configure BREVO_FROM_EMAIL nas Variables do Railway' }
     });
     return false;
   }
@@ -105,44 +65,108 @@ export function verificarConfigEmail(): boolean {
 
 /**
  * Explicação da função [healthCheckEmail]:
- * Testa a conexão com o servidor SMTP.
- * Verifica se as credenciais estão corretas e o servidor está acessível.
- * Chamada na inicialização do servidor para diagnóstico.
- * 
- * @returns { ok: boolean, error?: string }
+ * Valida a API key do Brevo via GET /account (não envia e-mail).
  */
 export async function healthCheckEmail(): Promise<{ ok: boolean; error?: string }> {
   if (!verificarConfigEmail()) {
-    return { ok: false, error: 'Configuração SMTP incompleta (SMTP_USER ou SMTP_PASS ausente)' };
+    return { ok: false, error: 'Configuração incompleta (BREVO_API_KEY ou BREVO_FROM_EMAIL ausente)' };
   }
 
+  const sender = getSender();
+
+  logger.info('[Email] 🔄 Iniciando health check Brevo API...', {
+    context: { fromEmail: sender.email }
+  });
+
   try {
-    const t = await getTransporter();
-    await t.verify();
-    logger.info('[Email] ✅ Health check OK — conexão SMTP funcionando', {
-      context: {
-        host: process.env.SMTP_HOST || 'smtp.hostinger.com',
-        port: process.env.SMTP_PORT || '465',
-        user: process.env.SMTP_USER
+    const res = await fetch('https://api.brevo.com/v3/account', {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+        'api-key': process.env.BREVO_API_KEY!.trim()
       }
     });
-    return { ok: true };
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : 'Erro desconhecido';
-    logger.error('[Email] ❌ Health check FALHOU — erro na conexão SMTP', {
+
+    const data = await res.json().catch(() => ({})) as { email?: string; message?: string };
+
+    if (res.ok) {
+      logger.info('[Email] ✅ Health check OK — API Brevo funcionando', {
+        context: { fromEmail: sender.email }
+      });
+      return { ok: true };
+    }
+
+    const msg = data?.message || `HTTP ${res.status}`;
+    logger.error('[Email] ❌ Health check FALHOU', {
       context: {
+        status: res.status,
         error: msg,
-        host: process.env.SMTP_HOST || 'smtp.hostinger.com',
-        port: process.env.SMTP_PORT || '465',
-        user: process.env.SMTP_USER,
+        fromEmail: sender.email,
         solucao: [
-          '1. Verifique se SMTP_USER e SMTP_PASS estão corretos no Railway',
-          '2. Confirme que o e-mail existe no painel Hostinger',
-          '3. Verifique se a porta 465 (SSL) está liberada',
-          '4. Teste as credenciais em um cliente de e-mail (Outlook, Thunderbird)'
+          '1. Verifique se BREVO_API_KEY está correta (https://app.brevo.com/settings/keys/api)',
+          '2. Confirme que BREVO_FROM_EMAIL é um remetente verificado no Brevo',
+          '3. Domínio deve estar autenticado em Remetentes e Domínios'
         ]
       }
     });
     return { ok: false, error: msg };
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Erro desconhecido';
+    logger.error('[Email] ❌ Health check FALHOU — erro de rede', {
+      context: { error: msg, fromEmail: sender.email }
+    });
+    return { ok: false, error: msg };
   }
+}
+
+/**
+ * Explicação da função [enviarEmailViaBrevo]:
+ * Envia e-mail via API REST do Brevo.
+ * Usado internamente pelo email-service.ts.
+ */
+export async function enviarEmailViaBrevo(params: {
+  para: string;
+  assunto: string;
+  html: string;
+  texto?: string;
+}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const apiKey = process.env.BREVO_API_KEY?.trim();
+  const sender = getSender();
+
+  if (!apiKey || !sender.email) {
+    return {
+      success: false,
+      error: 'Configuração incompleta (BREVO_API_KEY ou BREVO_FROM_EMAIL)'
+    };
+  }
+
+  const body: Record<string, unknown> = {
+    sender: { name: sender.name, email: sender.email },
+    to: [{ email: params.para }],
+    subject: params.assunto,
+    htmlContent: params.html
+  };
+
+  if (params.texto) {
+    body.textContent = params.texto;
+  }
+
+  const res = await fetch(BREVO_API_URL, {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'content-type': 'application/json',
+      'api-key': apiKey
+    },
+    body: JSON.stringify(body)
+  });
+
+  const data = await res.json().catch(() => ({})) as { messageId?: string; message?: string; code?: string };
+
+  if (res.ok) {
+    return { success: true, messageId: data.messageId };
+  }
+
+  const errorMsg = data.message || data.code || `HTTP ${res.status}`;
+  return { success: false, error: errorMsg };
 }

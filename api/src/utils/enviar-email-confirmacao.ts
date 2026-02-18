@@ -37,11 +37,30 @@ import {
  */
 export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<void> {
   try {
-    logger.info('[Email Confirmação] 🔄 ETAPA 1/5 — Iniciando fluxo de e-mail de confirmação', {
+    logger.info('[Email Confirmação] 🔄 ETAPA 1/6 — Iniciando fluxo de e-mail de confirmação', {
       context: { pedidoId }
     });
 
-    // 1. Busca pedido completo no banco
+    // 1. Lock atômico: marca emailConfirmacaoEnviado = true APENAS se ainda for false.
+    //    updateMany com where garante atomicidade — se dois processos tentarem ao mesmo tempo,
+    //    apenas um conseguirá a atualização (count === 1), o outro verá count === 0.
+    const lockResult = await prisma.pedido.updateMany({
+      where: { id: pedidoId, emailConfirmacaoEnviado: false },
+      data: { emailConfirmacaoEnviado: true }
+    });
+
+    if (lockResult.count === 0) {
+      logger.info('[Email Confirmação] ⏭️ E-mail já foi enviado anteriormente — ignorando duplicação', {
+        context: { pedidoId }
+      });
+      return;
+    }
+
+    logger.info('[Email Confirmação] ✅ ETAPA 1/6 — Lock adquirido (emailConfirmacaoEnviado marcado)', {
+      context: { pedidoId }
+    });
+
+    // 2. Busca pedido completo no banco
     const pedido = await prisma.pedido.findUnique({
       where: { id: pedidoId },
       include: {
@@ -53,13 +72,18 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
     });
 
     if (!pedido) {
-      logger.error('[Email Confirmação] ❌ ETAPA 1 FALHOU — Pedido não encontrado no banco', {
+      logger.error('[Email Confirmação] ❌ ETAPA 2 FALHOU — Pedido não encontrado no banco', {
         context: { pedidoId }
+      });
+      // Reverte o lock se o pedido não existe
+      await prisma.pedido.updateMany({
+        where: { id: pedidoId },
+        data: { emailConfirmacaoEnviado: false }
       });
       return;
     }
 
-    logger.info('[Email Confirmação] ✅ ETAPA 1/5 — Pedido encontrado no banco', {
+    logger.info('[Email Confirmação] ✅ ETAPA 2/6 — Pedido encontrado no banco', {
       context: {
         pedidoId,
         clienteId: pedido.clienteId,
@@ -76,13 +100,13 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
       }
     });
 
-    // 2. Determina o e-mail do destinatário
+    // 3. Determina o e-mail do destinatário
     // Prioridade: e-mail do responsável financeiro > e-mail do cliente
     const dadosResponsavel = pedido.dadosResponsavelFinanceiro as Record<string, string> | null;
     const emailDestinatario = dadosResponsavel?.email || pedido.cliente.email;
 
     if (!emailDestinatario) {
-      logger.error('[Email Confirmação] ❌ ETAPA 2 FALHOU — Nenhum e-mail de destinatário encontrado', {
+      logger.error('[Email Confirmação] ❌ ETAPA 3 FALHOU — Nenhum e-mail de destinatário encontrado', {
         context: {
           pedidoId,
           clienteId: pedido.clienteId,
@@ -90,10 +114,14 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
           responsavelEmail: dadosResponsavel?.email || 'VAZIO'
         }
       });
+      await prisma.pedido.updateMany({
+        where: { id: pedidoId },
+        data: { emailConfirmacaoEnviado: false }
+      });
       return;
     }
 
-    logger.info('[Email Confirmação] ✅ ETAPA 2/5 — Destinatário definido', {
+    logger.info('[Email Confirmação] ✅ ETAPA 3/6 — Destinatário definido', {
       context: {
         pedidoId,
         emailDestinatario,
@@ -101,12 +129,12 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
       }
     });
 
-    // 3. Determina o nome do produto
+    // 4. Determina o nome do produto
     const nomeProduto = pedido.excursaoPedagogica?.titulo
       || pedido.excursao?.titulo
       || 'Viagem pedagógica';
 
-    logger.info('[Email Confirmação] ✅ ETAPA 3/5 — Dados do produto identificados', {
+    logger.info('[Email Confirmação] ✅ ETAPA 4/6 — Dados do produto identificados', {
       context: {
         pedidoId,
         nomeProduto,
@@ -115,7 +143,7 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
       }
     });
 
-    // 4. Monta dados do endereço de cobrança
+    // 5. Monta dados do endereço de cobrança
     const endereco = dadosResponsavel ? {
       nome: dadosResponsavel.nome || dadosResponsavel.nomeCompleto || pedido.cliente.nome,
       sobrenome: dadosResponsavel.sobrenome || '',
@@ -129,7 +157,7 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
       email: dadosResponsavel.email || pedido.cliente.email
     } : undefined;
 
-    // 5. Monta dados dos estudantes
+    // 5b. Monta dados dos estudantes
     const estudantes = pedido.itens.map((item) => ({
       nomeAluno: item.nomeAluno,
       dataNascimento: item.dataNascimento
@@ -142,7 +170,7 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
       alergiasCuidados: item.alergiasCuidados || undefined
     }));
 
-    // 6. Monta dados completos para o template
+    // 5c. Monta dados completos para o template
     const dadosEmail: DadosEmailConfirmacao = {
       numeroPedido: pedido.id,
       dataPedido: pedido.createdAt,
@@ -157,8 +185,8 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
       endereco
     };
 
-    // 7. Gera HTML e texto do e-mail
-    logger.info('[Email Confirmação] 🔄 ETAPA 4/5 — Gerando template HTML do e-mail', {
+    // 6. Gera HTML e texto do e-mail
+    logger.info('[Email Confirmação] 🔄 ETAPA 5/6 — Gerando template HTML do e-mail', {
       context: {
         pedidoId,
         totalEstudantes: estudantes.length,
@@ -169,7 +197,7 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
     const html = gerarTemplateConfirmacaoPedido(dadosEmail);
     const texto = gerarTextoConfirmacaoPedido(dadosEmail);
 
-    logger.info('[Email Confirmação] ✅ ETAPA 4/5 — Template gerado', {
+    logger.info('[Email Confirmação] ✅ ETAPA 5/6 — Template gerado', {
       context: {
         pedidoId,
         htmlLength: html.length,
@@ -177,14 +205,12 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
       }
     });
 
-    // 8. Envia o e-mail
-    logger.info('[Email Confirmação] 🔄 ETAPA 5/5 — Enviando e-mail via SMTP', {
+    // 7. Envia o e-mail
+    logger.info('[Email Confirmação] 🔄 ETAPA 6/6 — Enviando e-mail via API Brevo', {
       context: {
         pedidoId,
         para: emailDestinatario,
-        assunto: `Confirmação de Inscrição - Pedido ${pedido.id.substring(0, 8)}`,
-        smtpHost: process.env.SMTP_HOST || 'smtp.hostinger.com',
-        smtpUser: process.env.SMTP_USER || 'NÃO CONFIGURADO'
+        assunto: `Confirmação de Inscrição - Pedido ${pedido.id.substring(0, 8)}`
       }
     });
 
@@ -196,7 +222,7 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
     });
 
     if (resultado.success) {
-      logger.info('[Email Confirmação] ✅ ETAPA 5/5 — E-mail enviado com SUCESSO', {
+      logger.info('[Email Confirmação] ✅ ETAPA 6/6 — E-mail enviado com SUCESSO', {
         context: {
           pedidoId,
           para: emailDestinatario,
@@ -206,15 +232,21 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
         }
       });
     } else {
-      logger.error('[Email Confirmação] ❌ ETAPA 5 FALHOU — E-mail NÃO foi enviado', {
+      logger.error('[Email Confirmação] ❌ ETAPA 6 FALHOU — E-mail NÃO foi enviado', {
         context: {
           pedidoId,
           para: emailDestinatario,
-          error: resultado.error,
-          smtpHost: process.env.SMTP_HOST || 'smtp.hostinger.com',
-          smtpUser: process.env.SMTP_USER || 'NÃO CONFIGURADO',
-          smtpPort: process.env.SMTP_PORT || '465'
+          error: resultado.error
         }
+      });
+
+      // Reverte o lock para permitir nova tentativa futura (via webhook ou polling)
+      await prisma.pedido.updateMany({
+        where: { id: pedidoId },
+        data: { emailConfirmacaoEnviado: false }
+      });
+      logger.info('[Email Confirmação] 🔄 Lock revertido — nova tentativa será possível', {
+        context: { pedidoId }
       });
     }
   } catch (error) {
@@ -227,5 +259,23 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
         stack: error instanceof Error ? error.stack : undefined
       }
     });
+
+    // Reverte o lock em caso de erro inesperado para permitir retry
+    try {
+      await prisma.pedido.updateMany({
+        where: { id: pedidoId },
+        data: { emailConfirmacaoEnviado: false }
+      });
+      logger.info('[Email Confirmação] 🔄 Lock revertido após erro — nova tentativa será possível', {
+        context: { pedidoId }
+      });
+    } catch (revertErr) {
+      logger.error('[Email Confirmação] ❌ Falha ao reverter lock após erro', {
+        context: {
+          pedidoId,
+          error: revertErr instanceof Error ? revertErr.message : 'Erro desconhecido'
+        }
+      });
+    }
   }
 }
