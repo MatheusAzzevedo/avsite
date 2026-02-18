@@ -304,11 +304,15 @@
         /**
          * Explicação da função [enviarEmailTeste]
          * Dispara envio de e-mail de confirmação de inscrição (dados mock) para
-         * azetus.io@gmail.com e dantydias@yahoo.com.br. Usado para testar SMTP.
+         * azetus.io@gmail.com e dantydias@yahoo.com.br. Usado para testar API Brevo.
          */
         async function enviarEmailTeste() {
             const btn = document.getElementById('btnTesteEmail');
             if (!btn) return;
+            if (typeof apiRequest !== 'function') {
+                alert('Erro: apiRequest não disponível. Recarregue a página.');
+                return;
+            }
             const textoOriginal = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
@@ -316,14 +320,16 @@
                 const res = await apiRequest('/admin/email/teste-confirmacao', {
                     method: 'POST'
                 });
-                if (res.success) {
+                if (res && res.success) {
                     alert('E-mails de teste enviados com sucesso para azetus.io@gmail.com e dantydias@yahoo.com.br.');
                 } else {
-                    const erros = res.data?.resultados?.filter(r => !r.success).map(r => `${r.email}: ${r.error}`).join('\n') || res.message;
+                    const erros = (res && res.data && res.data.resultados)
+                        ? res.data.resultados.filter(function(r) { return !r.success; }).map(function(r) { return r.email + ': ' + (r.error || 'erro'); }).join('\n')
+                        : (res && res.message) || 'Falha desconhecida';
                     alert('Falha ao enviar e-mails:\n' + erros);
                 }
             } catch (err) {
-                alert('Erro: ' + (err.message || 'Não foi possível enviar os e-mails de teste.'));
+                alert('Erro: ' + (err && err.message ? err.message : 'Não foi possível enviar os e-mails de teste. Verifique se está logado como admin.'));
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = textoOriginal;
@@ -333,8 +339,10 @@
         // Carrega o dashboard quando a página carrega
         document.addEventListener('DOMContentLoaded', function() {
             loadDashboard();
-            const btnTeste = document.getElementById('btnTesteEmail');
-            if (btnTeste) btnTeste.addEventListener('click', enviarEmailTeste);
+            var btnTeste = document.getElementById('btnTesteEmail');
+            if (btnTeste) {
+                btnTeste.addEventListener('click', function() { enviarEmailTeste(); });
+            }
         });
     </script>
 </body>
