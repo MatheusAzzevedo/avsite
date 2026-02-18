@@ -92,13 +92,13 @@
         if (elHorario) elHorario.textContent = excursao.horario || '—';
     }
 
-    var respFieldMap = { nome: 'respNome', sobrenome: 'respSobrenome', cpf: 'respCpf', pais: 'respPais', cep: 'respCep', endereco: 'respEndereco', complemento: 'respComplemento', numero: 'respNumero', cidade: 'respCidade', estado: 'respEstado', bairro: 'respBairro', telefone: 'respTelefone', email: 'respEmail' };
+    var respFieldMap = { nome: 'respNome', sobrenome: 'respSobrenome', cpf: 'respCpf', cep: 'respCep', endereco: 'respEndereco', complemento: 'respComplemento', numero: 'respNumero', cidade: 'respCidade', estado: 'respEstado', bairro: 'respBairro', telefone: 'respTelefone', email: 'respEmail' };
 
     function gerarResponsavelBlock() {
         var container = document.getElementById('responsavelContainer');
         if (!container) return;
         var estados = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
-        var opts = estados.map(function (uf) { return '<option value="' + uf + '">' + uf + '</option>'; }).join('');
+        var opts = estados.map(function (uf) { return '<option value="' + uf + '"' + (uf === 'MG' ? ' selected' : '') + '>' + uf + '</option>'; }).join('');
         container.innerHTML =
             '<section class="form-section">' +
             '<h2 class="form-section-title"><i class="fas fa-user-tie"></i> Dados do Responsável Financeiro</h2>' +
@@ -109,14 +109,12 @@
             '</div></div>' +
             '<div class="form-group"><label for="respCpf">CPF <span class="required">*</span></label><span class="label-hint">Formato: 000.000.000-00</span><input type="text" id="respCpf" name="respCpf" required placeholder="000.000.000-00">' +
             '</div>' +
-            '<div class="form-group"><label for="respPais">País <span class="required">*</span></label><select id="respPais" name="respPais" required><option value="Brasil">Brasil</option><option value="Argentina">Argentina</option><option value="Uruguai">Uruguai</option><option value="Chile">Chile</option><option value="Paraguai">Paraguai</option></select>' +
-            '</div>' +
             '<div class="form-grid"><div class="form-group"><label for="respCep">CEP <span class="required">*</span></label><input type="text" id="respCep" name="respCep" required placeholder="00000-000"></div>' +
             '<div class="form-group"><label for="respEndereco">Endereço <span class="required">*</span></label><input type="text" id="respEndereco" name="respEndereco" required placeholder="Rua e número"></div></div>' +
             '<div class="form-grid"><div class="form-group"><label for="respNumero">Número <span class="required">*</span></label><input type="text" id="respNumero" name="respNumero" required placeholder="Nº"></div>' +
             '<div class="form-group"><label for="respComplemento">Complemento</label><input type="text" id="respComplemento" name="respComplemento" placeholder="Apto, sala..."></div></div>' +
             '<div class="form-grid"><div class="form-group"><label for="respCidade">Cidade <span class="required">*</span></label><input type="text" id="respCidade" name="respCidade" required placeholder="Cidade"></div>' +
-            '<div class="form-group"><label for="respEstado">Estado <span class="required">*</span></label><select id="respEstado" name="respEstado" required><option value="">Selecione</option>' + opts + '</select></div></div>' +
+            '<div class="form-group"><label for="respEstado">Estado <span class="required">*</span></label><select id="respEstado" name="respEstado" required>' + opts + '</select></div></div>' +
             '<div class="form-group"><label for="respBairro">Bairro</label><input type="text" id="respBairro" name="respBairro" placeholder="Bairro">' +
             '</div>' +
             '<div class="form-grid"><div class="form-group"><label for="respTelefone">Telefone <span class="required">*</span></label><span class="label-hint">(11) 98888-8888</span><input type="tel" id="respTelefone" name="respTelefone" required placeholder="(11) 98888-8888"></div>' +
@@ -459,7 +457,7 @@
             medicamentosFebre: 'Medicamentos febre/dor',
             medicamentosAlergia: 'Medicamentos alergia'
         };
-        var respLabels = { nome: 'Nome', sobrenome: 'Sobrenome', cpf: 'CPF', pais: 'País', cep: 'CEP', endereco: 'Endereço', complemento: 'Complemento', numero: 'Número', cidade: 'Cidade', estado: 'Estado', bairro: 'Bairro', telefone: 'Telefone', email: 'Email' };
+        var respLabels = { nome: 'Nome', sobrenome: 'Sobrenome', cpf: 'CPF', cep: 'CEP', endereco: 'Endereço', complemento: 'Complemento', numero: 'Número', cidade: 'Cidade', estado: 'Estado', bairro: 'Bairro', telefone: 'Telefone', email: 'Email' };
 
         details.forEach(function (d) {
             var inputName = apiPathToInputName(d.field);
@@ -558,7 +556,7 @@
                 nome: getFormValue(form, 'respNome'),
                 sobrenome: getFormValue(form, 'respSobrenome'),
                 cpf: getFormValue(form, 'respCpf'),
-                pais: getFormValue(form, 'respPais'),
+                pais: 'Brasil',
                 cep: getFormValue(form, 'respCep'),
                 endereco: getFormValue(form, 'respEndereco'),
                 complemento: getFormValue(form, 'respComplemento') || undefined,

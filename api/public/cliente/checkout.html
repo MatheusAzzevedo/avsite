@@ -67,10 +67,10 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(234, 88, 12, 0.35) 0%, rgba(0, 0, 0, 0.65) 50%, rgba(154, 52, 18, 0.4) 100%);
+            background: rgba(255, 255, 255, 0.5);
             z-index: 1;
         }
-        @keyframes fadeInCheckoutImg { to { opacity: 1; } }
+        @keyframes fadeInCheckoutImg { to { opacity: 0.25; } }
 
         .navbar {
             background: white;
@@ -208,6 +208,13 @@
         }
 
         .checkout-container { position: relative; z-index: 2; max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .checkout-header-card {
+            background: #fff;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
         .checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; }
 
         .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.06); padding: 2rem; margin-bottom: 1.5rem; }
@@ -217,8 +224,14 @@
         .page-title { font-size: 1.75rem; color: var(--text-dark); margin-bottom: 0.25rem; }
         .subtitle { color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.95rem; }
 
-        /* Formulário: seções e labels organizadas */
-        .form-section { margin-bottom: 2rem; }
+        /* Formulário: seções e labels organizadas - fundo branco para leitura */
+        .form-section {
+            margin-bottom: 2rem;
+            background: #fff;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+        }
         .form-section-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -566,8 +579,10 @@
         </div>
 
     <div class="checkout-container">
-        <h1 class="page-title">Checkout</h1>
-        <p class="subtitle">Preencha os dados de cada participante. Campos com <span class="required">*</span> são obrigatórios.</p>
+        <div class="checkout-header-card">
+            <h1 class="page-title">Checkout</h1>
+            <p class="subtitle">Preencha os dados de cada participante. Campos com <span class="required">*</span> são obrigatórios.</p>
+        </div>
 
         <div class="checkout-grid">
             <!-- Coluna esquerda: formulário -->

@@ -4,10 +4,23 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: mosaico no checkout
-- **api/public/cliente/checkout.html** [Mosaico de fundo na seção de informações da excursão: 20 imagens de Imagens para o site, grid 4x5, overlay gradiente laranja, estilo igual ao login]
+### Última atualização (2026-02-18) - fix: histórico de pedidos não exibia pedidos
+- **api/public/cliente/pedidos.html** [Tratamento defensivo; verificação response.ok; log debug]
+- **cliente/pedidos.html** [Mesma correção; botão Pagar; statusLabels; estilos]
+- **api/src/routes/pedido.routes.ts** [Log debug quando cliente sem pedidos]
 
-Resumo: A tela de checkout de excursões pedagógicas passou a exibir mosaico de fundo na primeira seção (Resumo do Pedido, formulário e Dados da viagem), usando imagens do diretório Imagens para o site, no mesmo estilo da tela de login.
+Resumo: Página de histórico de pedidos não exibia pedidos (pendentes ou pagos). Corrigido tratamento defensivo da resposta da API. API já retorna todos os pedidos (PENDENTE, AGUARDANDO_PAGAMENTO, PAGO, CONFIRMADO). Botão "Pagar" para pedidos pendentes.
+
+### Versão anterior (2026-02-18) - fix: mosaico 25% + labels em divs brancas
+- **api/public/cliente/checkout.html** [Mosaico 25% opacidade; overlay branco; título e seções do form em divs com fundo branco]
+- **api/public/cliente/excursao.html** [Mosaico em toda a página; opacidade 25%; product-content transparente; cards brancos]
+
+Resumo: Mosaico de fundo com 25% de opacidade em checkout e excursão. Labels e títulos em divs com fundo branco para leitura. Excursão: mosaico em toda a página (não só no hero).
+
+### Versão anterior (2026-02-18) - fix: mosaico no hero da excursão
+- **api/public/cliente/excursao.html** [Mosaico de fundo na seção hero (título, breadcrumb, meta): 20 imagens de Imagens para o site, grid 4x5, overlay gradiente laranja, estilo igual ao login]
+
+Resumo: A página de detalhes da excursão (excursao.html) passou a exibir mosaico de fundo na seção hero escura (onde ficam o título City Tour, breadcrumb e informações). Antes tinha fundo preto sólido; agora exibe o mosaico com imagens do diretório Imagens para o site.
 
 ### Versão anterior (2026-02-18) - feat: botão renomeado para "Comprar"
 - **api/public/cliente/excursao.html**, **cliente/excursao.html** [Botão de compra: "Continuar para Checkout" → "Comprar"]

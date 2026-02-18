@@ -375,6 +375,12 @@ router.get('/',
         }
       });
 
+      if (pedidos.length === 0 && total === 0) {
+        logger.debug('[Pedidos] Nenhum pedido encontrado para cliente - verifique se pedidos foram criados com este clienteId', {
+          context: { clienteId }
+        });
+      }
+
       // Formata dados
       const data = pedidos.map(p => ({
         ...p,

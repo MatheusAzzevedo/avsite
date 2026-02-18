@@ -64,25 +64,73 @@
             color: #ff5c00;
         }
         
-        /* PRODUCT HERO */
+        /* PRODUCT HERO - overlay escuro para legibilidade do texto */
         .product-hero {
-            background: #000;
             color: #fff;
             padding: 60px 0 40px;
             position: relative;
             overflow: hidden;
         }
-
         .product-hero::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 92, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.7) 100%);
             z-index: 1;
         }
+        .product-hero .hero-container { z-index: 2; }
+
+        .excursao-page-bg .mosaico-item {
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation: fadeInExcursaoImg 1s ease-in-out forwards;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(1) { animation-delay: 0.03s; }
+        .excursao-page-bg .mosaico-item:nth-child(2) { animation-delay: 0.06s; }
+        .excursao-page-bg .mosaico-item:nth-child(3) { animation-delay: 0.09s; }
+        .excursao-page-bg .mosaico-item:nth-child(4) { animation-delay: 0.12s; }
+        .excursao-page-bg .mosaico-item:nth-child(5) { animation-delay: 0.15s; }
+        .excursao-page-bg .mosaico-item:nth-child(6) { animation-delay: 0.18s; }
+        .excursao-page-bg .mosaico-item:nth-child(7) { animation-delay: 0.21s; }
+        .excursao-page-bg .mosaico-item:nth-child(8) { animation-delay: 0.24s; }
+        .excursao-page-bg .mosaico-item:nth-child(9) { animation-delay: 0.27s; }
+        .excursao-page-bg .mosaico-item:nth-child(10) { animation-delay: 0.3s; }
+        .excursao-page-bg .mosaico-item:nth-child(11) { animation-delay: 0.33s; }
+        .excursao-page-bg .mosaico-item:nth-child(12) { animation-delay: 0.36s; }
+        .excursao-page-bg .mosaico-item:nth-child(13) { animation-delay: 0.39s; }
+        .excursao-page-bg .mosaico-item:nth-child(14) { animation-delay: 0.42s; }
+        .excursao-page-bg .mosaico-item:nth-child(15) { animation-delay: 0.45s; }
+        .excursao-page-bg .mosaico-item:nth-child(16) { animation-delay: 0.48s; }
+        .excursao-page-bg .mosaico-item:nth-child(17) { animation-delay: 0.51s; }
+        .excursao-page-bg .mosaico-item:nth-child(18) { animation-delay: 0.54s; }
+        .excursao-page-bg .mosaico-item:nth-child(19) { animation-delay: 0.57s; }
+        .excursao-page-bg .mosaico-item:nth-child(20) { animation-delay: 0.6s; }
+
+        .excursao-page-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.5);
+            z-index: 1;
+        }
+
+        @keyframes fadeInExcursaoImg { to { opacity: 0.25; } }
+
+        /* Mosaico em toda a página da excursão */
+        .excursao-page-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 4px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+        #excursaoContent { position: relative; min-height: 100vh; }
 
         .product-hero .hero-container {
             position: relative;
@@ -149,10 +197,10 @@
             color: #ddd;
         }
 
-        /* PRODUCT CONTENT */
+        /* PRODUCT CONTENT - transparente para mostrar mosaico */
         .product-content {
             padding: 60px 0;
-            background: #fff;
+            background: transparent;
             position: relative;
             z-index: 2;
         }
@@ -564,6 +612,11 @@
                 padding: 30px 0 20px;
             }
 
+            .excursao-page-bg {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(10, 1fr);
+            }
+
             .hero-container {
                 padding: 0 1rem;
             }
@@ -704,6 +757,30 @@
 
     <!-- Product Content (hidden initially) -->
     <div id="excursaoContent" style="display: none;">
+        <!-- Mosaico em toda a página -->
+        <div class="excursao-page-bg" aria-hidden="true">
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250627-WA0021.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0007.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250517-WA0011.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0008.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0019.jpg')"></div>
+            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg')"></div>
+        </div>
         <!-- Product Hero -->
         <section class="product-hero">
             <div class="hero-container">

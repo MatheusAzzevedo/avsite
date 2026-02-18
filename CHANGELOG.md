@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-02-18 - fix: página de histórico de pedidos não exibia pedidos
+
+### Arquivos Modificados
+- `api/public/cliente/pedidos.html` [Tratamento defensivo para data.data; verificação response.ok; log de debug; uso de Array.isArray]
+- `cliente/pedidos.html` [Mesma correção; adicionados botão Pagar, statusLabels e estilos btn-pagar/status]
+- `api/src/routes/pedido.routes.ts` [Log de debug quando nenhum pedido encontrado para cliente]
+
+### Alterações
+- A página de histórico de pedidos do cliente não exibia pedidos (pendentes ou pagos). Ajustado tratamento defensivo e verificação de resposta da API. Adicionado log para debug. A API já retorna todos os pedidos (status PENDENTE, AGUARDANDO_PAGAMENTO, PAGO, CONFIRMADO). O botão "Pagar" aparece para pedidos pendentes e aguardando pagamento.
+
+---
+
+## 2026-02-18 - fix: mosaico 25% opacidade + labels em divs brancas (excursao e checkout)
+
+### Arquivos Modificados
+- `api/public/cliente/checkout.html` [Mosaico com opacidade 25%; overlay branco; checkout-header-card e form-section com fundo branco para leitura dos labels]
+- `api/public/cliente/excursao.html` [Mosaico em toda a página (excursao-page-bg); opacidade 25%; product-content transparente; overlay branco na área de conteúdo]
+
+### Alterações
+- Checkout: mosaico do fundo passou a 25% de opacidade; título "Checkout" e subtítulo em div com fundo branco; seções do formulário (Dados do Responsável, Alunos) com fundo branco para não prejudicar a leitura.
+- Excursão: mosaico estendido para toda a página (não só o hero); opacidade 25%; área de conteúdo (product-content) com fundo transparente para o mosaico aparecer; cards (main-content, purchase-card) mantêm fundo branco.
+
+---
+
+## 2026-02-18 - fix: mosaico no hero da página de detalhes da excursão (excursao.html)
+
+### Arquivos Modificados
+- `api/public/cliente/excursao.html` [Mosaico de fundo no product-hero (seção escura com título): grid 4x5 com 20 imagens de Imagens para o site; overlay gradiente laranja; animação fadeIn; responsivo 2x10 no mobile]
+
+### Alterações
+- A seção hero da página de detalhes da excursão (excursao.html) passou a exibir mosaico de fundo com imagens do diretório "Imagens para o site", no mesmo estilo da tela de login. Antes tinha fundo preto sólido; agora exibe o mosaico com overlay gradiente laranja.
+
+---
+
 ## 2026-02-18 - feat: mosaico de fundo na tela de checkout (excursões pedagógicas)
 
 ### Arquivos Modificados

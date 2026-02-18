@@ -388,8 +388,17 @@
 
                 hideLoadingAndShow();
 
-                if (data.success && data.data.length > 0) {
-                    data.data.forEach(pedido => {
+                // Log para debug: ajuda a identificar se API retorna dados corretamente
+                console.log('[Pedidos] Resposta API:', { ok: response.ok, success: data?.success, total: Array.isArray(data?.data) ? data.data.length : 0 });
+
+                if (!response.ok) {
+                    throw new Error(data?.error || data?.message || 'Erro ao carregar pedidos');
+                }
+
+                // Tratamento defensivo: API retorna { success, data: [...], pagination }
+                const pedidos = Array.isArray(data?.data) ? data.data : [];
+                if (data.success && pedidos.length > 0) {
+                    pedidos.forEach(pedido => {
                         const titulo = (pedido.excursaoPedagogica && pedido.excursaoPedagogica.titulo)
                             ? pedido.excursaoPedagogica.titulo
                             : (pedido.excursao && pedido.excursao.titulo)
