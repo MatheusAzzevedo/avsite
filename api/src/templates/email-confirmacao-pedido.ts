@@ -164,7 +164,7 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
           <!-- ============================================ -->
           <tr>
             <td align="center" style="padding: 40px 30px 20px;">
-              <img src="${baseUrl}/images/background/Logo.webp" alt="Avoar Turismo Pedagógico" width="180" style="display: block; max-width: 180px; height: auto;" />
+              <img src="${baseUrl}/images/background/Logo%20avorar.webp" alt="Avoar Turismo Pedagógico" width="180" style="display: block; max-width: 180px; height: auto;" />
             </td>
           </tr>
           <tr>
@@ -308,24 +308,21 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
           </tr>
           <tr>
             <td align="center" style="padding: 20px 30px;">
-              <table role="presentation" cellpadding="0" cellspacing="0">
+              <table role="presentation" cellpadding="0" cellspacing="0" align="center">
                 <tr>
-                  <!-- Facebook -->
-                  <td style="padding: 0 12px;">
-                    <a href="https://www.facebook.com/avoarturismo" target="_blank" rel="noopener noreferrer" style="color: #555555; text-decoration: none; font-size: 20px;">
-                      &#xf09a;
+                  <td style="padding: 0 14px;">
+                    <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                      <img src="https://img.icons8.com/fluency/32/facebook.png" alt="Facebook" width="28" height="28" style="display: block; border: 0;" />
                     </a>
                   </td>
-                  <!-- Instagram -->
-                  <td style="padding: 0 12px;">
-                    <a href="https://www.instagram.com/avoarturismo" target="_blank" rel="noopener noreferrer" style="color: #555555; text-decoration: none; font-size: 20px;">
-                      &#xf16d;
+                  <td style="padding: 0 14px;">
+                    <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                      <img src="https://img.icons8.com/fluency/32/instagram-new.png" alt="Instagram" width="28" height="28" style="display: block; border: 0;" />
                     </a>
                   </td>
-                  <!-- LinkedIn -->
-                  <td style="padding: 0 12px;">
-                    <a href="https://www.linkedin.com/company/avoarturismo" target="_blank" rel="noopener noreferrer" style="color: #555555; text-decoration: none; font-size: 20px;">
-                      &#xf0e1;
+                  <td style="padding: 0 14px;">
+                    <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                      <img src="https://img.icons8.com/fluency/32/linkedin.png" alt="LinkedIn" width="28" height="28" style="display: block; border: 0;" />
                     </a>
                   </td>
                 </tr>
