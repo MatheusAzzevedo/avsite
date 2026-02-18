@@ -240,6 +240,29 @@
             opacity: 0.9;
         }
 
+        .btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-voltar:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
         .error-message {
             width: 100%;
             background-color: #fef2f2;
@@ -382,8 +405,11 @@
 
             <div class="links">
                 <a href="registro.html">Criar conta</a>
-                <a href="/" title="Voltar para a página inicial">Voltar</a>
             </div>
+            <a href="/" class="btn-voltar" title="Voltar para a página inicial">
+                <i class="fas fa-arrow-left"></i>
+                Voltar à página inicial
+            </a>
         </div>
     </div>
 
