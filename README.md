@@ -4,7 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - fix: CSP no dashboard admin
+### Última atualização (2026-02-18) - feat: botão enviar e-mail manual
+- **api/public/admin/listas.html** [Nova coluna "Ações" na tabela de alunos]
+- **api/public/admin/js/listas.js** [Botão "Enviar E-mail" em cada linha; funções attachEmailButtonListeners e enviarEmailManual]
+- **api/src/routes/pedido.routes.ts** [Nova rota POST /api/admin/pedidos/:id/enviar-email para envio manual]
+- **api/src/server.ts** [Rota /api/admin/pedidos registrada]
+
+Resumo: Na Lista de Alunos, cada linha agora tem um botão "Enviar E-mail" para o administrador enviar manualmente o e-mail de confirmação de inscrição, usando o mesmo template automático. Útil para reenviar e-mails.
+
+### Versão anterior (2026-02-18) - feat: e-mail confirmação com redes sociais
+- **api/src/templates/email-confirmacao-pedido.ts** [Ícones Facebook, Instagram, LinkedIn como img; links do site; logo Logo avorar.webp]
+- **api/public/images/LOGO-EMAIL-README.md** [Instruções para logo HD]
+
+Resumo: E-mail de confirmação exibe ícones das redes sociais (img PNG) com links corretos. Logo usa Logo avorar.webp. Para logo em alta definição, substitua o arquivo conforme README.
+
+### Versão anterior (2026-02-18) - fix: CSP no dashboard admin
 - **api/public/admin/dashboard.html** [Removidos script inline e onclick; id navLogout no link Sair]
 - **api/public/admin/js/dashboard.js** [Novo: lógica do dashboard externalizada para compatibilidade com CSP]
 

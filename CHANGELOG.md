@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-02-18 - feat: botão enviar e-mail manual na lista de alunos
+
+### Arquivos Modificados
+- `api/public/admin/listas.html` [Nova coluna "Ações" na tabela de alunos; th adicionado]
+- `api/public/admin/js/listas.js` [Botão "Enviar E-mail" em cada linha; colspan da mensagem vazia alterado para 8; funções attachEmailButtonListeners e enviarEmailManual; showSuccess para toast de sucesso]
+- `api/src/routes/pedido.routes.ts` [Nova rota POST /api/admin/pedidos/:id/enviar-email com auth admin; reseta emailConfirmacaoEnviado antes de enviar; chama enviarEmailConfirmacaoPedido; registra log de atividade; import de enviarEmailConfirmacaoPedido]
+- `api/src/server.ts` [Rota /api/admin/pedidos registrada para reuso do router de pedidos]
+
+### Alterações
+- Na Lista de Alunos, cada linha da tabela agora exibe um botão "Enviar E-mail" na nova coluna "Ações". Ao clicar, o administrador pode enviar manualmente o e-mail de confirmação de inscrição para aquele pedido específico, usando o mesmo template que é enviado automaticamente após pagamento confirmado. O botão solicita confirmação antes de enviar. Útil para reenviar e-mails ou enviar após criar/atualizar pedido manualmente. A API reseta o lock de envio (emailConfirmacaoEnviado) para permitir reenvio e registra a ação no log do sistema.
+
+---
+
+## 2026-02-18 - feat: e-mail confirmação — redes sociais com ícones e logo ajustada
+
+### Arquivos Modificados
+- `api/src/templates/email-confirmacao-pedido.ts` [Links redes sociais: Facebook, Instagram, LinkedIn (URLs do site); ícones como img PNG (Icons8); logo usa Logo avorar.webp]
+- `api/public/images/LOGO-EMAIL-README.md` [Novo: instruções para substituir logo por versão HD]
+
+### Alterações
+- Abaixo de "Estamos ansiosos para tê-lo conosco em breve!": ícones de Facebook, Instagram e LinkedIn agora aparecem como imagens PNG (28x28px) com links corretos do site. Logo alterada para Logo avorar.webp (250x100). Para logo em alta definição, substitua o arquivo conforme LOGO-EMAIL-README.md.
+
+---
+
 ## 2026-02-18 - fix: CSP dashboard — scripts e handlers externalizados
 
 ### Arquivos Modificados

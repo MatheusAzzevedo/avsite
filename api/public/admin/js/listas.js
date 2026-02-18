@@ -247,7 +247,7 @@ function renderAlunos() {
     if (alunosData.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-light);">
+                <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-light);">
                     <i class="fas fa-inbox" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 1rem;"></i>
                     <strong>Nenhum registro</strong>
                     <p style="margin-top: 0.5rem;">Não há alunos para esta excursão com os filtros selecionados.</p>
@@ -273,9 +273,17 @@ function renderAlunos() {
                     ${aluno.statusPedido === 'AGUARDANDO_PAGAMENTO' ? '<br><small style="color: var(--text-light); font-size: 0.75rem;">1ª verificação em 3 min, depois a cada 4h. Use o botão Atualizar na página de listas para forçar.</small>' : ''}
                 </td>
                 <td>${dataPedido}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-primary btn-enviar-email" data-pedido-id="${aluno.pedidoId}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Enviar e-mail de confirmação">
+                        <i class="fas fa-envelope"></i> Enviar E-mail
+                    </button>
+                </td>
             </tr>
         `;
     }).join('');
+
+    // Anexar event listeners aos botões de envio
+    attachEmailButtonListeners();
 }
 
 /**
@@ -536,6 +544,86 @@ async function deletarExcursao(excursaoId, titulo) {
     } catch (error) {
         console.error('[Listas] Erro ao deletar excursão:', error);
         showError('Erro ao deletar excursão. Tente novamente.');
+    }
+}
+
+/**
+ * Explicação da função [attachEmailButtonListeners]
+ * Anexa event listeners aos botões de envio de e-mail na tabela de alunos
+ */
+function attachEmailButtonListeners() {
+    const btnsEnviar = document.querySelectorAll('.btn-enviar-email');
+    btnsEnviar.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const pedidoId = this.getAttribute('data-pedido-id');
+            const alunoNome = this.getAttribute('data-aluno-nome');
+            
+            if (!pedidoId) {
+                showError('ID do pedido não encontrado');
+                return;
+            }
+
+            if (confirm(`Deseja enviar o e-mail de confirmação para o pedido de ${alunoNome}?`)) {
+                await enviarEmailManual(pedidoId, this);
+            }
+        });
+    });
+}
+
+/**
+ * Explicação da função [enviarEmailManual]
+ * Envia manualmente o e-mail de confirmação de inscrição para um pedido específico.
+ * Usa o mesmo template que é enviado automaticamente após pagamento confirmado.
+ */
+async function enviarEmailManual(pedidoId, btnElement) {
+    const textoOriginal = btnElement.innerHTML;
+    btnElement.disabled = true;
+    btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+    try {
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const response = await fetch(`/api/admin/pedidos/${pedidoId}/enviar-email`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.error || 'Erro ao enviar e-mail');
+        }
+
+        if (result.success) {
+            showSuccess(result.message || 'E-mail enviado com sucesso!');
+        } else {
+            throw new Error(result.message || 'Falha ao enviar e-mail');
+        }
+    } catch (error) {
+        console.error('[Listas] Erro ao enviar e-mail:', error);
+        showError(error.message || 'Erro ao enviar e-mail. Tente novamente.');
+    } finally {
+        btnElement.disabled = false;
+        btnElement.innerHTML = textoOriginal;
+    }
+}
+
+/**
+ * Explicação da função [showSuccess]
+ * Exibe mensagem de sucesso (toast verde)
+ */
+function showSuccess(message) {
+    if (typeof window.showToast === 'function') {
+        window.showToast(message, 'success');
+    } else {
+        alert(message);
     }
 }
 

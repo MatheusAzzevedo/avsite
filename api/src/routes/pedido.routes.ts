@@ -25,6 +25,7 @@ import {
   updatePedidoStatusSchema,
   filterPedidosSchema
 } from '../schemas/pedido.schema';
+import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 import { logger } from '../utils/logger';
 import { ExcursaoStatus } from '@prisma/client';
 
@@ -790,6 +791,84 @@ router.post('/convencional',
         context: { 
           error: error instanceof Error ? error.message : 'Unknown error',
           clienteId: req.cliente?.id
+        }
+      });
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/admin/pedidos/:id/enviar-email]
+ * 
+ * Envia manualmente o e-mail de confirmação de inscrição para um pedido específico.
+ * Requer autenticação de ADMIN.
+ * 
+ * Usa o mesmo template que é enviado automaticamente após pagamento confirmado.
+ * Útil para reenviar e-mails ou enviar após criar/atualizar pedido manualmente.
+ * 
+ * Params: { id: string (pedidoId) }
+ * Response: { success, message }
+ */
+router.post('/:id/enviar-email',
+  authMiddleware,
+  adminMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id: pedidoId } = req.params;
+
+      logger.info('[Pedidos Admin] Solicitação de envio manual de e-mail', {
+        context: { pedidoId, adminId: req.user!.id, adminEmail: req.user!.email }
+      });
+
+      // Verifica se pedido existe
+      const pedidoExistente = await prisma.pedido.findUnique({
+        where: { id: pedidoId },
+        select: { id: true, status: true, clienteId: true }
+      });
+
+      if (!pedidoExistente) {
+        logger.warn('[Pedidos Admin] Pedido não encontrado para envio de e-mail', {
+          context: { pedidoId }
+        });
+        throw ApiError.notFound('Pedido não encontrado');
+      }
+
+      // Reseta o lock para permitir reenvio
+      await prisma.pedido.update({
+        where: { id: pedidoId },
+        data: { emailConfirmacaoEnviado: false }
+      });
+
+      // Envia e-mail (função já trata erros internamente e registra logs)
+      await enviarEmailConfirmacaoPedido(pedidoId);
+
+      // Registra atividade
+      await prisma.activityLog.create({
+        data: {
+          action: 'email_send',
+          entity: 'pedido',
+          entityId: pedidoId,
+          description: `E-mail de confirmação enviado manualmente`,
+          userId: req.user!.id,
+          userEmail: req.user!.email
+        }
+      });
+
+      logger.info('[Pedidos Admin] E-mail de confirmação enviado manualmente com sucesso', {
+        context: { pedidoId, adminId: req.user!.id }
+      });
+
+      res.json({
+        success: true,
+        message: 'E-mail de confirmação enviado com sucesso'
+      });
+    } catch (error) {
+      logger.error('[Pedidos Admin] Erro ao enviar e-mail manual', {
+        context: { 
+          error: error instanceof Error ? error.message : 'Unknown error',
+          pedidoId: req.params.id,
+          adminId: req.user?.id
         }
       });
       next(error);

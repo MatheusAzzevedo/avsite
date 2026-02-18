@@ -187,6 +187,9 @@ app.use('/api/cliente/auth', clienteAuthRoutes);
 // Rotas de pedidos de cliente
 app.use('/api/cliente/pedidos', pedidoRoutes);
 
+// Rotas admin de pedidos (reusa o mesmo router)
+app.use('/api/admin/pedidos', pedidoRoutes);
+
 // Rotas de pagamento de cliente
 app.use('/api/cliente/pagamento', pagamentoRoutes);
 
