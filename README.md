@@ -4,7 +4,20 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-14) - fix: menu hamburger bloqueado por CSP
+### Última atualização (2026-02-18) - feat: botão de teste de e-mail no dashboard admin
+- **api/src/routes/admin-email.routes.ts** [Nova rota POST /api/admin/email/teste-confirmacao]
+- **api/public/admin/dashboard.html** [Botão "Testar E-mail Confirmação" em Ações Rápidas]
+
+Resumo: Botão no painel admin envia e-mail de confirmação de inscrição (dados mock) para azetus.io@gmail.com e dantydias@yahoo.com.br. Permite validar SMTP (Brevo) e o layout do e-mail sem realizar compra.
+
+### Versão anterior (2026-02-16) - feat: telefone obrigatório e máscara no registro
+- **api/public/cliente/registro.html** [Telefone obrigatório; placeholder com exemplo (11) 98888-8888]
+- **api/public/cliente/js/registro.js** [Máscara automática de telefone durante digitação; validação obrigatória]
+- **api/src/schemas/cliente-auth.schema.ts** [Schema de registro: telefone obrigatório com validação de formato]
+
+Resumo: Na tela de criar conta, o campo telefone passou a ser obrigatório (removido "opcional"). Máscara automática formata o número durante a digitação no padrão (11) 98888-8888. Validação no frontend e backend.
+
+### Versão anterior (2026-02-14) - fix: menu hamburger bloqueado por CSP
 - **api/public/cliente/inicio.html** [Removido script inline do menu mobile]
 - **api/public/cliente/js/inicio.js** [initMobileMenu externalizado para compatibilidade com CSP]
 

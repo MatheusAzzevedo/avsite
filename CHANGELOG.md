@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-02-18 - feat: botão de teste de e-mail de confirmação no dashboard admin
+
+### Arquivos Modificados
+- `api/src/routes/admin-email.routes.ts` [Novo: rota POST /api/admin/email/teste-confirmacao; envia e-mail de confirmação com dados mock para azetus.io@gmail.com e dantydias@yahoo.com.br]
+- `api/src/server.ts` [Registro da rota /api/admin/email]
+- `api/public/admin/dashboard.html` [Botão "Testar E-mail Confirmação" em Ações Rápidas; handler enviarEmailTeste chama a API e exibe feedback]
+
+### Alterações
+- Botão de teste no painel admin (Ações Rápidas) dispara envio do e-mail de confirmação de inscrição (template real, dados mock) para os endereços azetus.io@gmail.com e dantydias@yahoo.com.br. Permite validar SMTP (Brevo) e o layout do e-mail sem realizar compra real.
+
+---
+
+## 2026-02-16 - feat: telefone obrigatório e máscara automática no registro
+
+### Arquivos Modificados
+- `api/public/cliente/registro.html` [Placeholder "Telefone (11) 98888-8888"; campo required; maxlength 16]
+- `api/public/cliente/js/registro.js` [Funções formatPhoneBr e applyPhoneMask; validação telefone obrigatório; máscara aplicada no carregamento]
+- `api/src/schemas/cliente-auth.schema.ts` [clienteRegisterSchema: telefone obrigatório; refine formato (XX) XXXXX-XXXX]
+
+### Alterações
+- Campo telefone na tela de criar conta deixou de ser opcional. Todos os campos (nome, email, telefone, senha) são obrigatórios. Máscara automática formata o número durante a digitação no padrão (11) 98888-8888. Validação no frontend e backend (Zod) exige DDD + 8 ou 9 dígitos.
+
+---
+
 ## 2026-02-14 - fix: menu hamburger bloqueado por CSP - script inline externalizado
 
 ### Arquivos Modificados

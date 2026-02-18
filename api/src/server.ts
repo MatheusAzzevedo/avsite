@@ -42,6 +42,7 @@ import publicRoutes from './routes/public.routes';
 import listaAlunosRoutes from './routes/lista-alunos.routes';
 import categoriasExcursaoRoutes from './routes/categorias-excursao.routes';
 import dashboardRoutes from './routes/dashboard.routes';
+import adminEmailRoutes from './routes/admin-email.routes';
 
 // Importa utilitários
 import { prisma } from './config/database';
@@ -199,6 +200,7 @@ app.use('/api/admin/payment', adminPaymentRoutes);
 app.use('/api/admin/listas', listaAlunosRoutes);
 app.use('/api/admin/categorias-excursao', categoriasExcursaoRoutes);
 app.use('/api/admin/dashboard', dashboardRoutes);
+app.use('/api/admin/email', adminEmailRoutes);
 
 // ===========================================
 // TRATAMENTO DE ERROS

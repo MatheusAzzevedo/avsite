@@ -564,7 +564,59 @@
         }
     }
 
+    function initMobileMenu() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        var hamburgerBtn = document.getElementById('hamburgerBtn');
+        var closeBtn = document.getElementById('closeSidebarBtn');
+
+        function openSidebar(e) {
+            if (e && e.type === 'touchend') e.preventDefault();
+            if (sidebar && overlay) {
+                sidebar.classList.add('open');
+                overlay.classList.add('open');
+                overlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeSidebar(e) {
+            if (e && e.type === 'touchend') e.preventDefault();
+            if (sidebar && overlay) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+                overlay.style.display = '';
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', openSidebar);
+            hamburgerBtn.addEventListener('touchend', function (e) { e.preventDefault(); openSidebar(e); }, { passive: false });
+        }
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeSidebar);
+            closeBtn.addEventListener('touchend', closeSidebar, { passive: false });
+        }
+        if (overlay) {
+            overlay.addEventListener('click', closeSidebar);
+            overlay.addEventListener('touchend', closeSidebar, { passive: false });
+        }
+        document.querySelectorAll('.sidebar-link').forEach(function (link) {
+            link.addEventListener('click', closeSidebar);
+        });
+    }
+
     async function init() {
+        initMobileMenu();
+
+        document.querySelectorAll('.btn-logout').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                clienteAuth.logout();
+                window.location.href = '/cliente/login.html';
+            });
+        });
+
         await clienteAuth.requireAuth();
 
         var data = localStorage.getItem('checkout_excursao');

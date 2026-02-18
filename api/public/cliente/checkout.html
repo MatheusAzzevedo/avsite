@@ -52,6 +52,109 @@
         }
         .btn-logout:hover { opacity: 0.95; transform: translateY(-1px); }
 
+        /* Hamburger - oculto no desktop */
+        .btn-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            min-width: 44px;
+            min-height: 44px;
+            cursor: pointer;
+            color: #333;
+            font-size: 1.5rem;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 1001;
+        }
+
+        /* Sidebar lateral */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .sidebar-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 85vw;
+            height: 100vh;
+            background: #1a3a2e;
+            z-index: 1999;
+            padding: 1.5rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            pointer-events: none;
+        }
+        .sidebar.open {
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .sidebar-logo { height: 40px; width: auto; }
+        .btn-close-sidebar {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(255, 92, 0, 0.2);
+            color: #ff5c00;
+        }
+        .sidebar-link i { width: 24px; text-align: center; font-size: 1.1rem; }
+        .sidebar .btn-logout {
+            width: 100%;
+            margin-top: 1.5rem;
+            justify-content: center;
+            background: rgba(255, 92, 0, 0.3);
+            color: #fff;
+            border: none;
+        }
+        .sidebar .btn-logout:hover {
+            background: rgba(255, 92, 0, 0.5);
+            color: #fff;
+        }
+
         .checkout-container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
         .checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; }
 
@@ -254,8 +357,9 @@
                 padding: 0.75rem 1rem;
                 gap: 0.5rem;
             }
+            .btn-hamburger { display: flex; }
+            .navbar-menu { display: none; }
             .navbar-left { gap: 0.75rem; flex-wrap: wrap; }
-            .navbar-menu { gap: 0.75rem; flex-wrap: wrap; }
             .navbar-brand { font-size: 1.1rem; }
             .navbar-link {
                 font-size: 0.9rem;
@@ -348,11 +452,27 @@
     </style>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+    <aside class="sidebar" id="sidebar" aria-label="Menu de navegação">
+        <div class="sidebar-header">
+            <a href="../index-10.html"><img src="../images/background/Logo.webp" alt="Avoar Turismo" class="sidebar-logo"></a>
+            <button type="button" class="btn-close-sidebar" id="closeSidebarBtn" aria-label="Fechar menu"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="inicio.html" class="sidebar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="pacotes-viagens.html" class="sidebar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            <a href="pedidos.html" class="sidebar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="sidebar-link"><i class="fas fa-cog"></i> Configurações</a>
+            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </nav>
+    </aside>
+
     <nav class="navbar">
         <div class="navbar-left">
             <a href="../index-10.html" class="navbar-brand"><img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo"></a>
             <a href="#" id="voltarLink" class="navbar-link"><i class="fas fa-arrow-left"></i> Voltar</a>
         </div>
+        <button type="button" class="btn-hamburger" id="hamburgerBtn" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
         <div class="navbar-menu">
             <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
             <a href="pacotes-viagens.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>

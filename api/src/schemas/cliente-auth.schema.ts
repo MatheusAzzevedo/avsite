@@ -32,10 +32,10 @@ export const clienteRegisterSchema = z.object({
       'Senha deve conter pelo menos uma letra maiúscula, uma minúscula e um número'
     ),
   telefone: z
-    .string()
-    .optional()
+    .string({ required_error: 'Telefone é obrigatório' })
+    .min(1, 'Telefone é obrigatório')
     .refine(
-      (val) => !val || /^\(\d{2}\)\s?\d{4,5}-?\d{4}$/.test(val),
+      (val) => /^\(\d{2}\)\s?\d{4,5}-?\d{4}$/.test(val),
       'Telefone inválido. Use formato: (11) 98888-8888'
     ),
   cpf: z
