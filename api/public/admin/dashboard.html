@@ -153,10 +153,10 @@
                             <a href="config-pagamento.html" class="btn btn-secondary" style="text-decoration: none; text-align: center;">
                                 <i class="fas fa-cog"></i> Configurar Pagamentos
                             </a>
-                            <button type="button" id="btnTesteEmail" class="btn btn-secondary" style="text-align: center;">
+                            <button type="button" id="btnTesteEmail" class="btn btn-secondary" style="text-align: center;" onclick="enviarEmailTeste()">
                                 <i class="fas fa-envelope"></i> Testar E-mail Confirmação
                             </button>
-                            <div id="msgTesteEmail" role="alert" aria-live="polite" style="display: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.9rem; margin-top: 0.5rem; animation: slideIn 0.3s ease;"></div>
+                            <div id="msgTesteEmail" role="alert" aria-live="polite" style="display: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.9rem; margin-top: 0.5rem;"></div>
                         </div>
                     </div>
                 </div>
@@ -303,7 +303,6 @@
         }
 
         /**
-         * Explicação da função [mostrarMsgTesteEmail]
          * Exibe mensagem de feedback (sucesso ou erro) abaixo do botão de teste de e-mail.
          */
         function mostrarMsgTesteEmail(texto, sucesso) {
@@ -319,56 +318,47 @@
             el.style.color = sucesso ? '#166534' : '#991b1b';
             el.style.border = '1px solid ' + (sucesso ? '#86efac' : '#fecaca');
             clearTimeout(el._hideTimer);
-            el._hideTimer = setTimeout(function() {
-                el.style.display = 'none';
-            }, 6000);
+            el._hideTimer = setTimeout(function() { el.style.display = 'none'; }, 6000);
         }
 
         /**
-         * Explicação da função [enviarEmailTeste]
-         * Dispara envio de e-mail de confirmação de inscrição (dados mock) para
-         * azetus.io@gmail.com e dantydias@yahoo.com.br. Usado para testar API Brevo.
+         * Envia e-mail de confirmação de inscrição (template + dados mock) para
+         * azetus.io@gmail.com e dantydias@yahoo.com.br. Apenas teste, sem outros fluxos.
          */
         async function enviarEmailTeste() {
             var btn = document.getElementById('btnTesteEmail');
             if (!btn) return;
-            if (typeof apiRequest !== 'function') {
-                mostrarMsgTesteEmail('Erro: apiRequest não disponível. Recarregue a página.', false);
-                return;
-            }
             var textoOriginal = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             mostrarMsgTesteEmail('', true);
-            document.getElementById('msgTesteEmail').style.display = 'none';
+            var msgEl = document.getElementById('msgTesteEmail');
+            if (msgEl) msgEl.style.display = 'none';
+            var apiUrl = (window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : window.location.origin + '/api') + '/admin/email/teste-confirmacao';
+            var token = localStorage.getItem('avorar_token');
+            var headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = 'Bearer ' + token;
             try {
-                var res = await apiRequest('/admin/email/teste-confirmacao', {
-                    method: 'POST'
-                });
-                if (res && res.success) {
+                var res = await fetch(apiUrl, { method: 'POST', headers: headers });
+                var data = {};
+                try { data = await res.json(); } catch (e) {}
+                if (res.ok && data.success) {
                     mostrarMsgTesteEmail('E-mails de teste enviados com sucesso para azetus.io@gmail.com e dantydias@yahoo.com.br. Verifique as caixas de entrada.', true);
                 } else {
-                    var erros = (res && res.data && res.data.resultados)
-                        ? res.data.resultados.filter(function(r) { return !r.success; }).map(function(r) { return r.email + ': ' + (r.error || 'erro'); }).join('; ')
-                        : (res && res.message) || 'Falha desconhecida';
-                    mostrarMsgTesteEmail('Falha ao enviar: ' + erros, false);
+                    var erros = (data.data && data.data.resultados)
+                        ? data.data.resultados.filter(function(r) { return !r.success; }).map(function(r) { return r.email + ': ' + (r.error || 'erro'); }).join('; ')
+                        : (data.message || data.error || 'Falha ao enviar. Verifique se está logado como admin.');
+                    mostrarMsgTesteEmail(erros, false);
                 }
             } catch (err) {
-                mostrarMsgTesteEmail((err && err.message ? err.message : 'Não foi possível enviar. Verifique se está logado como admin.'), false);
+                mostrarMsgTesteEmail((err && err.message) ? err.message : 'Erro de conexão. Verifique se está logado como admin.', false);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = textoOriginal;
             }
         }
 
-        // Carrega o dashboard quando a página carrega
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDashboard();
-            var btnTeste = document.getElementById('btnTesteEmail');
-            if (btnTeste) {
-                btnTeste.addEventListener('click', function() { enviarEmailTeste(); });
-            }
-        });
+        document.addEventListener('DOMContentLoaded', loadDashboard);
     </script>
 </body>
 </html>
