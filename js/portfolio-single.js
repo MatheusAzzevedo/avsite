@@ -153,11 +153,6 @@ function renderExcursao(excursao) {
 
     var precoEl = document.getElementById('excursaoPreco');
     if (precoEl) precoEl.textContent = ExcursaoManager.formatPrice(excursao.preco);
-    var precoPix = document.getElementById('precoPix');
-    if (precoPix) {
-        var precoComDesconto = (excursao.preco * 0.97).toFixed(2);
-        precoPix.textContent = '✓ Desconto de 3% no PIX: ' + ExcursaoManager.formatPrice(parseFloat(precoComDesconto));
-    }
 }
 
 async function loadExcursao() {
