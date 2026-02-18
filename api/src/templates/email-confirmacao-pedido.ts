@@ -104,7 +104,7 @@ function formatarMetodoPagamento(metodo: string): string {
  * O template segue o layout descrito nos prints de referência:
  * - Logo centralizada no topo
  * - Mensagem "Oba! Compra concluída com sucesso!"
- * - Título "Seu pedido {número} foi concluído com sucesso"
+ * - Título "Seu pedido {nome da excursão} foi concluído com sucesso"
  * - Detalhes do pedido em tabela
  * - Dados dos estudantes
  * - Endereço de cobrança
@@ -171,7 +171,7 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
             <td align="center" style="padding: 0 30px;">
               <p style="font-size: 16px; color: #666666; font-style: italic; margin: 0 0 10px;">Oba! Compra concluída com sucesso!</p>
               <h1 style="font-size: 26px; font-weight: bold; color: #222222; margin: 0 0 20px; line-height: 1.3;">
-                Seu pedido ${dados.numeroPedido.substring(0, 8)} foi concluído com sucesso
+                Seu pedido ${dados.nomeProduto} foi concluído com sucesso
               </h1>
             </td>
           </tr>
@@ -366,7 +366,7 @@ export function gerarTextoConfirmacaoPedido(dados: DadosEmailConfirmacao): strin
   return `
 Oba! Compra concluída com sucesso!
 
-Seu pedido ${dados.numeroPedido.substring(0, 8)} foi concluído com sucesso
+Seu pedido ${dados.nomeProduto} foi concluído com sucesso
 
 Olá ${dados.nomeCliente}. Informamos que seu pedido em Avoar Turismo foi concluído com sucesso.
 
