@@ -862,12 +862,7 @@
 	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li > a:before {
 		background: rgba(255, 255, 255, 0.15);
 	}
-	/* Página selecionada no mobile: borda laranja à esquerda */
-	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.current > a,
-	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.open > a {
-		border-left: 4px solid #ff5c00;
-		padding-left: 12px;
-	}
+	/* Página selecionada no mobile: apenas o ponto (:before) em laranja */
 	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.current > a:before,
 	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.open > a:before {
 		background: #ff5c00;
