@@ -294,15 +294,15 @@ router.post('/',
 
 /**
  * Explicação da API [GET /api/cliente/pedidos]
- * 
- * Lista todos os pedidos do cliente autenticado.
+ *
+ * Lista todos os pedidos do cliente autenticado (todos os status, inclusive não pagos).
  * Requer autenticação de cliente.
- * 
+ *
  * Query params:
- * - status (opcional): filtrar por status
+ * - status (opcional): filtrar por status (se omitido, retorna PENDENTE, AGUARDANDO_PAGAMENTO, PAGO, CONFIRMADO, etc.)
  * - limit (opcional): quantidade de resultados (default: 20, max: 100)
  * - page (opcional): página para paginação (default: 1)
- * 
+ *
  * Response: { success, data: [...], pagination: {...} }
  */
 router.get('/',
@@ -315,10 +315,10 @@ router.get('/',
       const skip = (parseInt(page as string) - 1) * take;
 
       logger.info('[Pedidos] Listando pedidos do cliente', {
-        context: { clienteId, status, limit: take, page: parseInt(page as string) }
+        context: { clienteId, status: status || 'todos', limit: take, page: parseInt(page as string) }
       });
 
-      const where: any = { clienteId };
+      const where: { clienteId: string; status?: string } = { clienteId };
 
       if (status && typeof status === 'string') {
         where.status = status;

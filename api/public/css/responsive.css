@@ -817,7 +817,7 @@
 	}
 
 	.main-header-bar .header-bar-inner .outer-box {
-		background: rgba(0, 0, 0, 0.4) !important;
+		background: transparent !important;
 	}
 
 	.main-header-bar .copyright {

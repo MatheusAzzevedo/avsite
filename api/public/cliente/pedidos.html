@@ -364,10 +364,11 @@
     <script src="js/auth-manager.js"></script>
     <script>
         (async () => {
-            await clienteAuth.requireAuth();
+            if (!window.clienteAuth || !(await clienteAuth.requireAuth())) return;
 
             const loadingEl = document.getElementById('loading');
             const containerEl = document.getElementById('pedidosContainer');
+            if (!containerEl) return;
 
             let loadingTimer = setTimeout(() => {
                 loadingTimer = null;
@@ -382,22 +383,37 @@
                 if (loadingEl) loadingEl.style.display = 'none';
             }
 
+            function renderEmpty() {
+                containerEl.innerHTML = '<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>Nenhum pedido encontrado</p></div>';
+            }
+            function renderError() {
+                containerEl.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Erro ao carregar pedidos</p></div>';
+            }
+
             try {
                 const response = await clienteAuth.fetchAuth('/cliente/pedidos');
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    hideLoadingAndShow();
+                    renderError();
+                    return;
+                }
 
                 hideLoadingAndShow();
 
-                // Log para debug: ajuda a identificar se API retorna dados corretamente
                 console.log('[Pedidos] Resposta API:', { ok: response.ok, success: data?.success, total: Array.isArray(data?.data) ? data.data.length : 0 });
 
                 if (!response.ok) {
                     throw new Error(data?.error || data?.message || 'Erro ao carregar pedidos');
                 }
 
-                // Tratamento defensivo: API retorna { success, data: [...], pagination }
-                const pedidos = Array.isArray(data?.data) ? data.data : [];
-                if (data.success && pedidos.length > 0) {
+                // API retorna { success, data: [...], pagination }; aceita também data como array direto
+                const pedidos = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
+                containerEl.innerHTML = '';
+
+                if (pedidos.length > 0) {
                     pedidos.forEach(pedido => {
                         const titulo = (pedido.excursaoPedagogica && pedido.excursaoPedagogica.titulo)
                             ? pedido.excursaoPedagogica.titulo
@@ -405,8 +421,6 @@
                                 ? pedido.excursao.titulo
                                 : 'Viagem';
                         const tipoLabel = pedido.tipo === 'CONVENCIONAL' ? 'Viagem convencional' : 'Excursão pedagógica';
-                        
-                        // Mapa de status para texto amigável
                         const statusLabels = {
                             'PENDENTE': 'Pendente',
                             'AGUARDANDO_PAGAMENTO': 'Aguardando Pagamento',
@@ -416,13 +430,14 @@
                             'CANCELADO': 'Cancelado'
                         };
                         const statusLabel = statusLabels[pedido.status] || pedido.status;
-                        
-                        // Mostra botão "Pagar" para pedidos pendentes ou aguardando pagamento
                         const showPayButton = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
-                        const payButtonHtml = showPayButton 
-                            ? `<a href="/cliente/pagamento.html?pedidoId=${pedido.id}" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar</a>` 
+                        const payButtonHtml = showPayButton
+                            ? `<a href="/cliente/pagamento.html?pedidoId=${pedido.id}" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar</a>`
                             : '';
-                        
+                        const valorTotal = Number(pedido.valorTotal);
+                        const valorStr = isNaN(valorTotal) ? '0,00' : valorTotal.toFixed(2);
+                        const dataStr = pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString('pt-BR') : '-';
+
                         containerEl.innerHTML += `
                             <div class="pedido-card">
                                 <div class="pedido-header">
@@ -431,33 +446,23 @@
                                 </div>
                                 <div class="pedido-info">
                                     <span class="pedido-tipo">${tipoLabel}</span>
-                                    <div><i class="fas fa-calendar-alt"></i> ${new Date(pedido.createdAt).toLocaleDateString('pt-BR')}</div>
-                                    <div><i class="fas fa-users"></i> ${pedido.quantidade} pessoa(s)</div>
+                                    <div><i class="fas fa-calendar-alt"></i> ${dataStr}</div>
+                                    <div><i class="fas fa-users"></i> ${pedido.quantidade || 0} pessoa(s)</div>
                                 </div>
                                 <div class="pedido-footer">
-                                    <div class="pedido-valor">R$ <span>${pedido.valorTotal.toFixed(2)}</span></div>
+                                    <div class="pedido-valor">R$ <span>${valorStr}</span></div>
                                     ${payButtonHtml}
                                 </div>
                             </div>
                         `;
                     });
                 } else {
-                    containerEl.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-shopping-bag"></i>
-                            <p>Nenhum pedido encontrado</p>
-                        </div>
-                    `;
+                    renderEmpty();
                 }
             } catch (error) {
-                console.error('Erro:', error);
+                console.error('[Pedidos] Erro:', error);
                 hideLoadingAndShow();
-                containerEl.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p>Erro ao carregar pedidos</p>
-                    </div>
-                `;
+                try { renderError(); } catch (e) { console.error(e); }
             }
         })();
     </script>
