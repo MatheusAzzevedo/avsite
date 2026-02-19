@@ -27,7 +27,7 @@ import {
 } from '../schemas/pedido.schema';
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 import { logger } from '../utils/logger';
-import { ExcursaoStatus } from '@prisma/client';
+import { ExcursaoStatus, PedidoStatus } from '@prisma/client';
 
 const router = Router();
 
@@ -318,10 +318,10 @@ router.get('/',
         context: { clienteId, status: status || 'todos', limit: take, page: parseInt(page as string) }
       });
 
-      const where: { clienteId: string; status?: string } = { clienteId };
+      const where: { clienteId: string; status?: PedidoStatus } = { clienteId };
 
       if (status && typeof status === 'string') {
-        where.status = status;
+        where.status = status as PedidoStatus;
       }
 
       const [pedidos, total] = await Promise.all([
