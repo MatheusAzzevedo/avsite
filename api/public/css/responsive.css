@@ -837,7 +837,7 @@
 		top: 24px;
 	}
 
-	/* Nav Outer: fullscreen overlay no mobile - fundo transparente (opacidade 0%) */
+	/* Nav Outer: fullscreen overlay no mobile; fundo neutro apenas quando aberto (.now-visible) */
 	.main-nav-outer {
 		position: fixed;
 		left: 0 !important;
@@ -846,7 +846,19 @@
 		height: 100vh !important;
 		max-height: 100vh !important;
 		z-index: 999999;
-		background: rgba(0, 0, 0, 0);
+		background: transparent;
+	}
+	.main-nav-outer.now-visible {
+		background: #f5f5f5;
+	}
+	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li > a {
+		color: #1a1a1a;
+	}
+	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li > a:before {
+		background: rgba(0, 0, 0, 0.2);
+	}
+	.main-nav-outer.now-visible .nav-closer img {
+		filter: brightness(0);
 	}
 
 	.main-nav-outer .outer-nav-box {
