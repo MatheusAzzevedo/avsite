@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-02-18 - feat: formatação automática do campo Validade (MM/AA) no checkout pedagógico
+
+### Arquivos Modificados
+- `api/public/cliente/js/checkout.js` [Máscara no campo Validade do cartão: formatação 00/00 com barra automática ao digitar; funções formatExpiryMMAA e applyExpiryMask]
+
+### Alterações
+- O campo "Validade (MM/AA)" no pagamento com cartão (checkout da excursão pedagógica) passou a ser formatado automaticamente: o usuário digita apenas os números e a barra é inserida entre mês e ano (ex.: 1226 → 12/26), no formato 00/00.
+
+---
+
+## 2026-02-18 - fix: campo Idade ocultado no checkout da excursão pedagógica
+
+### Arquivos Modificados
+- `api/public/cliente/js/checkout.js` [Removido campo Idade do formulário de dados do aluno; não é obrigatório e não será usado]
+- `cliente/js/checkout.js` [Mesma alteração para manter paridade]
+
+### Alterações
+- O campo "Idade" no preenchimento dos dados do aluno no checkout da excursão pedagógica foi ocultado. O campo não é obrigatório e não será utilizado no fluxo atual; o envio do pedido continua enviando undefined para idadeAluno quando o campo não existe.
+
+---
+
 ## 2026-02-18 - fix: carrossel de imagens com mais fotos e deslize/seta no mobile
 
 ### Arquivos Modificados

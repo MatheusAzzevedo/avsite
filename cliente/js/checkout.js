@@ -145,7 +145,6 @@
                 '<div class="form-group"><label for="rgAluno_' + i + '">RG do aluno</label><input type="text" id="rgAluno_' + i + '" name="rgAluno_' + i + '" placeholder="MG 14.123.456"></div>' +
                 '</div>' +
                 '<div class="form-grid">' +
-                '<div class="form-group"><label for="idadeAluno_' + i + '">Idade</label><input type="number" id="idadeAluno_' + i + '" name="idadeAluno_' + i + '" min="1" max="120" placeholder="Ex.: 14"></div>' +
                 '<div class="form-group"><label for="serieAluno_' + i + '">Série <span class="required">*</span></label><input type="text" id="serieAluno_' + i + '" name="serieAluno_' + i + '" required placeholder="Ex.: 2º ano"></div>' +
                 '</div>' +
                 '<div class="form-grid">' +

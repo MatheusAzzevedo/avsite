@@ -145,7 +145,6 @@
                 '<div class="form-group"><label for="rgAluno_' + i + '">RG do aluno</label><input type="text" id="rgAluno_' + i + '" name="rgAluno_' + i + '" placeholder="MG 14.123.456"></div>' +
                 '</div>' +
                 '<div class="form-grid">' +
-                '<div class="form-group"><label for="idadeAluno_' + i + '">Idade</label><input type="number" id="idadeAluno_' + i + '" name="idadeAluno_' + i + '" min="1" max="120" placeholder="Ex.: 14"></div>' +
                 '<div class="form-group"><label for="serieAluno_' + i + '">Série <span class="required">*</span></label><input type="text" id="serieAluno_' + i + '" name="serieAluno_' + i + '" required placeholder="Ex.: 2º ano"></div>' +
                 '</div>' +
                 '<div class="form-grid">' +
@@ -421,6 +420,24 @@
         });
     }
 
+    /** Formata validade do cartão como MM/AA (4 dígitos: mês + ano). */
+    function formatExpiryMMAA(value) {
+        var d = String(value).replace(/\D/g, '').slice(0, 4);
+        if (d.length <= 2) return d;
+        return d.slice(0, 2) + '/' + d.slice(2, 4);
+    }
+
+    /** Aplica máscara de validade no input: usuário só digita, campo exibe barra automaticamente (00/00). */
+    function applyExpiryMask(inputEl) {
+        if (!inputEl) return;
+        inputEl.addEventListener('input', function () {
+            var digits = inputEl.value.replace(/\D/g, '').slice(0, 4);
+            var formatted = formatExpiryMMAA(digits);
+            inputEl.value = formatted;
+            inputEl.setSelectionRange(formatted.length, formatted.length);
+        });
+    }
+
     function pagarComCartao() {
         var btn = document.getElementById('btnPagarCartao');
         var num = onlyDigits(document.getElementById('cardNumber').value);
@@ -666,6 +683,7 @@
         applyCpfMask(document.getElementById('cardHolderCpf'));
         applyCepMask(document.getElementById('respCep'));
         applyCepMask(document.getElementById('cardHolderCep'));
+        applyExpiryMask(document.getElementById('cardExpiry'));
         var qtdAlunos = Math.max(1, Math.min(50, parseInt(excursao.quantidade, 10) || 1));
         for (var a = 1; a <= qtdAlunos; a++) {
             var cpfAlunoEl = document.getElementById('cpfAluno_' + a);

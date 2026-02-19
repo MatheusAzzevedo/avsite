@@ -4,7 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - fix: carrossel com mais imagens e deslize/seta no mobile
+### Última atualização (2026-02-18) - feat: formatação automática Validade (MM/AA) no checkout
+- **api/public/cliente/js/checkout.js** [Máscara no campo Validade do cartão: barra inserida automaticamente ao digitar, formato 00/00]
+
+Resumo: Campo "Validade (MM/AA)" no pagamento com cartão agora é formatado automaticamente (ex.: 1226 vira 12/26).
+
+### Versão anterior (2026-02-18) - fix: campo Idade ocultado no checkout pedagógico
+- **api/public/cliente/js/checkout.js**, **cliente/js/checkout.js** [Campo Idade removido do formulário de dados do aluno; não obrigatório e não utilizado]
+
+Resumo: O campo "Idade" no checkout da excursão pedagógica foi ocultado. Não é obrigatório e não será usado no fluxo atual.
+
+### Versão anterior (2026-02-18) - fix: carrossel com mais imagens e deslize/seta no mobile
 - **api/public/about.html** [Carrossel: +2 imagens (22 total); JS: track e slides com largura em px para seta e swipe no mobile; touchstart com e.touches[0]]
 
 Resumo: Carrossel da página Sobre Nós ganhou mais imagens da pasta "Imagens para o site". Ajuste no script para o track ter largura explícita e slides em px, permitindo rolagem lateral com setas e arraste no mobile.
