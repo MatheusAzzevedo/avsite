@@ -809,9 +809,9 @@
 }
 
 @media only screen and (max-width: 767px){
-	/* Backdrop do menu no mobile: mesmo fundo neutro do menu (sem escurecer) */
+	/* Backdrop do menu no mobile: mesmo fundo do menu */
 	.navbar-visible .menu-backdrop {
-		background: #f5f5f5;
+		background: #2B2B2B;
 	}
 
 	/* Menu lateral mobile fullscreen */
@@ -842,7 +842,7 @@
 		top: 24px;
 	}
 
-	/* Nav Outer: fullscreen overlay no mobile; fundo neutro apenas quando aberto (.now-visible) */
+	/* Nav Outer: fullscreen overlay no mobile; fundo escuro quando aberto (.now-visible) */
 	.main-nav-outer {
 		position: fixed;
 		left: 0 !important;
@@ -854,16 +854,30 @@
 		background: transparent;
 	}
 	.main-nav-outer.now-visible {
-		background: #f5f5f5;
+		background: #2B2B2B;
 	}
 	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li > a {
-		color: #1a1a1a;
+		color: #ffffff;
 	}
 	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li > a:before {
-		background: rgba(0, 0, 0, 0.2);
+		background: rgba(255, 255, 255, 0.15);
+	}
+	/* Página selecionada no mobile: borda laranja à esquerda */
+	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.current > a,
+	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.open > a {
+		border-left: 4px solid #ff5c00;
+		padding-left: 12px;
+	}
+	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.current > a:before,
+	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.open > a:before {
+		background: #ff5c00;
+	}
+	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.current > a,
+	.main-nav-outer.now-visible .main-nav-box .main-nav .navigation > li.open > a {
+		color: #ff5c00;
 	}
 	.main-nav-outer.now-visible .nav-closer img {
-		filter: brightness(0);
+		filter: brightness(0) invert(1);
 	}
 
 	.main-nav-outer .outer-nav-box {
