@@ -99,10 +99,6 @@ function renderPassageirosForm() {
                         <input type="text" name="passageiro_${i}_cpf" placeholder="000.000.000-00" required data-index="${i}" data-field="cpf" maxlength="14">
                     </div>
                     <div class="form-group">
-                        <label>País <span class="required">*</span></label>
-                        <input type="text" name="passageiro_${i}_pais" value="Brasil" required data-index="${i}" data-field="pais">
-                    </div>
-                    <div class="form-group">
                         <label>CEP <span class="required">*</span></label>
                         <input type="text" name="passageiro_${i}_cep" placeholder="00000-000" required data-index="${i}" data-field="cep" maxlength="9">
                     </div>
@@ -124,7 +120,7 @@ function renderPassageirosForm() {
                     </div>
                     <div class="form-group">
                         <label>Estado <span class="required">*</span></label>
-                        <input type="text" name="passageiro_${i}_estado" placeholder="SP" required data-index="${i}" data-field="estado" maxlength="2">
+                        <input type="text" name="passageiro_${i}_estado" value="MG" placeholder="MG" required data-index="${i}" data-field="estado" maxlength="2">
                     </div>
                     <div class="form-group">
                         <label>Bairro</label>
@@ -200,7 +196,7 @@ function collectFormData() {
             nome: getFieldValue(i, 'nome'),
             sobrenome: getFieldValue(i, 'sobrenome'),
             cpf: getFieldValue(i, 'cpf'),
-            pais: getFieldValue(i, 'pais'),
+            pais: 'Brasil',
             cep: getFieldValue(i, 'cep'),
             endereco: getFieldValue(i, 'endereco'),
             numero: getFieldValue(i, 'numero'),
@@ -230,7 +226,7 @@ function getFieldValue(index, field) {
 // Validação básica do formulário
 function validateForm() {
     const errors = [];
-    const requiredFields = ['nome', 'sobrenome', 'cpf', 'pais', 'cep', 'endereco', 'numero', 'cidade', 'estado', 'telefone', 'email'];
+    const requiredFields = ['nome', 'sobrenome', 'cpf', 'cep', 'endereco', 'numero', 'cidade', 'estado', 'telefone', 'email'];
 
     for (let i = 0; i < quantidade; i++) {
         for (const field of requiredFields) {

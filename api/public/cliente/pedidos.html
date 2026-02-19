@@ -353,7 +353,7 @@
             <p class="page-subtitle">Acompanhe todas as suas excursões e pagamentos</p>
         </div>
         
-        <div id="loading" class="loading" style="display: none;">
+        <div id="loading" class="loading" style="display: block;">
             <i class="fas fa-spinner fa-spin fa-2x"></i>
             <p>Carregando pedidos...</p>
         </div>
@@ -362,109 +362,6 @@
     </div>
 
     <script src="js/auth-manager.js"></script>
-    <script>
-        (async () => {
-            if (!window.clienteAuth || !(await clienteAuth.requireAuth())) return;
-
-            const loadingEl = document.getElementById('loading');
-            const containerEl = document.getElementById('pedidosContainer');
-            if (!containerEl) return;
-
-            let loadingTimer = setTimeout(() => {
-                loadingTimer = null;
-                if (loadingEl) loadingEl.style.display = 'block';
-            }, 400);
-
-            function hideLoadingAndShow() {
-                if (loadingTimer) {
-                    clearTimeout(loadingTimer);
-                    loadingTimer = null;
-                }
-                if (loadingEl) loadingEl.style.display = 'none';
-            }
-
-            function renderEmpty() {
-                containerEl.innerHTML = '<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>Nenhum pedido encontrado</p></div>';
-            }
-            function renderError() {
-                containerEl.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Erro ao carregar pedidos</p></div>';
-            }
-
-            try {
-                const response = await clienteAuth.fetchAuth('/cliente/pedidos');
-                let data;
-                try {
-                    data = await response.json();
-                } catch (e) {
-                    hideLoadingAndShow();
-                    renderError();
-                    return;
-                }
-
-                hideLoadingAndShow();
-
-                console.log('[Pedidos] Resposta API:', { ok: response.ok, success: data?.success, total: Array.isArray(data?.data) ? data.data.length : 0 });
-
-                if (!response.ok) {
-                    throw new Error(data?.error || data?.message || 'Erro ao carregar pedidos');
-                }
-
-                // API retorna { success, data: [...], pagination }; aceita também data como array direto
-                const pedidos = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
-                containerEl.innerHTML = '';
-
-                if (pedidos.length > 0) {
-                    pedidos.forEach(pedido => {
-                        const titulo = (pedido.excursaoPedagogica && pedido.excursaoPedagogica.titulo)
-                            ? pedido.excursaoPedagogica.titulo
-                            : (pedido.excursao && pedido.excursao.titulo)
-                                ? pedido.excursao.titulo
-                                : 'Viagem';
-                        const tipoLabel = pedido.tipo === 'CONVENCIONAL' ? 'Viagem convencional' : 'Excursão pedagógica';
-                        const statusLabels = {
-                            'PENDENTE': 'Pendente',
-                            'AGUARDANDO_PAGAMENTO': 'Aguardando Pagamento',
-                            'PAGO': 'Pago',
-                            'CONFIRMADO': 'Confirmado',
-                            'EXPIRADO': 'Expirado',
-                            'CANCELADO': 'Cancelado'
-                        };
-                        const statusLabel = statusLabels[pedido.status] || pedido.status;
-                        const showPayButton = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
-                        const payButtonHtml = showPayButton
-                            ? `<a href="/cliente/pagamento.html?pedidoId=${pedido.id}" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar</a>`
-                            : '';
-                        const valorTotal = Number(pedido.valorTotal);
-                        const valorStr = isNaN(valorTotal) ? '0,00' : valorTotal.toFixed(2);
-                        const dataStr = pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString('pt-BR') : '-';
-
-                        containerEl.innerHTML += `
-                            <div class="pedido-card">
-                                <div class="pedido-header">
-                                    <div class="pedido-titulo">${titulo}</div>
-                                    <div class="pedido-status status-${pedido.status}">${statusLabel}</div>
-                                </div>
-                                <div class="pedido-info">
-                                    <span class="pedido-tipo">${tipoLabel}</span>
-                                    <div><i class="fas fa-calendar-alt"></i> ${dataStr}</div>
-                                    <div><i class="fas fa-users"></i> ${pedido.quantidade || 0} pessoa(s)</div>
-                                </div>
-                                <div class="pedido-footer">
-                                    <div class="pedido-valor">R$ <span>${valorStr}</span></div>
-                                    ${payButtonHtml}
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    renderEmpty();
-                }
-            } catch (error) {
-                console.error('[Pedidos] Erro:', error);
-                hideLoadingAndShow();
-                try { renderError(); } catch (e) { console.error(e); }
-            }
-        })();
-    </script>
+    <script src="js/pedidos.js"></script>
 </body>
 </html>

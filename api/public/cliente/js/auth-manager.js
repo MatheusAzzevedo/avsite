@@ -9,7 +9,7 @@ class ClienteAuthManager {
         this.CLIENTE_KEY = 'cliente_data';
         this.API_BASE_URL = window.location.hostname === 'localhost' 
             ? 'http://localhost:3001/api'
-            : '/api';
+            : (window.location.origin + '/api');
     }
 
     /**
