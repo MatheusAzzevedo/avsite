@@ -175,10 +175,19 @@
             color: #333;
         }
 
+        .login-logo-link {
+            display: block;
+            line-height: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-logo-link:hover {
+            opacity: 0.95;
+        }
+
         .login-logo {
             width: 160px;
             height: auto;
-            margin-bottom: 0.5rem;
             object-fit: contain;
             display: block;
         }
@@ -403,7 +412,9 @@
                 <span id="successText"></span>
             </div>
 
-            <img src="../images/Logo%20Branca.png" alt="Avoar Turismo Pedagógico" class="login-logo">
+            <a href="/" class="login-logo-link" title="Voltar à página inicial">
+                <img src="../images/Logo%20Branca.png" alt="Avoar Turismo Pedagógico" class="login-logo">
+            </a>
 
             <button type="button" class="btn-google" id="googleLoginBtn">
                 <svg width="20" height="20" viewBox="0 0 24 24">
