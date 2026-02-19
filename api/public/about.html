@@ -275,6 +275,7 @@
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
@@ -282,6 +283,7 @@
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
                                 <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/parceiros.jpeg" alt="Parceiros Avoar Turismo" loading="lazy"></div>
                             </div>
                         </div>
                         <button class="gallery-arrow gallery-arrow-next" aria-label="Próximo">
@@ -718,6 +720,14 @@
     var containerWidth = container.offsetWidth;
     var slideWidth = (containerWidth - (perView - 1) * gap) / perView;
     var offset = currentIndex * (slideWidth + gap);
+    /* Largura explícita do track para o deslize funcionar (seta e swipe no mobile) */
+    var trackWidth = slides.length * slideWidth + (slides.length - 1) * gap;
+    track.style.width = trackWidth + 'px';
+    track.style.minWidth = trackWidth + 'px';
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].style.flex = '0 0 ' + slideWidth + 'px';
+      slides[i].style.minWidth = slideWidth + 'px';
+    }
     track.style.transform = 'translateX(-' + offset + 'px)';
 
     prevBtn.disabled = currentIndex <= 0;
@@ -760,7 +770,7 @@
   var touchEndX = 0;
 
   track.addEventListener('touchstart', function(e) {
-    touchStartX = e.changedTouches[0].screenX;
+    touchStartX = e.touches && e.touches[0] ? e.touches[0].screenX : 0;
     stopAutoPlay();
   }, { passive: true });
 

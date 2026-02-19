@@ -837,7 +837,7 @@
 		top: 24px;
 	}
 
-	/* Nav Outer: fullscreen overlay no mobile */
+	/* Nav Outer: fullscreen overlay no mobile - fundo transparente (opacidade 0%) */
 	.main-nav-outer {
 		position: fixed;
 		left: 0 !important;
@@ -846,7 +846,7 @@
 		height: 100vh !important;
 		max-height: 100vh !important;
 		z-index: 999999;
-		background: rgba(0, 0, 0, 0.97);
+		background: rgba(0, 0, 0, 0);
 	}
 
 	.main-nav-outer .outer-nav-box {

@@ -4,7 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: carrossel de imagens na página Sobre Nós
+### Última atualização (2026-02-18) - fix: carrossel com mais imagens e deslize/seta no mobile
+- **api/public/about.html** [Carrossel: +2 imagens (22 total); JS: track e slides com largura em px para seta e swipe no mobile; touchstart com e.touches[0]]
+
+Resumo: Carrossel da página Sobre Nós ganhou mais imagens da pasta "Imagens para o site". Ajuste no script para o track ter largura explícita e slides em px, permitindo rolagem lateral com setas e arraste no mobile.
+
+### Versão anterior (2026-02-18) - fix: menu lateral mobile sem opacidade
+- **api/public/css/responsive.css** [Fundo do menu lateral mobile: opacidade 0% (transparente); removida faixa escura]
+
+Resumo: No mobile, o menu lateral (hamburger) não exibe mais a faixa escura; o fundo do overlay do menu está com 0% de opacidade.
+
+### Versão anterior (2026-02-18) - feat: carrossel de imagens na página Sobre Nós
 - **api/public/about.html** [Nova seção gallery-carousel com 20 imagens; setas prev/next; script autoplay + touch swipe]
 - **api/public/css/about-page.css** [Estilos do carrossel: slides 4:5 com object-fit cover; 4/3/2/1 slides por breakpoint; setas responsivas]
 

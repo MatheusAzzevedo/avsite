@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-02-18 - fix: carrossel de imagens com mais fotos e deslize/seta no mobile
+
+### Arquivos Modificados
+- `api/public/about.html` [Carrossel: +2 imagens da pasta (IMG-20251022-WA0000.jpg, parceiros.jpeg), total 22; JS: largura explícita do track e dos slides em px para deslize/seta funcionar no mobile; touchstart com e.touches[0]]
+- (nenhum arquivo CSS alterado)
+
+### Alterações
+- Inclusão de mais imagens da pasta "Imagens para o site" no carrossel da página Sobre Nós. Ajuste no script: o track passa a ter largura explícita em pixels e cada slide também (flex/minWidth), para que o translateX permita rolagem lateral ao usar setas ou arrastar no mobile. Correção do touchstart para usar e.touches[0].
+
+---
+
+## 2026-02-18 - fix: menu lateral mobile sem opacidade (faixa escura 0%)
+
+### Arquivos Modificados
+- `api/public/css/responsive.css` [main-nav-outer no mobile: background de rgba(0,0,0,0.97) para rgba(0,0,0,0); fundo do menu lateral totalmente transparente]
+
+### Alterações
+- No mobile, o menu lateral (hamburger) deixou de exibir a faixa escura com opacidade; o fundo do overlay do menu passou a 0% de opacidade (transparente).
+
+---
+
 ## 2026-02-18 - feat: carrossel de imagens na página Sobre Nós
 
 ### Arquivos Modificados
