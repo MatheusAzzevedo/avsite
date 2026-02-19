@@ -128,3 +128,28 @@
 .consultant-form-section .consultant-form .form-submit .theme-btn {
   min-width: 220px;
 }
+
+@media (max-width: 767px) {
+  .consultant-form-section {
+    padding: 40px 0 60px;
+  }
+
+  .consultant-form-section .consultant-form-card {
+    padding: 28px 20px;
+    border-radius: 14px;
+  }
+
+  .consultant-form-section .form-title {
+    font-size: 20px;
+  }
+
+  .consultant-form-section .form-intro {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .consultant-form-section .consultant-form .form-submit .theme-btn {
+    width: 100%;
+    min-width: 0;
+  }
+}

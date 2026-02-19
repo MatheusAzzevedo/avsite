@@ -4,7 +4,20 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - fix: histórico de pedidos não exibia pedidos
+### Última atualização (2026-02-18) - feat: carrossel de imagens na página Sobre Nós
+- **api/public/about.html** [Nova seção gallery-carousel com 20 imagens; setas prev/next; script autoplay + touch swipe]
+- **api/public/css/about-page.css** [Estilos do carrossel: slides 4:5 com object-fit cover; 4/3/2/1 slides por breakpoint; setas responsivas]
+
+Resumo: Carrossel de imagens abaixo da seção "Do planejamento à execução" na página Sobre Nós. 20 fotos cropadas em 4:5 para ficarem alinhadas. Setas com padding adequado. Autoplay 4s. Swipe touch no mobile. 4 slides desktop, 3 tablet, 2 mobile, 1 small.
+
+### Versão anterior (2026-02-18) - feat: responsividade mobile Sobre Nós + menu fullscreen
+- **api/public/css/responsive.css** [Menu lateral mobile fullscreen (100vw×100vh); barra reduzida 60px; conteúdo sem padding-left; z-index elevado]
+- **api/public/css/about-page.css** [Responsividade completa 767px/480px: hero, métricas, processo, diferenciais, parceiros, valores, CTA]
+- **api/public/css/consultant-form.css** [Formulário mobile: padding reduzido; botão submit 100% largura]
+
+Resumo: Menu lateral do site no mobile agora abre em tela cheia (overlay escuro) com itens centralizados e botão fechar visível. A página "Sobre Nós" teve todas as seções ajustadas para mobile com tamanhos, espaçamentos e fontes otimizados. O conteúdo principal usa toda a largura da tela sem padding da barra lateral.
+
+### Versão anterior (2026-02-18) - fix: histórico de pedidos não exibia pedidos
 - **api/public/cliente/pedidos.html** [Tratamento defensivo; verificação response.ok; log debug]
 - **cliente/pedidos.html** [Mesma correção; botão Pagar; statusLabels; estilos]
 - **api/src/routes/pedido.routes.ts** [Log debug quando cliente sem pedidos]

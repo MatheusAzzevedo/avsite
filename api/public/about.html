@@ -249,6 +249,48 @@
                 </div>
             </section>
 
+            <!-- Galeria de Imagens Carrossel -->
+            <section class="about-gallery-carousel">
+                <div class="auto-container">
+                    <div class="section-heading-centered">
+                        <span class="eyebrow">Nossas experiências</span>
+                        <h2>Momentos que transformam</h2>
+                    </div>
+                    <div class="gallery-carousel-wrapper">
+                        <button class="gallery-arrow gallery-arrow-prev" aria-label="Anterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="gallery-carousel-track-container">
+                            <div class="gallery-carousel-track">
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250517-WA0011.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250517-WA0043.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250524-WA0011.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0008.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
+                            </div>
+                        </div>
+                        <button class="gallery-arrow gallery-arrow-next" aria-label="Próximo">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <!-- Differentials (simplified) -->
             <section class="about-differentials-modern">
                 <div class="auto-container">
@@ -637,6 +679,112 @@
       closeFullscreen();
     }
   });
+})();
+</script>
+<script>
+(function() {
+  var track = document.querySelector('.gallery-carousel-track');
+  var slides = document.querySelectorAll('.gallery-slide');
+  var prevBtn = document.querySelector('.gallery-arrow-prev');
+  var nextBtn = document.querySelector('.gallery-arrow-next');
+  if (!track || !slides.length || !prevBtn || !nextBtn) return;
+
+  var currentIndex = 0;
+  var autoPlayInterval = null;
+
+  function getSlidesPerView() {
+    var w = window.innerWidth;
+    if (w <= 480) return 1;
+    if (w <= 767) return 2;
+    if (w <= 991) return 3;
+    return 4;
+  }
+
+  function getGap() {
+    var w = window.innerWidth;
+    if (w <= 480) return 10;
+    if (w <= 767) return 12;
+    return 16;
+  }
+
+  function getMaxIndex() {
+    return Math.max(0, slides.length - getSlidesPerView());
+  }
+
+  function updatePosition() {
+    var perView = getSlidesPerView();
+    var gap = getGap();
+    var container = track.parentElement;
+    var containerWidth = container.offsetWidth;
+    var slideWidth = (containerWidth - (perView - 1) * gap) / perView;
+    var offset = currentIndex * (slideWidth + gap);
+    track.style.transform = 'translateX(-' + offset + 'px)';
+
+    prevBtn.disabled = currentIndex <= 0;
+    nextBtn.disabled = currentIndex >= getMaxIndex();
+  }
+
+  function goNext() {
+    if (currentIndex < getMaxIndex()) {
+      currentIndex++;
+      updatePosition();
+    } else {
+      currentIndex = 0;
+      updatePosition();
+    }
+  }
+
+  function goPrev() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updatePosition();
+    }
+  }
+
+  function startAutoPlay() {
+    stopAutoPlay();
+    autoPlayInterval = setInterval(goNext, 4000);
+  }
+
+  function stopAutoPlay() {
+    if (autoPlayInterval) {
+      clearInterval(autoPlayInterval);
+      autoPlayInterval = null;
+    }
+  }
+
+  nextBtn.addEventListener('click', function() { stopAutoPlay(); goNext(); startAutoPlay(); });
+  prevBtn.addEventListener('click', function() { stopAutoPlay(); goPrev(); startAutoPlay(); });
+
+  var touchStartX = 0;
+  var touchEndX = 0;
+
+  track.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    stopAutoPlay();
+  }, { passive: true });
+
+  track.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    var diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goNext();
+      else goPrev();
+    }
+    startAutoPlay();
+  }, { passive: true });
+
+  var resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      if (currentIndex > getMaxIndex()) currentIndex = getMaxIndex();
+      updatePosition();
+    }, 150);
+  });
+
+  updatePosition();
+  startAutoPlay();
 })();
 </script>
 </body>

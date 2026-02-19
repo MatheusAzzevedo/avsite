@@ -522,7 +522,6 @@
 
 @media only screen and (max-width: 991px){
 
-
 	.main-header-bar{
 		width: 80px;
 	}
@@ -564,6 +563,11 @@
 
 	.main-header-bar .alt-logo-box{
 		left: 134px;
+	}
+
+	/* Esconder logo no header bar em tablets */
+	.main-header-bar .nav-bg-box {
+		display: none;
 	}
 
 	.banner-section .slide-item .slide-bar{
@@ -805,19 +809,124 @@
 }
 
 @media only screen and (max-width: 767px){
-	/* Remove faixa branca lateral esquerda no mobile */
-	.main-header-bar .header-bar-inner .outer-box {
-		background: transparent !important;
+	/* Menu lateral mobile fullscreen */
+	.main-header-bar {
+		width: 60px;
+		z-index: 99999;
+		background: transparent;
 	}
 
-	/* Esconder copyright "© Avoar Turismo 2026" somente no mobile */
+	.main-header-bar .header-bar-inner .outer-box {
+		background: rgba(0, 0, 0, 0.4) !important;
+	}
+
 	.main-header-bar .copyright {
 		display: none !important;
 	}
 
-	/* Reduzir padding entre logo e item "Início" no menu lateral mobile */
+	.main-header-bar .line-one,
+	.main-header-bar .line-two {
+		display: none !important;
+	}
+
+	.main-header-bar .alt-logo-box {
+		display: none !important;
+	}
+
+	.main-header-bar .nav-toggler {
+		top: 24px;
+	}
+
+	/* Nav Outer: fullscreen overlay no mobile */
+	.main-nav-outer {
+		position: fixed;
+		left: 0 !important;
+		top: 0;
+		width: 100% !important;
+		height: 100vh !important;
+		max-height: 100vh !important;
+		z-index: 999999;
+		background: rgba(0, 0, 0, 0.97);
+	}
+
+	.main-nav-outer .outer-nav-box {
+		width: 100%;
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+	}
+
+	.main-nav-outer .outer-nav-box .top-bg,
+	.main-nav-outer .outer-nav-box .bottom-bg {
+		display: none;
+	}
+
+	.main-nav-outer .main-nav-box {
+		width: 100%;
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.main-nav-outer .main-logo-box {
+		padding: 0;
+		margin-bottom: 32px;
+	}
+
+	.main-nav-outer .main-logo-box img {
+		max-width: 160px;
+	}
+
 	.main-nav-outer .main-nav-box .main-nav {
-		padding-top: 45px;
+		padding: 0 20px;
+		text-align: center;
+	}
+
+	.main-nav-outer .main-nav-box .main-nav .navigation {
+		text-align: center;
+	}
+
+	.main-nav-outer .main-nav-box .main-nav .navigation > li {
+		text-align: center;
+		margin-bottom: 4px;
+	}
+
+	.main-nav-outer .main-nav-box .main-nav .navigation > li > a {
+		font-size: 20px;
+		padding: 10px 0;
+		display: inline-block;
+	}
+
+	/* Botão fechar maior e mais visível no mobile */
+	.main-nav-outer .nav-closer {
+		top: 24px;
+		right: 24px;
+		left: auto;
+		transform: scale(1) !important;
+		width: 36px;
+		height: 36px;
+	}
+
+	.main-nav-outer.now-visible .nav-closer {
+		transform: scale(1) !important;
+	}
+
+	/* Conteúdo sem padding da barra lateral no mobile */
+	.main-content-container {
+		padding-left: 0px !important;
+	}
+
+	.banner-section .slide-item .content {
+		padding-left: 20px;
+	}
+
+	.banner-section .slide-item .slide-bar {
+		left: 0;
 	}
 
 	.banner-section .slide-item h1{
@@ -1003,7 +1112,7 @@
 	}
 
 	.main-nav-outer.now-visible{
-		z-index: 10;
+		z-index: 999999;
 	}
 
 	.banner-section .slide-item h1{

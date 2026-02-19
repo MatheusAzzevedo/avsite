@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-02-18 - feat: carrossel de imagens na página Sobre Nós
+
+### Arquivos Modificados
+- `api/public/about.html` [Nova seção gallery-carousel entre Process e Differentials; 20 imagens da pasta Imagens para o site; setas prev/next; script do carrossel com autoplay, touch swipe e resize]
+- `api/public/css/about-page.css` [Estilos do carrossel: slides 4:5 aspect-ratio com object-fit cover; setas circulares com hover; 4 slides desktop, 3 tablet, 2 mobile, 1 small mobile; responsivo 991px/767px/480px]
+
+### Alterações
+- Adicionado carrossel de imagens abaixo da seção "Do planejamento à execução" na página Sobre Nós. O carrossel exibe 20 fotos da pasta "Imagens para o site", todas cropadas em aspect-ratio 4:5 para ficarem alinhadas e do mesmo tamanho. Setas de navegação com padding adequado. Autoplay a cada 4s com pausa ao interagir. Suporte a swipe touch no mobile. Responsivo: 4 slides no desktop, 3 em tablet, 2 em mobile e 1 em telas pequenas.
+
+---
+
+## 2026-02-18 - feat: responsividade mobile na página Sobre Nós e menu lateral fullscreen
+
+### Arquivos Modificados
+- `api/public/css/responsive.css` [Menu lateral mobile: barra reduzida para 60px; main-nav-outer fullscreen (100vw × 100vh) com fundo escuro; nav-closer reposicionado (top-right 36px); main-content-container sem padding-left no mobile; z-index 999999]
+- `api/public/css/about-page.css` [Responsividade completa para 767px e 480px: hero com padding/fontes reduzidos; stats inline em row wrap; metrics em 1 coluna; process steps menores; differentials compactos; social proof com numbers em 1 coluna; values cards menores; CTA com botões 100% largura; btn-large menor]
+- `api/public/css/consultant-form.css` [Formulário mobile: padding reduzido; título menor; botão submit 100% largura]
+
+### Alterações
+- O menu lateral do site no mobile agora abre em tela cheia (fullscreen overlay escuro) com os itens centralizados e botão fechar visível no canto superior direito. Ao fechar, o menu sai completamente. A barra lateral fixa foi reduzida para 60px e o conteúdo principal não tem mais padding-left no mobile, usando toda a largura da tela. A página "Sobre Nós" teve todas as seções ajustadas para mobile: hero, métricas, processo, diferenciais, parceiros, valores, CTA e formulário com tamanhos, espaçamentos e fontes otimizados para telas pequenas.
+
+---
+
 ## 2026-02-18 - fix: página de histórico de pedidos não exibia pedidos
 
 ### Arquivos Modificados
