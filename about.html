@@ -536,9 +536,9 @@
       <div class="footer-info">
         <h4>Informações</h4>
         <ul>
-          <li><strong>CNPJ:</strong> 479.278.290/0001-06</li>
-          <li><strong>Endereço:</strong> Avenida do Contorno 9681 sala 504 - Prado - Belo Horizonte - MG</li>
-          <li><strong>Telefone/WhatsApp:</strong> <a href="https://wa.me/553125147884" target="_blank" rel="noopener">(31) 2514-7884</a></li>
+          <li>CNPJ: 479.278.290/0001-06</li>
+          <li>Endereço: Avenida do Contorno 9681 sala 504 - Prado - Belo Horizonte - MG</li>
+          <li>Telefone/WhatsApp: <a href="https://wa.me/553125147884" target="_blank" rel="noopener">(31) 2514-7884</a></li>
         </ul>
       </div>
 
@@ -585,40 +585,6 @@
 <script src="js/wow.js"></script>
 <script src="js/custom-script.js"></script>
 <script src="js/testimonials.js"></script>
-<script>
-(function() {
-  var showcase = document.getElementById('partners-showcase');
-  var overlay = document.getElementById('partners-fullscreen-overlay');
-  if (!showcase || !overlay) return;
-
-  function openFullscreen() {
-    overlay.classList.add('is-open');
-    overlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeFullscreen() {
-    overlay.classList.remove('is-open');
-    overlay.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  showcase.addEventListener('click', openFullscreen);
-  overlay.addEventListener('click', closeFullscreen);
-
-  showcase.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openFullscreen();
-    }
-  });
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
-      closeFullscreen();
-    }
-  });
-})();
-</script>
+<script src="js/about-page.js"></script>
 </body>
 </html>

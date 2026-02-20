@@ -50,8 +50,8 @@
 }
 
 .footer-brand h3 {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #ff5c00;
@@ -60,18 +60,19 @@
 }
 
 .footer-brand p {
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.7);
   margin: 0;
 }
 
-/* Títulos das colunas - uniformes */
+/* Títulos das colunas - 18px, apenas títulos em bold */
 .footer-info h4,
 .footer-nav h4,
 .footer-social h4 {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #ff5c00;
@@ -94,10 +95,12 @@
 }
 
 .footer-info a,
-.footer-info p {
-  font-size: 13px;
+.footer-info p,
+.footer-info li {
+  font-size: 14px;
+  font-weight: 400;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   transition: color 0.3s ease;
 }
@@ -119,7 +122,8 @@
 }
 
 .footer-nav a {
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: color 0.3s ease;
@@ -173,7 +177,7 @@
   color: #ff5c00;
   text-decoration: none;
   transition: color 0.3s ease;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .footer-legal-links a:hover {
@@ -246,6 +250,20 @@
 
   .footer-info p,
   .footer-info a,
+  .footer-info li,
+  .footer-nav a {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .footer-brand h3,
+  .footer-info h4,
+  .footer-nav h4,
+  .footer-social h4 {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
   .footer-copyright {
     font-size: 12px;
   }
@@ -274,9 +292,21 @@
 
   .footer-info p,
   .footer-info a,
-  .footer-copyright,
+  .footer-info li,
+  .footer-nav a {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .footer-brand h3,
   .footer-info h4,
-  .footer-nav h4 {
-    font-size: 11px;
+  .footer-nav h4,
+  .footer-social h4 {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .footer-copyright {
+    font-size: 12px;
   }
 }

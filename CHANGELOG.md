@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-02-20 - fix: CSP bloqueava scripts inline na página Sobre Nós (carrossel e fullscreen)
+
+### Arquivos Modificados
+- `api/public/js/about-page.js` [Novo: lógica do carrossel de imagens e overlay fullscreen dos parceiros externalizada]
+- `js/about-page.js` [Cópia para manter paridade na raiz do projeto]
+- `api/public/about.html`, `about.html` [Removidos scripts inline; carregamento de js/about-page.js]
+
+### Alterações
+- A página Sobre Nós exibia erro de CSP ao executar scripts inline (carrossel "Momentos que transformam" e overlay fullscreen da imagem "Quem confia"). Scripts externalizados para about-page.js, compatível com script-src 'self'. Carrossel e botões de navegação passam a funcionar corretamente.
+
+---
+
+## 2026-02-20 - feat: tipografia do rodapé padronizada (títulos 18px bold, textos 14px sem bold)
+
+### Arquivos Modificados
+- `api/public/css/footer.css`, `css/footer.css` [Títulos (h3, h4): 18px, font-weight 700; textos: 14px, font-weight 400; removido bold de labels de contato e footer-legal-links; media queries mobile com mesmas regras]
+- `api/public/includes/footer.html`, `includes/footer.html` e demais páginas com footer inline [Removidas tags <strong> dos labels Telefone, E-mail, Endereço e CNPJ na seção de contato]
+
+### Alterações
+- Rodapé: apenas títulos em bold (18px); textos em 14px sem variações de bold. Labels "Telefone:", "E-mail:", "Endereço:" e "CNPJ:" passaram a peso normal. Mesmas regras aplicadas na versão mobile (768px e 480px).
+
+---
+
 ## 2026-02-18 - feat: formatação automática do campo Validade (MM/AA) no checkout pedagógico
 
 ### Arquivos Modificados

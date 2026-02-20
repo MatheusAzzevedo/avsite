@@ -4,7 +4,19 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: formatação automática Validade (MM/AA) no checkout
+### Última atualização (2026-02-20) - fix: CSP na página Sobre Nós
+- **api/public/js/about-page.js**, **js/about-page.js** [Novo: carrossel e overlay fullscreen externalizados]
+- **api/public/about.html**, **about.html** [Scripts inline removidos; carregamento de about-page.js]
+
+Resumo: Erro de CSP bloqueava carrossel e fullscreen na página Sobre Nós. Scripts movidos para about-page.js. Carrossel e botões de navegação funcionam corretamente.
+
+### Versão anterior (2026-02-20) - feat: tipografia do rodapé padronizada
+- **api/public/css/footer.css**, **css/footer.css** [Títulos 18px bold; textos 14px sem bold; mobile com mesmas regras]
+- **api/public/includes/footer.html**, **includes/footer.html** e páginas com footer [Removidas tags strong dos labels de contato]
+
+Resumo: Rodapé com tipografia uniforme: apenas títulos em bold (18px); textos em 14px sem variações de bold. Labels Telefone, E-mail, Endereço e CNPJ em peso normal. Mesmo comportamento no mobile.
+
+### Versão anterior (2026-02-18) - feat: formatação automática Validade (MM/AA) no checkout
 - **api/public/cliente/js/checkout.js** [Máscara no campo Validade do cartão: barra inserida automaticamente ao digitar, formato 00/00]
 
 Resumo: Campo "Validade (MM/AA)" no pagamento com cartão agora é formatado automaticamente (ex.: 1226 vira 12/26).
