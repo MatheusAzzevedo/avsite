@@ -893,6 +893,13 @@
   pointer-events: none;
 }
 
+/* Desktop: fotos do carrossel 30% maiores */
+@media (min-width: 992px) {
+  .about-gallery-carousel .auto-container {
+    max-width: 1560px; /* 30% maior que 1200px */
+  }
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .about-hero-modern h1 {
