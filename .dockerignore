@@ -1,0 +1,35 @@
+# Reduz o contexto de build para evitar timeout e "context canceled"
+# Arquivos e pastas excluídos do envio ao Docker daemon
+
+# Dependências (serão instaladas no build)
+**/node_modules
+**/npm-debug.log
+
+# Git e metadados
+.git
+.gitignore
+.cursor
+.cursorignore
+
+# Cache e temporários
+**/.cache
+**/.npm
+**/tmp
+**/temp
+
+# Documentação e arquivos de desenvolvimento
+*.md
+!api/README.md
+
+# Imagens e assets pesados (opcional: descomente se o build continuar falhando)
+# api/public/images
+
+# Testes e cobertura
+**/coverage
+**/*.test.ts
+**/*.spec.ts
+
+# Ambiente local
+.env
+.env.local
+.env.*.local
