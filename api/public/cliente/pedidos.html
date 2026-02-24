@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Pedidos - Avorar Turismo</title>
+    <title>Meus Pedidos - Avoar Turismo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
     <style>
         * { 
             margin: 0; 
@@ -64,11 +65,143 @@
             padding-bottom: 0.3rem;
         }
         
-        .navbar a:hover, .navbar a.active { 
+        .navbar-link {
+            text-decoration: none;
+            color: #333333;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.3rem;
+        }
+        .navbar-link:hover, .navbar-link.active {
             color: #ff5c00;
             border-bottom-color: #ff5c00;
         }
-        
+        .btn-logout {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
+        }
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #ff5c00;
+            cursor: pointer;
+            padding: 0.5rem;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100%;
+            background: #fff;
+            z-index: 1002;
+            transition: right 0.3s ease;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .mobile-sidebar.active {
+            right: 0;
+        }
+        .mobile-sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            border-bottom: 2px solid #ff5c00;
+        }
+        .mobile-sidebar-header img {
+            height: 32px;
+            width: auto;
+        }
+        .mobile-sidebar-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mobile-sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0;
+            flex: 1;
+        }
+        .mobile-sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s ease, color 0.2s ease;
+            min-height: 48px;
+        }
+        .mobile-sidebar-nav a:hover,
+        .mobile-sidebar-nav a.active {
+            background: #fff7ed;
+            color: #ff5c00;
+        }
+        .mobile-sidebar-nav a i {
+            width: 20px;
+            text-align: center;
+        }
+        .mobile-sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .mobile-sidebar-footer .btn-logout {
+            width: 100%;
+            justify-content: center;
+            min-height: 48px;
+        }
         .container { 
             max-width: 1000px; 
             margin: 3rem auto; 
@@ -288,45 +421,32 @@
         }
         
         @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                padding: 1rem;
-                gap: 1rem;
-            }
-            
             .navbar-menu {
-                flex-direction: column;
-                gap: 1rem;
-                width: 100%;
+                display: none;
             }
-            
-            .navbar a {
-                width: 100%;
-                justify-content: center;
+            .hamburger-btn {
+                display: flex;
             }
-            
+            .navbar {
+                padding: 1rem 1.5rem;
+            }
             .container {
                 margin: 2rem auto;
                 padding: 0 1rem;
             }
-            
             h1 {
                 font-size: 1.6rem;
             }
-            
             .pedido-card {
                 padding: 1.5rem;
             }
-            
             .pedido-header {
                 flex-direction: column;
             }
-            
             .pedido-info {
                 flex-direction: column;
                 gap: 0.8rem;
             }
-            
             .pedido-footer {
                 flex-direction: column;
             }
@@ -339,13 +459,35 @@
             <img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo">
         </a>
         <div class="navbar-menu">
+            <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="pacotes-viagens.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            <a href="pedidos.html" class="navbar-link active"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
+            <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </div>
+        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="mobile-sidebar-header">
+            <img src="../images/background/Logo.webp" alt="Avoar Turismo">
+            <button type="button" class="mobile-sidebar-close" id="sidebarClose" aria-label="Fechar menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-sidebar-nav">
             <a href="inicio.html"><i class="fas fa-home"></i> Início</a>
             <a href="pacotes-viagens.html"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
             <a href="pedidos.html" class="active"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
-            <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </nav>
+        <div class="mobile-sidebar-footer">
+            <button type="button" class="btn-logout" id="logoutBtnMobile"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
-    </nav>
+    </div>
 
     <div class="container">
         <div class="page-header">
@@ -363,5 +505,36 @@
 
     <script src="js/auth-manager.js"></script>
     <script src="js/pedidos.js"></script>
+    <script>
+    (function() {
+        var hamburger = document.getElementById('hamburgerBtn');
+        var sidebar = document.getElementById('mobileSidebar');
+        var overlay = document.getElementById('mobileOverlay');
+        var closeBtn = document.getElementById('sidebarClose');
+        var logoutBtn = document.getElementById('logoutBtn');
+        var logoutMobile = document.getElementById('logoutBtnMobile');
+
+        function openMenu() {
+            if (sidebar) sidebar.classList.add('active');
+            if (overlay) overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            if (sidebar) sidebar.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function doLogout() {
+            if (window.clienteAuth) window.clienteAuth.logout();
+            window.location.href = '/cliente/login.html';
+        }
+
+        if (hamburger) hamburger.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+        if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+        if (logoutMobile) logoutMobile.addEventListener('click', function() { closeMenu(); doLogout(); });
+    })();
+    </script>
 </body>
 </html>

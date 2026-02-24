@@ -90,7 +90,7 @@ async function loadPedido() {
         // Verifica se já foi pago
         if (pedidoData.status === 'PAGO' || pedidoData.status === 'CONFIRMADO') {
             console.log('[Pagamento] Pedido já pago, exibindo sucesso');
-            showSuccess('Este pedido já foi pago!');
+            showSuccess('Este pedido já foi pago!', { metodo: 'PIX' });
             return;
         }
 
@@ -184,7 +184,7 @@ function setupPixButton() {
             // Verifica se já foi pago (reconciliação)
             if (result.data.status === 'PAGO') {
                 console.log('[Pagamento PIX] Pagamento já confirmado via reconciliação');
-                showSuccess('Pagamento já foi confirmado!');
+                showSuccess('Pagamento já foi confirmado!', { metodo: 'PIX' });
                 return;
             }
 
@@ -300,7 +300,7 @@ function startPixPolling() {
                 if (status === 'PAGO' || status === 'CONFIRMADO') {
                     console.log('[Pagamento PIX] Pagamento confirmado!');
                     stopPolling();
-                    showSuccess('Pagamento PIX confirmado com sucesso!');
+                    showSuccess('Pagamento PIX confirmado com sucesso!', { metodo: 'PIX' });
                 }
             }
         } catch (error) {
@@ -386,7 +386,7 @@ function setupCardForm() {
             }
 
             if (result.data.status === 'PAGO') {
-                showSuccess('Pagamento com cartão aprovado!');
+                showSuccess('Pagamento com cartão aprovado!', { metodo: 'Cartão' });
             } else {
                 // Aguardando processamento
                 showAlert('success', 'Pagamento em processamento. Você será notificado quando for confirmado.');
@@ -509,10 +509,12 @@ function prefillHolderData() {
 
 /**
  * Explicação da função [showSuccess]:
- * Exibe a tela de sucesso após confirmação do pagamento.
- * Esconde o card de pagamento e mostra mensagem de confirmação.
+ * Exibe popup de confirmação após pagamento aprovado.
+ * Mostra: método de pagamento, nome do cliente, valor e botão WhatsApp.
+ * @param {string} message - Mensagem de confirmação
+ * @param {Object} options - { metodo: 'PIX'|'Cartão' }
  */
-function showSuccess(message) {
+function showSuccess(message, options = {}) {
     // Para polling se ativo
     if (pixPollingInterval) {
         clearInterval(pixPollingInterval);
@@ -520,9 +522,23 @@ function showSuccess(message) {
     }
 
     document.getElementById('paymentCard').style.display = 'none';
-    document.getElementById('successCard').style.display = 'block';
-    document.getElementById('successMessage').textContent = message || 'Seu pagamento foi processado com sucesso.';
     hideAlerts();
+
+    const metodo = options.metodo || 'PIX';
+    const cliente = clienteAuth.getCliente();
+    const nome = (cliente && cliente.nome) ? cliente.nome : '—';
+    const valor = (pedidoData && pedidoData.valorTotal != null)
+        ? formatMoney(pedidoData.valorTotal)
+        : '—';
+
+    document.getElementById('confirmMetodo').textContent = metodo === 'PIX' ? 'PIX' : 'Cartão de Crédito';
+    document.getElementById('confirmNome').textContent = nome;
+    document.getElementById('confirmValor').textContent = valor;
+
+    const overlay = document.getElementById('paymentConfirmOverlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+    }
 }
 
 /**

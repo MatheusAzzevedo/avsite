@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.Previews - Avoar Admin</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .preview-section {
+            margin-bottom: 3rem;
+        }
+        .preview-section h2 {
+            font-size: 1.25rem;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-border);
+        }
+        .preview-section .origin {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .preview-btn {
+            padding: 0.75rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .preview-btn:hover {
+            background: var(--primary-dark);
+        }
+        .preview-btn.secondary {
+            background: var(--light-bg);
+            color: var(--text-dark);
+            border: 1px solid var(--light-border);
+        }
+        .preview-btn.secondary:hover {
+            background: var(--light-border);
+        }
+
+        /* Toast (admin) - inline para preview */
+        .toast-preview {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .toast-preview.success { background: #10b981; }
+        .toast-preview.error { background: #ef4444; }
+        .toast-preview.warning { background: #f59e0b; }
+        .toast-preview.info { background: #06b6d4; }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Payment Confirm (cliente) */
+        .payment-confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .payment-confirm-modal {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            max-width: 420px;
+            width: 100%;
+            padding: 2rem;
+            text-align: center;
+        }
+        .payment-confirm-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1.25rem;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .payment-confirm-icon i { font-size: 2rem; color: #16a34a; }
+        .payment-confirm-title { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
+        .payment-confirm-subtitle { color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem; }
+        .payment-confirm-details {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .payment-confirm-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+        .payment-confirm-row:not(:last-child) { border-bottom: 1px solid #e2e8f0; }
+        .payment-confirm-row .label { color: #64748b; font-weight: 500; }
+        .payment-confirm-row .valor { font-weight: 700; color: #EA580C; font-size: 1.1rem; }
+        .payment-confirm-actions { display: flex; flex-direction: column; gap: 0.75rem; }
+        .btn-see-orders, .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-see-orders { background: #EA580C; color: white; }
+        .btn-see-orders:hover { background: #C2410C; }
+        .btn-whatsapp { background: #25d366; color: white; }
+        .btn-whatsapp:hover { background: #20bd5a; }
+
+        /* Checkout Toast (cliente) */
+        .checkout-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 90%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .checkout-toast.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .checkout-toast.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .checkout-toast.info { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Avoar Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a></div>
+                <div class="nav-item"><a href="excursoes-pedagogicas.html" class="nav-link"><i class="fas fa-graduation-cap"></i> Pedagógico</a></div>
+                <div class="nav-item"><a href="excursoes.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Convencional</a></div>
+                <div class="nav-item"><a href="blog.html" class="nav-link"><i class="fas fa-blog"></i> Blog</a></div>
+                <div class="nav-item"><a href="categorias.html" class="nav-link"><i class="fas fa-tags"></i> Categorias</a></div>
+                <div class="nav-item"><a href="listas.html" class="nav-link"><i class="fas fa-list-alt"></i> Listas de Alunos</a></div>
+                <div class="nav-item">
+                    <a href="previews.html" class="nav-link active">
+                        <i class="fas fa-eye"></i>
+                        S.Previews
+                    </a>
+                </div>
+                <div class="nav-item" style="margin-top: 2rem;">
+                    <a href="#" class="nav-link" id="navLogout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <button id="sidebarToggle" class="btn btn-secondary btn-sm" style="margin-right: 1rem; display: none;"><i class="fas fa-bars"></i></button>
+                <h1>S.Previews</h1>
+                <div class="user-menu">
+                    <span id="userName">Administrador</span>
+                    <div class="user-avatar">AD</div>
+                </div>
+            </div>
+
+            <p class="subtitle" style="margin-bottom: 2rem;">Controle de qualidade e design. Clique nos botões para visualizar cada popup do sistema.</p>
+
+            <!-- 1. Admin Toast -->
+            <div class="preview-section">
+                <h2>1. Toast (Admin)</h2>
+                <p class="origin">Origem: admin-main.js / showToast</p>
+                <div class="preview-grid">
+                    <button type="button" class="preview-btn" data-toast="success">Toast Success</button>
+                    <button type="button" class="preview-btn" data-toast="error">Toast Error</button>
+                    <button type="button" class="preview-btn" data-toast="warning">Toast Warning</button>
+                    <button type="button" class="preview-btn" data-toast="info">Toast Info</button>
+                </div>
+            </div>
+
+            <!-- 2. Admin Modal Categoria -->
+            <div class="preview-section">
+                <h2>2. Modal Categoria (Admin)</h2>
+                <p class="origin">Origem: categorias.html</p>
+                <button type="button" class="preview-btn" id="btnModalCategoria">Abrir Modal Categoria</button>
+            </div>
+
+            <!-- 3. Payment Confirm (Cliente) -->
+            <div class="preview-section">
+                <h2>3. Confirmação de Pagamento (Cliente)</h2>
+                <p class="origin">Origem: cliente/pagamento.html</p>
+                <button type="button" class="preview-btn" id="btnPaymentConfirm">Abrir Popup Pagamento Confirmado</button>
+            </div>
+
+            <!-- 4. Checkout Toast (Cliente) -->
+            <div class="preview-section">
+                <h2>4. Toast Checkout (Cliente)</h2>
+                <p class="origin">Origem: cliente/checkout.html</p>
+                <div class="preview-grid">
+                    <button type="button" class="preview-btn" data-checkout-toast="success">Toast Success</button>
+                    <button type="button" class="preview-btn" data-checkout-toast="error">Toast Error</button>
+                    <button type="button" class="preview-btn" data-checkout-toast="info">Toast Info</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast container (admin) -->
+    <div id="toastContainer"></div>
+
+    <!-- Modal Categoria (admin) -->
+    <div id="modalCategoria" class="modal-overlay hidden">
+        <div class="modal-box modal-categoria">
+            <div class="modal-header">
+                <h3 id="modalCategoriaTitle">Nova categoria</h3>
+                <button type="button" class="modal-close" aria-label="Fechar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="categoriaId" value="">
+                <div class="form-group">
+                    <label for="categoriaSlug">Slug <span class="required">*</span></label>
+                    <input type="text" id="categoriaSlug" class="form-control" placeholder="ex: natureza">
+                </div>
+                <div class="form-group">
+                    <label for="categoriaNome">Nome (exibido no site) <span class="required">*</span></label>
+                    <input type="text" id="categoriaNome" class="form-control" placeholder="ex: Natureza">
+                </div>
+                <div class="form-group">
+                    <label for="categoriaOrdem">Ordem</label>
+                    <input type="number" id="categoriaOrdem" class="form-control" value="0" min="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modalCategoriaCancel">Cancelar</button>
+                <button type="button" class="btn btn-success" id="modalCategoriaSave"><i class="fas fa-check"></i> Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Confirm Overlay (cliente) -->
+    <div class="payment-confirm-overlay" id="paymentConfirmOverlay" style="display: none;">
+        <div class="payment-confirm-modal">
+            <div class="payment-confirm-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 class="payment-confirm-title">Pagamento Confirmado!</h2>
+            <p class="payment-confirm-subtitle">Seu pagamento foi processado com sucesso.</p>
+            <div class="payment-confirm-details">
+                <div class="payment-confirm-row">
+                    <span class="label">Método de pagamento:</span>
+                    <span>PIX</span>
+                </div>
+                <div class="payment-confirm-row">
+                    <span class="label">Cliente:</span>
+                    <span>João Silva</span>
+                </div>
+                <div class="payment-confirm-row">
+                    <span class="label">Valor:</span>
+                    <span class="valor">R$ 150,00</span>
+                </div>
+            </div>
+            <div class="payment-confirm-actions">
+                <a href="#" class="btn-see-orders" onclick="document.getElementById('paymentConfirmOverlay').style.display='none'; return false;">
+                    <i class="fas fa-list"></i> Ver Meus Pedidos
+                </a>
+                <a href="https://wa.me/553125147884" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> Para dúvidas entre em contato
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Toast (cliente) -->
+    <div id="checkoutToast" class="checkout-toast" style="display: none;"></div>
+
+    <script src="js/admin-main.js"></script>
+    <script>
+    (function() {
+        // Toast Admin
+        document.querySelectorAll('[data-toast]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var type = this.dataset.toast;
+                var messages = {
+                    success: 'Operação realizada com sucesso!',
+                    error: 'Erro ao processar. Tente novamente.',
+                    warning: 'Atenção: verifique os dados.',
+                    info: 'Informação enviada.'
+                };
+                if (typeof showToast === 'function') {
+                    showToast(messages[type], type);
+                }
+            });
+        });
+
+        // Modal Categoria
+        var modalCategoria = document.getElementById('modalCategoria');
+        var btnModal = document.getElementById('btnModalCategoria');
+        var btnClose = modalCategoria.querySelector('.modal-close');
+        var btnCancel = document.getElementById('modalCategoriaCancel');
+
+        function openModalCategoria() {
+            modalCategoria.classList.remove('hidden');
+        }
+        function closeModalCategoria() {
+            modalCategoria.classList.add('hidden');
+        }
+
+        if (btnModal) btnModal.addEventListener('click', openModalCategoria);
+        if (btnClose) btnClose.addEventListener('click', closeModalCategoria);
+        if (btnCancel) btnCancel.addEventListener('click', closeModalCategoria);
+        modalCategoria.addEventListener('click', function(e) {
+            if (e.target === modalCategoria) closeModalCategoria();
+        });
+
+        // Payment Confirm
+        var paymentOverlay = document.getElementById('paymentConfirmOverlay');
+        const btnPaymentConfirm = document.getElementById('btnPaymentConfirm');
+        if (btnPaymentConfirm) {
+            btnPaymentConfirm.addEventListener('click', function() {
+                paymentOverlay.style.display = 'flex';
+            });
+        }
+        paymentOverlay.addEventListener('click', function(e) {
+            if (e.target === paymentOverlay) paymentOverlay.style.display = 'none';
+        });
+
+        // Checkout Toast
+        var checkoutToast = document.getElementById('checkoutToast');
+        document.querySelectorAll('[data-checkout-toast]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var type = this.dataset.checkoutToast;
+                var messages = {
+                    success: 'Pagamento confirmado! Redirecionando...',
+                    error: 'Erro ao processar pagamento.',
+                    info: 'Processando pagamento...'
+                };
+                checkoutToast.textContent = messages[type];
+                checkoutToast.className = 'checkout-toast ' + type;
+                checkoutToast.style.display = 'flex';
+                setTimeout(function() {
+                    checkoutToast.style.display = 'none';
+                }, 3000);
+            });
+        });
+    })();
+    </script>
+</body>
+</html>
