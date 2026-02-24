@@ -347,17 +347,31 @@ router.put('/profile',
   validateBody(clienteUpdateProfileSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { nome, telefone, cpf, avatarUrl } = req.body;
+      const { nome, email, telefone, cpf, avatarUrl } = req.body;
 
       logger.info('[Cliente Auth] Atualizando perfil do cliente', {
         context: { clienteId: req.cliente!.id, campos: Object.keys(req.body) }
       });
 
+      // Se email foi alterado, verifica se já está em uso
+      if (email) {
+        const existing = await prisma.cliente.findFirst({
+          where: {
+            email: email.toLowerCase(),
+            id: { not: req.cliente!.id }
+          }
+        });
+        if (existing) {
+          throw ApiError.conflict('Email já está em uso por outra conta');
+        }
+      }
+
       const cliente = await prisma.cliente.update({
         where: { id: req.cliente!.id },
         data: {
           ...(nome && { nome }),
-          ...(telefone !== undefined && { telefone }),
+          ...(email && { email: email.toLowerCase() }),
+          ...(telefone !== undefined && { telefone: telefone || null }),
           ...(cpf !== undefined && { cpf }),
           ...(avatarUrl !== undefined && { avatarUrl })
         },

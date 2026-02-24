@@ -73,13 +73,34 @@ export const clienteUpdateProfileSchema = z.object({
     .max(100, 'Nome deve ter no máximo 100 caracteres')
     .trim()
     .optional(),
+  email: z
+    .string()
+    .email('Email inválido')
+    .trim()
+    .toLowerCase()
+    .optional(),
   telefone: z
     .string()
     .optional()
+    .transform((val) => (val && val.trim() ? val.trim() : undefined))
     .refine(
-      (val) => !val || /^\(\d{2}\)\s?\d{4,5}-?\d{4}$/.test(val),
+      (val) => {
+        if (!val) return true;
+        const digits = val.replace(/\D/g, '');
+        return digits.length >= 10 && digits.length <= 11;
+      },
       'Telefone inválido. Use formato: (11) 98888-8888'
-    ),
+    )
+    .transform((val) => {
+      if (!val) return undefined;
+      const digits = val.replace(/\D/g, '');
+      if (digits.length >= 10) {
+        const ddd = digits.slice(0, 2);
+        const rest = digits.slice(2);
+        return rest.length === 9 ? `(${ddd}) ${rest.slice(0, 5)}-${rest.slice(5)}` : `(${ddd}) ${rest.slice(0, 4)}-${rest.slice(4)}`;
+      }
+      return val;
+    }),
   cpf: z
     .string()
     .optional()

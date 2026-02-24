@@ -339,8 +339,7 @@
                 
                 <div class="form-group">
                     <label for="email"><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="email" disabled>
-                    <p class="form-hint">Email não pode ser alterado</p>
+                    <input type="email" id="email" required placeholder="seu@email.com">
                 </div>
                 
                 <div class="form-group">
@@ -361,7 +360,7 @@
             <div id="oauthNotice" class="oauth-notice" style="display: none;">
                 <i class="fas fa-info-circle"></i> Sua conta foi criada com Google. Para alterar a senha, use as configurações da sua conta Google.
             </div>
-            <form id="senhaForm" style="display: none;">
+            <form id="senhaForm">
                 <div class="form-group">
                     <label for="senhaAtual"><i class="fas fa-key"></i> Senha atual <span style="color: #dc2626;">*</span></label>
                     <input type="password" id="senhaAtual" name="senhaAtual" required placeholder="Digite sua senha atual" autocomplete="current-password">
@@ -399,17 +398,34 @@
                     document.getElementById('telefone').value = data.data.telefone || '';
                     
                     var authProvider = data.data.authProvider || 'LOCAL';
-                    if (authProvider === 'LOCAL') {
-                        document.getElementById('senhaForm').style.display = 'block';
-                        document.getElementById('oauthNotice').style.display = 'none';
-                    } else {
+                    if (authProvider === 'GOOGLE') {
                         document.getElementById('senhaForm').style.display = 'none';
                         document.getElementById('oauthNotice').style.display = 'block';
+                    } else {
+                        document.getElementById('senhaForm').style.display = 'block';
+                        document.getElementById('oauthNotice').style.display = 'none';
                     }
                 }
             } catch (error) {
                 console.error('Erro:', error);
                 document.getElementById('senhaForm').style.display = 'block';
+                document.getElementById('oauthNotice').style.display = 'none';
+            }
+
+            // Máscara de telefone
+            var telefoneInput = document.getElementById('telefone');
+            if (telefoneInput) {
+                telefoneInput.addEventListener('input', function() {
+                    var v = this.value.replace(/\D/g, '');
+                    if (v.length > 11) v = v.slice(0, 11);
+                    if (v.length > 6) {
+                        this.value = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+                    } else if (v.length > 2) {
+                        this.value = '(' + v.slice(0,2) + ') ' + v.slice(2);
+                    } else if (v.length > 0) {
+                        this.value = '(' + v;
+                    }
+                });
             }
         })();
 
@@ -418,6 +434,7 @@
             
             const dados = {
                 nome: document.getElementById('nome').value.trim(),
+                email: document.getElementById('email').value.trim().toLowerCase(),
                 telefone: document.getElementById('telefone').value.trim() || undefined
             };
 
