@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: assunto do e-mail de confirmação
+### Última atualização (2026-02-18) - feat: redes sociais no header
+- **api/public/*.html** (index-10, index-11, about, contact, blog, portfolio, nossos-roteiros) [Botão Administrativo substituído por ícones Facebook, Instagram, LinkedIn]
+- **api/public/css/avoar-top-header.css** [Estilos .header-social]
+
+Resumo: Botão Administrativo removido do header. Ícones das redes sociais (Facebook, Instagram, LinkedIn) ocupam seu lugar, à esquerda do botão Login.
+
+### Versão anterior (2026-02-18) - feat: assunto do e-mail de confirmação
 - **api/src/utils/enviar-email-confirmacao.ts** [Assunto fixo do e-mail de confirmação de inscrição]
 - **api/src/routes/admin-email.routes.ts** [Assunto do teste alinhado]
 

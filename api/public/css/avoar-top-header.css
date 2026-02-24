@@ -79,33 +79,32 @@
         border-bottom-color: #ff5c00;
     }
 
-    /* Botões Administrativo e Login à direita */
+    /* Redes sociais e Login à direita */
     .avoar-top-header .header-login {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 20px;
         flex-shrink: 0;
     }
 
-    /* Botão Administrativo - borda laranja, fundo preto */
-    .avoar-top-header .header-login .btn-administrativo {
-        display: inline-block;
-        background: #000000;
-        color: #ff5c00;
-        text-decoration: none;
-        padding: 12px 28px;
-        border-radius: 4px;
-        border: 2px solid #ff5c00;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
+    /* Ícones das redes sociais */
+    .avoar-top-header .header-social {
+        display: flex;
+        align-items: center;
+        gap: 14px;
     }
 
-    .avoar-top-header .header-login .btn-administrativo:hover {
-        background: rgba(255, 92, 0, 0.1);
-        box-shadow: 0 0 15px rgba(255, 92, 0, 0.3);
+    .avoar-top-header .header-social a {
+        color: #ffffff;
+        font-size: 18px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        opacity: 0.9;
+    }
+
+    .avoar-top-header .header-social a:hover {
+        color: #ff5c00;
+        opacity: 1;
         transform: translateY(-2px);
     }
 

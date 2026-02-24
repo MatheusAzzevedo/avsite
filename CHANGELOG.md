@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-18 - feat: redes sociais no header em vez do botão Administrativo
+
+### Arquivos Modificados
+- `api/public/index-10.html`, `index-11.html`, `about.html`, `contact.html`, `blog.html`, `blog-single.html`, `portfolio.html`, `portfolio-single.html`, `nossos-roteiros.html` [Botão Administrativo removido; ícones Facebook, Instagram e LinkedIn adicionados no header]
+- `api/public/css/avoar-top-header.css` [Estilos .header-social para ícones; removidos .btn-administrativo]
+
+### Alterações
+- O botão "Administrativo" foi removido do header do site. Os ícones das redes sociais (Facebook, Instagram, LinkedIn) passaram a ocupar seu lugar, à esquerda do botão Login. Links e estilos alinhados ao rodapé.
+
+---
+
 ## 2026-02-18 - feat: assunto do e-mail de confirmação de inscrição padronizado
 
 ### Arquivos Modificados
