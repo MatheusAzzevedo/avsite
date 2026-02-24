@@ -9,14 +9,18 @@
         * { 
             margin: 0; 
             padding: 0; 
-            box-sizing: border-box; 
+            box-sizing: border-box;
+            cursor: auto !important;
         }
         
         body { 
             font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
             min-height: 100vh;
+            cursor: default !important;
         }
+        
+        a, button { cursor: pointer !important; }
         
         /* NAVBAR */
         .navbar { 
@@ -51,8 +55,8 @@
             flex: 1;
         }
         
-        .navbar a { 
-            text-decoration: none; 
+        .navbar-link {
+            text-decoration: none;
             color: #333333;
             font-weight: 600;
             font-size: 0.95rem;
@@ -63,11 +67,120 @@
             border-bottom: 2px solid transparent;
             padding-bottom: 0.3rem;
         }
-        
-        .navbar a:hover, .navbar a.active { 
+        .navbar-link:hover, .navbar-link.active { 
             color: #ff5c00;
             border-bottom-color: #ff5c00;
         }
+        
+        .btn-logout {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
+        }
+        
+        .btn-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            min-width: 44px;
+            min-height: 44px;
+            cursor: pointer;
+            color: #333;
+            font-size: 1.5rem;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 1001;
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .sidebar-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 85vw;
+            height: 100vh;
+            background: #1a3a2e;
+            z-index: 1999;
+            padding: 1.5rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            pointer-events: none;
+        }
+        .sidebar.open {
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .sidebar-logo { height: 40px; width: auto; }
+        .btn-close-sidebar {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(255, 92, 0, 0.2);
+            color: #ff5c00;
+        }
+        .sidebar-link i { width: 24px; text-align: center; font-size: 1.1rem; }
+        .sidebar .btn-logout { width: 100%; margin-top: 1.5rem; justify-content: center; }
         
         .container { 
             max-width: 600px; 
@@ -270,21 +383,14 @@
         }
         
         @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                padding: 1rem;
-                gap: 1rem;
-            }
-            
             .navbar-menu {
-                flex-direction: column;
-                gap: 1rem;
-                width: 100%;
+                display: none;
             }
-            
-            .navbar a {
-                width: 100%;
-                justify-content: center;
+            .btn-hamburger {
+                display: flex;
+            }
+            .navbar {
+                padding: 1rem 1.5rem;
             }
             
             .container {
@@ -308,15 +414,37 @@
     </style>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+    <aside class="sidebar" id="sidebar" aria-label="Menu de navegação">
+        <div class="sidebar-header">
+            <a href="../index-10.html">
+                <img src="../images/background/Logo.webp" alt="Avoar Turismo" class="sidebar-logo">
+            </a>
+            <button type="button" class="btn-close-sidebar" id="closeSidebarBtn" aria-label="Fechar menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="inicio.html" class="sidebar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="pacotes-viagens.html" class="sidebar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            <a href="pedidos.html" class="sidebar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="sidebar-link active"><i class="fas fa-cog"></i> Configurações</a>
+            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </nav>
+    </aside>
+
     <nav class="navbar">
         <a href="../index-10.html" class="navbar-brand">
             <img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo">
         </a>
+        <button type="button" class="btn-hamburger" id="hamburgerBtn" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="navbar-menu">
-            <a href="inicio.html"><i class="fas fa-home"></i> Início</a>
-            <a href="pacotes-viagens.html"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
-            <a href="pedidos.html"><i class="fas fa-list"></i> Meus Pedidos</a>
-            <a href="configuracoes.html" class="active"><i class="fas fa-cog"></i> Configurações</a>
+            <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="pacotes-viagens.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="navbar-link active"><i class="fas fa-cog"></i> Configurações</a>
             <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
     </nav>
@@ -384,143 +512,6 @@
     </div>
 
     <script src="js/auth-manager.js"></script>
-    <script>
-        (async () => {
-            await clienteAuth.requireAuth();
-            
-            try {
-                const response = await clienteAuth.fetchAuth('/cliente/auth/me');
-                const data = await response.json();
-                
-                if (data.success) {
-                    document.getElementById('nome').value = data.data.nome;
-                    document.getElementById('email').value = data.data.email;
-                    document.getElementById('telefone').value = data.data.telefone || '';
-                    
-                    var authProvider = data.data.authProvider || 'LOCAL';
-                    if (authProvider === 'GOOGLE') {
-                        document.getElementById('senhaForm').style.display = 'none';
-                        document.getElementById('oauthNotice').style.display = 'block';
-                    } else {
-                        document.getElementById('senhaForm').style.display = 'block';
-                        document.getElementById('oauthNotice').style.display = 'none';
-                    }
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                document.getElementById('senhaForm').style.display = 'block';
-                document.getElementById('oauthNotice').style.display = 'none';
-            }
-
-            // Máscara de telefone
-            var telefoneInput = document.getElementById('telefone');
-            if (telefoneInput) {
-                telefoneInput.addEventListener('input', function() {
-                    var v = this.value.replace(/\D/g, '');
-                    if (v.length > 11) v = v.slice(0, 11);
-                    if (v.length > 6) {
-                        this.value = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
-                    } else if (v.length > 2) {
-                        this.value = '(' + v.slice(0,2) + ') ' + v.slice(2);
-                    } else if (v.length > 0) {
-                        this.value = '(' + v;
-                    }
-                });
-            }
-        })();
-
-        document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const dados = {
-                nome: document.getElementById('nome').value.trim(),
-                email: document.getElementById('email').value.trim().toLowerCase(),
-                telefone: document.getElementById('telefone').value.trim() || undefined
-            };
-
-            try {
-                const response = await clienteAuth.fetchAuth('/cliente/auth/profile', {
-                    method: 'PUT',
-                    body: JSON.stringify(dados)
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    const successDiv = document.getElementById('successMessage');
-                    successDiv.textContent = '✓ Dados atualizados com sucesso!';
-                    successDiv.classList.add('show');
-                    setTimeout(() => successDiv.classList.remove('show'), 4000);
-                    
-                    const cliente = clienteAuth.getCliente();
-                    clienteAuth.saveAuth(clienteAuth.getToken(), { ...cliente, ...data.data });
-                } else {
-                    alert(data.error || 'Erro ao atualizar dados');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao atualizar dados');
-            }
-        });
-
-        document.getElementById('senhaForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            var senhaAtual = document.getElementById('senhaAtual').value;
-            var novaSenha = document.getElementById('novaSenha').value;
-            var confirmarSenha = document.getElementById('confirmarSenha').value;
-            
-            var successDiv = document.getElementById('senhaSuccessMessage');
-            var errorDiv = document.getElementById('senhaErrorMessage');
-            successDiv.classList.remove('show');
-            errorDiv.style.display = 'none';
-            
-            if (novaSenha !== confirmarSenha) {
-                errorDiv.textContent = 'A nova senha e a confirmação não coincidem.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-            
-            if (novaSenha.length < 8) {
-                errorDiv.textContent = 'A nova senha deve ter no mínimo 8 caracteres.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-            
-            var hasUpper = /[A-Z]/.test(novaSenha);
-            var hasLower = /[a-z]/.test(novaSenha);
-            var hasNumber = /\d/.test(novaSenha);
-            if (!hasUpper || !hasLower || !hasNumber) {
-                errorDiv.textContent = 'A nova senha deve conter pelo menos uma letra maiúscula, uma minúscula e um número.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-            
-            try {
-                var response = await clienteAuth.fetchAuth('/cliente/auth/change-password', {
-                    method: 'PUT',
-                    body: JSON.stringify({
-                        currentPassword: senhaAtual,
-                        newPassword: novaSenha
-                    })
-                });
-                var data = await response.json();
-                
-                if (response.ok && data.success) {
-                    successDiv.textContent = '✓ Senha alterada com sucesso!';
-                    successDiv.classList.add('show');
-                    setTimeout(function() { successDiv.classList.remove('show'); }, 4000);
-                    document.getElementById('senhaForm').reset();
-                } else {
-                    errorDiv.textContent = data.error || 'Erro ao alterar senha.';
-                    errorDiv.style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                errorDiv.textContent = 'Erro ao alterar senha. Tente novamente.';
-                errorDiv.style.display = 'block';
-            }
-        });
-    </script>
+    <script src="js/configuracoes.js"></script>
 </body>
 </html>

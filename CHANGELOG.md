@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-02-18 - feat: assunto do e-mail de confirmação de inscrição padronizado
+
+### Arquivos Modificados
+- `api/src/utils/enviar-email-confirmacao.ts` [Assunto fixo: "Inscrição C-O-N-F-I-R-M-A-D-A❤️ Ficamos felizes em avisar que seu pedido foi concluído!"]
+- `api/src/routes/admin-email.routes.ts` [Assunto do e-mail de teste alinhado ao padrão]
+
+### Alterações
+- O assunto (título) do e-mail de confirmação de inscrição enviado após pagamento confirmado passou a ser fixo: "Inscrição C-O-N-F-I-R-M-A-D-A❤️ Ficamos felizes em avisar que seu pedido foi concluído!". O corpo do e-mail permanece inalterado.
+
+---
+
+## 2026-02-18 - feat: header padronizado na página Configurações do cliente
+
+### Arquivos Modificados
+- `api/public/cliente/configuracoes.html` [Header padronizado: sidebar lateral esquerda, hamburger, overlay; estilos e estrutura iguais ao Início; script inline removido]
+- `api/public/cliente/js/configuracoes.js` [Novo: initMobileMenu, bindLogout e lógica do formulário de perfil/senha]
+
+### Alterações
+- Página Configurações do cliente passou a usar o mesmo header do Início: sidebar lateral esquerda (fundo verde #1a3a2e), botão hamburger no mobile, overlay escuro. Script inline movido para configuracoes.js para compatibilidade com CSP.
+
+---
+
+## 2026-02-18 - fix: S.Previews - CSP e Storage.get
+
+### Arquivos Modificados
+- `api/public/admin/previews.html` [Adicionado api-client.js; removido script inline; carregamento de previews.js]
+- `api/public/admin/js/previews.js` [Novo: lógica dos botões Toast, Modal Categoria, Payment Confirm e Checkout Toast externalizada]
+
+### Alterações
+- Página S.Previews exibia erro de CSP ao executar script inline e "Storage.get is not a function" porque api-client.js não era carregado. Corrigido: api-client.js adicionado antes de admin-main.js (define Storage e AuthManager); script inline movido para previews.js, compatível com CSP.
+
+---
+
+## 2026-02-18 - fix: página Meus Pedidos - cursor sumindo, header padronizado e CSP
+
+### Arquivos Modificados
+- `api/public/cliente/pedidos.html` [Override cursor: auto/default/pointer; header padronizado com sidebar esquerda igual ao Início; removido script inline]
+- `api/public/cliente/js/pedidos.js` [initMobileMenu e bindLogout externalizados para compatibilidade com CSP]
+
+### Alterações
+- Cursor do mouse sumia na tela de Meus Pedidos devido a `cursor: none` no style.css global. Overrides adicionados em pedidos.html. Header padronizado: sidebar lateral esquerda (fundo verde #1a3a2e), hamburger, overlay e botões de logout iguais ao Início. Script inline removido; lógica do menu e logout movida para pedidos.js, resolvendo erro de Content Security Policy.
+
+---
+
 ## 2026-02-20 - fix: CSP bloqueava scripts inline na página Sobre Nós (carrossel e fullscreen)
 
 ### Arquivos Modificados

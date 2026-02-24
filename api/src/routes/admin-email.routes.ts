@@ -88,7 +88,7 @@ router.post('/teste-confirmacao',
       const dadosEmail = obterDadosMockEmailConfirmacao();
       const html = gerarTemplateConfirmacaoPedido(dadosEmail);
       const texto = gerarTextoConfirmacaoPedido(dadosEmail);
-      const assunto = `[TESTE] Confirmação de Inscrição - Pedido ${dadosEmail.numeroPedido}`;
+      const assunto = '[TESTE] Inscrição C-O-N-F-I-R-M-A-D-A❤️ Ficamos felizes em avisar que seu pedido foi concluído!';
 
       const resultados: Array<{ email: string; success: boolean; error?: string }> = [];
 

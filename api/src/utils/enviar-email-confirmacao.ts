@@ -206,17 +206,19 @@ export async function enviarEmailConfirmacaoPedido(pedidoId: string): Promise<vo
     });
 
     // 7. Envia o e-mail
+    const assunto = 'Inscrição C-O-N-F-I-R-M-A-D-A❤️ Ficamos felizes em avisar que seu pedido foi concluído!';
+
     logger.info('[Email Confirmação] 🔄 ETAPA 6/6 — Enviando e-mail via API Brevo', {
       context: {
         pedidoId,
         para: emailDestinatario,
-        assunto: `Confirmação de Inscrição - Pedido ${pedido.id.substring(0, 8)}`
+        assunto
       }
     });
 
     const resultado = await enviarEmail({
       para: emailDestinatario,
-      assunto: `Confirmação de Inscrição - Pedido ${pedido.id.substring(0, 8)}`,
+      assunto,
       html,
       texto
     });

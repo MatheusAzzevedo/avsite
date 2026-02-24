@@ -7,16 +7,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+        * {
+            cursor: auto !important;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        body { 
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
             min-height: 100vh;
+            cursor: default !important;
+        }
+
+        a, button {
+            cursor: pointer !important;
         }
         
         /* NAVBAR */
@@ -100,107 +106,104 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
         }
-        .hamburger-btn {
+        .btn-hamburger {
             display: none;
             background: none;
             border: none;
-            font-size: 1.5rem;
-            color: #ff5c00;
-            cursor: pointer;
             padding: 0.5rem;
             min-width: 44px;
             min-height: 44px;
+            cursor: pointer;
+            color: #333;
+            font-size: 1.5rem;
             align-items: center;
             justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 1001;
         }
-        .mobile-overlay {
+        .sidebar-overlay {
             display: none;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 1001;
+            z-index: 1998;
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
-        .mobile-overlay.active {
-            display: block;
+        .sidebar-overlay.open {
             opacity: 1;
+            pointer-events: auto;
         }
-        .mobile-sidebar {
+        .sidebar {
             position: fixed;
             top: 0;
-            right: -280px;
+            left: 0;
             width: 280px;
-            height: 100%;
-            background: #fff;
-            z-index: 1002;
-            transition: right 0.3s ease;
-            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
+            max-width: 85vw;
+            height: 100vh;
+            background: #1a3a2e;
+            z-index: 1999;
+            padding: 1.5rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
             overflow-y: auto;
+            pointer-events: none;
         }
-        .mobile-sidebar.active {
-            right: 0;
+        .sidebar.open {
+            transform: translateX(0);
+            pointer-events: auto;
         }
-        .mobile-sidebar-header {
+        .sidebar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem;
-            border-bottom: 2px solid #ff5c00;
+            margin-bottom: 2rem;
         }
-        .mobile-sidebar-header img {
-            height: 32px;
+        .sidebar-logo {
+            height: 40px;
             width: auto;
         }
-        .mobile-sidebar-close {
+        .btn-close-sidebar {
             background: none;
             border: none;
+            color: #fff;
             font-size: 1.5rem;
-            color: #333;
             cursor: pointer;
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 0.25rem;
         }
-        .mobile-sidebar-nav {
+        .sidebar-nav {
             display: flex;
             flex-direction: column;
-            padding: 1rem 0;
-            flex: 1;
+            gap: 0.5rem;
         }
-        .mobile-sidebar-nav a {
+        .sidebar-link {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 1rem 1.5rem;
+            padding: 1rem 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            color: #333;
             font-weight: 600;
-            font-size: 1rem;
-            transition: background 0.2s ease, color 0.2s ease;
-            min-height: 48px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
-        .mobile-sidebar-nav a:hover,
-        .mobile-sidebar-nav a.active {
-            background: #fff7ed;
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(255, 92, 0, 0.2);
             color: #ff5c00;
         }
-        .mobile-sidebar-nav a i {
-            width: 20px;
+        .sidebar-link i {
+            width: 24px;
             text-align: center;
+            font-size: 1.1rem;
         }
-        .mobile-sidebar-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid #e5e7eb;
-        }
-        .mobile-sidebar-footer .btn-logout {
+        .sidebar .btn-logout {
             width: 100%;
+            margin-top: 1.5rem;
             justify-content: center;
-            min-height: 48px;
         }
         .container { 
             max-width: 1000px; 
@@ -424,7 +427,7 @@
             .navbar-menu {
                 display: none;
             }
-            .hamburger-btn {
+            .btn-hamburger {
                 display: flex;
             }
             .navbar {
@@ -454,10 +457,32 @@
     </style>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+    <aside class="sidebar" id="sidebar" aria-label="Menu de navegação">
+        <div class="sidebar-header">
+            <a href="../index-10.html">
+                <img src="../images/background/Logo.webp" alt="Avoar Turismo" class="sidebar-logo">
+            </a>
+            <button type="button" class="btn-close-sidebar" id="closeSidebarBtn" aria-label="Fechar menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="inicio.html" class="sidebar-link"><i class="fas fa-home"></i> Início</a>
+            <a href="pacotes-viagens.html" class="sidebar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            <a href="pedidos.html" class="sidebar-link active"><i class="fas fa-list"></i> Meus Pedidos</a>
+            <a href="configuracoes.html" class="sidebar-link"><i class="fas fa-cog"></i> Configurações</a>
+            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </nav>
+    </aside>
+
     <nav class="navbar">
         <a href="../index-10.html" class="navbar-brand">
             <img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo">
         </a>
+        <button type="button" class="btn-hamburger" id="hamburgerBtn" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="navbar-menu">
             <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
             <a href="pacotes-viagens.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
@@ -465,29 +490,7 @@
             <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
             <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
-        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
-            <i class="fas fa-bars"></i>
-        </button>
     </nav>
-
-    <div class="mobile-overlay" id="mobileOverlay"></div>
-    <div class="mobile-sidebar" id="mobileSidebar">
-        <div class="mobile-sidebar-header">
-            <img src="../images/background/Logo.webp" alt="Avoar Turismo">
-            <button type="button" class="mobile-sidebar-close" id="sidebarClose" aria-label="Fechar menu">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <nav class="mobile-sidebar-nav">
-            <a href="inicio.html"><i class="fas fa-home"></i> Início</a>
-            <a href="pacotes-viagens.html"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
-            <a href="pedidos.html" class="active"><i class="fas fa-list"></i> Meus Pedidos</a>
-            <a href="configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
-        </nav>
-        <div class="mobile-sidebar-footer">
-            <button type="button" class="btn-logout" id="logoutBtnMobile"><i class="fas fa-sign-out-alt"></i> Sair</button>
-        </div>
-    </div>
 
     <div class="container">
         <div class="page-header">
@@ -505,36 +508,5 @@
 
     <script src="js/auth-manager.js"></script>
     <script src="js/pedidos.js"></script>
-    <script>
-    (function() {
-        var hamburger = document.getElementById('hamburgerBtn');
-        var sidebar = document.getElementById('mobileSidebar');
-        var overlay = document.getElementById('mobileOverlay');
-        var closeBtn = document.getElementById('sidebarClose');
-        var logoutBtn = document.getElementById('logoutBtn');
-        var logoutMobile = document.getElementById('logoutBtnMobile');
-
-        function openMenu() {
-            if (sidebar) sidebar.classList.add('active');
-            if (overlay) overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeMenu() {
-            if (sidebar) sidebar.classList.remove('active');
-            if (overlay) overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        function doLogout() {
-            if (window.clienteAuth) window.clienteAuth.logout();
-            window.location.href = '/cliente/login.html';
-        }
-
-        if (hamburger) hamburger.addEventListener('click', openMenu);
-        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-        if (overlay) overlay.addEventListener('click', closeMenu);
-        if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
-        if (logoutMobile) logoutMobile.addEventListener('click', function() { closeMenu(); doLogout(); });
-    })();
-    </script>
 </body>
 </html>

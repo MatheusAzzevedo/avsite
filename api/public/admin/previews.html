@@ -292,7 +292,7 @@
                 </div>
             </div>
             <div class="payment-confirm-actions">
-                <a href="#" class="btn-see-orders" onclick="document.getElementById('paymentConfirmOverlay').style.display='none'; return false;">
+                <a href="#" class="btn-see-orders" id="btnClosePaymentConfirm">
                     <i class="fas fa-list"></i> Ver Meus Pedidos
                 </a>
                 <a href="https://wa.me/553125147884" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
@@ -305,76 +305,8 @@
     <!-- Checkout Toast (cliente) -->
     <div id="checkoutToast" class="checkout-toast" style="display: none;"></div>
 
+    <script src="../js/api-client.js"></script>
     <script src="js/admin-main.js"></script>
-    <script>
-    (function() {
-        // Toast Admin
-        document.querySelectorAll('[data-toast]').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var type = this.dataset.toast;
-                var messages = {
-                    success: 'Operação realizada com sucesso!',
-                    error: 'Erro ao processar. Tente novamente.',
-                    warning: 'Atenção: verifique os dados.',
-                    info: 'Informação enviada.'
-                };
-                if (typeof showToast === 'function') {
-                    showToast(messages[type], type);
-                }
-            });
-        });
-
-        // Modal Categoria
-        var modalCategoria = document.getElementById('modalCategoria');
-        var btnModal = document.getElementById('btnModalCategoria');
-        var btnClose = modalCategoria.querySelector('.modal-close');
-        var btnCancel = document.getElementById('modalCategoriaCancel');
-
-        function openModalCategoria() {
-            modalCategoria.classList.remove('hidden');
-        }
-        function closeModalCategoria() {
-            modalCategoria.classList.add('hidden');
-        }
-
-        if (btnModal) btnModal.addEventListener('click', openModalCategoria);
-        if (btnClose) btnClose.addEventListener('click', closeModalCategoria);
-        if (btnCancel) btnCancel.addEventListener('click', closeModalCategoria);
-        modalCategoria.addEventListener('click', function(e) {
-            if (e.target === modalCategoria) closeModalCategoria();
-        });
-
-        // Payment Confirm
-        var paymentOverlay = document.getElementById('paymentConfirmOverlay');
-        const btnPaymentConfirm = document.getElementById('btnPaymentConfirm');
-        if (btnPaymentConfirm) {
-            btnPaymentConfirm.addEventListener('click', function() {
-                paymentOverlay.style.display = 'flex';
-            });
-        }
-        paymentOverlay.addEventListener('click', function(e) {
-            if (e.target === paymentOverlay) paymentOverlay.style.display = 'none';
-        });
-
-        // Checkout Toast
-        var checkoutToast = document.getElementById('checkoutToast');
-        document.querySelectorAll('[data-checkout-toast]').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var type = this.dataset.checkoutToast;
-                var messages = {
-                    success: 'Pagamento confirmado! Redirecionando...',
-                    error: 'Erro ao processar pagamento.',
-                    info: 'Processando pagamento...'
-                };
-                checkoutToast.textContent = messages[type];
-                checkoutToast.className = 'checkout-toast ' + type;
-                checkoutToast.style.display = 'flex';
-                setTimeout(function() {
-                    checkoutToast.style.display = 'none';
-                }, 3000);
-            });
-        });
-    })();
-    </script>
+    <script src="js/previews.js"></script>
 </body>
 </html>

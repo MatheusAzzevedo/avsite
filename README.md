@@ -4,7 +4,31 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-20) - fix: CSP na página Sobre Nós
+### Última atualização (2026-02-18) - feat: assunto do e-mail de confirmação
+- **api/src/utils/enviar-email-confirmacao.ts** [Assunto fixo do e-mail de confirmação de inscrição]
+- **api/src/routes/admin-email.routes.ts** [Assunto do teste alinhado]
+
+Resumo: Assunto do e-mail de confirmação de inscrição padronizado para "Inscrição C-O-N-F-I-R-M-A-D-A❤️ Ficamos felizes em avisar que seu pedido foi concluído!". Corpo do e-mail mantido.
+
+### Versão anterior (2026-02-18) - feat: header padronizado em Configurações
+- **api/public/cliente/configuracoes.html** [Header igual ao Início: sidebar esquerda, hamburger, overlay]
+- **api/public/cliente/js/configuracoes.js** [Novo: menu mobile e lógica do formulário]
+
+Resumo: Página Configurações do cliente com header padronizado igual ao Início (sidebar lateral verde, hamburger no mobile). Script inline movido para configuracoes.js.
+
+### Versão anterior (2026-02-18) - fix: S.Previews - CSP e Storage.get
+- **api/public/admin/previews.html** [api-client.js adicionado; script inline removido; previews.js]
+- **api/public/admin/js/previews.js** [Novo: lógica dos botões de preview externalizada]
+
+Resumo: S.Previews não funcionava por erro de CSP (script inline) e "Storage.get is not a function" (api-client não carregado). Corrigido com api-client.js e previews.js externo.
+
+### Versão anterior (2026-02-18) - fix: Meus Pedidos - cursor, header e CSP
+- **api/public/cliente/pedidos.html** [Override cursor; header padronizado com sidebar igual ao Início; script inline removido]
+- **api/public/cliente/js/pedidos.js** [initMobileMenu e bindLogout externalizados para CSP]
+
+Resumo: Cursor sumindo corrigido com overrides em pedidos.html. Header padronizado com sidebar lateral esquerda igual ao Início. Erro de CSP resolvido ao mover scripts inline para pedidos.js.
+
+### Versão anterior (2026-02-20) - fix: CSP na página Sobre Nós
 - **api/public/js/about-page.js**, **js/about-page.js** [Novo: carrossel e overlay fullscreen externalizados]
 - **api/public/about.html**, **about.html** [Scripts inline removidos; carregamento de about-page.js]
 
