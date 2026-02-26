@@ -64,7 +64,29 @@ function preencheCredenciaisURL() {
   }
 }
 
+/**
+ * Explicação da função [showAdminForm]
+ * Ao clicar em "Admin Site Avoar": exibe o formulário de login, oculta o botão,
+ * e troca o background para o mosaico do login do cliente.
+ */
+function showAdminForm() {
+  const adminFormSection = document.getElementById('adminFormSection');
+  const adminSiteBtnWrap = document.getElementById('adminSiteBtnWrap');
+  const loginBgCliente = document.getElementById('loginBgCliente');
+
+  if (adminFormSection) adminFormSection.classList.add('visible');
+  if (adminSiteBtnWrap) adminSiteBtnWrap.classList.add('hidden');
+  if (loginBgCliente) loginBgCliente.classList.add('visible');
+  document.body.classList.add('bg-cliente');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+  // Botão "Admin Site Avoar": ao clicar, mostra formulário e troca background
+  const adminSiteBtn = document.getElementById('adminSiteBtn');
+  if (adminSiteBtn) {
+    adminSiteBtn.addEventListener('click', showAdminForm);
+  }
+
   // Redireciona se já autenticado
   if (AuthManager.isAuthenticated()) {
     AuthManager.verifyToken().then((valid) => {
