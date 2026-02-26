@@ -1,5 +1,48 @@
 # Changelog
 
+## 2026-02-26 - feat: legenda Projetos Pedagógicos sem ponto final
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Legenda da seção Projetos Pedagógicos: removido ponto final]
+
+### Alterações
+- Legenda abaixo do título "Projetos Pedagógicos" alterada de "Onde a teoria vira prática e o mundo vira sala de aula." para "Onde a teoria vira prática e o mundo vira sala de aula".
+
+---
+
+## 2026-02-26 - feat: título da hero seção 1 atualizado
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Título da seção 1: "Onde a teoria vira prática e o mundo vira sala de aula"]
+
+### Alterações
+- Título da hero da página inicial (seção 1) alterado para "Onde a teoria vira prática e o mundo vira sala de aula".
+
+---
+
+## 2026-02-26 - feat: logo branca e título na hero da página inicial
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Logo branca centralizada antes do título; título alterado para "Onde o saber encontra o seu destino"]
+- `api/public/css/avoar-sections-page.css` [Estilos .section-hero-logo; responsivo para tablet e mobile]
+
+### Alterações
+- Hero da página inicial exibe logo branca (Logo Avoar svg Branca.svg) centralizada antes do título.
+- Título alterado de "Avoar Turismo: Onde o saber encontra o seu destino." para "Onde o saber encontra o seu destino".
+
+---
+
+## 2026-02-26 - feat: logo colorida no e-mail de confirmação
+
+### Arquivos Modificados
+- `api/src/templates/email-confirmacao-pedido.ts` [Logo do corpo do e-mail alterada de Logo.webp para Logo Avoar svg colorida.svg]
+- `api/public/images/LOGO-EMAIL-README.md` [Documentação atualizada para refletir a nova logo]
+
+### Alterações
+- O e-mail de confirmação de pedido passa a exibir a logo colorida em SVG no header do corpo do e-mail.
+
+---
+
 ## 2026-02-26 - feat: botão Extração Completa na Lista de Alunos
 
 ### Arquivos Modificados

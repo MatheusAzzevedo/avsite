@@ -164,7 +164,7 @@ export function gerarTemplateConfirmacaoPedido(dados: DadosEmailConfirmacao): st
           <!-- ============================================ -->
           <tr>
             <td align="center" style="padding: 40px 30px 20px;">
-              <img src="${baseUrl}/images/background/Logo.webp" alt="Avoar Turismo Pedagógico" width="252" style="display: block; max-width: 252px; height: auto;" />
+              <img src="${baseUrl}/images/Logo%20Avoar%20svg%20colorida.svg" alt="Avoar Turismo Pedagógico" width="252" style="display: block; max-width: 252px; height: auto;" />
             </td>
           </tr>
           <tr>

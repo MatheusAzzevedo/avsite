@@ -4,7 +4,18 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: Extração Completa na Lista de Alunos
+### Última atualização (2026-02-26) - feat: legenda Projetos Pedagógicos
+- **api/public/index-10.html** [Legenda da seção Projetos Pedagógicos sem ponto final]
+
+Resumo: Legenda abaixo do título "Projetos Pedagógicos" alterada para "Onde a teoria vira prática e o mundo vira sala de aula" (sem ponto final).
+
+### Versão anterior (2026-02-26) - feat: logo colorida no e-mail de confirmação
+- **api/src/templates/email-confirmacao-pedido.ts** [Logo do corpo do e-mail alterada para Logo Avoar svg colorida.svg]
+- **api/public/images/LOGO-EMAIL-README.md** [Documentação da logo atualizada]
+
+Resumo: O e-mail de confirmação de pedido passa a exibir a logo colorida em SVG no header do corpo do e-mail.
+
+### Versão anterior (2026-02-26) - feat: Extração Completa na Lista de Alunos
 - **api/src/routes/lista-alunos.routes.ts** [Rota GET /exportar-completa]
 - **api/public/admin/listas.html**, **js/listas.js** [Botão Extração Completa e função de exportação]
 
