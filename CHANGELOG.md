@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-26 - feat: logo hero 50% maior e gap 20px
+
+### Arquivos Modificados
+- `api/public/css/avoar-sections-page.css` [Logo .section-hero-logo +50%; gap .section-text 20px]
+
+### Alterações
+- Logo acima do título na hero aumentada em 50% (280px→420px; tablet 330px; mobile 270px).
+- Gap entre logo, título e demais elementos da seção alterado para 20px.
+
+---
+
 ## 2026-02-26 - feat: legenda Projetos Pedagógicos sem ponto final
 
 ### Arquivos Modificados

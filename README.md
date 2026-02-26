@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: legenda Projetos Pedagógicos
+### Última atualização (2026-02-26) - feat: logo hero 50% maior e gap 20px
+- **api/public/css/avoar-sections-page.css** [Logo +50%; gap 20px]
+
+Resumo: Logo acima do título na hero aumentada em 50%. Gap entre logo e título definido em 20px.
+
+### Versão anterior (2026-02-26) - feat: legenda Projetos Pedagógicos
 - **api/public/index-10.html** [Legenda da seção Projetos Pedagógicos sem ponto final]
 
 Resumo: Legenda abaixo do título "Projetos Pedagógicos" alterada para "Onde a teoria vira prática e o mundo vira sala de aula" (sem ponto final).
