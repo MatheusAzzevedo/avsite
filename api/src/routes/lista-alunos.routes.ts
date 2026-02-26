@@ -14,6 +14,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
+import { PedidoStatus } from '@prisma/client';
 import { prisma } from '../config/database';
 import { ApiError } from '../utils/api-error';
 import { authMiddleware, adminMiddleware } from '../middleware/auth.middleware';
@@ -449,8 +450,7 @@ router.post('/excursao/:id/atualizar-pagamentos',
  * Inclui: dados do aluno, informações médicas, dados do pedido, cliente e responsável financeiro.
  *
  * Params: { id: string } - ID da excursão pedagógica
- * Query params:
- * - statusPedido (opcional): filtrar por status do pedido
+ * Sempre inclui apenas pedidos com pagamento confirmado (PAGO ou CONFIRMADO).
  *
  * Response: arquivo Excel (.xlsx)
  */
@@ -458,13 +458,11 @@ router.get('/excursao/:id/exportar-completa',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const { statusPedido } = req.query;
 
-      logger.info('[Listas] Iniciando extração completa de Excel', {
+      logger.info('[Listas] Iniciando extração completa de Excel (apenas pagamento confirmado)', {
         context: {
           adminId: req.user!.id,
-          excursaoId: id,
-          statusPedido: statusPedido || 'todos'
+          excursaoId: id
         }
       });
 
@@ -480,10 +478,11 @@ router.get('/excursao/:id/exportar-completa',
         throw ApiError.notFound('Excursão pedagógica não encontrada');
       }
 
-      const wherePedido: any = { excursaoPedagogicaId: id };
-      if (statusPedido && typeof statusPedido === 'string') {
-        wherePedido.status = statusPedido;
-      }
+      // Apenas pedidos com pagamento confirmado (PAGO ou CONFIRMADO)
+      const wherePedido = {
+        excursaoPedagogicaId: id,
+        status: { in: ['PAGO', 'CONFIRMADO'] as PedidoStatus[] }
+      };
 
       const pedidos = await prisma.pedido.findMany({
         where: wherePedido,
@@ -642,22 +641,19 @@ router.get('/excursao/:id/exportar-completa',
  * Gera arquivo conforme especificação da Lista de Chamada.
  * 
  * Params: { id: string } - ID da excursão pedagógica
- * Query params:
- * - statusPedido (opcional): filtrar por status do pedido (PENDENTE, PAGO, CONFIRMADO, etc.)
- * 
+ * Sempre inclui apenas pedidos com pagamento confirmado (PAGO ou CONFIRMADO).
+ *
  * Response: arquivo Excel (.xlsx)
  */
 router.get('/excursao/:id/exportar',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const { statusPedido } = req.query;
 
-      logger.info('[Listas] Iniciando exportação de Excel', {
+      logger.info('[Listas] Iniciando exportação de Excel (apenas pagamento confirmado)', {
         context: { 
           adminId: req.user!.id, 
-          excursaoId: id,
-          statusPedido: statusPedido || 'todos'
+          excursaoId: id
         }
       });
 
@@ -678,11 +674,11 @@ router.get('/excursao/:id/exportar',
         throw ApiError.notFound('Excursão pedagógica não encontrada');
       }
 
-      // Filtro de pedidos
-      const wherePedido: any = { excursaoPedagogicaId: id };
-      if (statusPedido && typeof statusPedido === 'string') {
-        wherePedido.status = statusPedido;
-      }
+      // Apenas pedidos com pagamento confirmado (PAGO ou CONFIRMADO)
+      const wherePedido = {
+        excursaoPedagogicaId: id,
+        status: { in: ['PAGO', 'CONFIRMADO'] as PedidoStatus[] }
+      };
 
       // Busca pedidos com itens
       const pedidos = await prisma.pedido.findMany({

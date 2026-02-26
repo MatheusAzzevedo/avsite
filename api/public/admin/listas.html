@@ -111,6 +111,24 @@
             margin-top: 1rem;
         }
 
+        .action-buttons button {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .export-legend {
+            margin: 0.75rem 0 0 0;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.4;
+            width: 100%;
+        }
+
+        .export-legend i {
+            margin-right: 0.35rem;
+            opacity: 0.8;
+        }
+
         .back-button {
             display: inline-flex;
             align-items: center;
@@ -272,6 +290,10 @@
                                 <i class="fas fa-file-medical-alt"></i> Extração Completa
                             </button>
                         </div>
+                        <p class="export-legend">
+                            <i class="fas fa-info-circle"></i>
+                            Na listagem aparecem todos os alunos, inclusive pendentes de pagamento. Nas extrações em Excel, apenas alunos com pagamento confirmado são incluídos.
+                        </p>
                     </div>
                     <div class="card-body">
                         <div class="filters">

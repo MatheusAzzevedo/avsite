@@ -377,11 +377,7 @@ async function exportarExtracaoCompleta() {
     }
 
     try {
-        const filterStatusPedido = document.getElementById('filterStatusPedido').value;
-        const params = new URLSearchParams();
-        if (filterStatusPedido) params.append('statusPedido', filterStatusPedido);
-
-        console.log('[Listas] Exportando extração completa da excursão:', currentExcursaoId);
+        console.log('[Listas] Exportando extração completa da excursão (apenas pagamento confirmado):', currentExcursaoId);
 
         const btn = document.getElementById('btnExtracaoCompleta');
         btn.disabled = true;
@@ -394,7 +390,7 @@ async function exportarExtracaoCompleta() {
             return;
         }
 
-        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/exportar-completa?${params.toString()}`, {
+        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/exportar-completa`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -451,11 +447,7 @@ async function exportarExcel() {
     }
 
     try {
-        const filterStatusPedido = document.getElementById('filterStatusPedido').value;
-        const params = new URLSearchParams();
-        if (filterStatusPedido) params.append('statusPedido', filterStatusPedido);
-
-        console.log('[Listas] Exportando Excel da excursão:', currentExcursaoId);
+        console.log('[Listas] Exportando Excel da excursão (apenas pagamento confirmado):', currentExcursaoId);
 
         const btn = document.getElementById('btnExportar');
         btn.disabled = true;
@@ -468,7 +460,7 @@ async function exportarExcel() {
             return;
         }
 
-        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/exportar?${params.toString()}`, {
+        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/exportar`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
