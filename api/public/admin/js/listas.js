@@ -13,6 +13,7 @@
 
 // Estado da aplicação
 let currentExcursaoId = null;
+let currentExcursaoCodigo = '';
 let excursoesData = [];
 let alunosData = [];
 
@@ -225,7 +226,8 @@ async function loadAlunos() {
 
         console.log('[Listas] Alunos carregados:', alunosData.length);
 
-        // Atualiza cabeçalho
+        // Atualiza cabeçalho e código para nome do arquivo de exportação
+        currentExcursaoCodigo = result.data.excursao.codigo || 'lista';
         document.getElementById('excursaoTitulo').textContent = result.data.excursao.titulo;
         document.getElementById('excursaoInfo').textContent = 
             `${result.data.totalAlunos} aluno(s) • ${result.data.totalPedidos} pedido(s) • Código: ${result.data.excursao.codigo}`;
@@ -358,6 +360,7 @@ function voltarParaExcursoes(event) {
     if (event) event.preventDefault();
     
     currentExcursaoId = null;
+    currentExcursaoCodigo = '';
     alunosData = [];
 
     document.getElementById('alunosView').style.display = 'none';
@@ -410,12 +413,8 @@ async function exportarExtracaoCompleta() {
         const a = document.createElement('a');
         a.href = url;
 
-        const contentDisposition = response.headers.get('Content-Disposition');
-        let filename = 'extracao_completa.xlsx';
-        if (contentDisposition) {
-            const m = contentDisposition.match(/filename="([^"]+)"|filename\*?=(?:UTF-8'')?([^;\s]+)/i);
-            if (m) filename = (m[1] || m[2] || '').trim().replace(/\.xlsx_?$/, '.xlsx');
-        }
+        const hoje = new Date().toISOString().split('T')[0];
+        const filename = `extracao_completa_${currentExcursaoCodigo}_${hoje}.xlsx`;
 
         a.download = filename;
         document.body.appendChild(a);
@@ -475,19 +474,14 @@ async function exportarExcel() {
             throw new Error(`Erro ao exportar Excel: ${response.status}`);
         }
 
-        // Faz download do arquivo
+        // Faz download do arquivo (nome gerado no cliente para evitar .xlsx_ de proxies)
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        
-        // Extrai nome do arquivo do header Content-Disposition
-        const contentDisposition = response.headers.get('Content-Disposition');
-        let filename = 'lista_alunos.xlsx';
-        if (contentDisposition) {
-            const m = contentDisposition.match(/filename="([^"]+)"|filename\*?=(?:UTF-8'')?([^;\s]+)/i);
-            if (m) filename = (m[1] || m[2] || '').trim().replace(/\.xlsx_?$/, '.xlsx');
-        }
+
+        const hoje = new Date().toISOString().split('T')[0];
+        const filename = `lista_${currentExcursaoCodigo}_${hoje}.xlsx`;
 
         a.download = filename;
         document.body.appendChild(a);

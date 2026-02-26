@@ -191,6 +191,20 @@
 }
 
 /* ========================================
+   Telas grandes (1600x900+) - conteúdo mais extenso
+   ======================================== */
+
+@media (min-width: 1600px) and (min-height: 900px) {
+    .section-text {
+        max-width: 950px;
+    }
+
+    .section-bottom {
+        max-width: 1000px;
+    }
+}
+
+/* ========================================
    Responsivo - Tablets (1200px)
    ======================================== */
 
