@@ -176,6 +176,9 @@
     var pollStatusInterval = null;
     var pollStatusTimeout = null;
     var pagamentoListenersAdded = false;
+    var pixExpiryTimerId = null;
+    var pixExpiryIntervalId = null;
+    var PIX_EXPIRY_MINUTES = 15;
 
     function mostrarEtapaPagamento(pedidoId, valorTotal) {
         pedidoIdPagamento = pedidoId;
@@ -238,6 +241,7 @@
                     opcaoCartao.classList.add('selected');
                     if (pixBox) pixBox.classList.remove('show');
                     if (cartaoBox) cartaoBox.classList.add('show');
+                    pararTemporizadorPix();
                 });
             }
             var btnCopiarPix = document.getElementById('btnCopiarPix');
@@ -304,15 +308,64 @@
                     html += '<p class="pix-code-text" style="margin-top: 0.75rem;">Ou copie o código PIX com o botão abaixo.</p>';
                 }
                 if (!html) html = '<p style="color: var(--text-light);">Use o botão abaixo para copiar o código PIX.</p>';
+                html += '<p id="pixCountdown" class="pix-countdown" style="margin-top: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--primary-color);"></p>';
                 container.innerHTML = html;
                 if (btn) btn.style.display = 'inline-block';
                 iniciarPollStatus();
+                iniciarTemporizadorPix();
             });
         }).catch(function (err) {
             container.innerHTML = '<p style="color: var(--danger-color);"><i class="fas fa-exclamation-circle"></i> Falha na conexão. Verifique sua internet e tente novamente.</p>';
             if (btn) btn.style.display = 'none';
             console.error('[Checkout] PIX:', err);
         });
+    }
+
+    function pararTemporizadorPix() {
+        if (pixExpiryTimerId) { clearTimeout(pixExpiryTimerId); pixExpiryTimerId = null; }
+        if (pixExpiryIntervalId) { clearInterval(pixExpiryIntervalId); pixExpiryIntervalId = null; }
+        var el = document.getElementById('pixCountdown');
+        if (el) el.textContent = '';
+    }
+
+    function iniciarTemporizadorPix() {
+        pararTemporizadorPix();
+        if (!pedidoIdPagamento) return;
+        var segundosRestantes = PIX_EXPIRY_MINUTES * 60;
+        var countdownEl = document.getElementById('pixCountdown');
+
+        function atualizarExibicao() {
+            if (!countdownEl) return;
+            var min = Math.floor(segundosRestantes / 60);
+            var seg = segundosRestantes % 60;
+            countdownEl.textContent = 'Tempo restante: ' + min + ':' + (seg < 10 ? '0' : '') + seg + ' (pagamento expira em ' + PIX_EXPIRY_MINUTES + ' min)';
+            if (segundosRestantes <= 60) countdownEl.style.color = '#dc2626';
+        }
+
+        pixExpiryIntervalId = setInterval(function () {
+            segundosRestantes--;
+            atualizarExibicao();
+            if (segundosRestantes <= 0) {
+                pararTemporizadorPix();
+            }
+        }, 1000);
+        atualizarExibicao();
+
+        pixExpiryTimerId = setTimeout(function () {
+            pararTemporizadorPix();
+            if (pollStatusInterval) clearInterval(pollStatusInterval);
+            if (pollStatusTimeout) clearTimeout(pollStatusTimeout);
+            clienteAuth.fetchAuth('/cliente/pagamento/' + pedidoIdPagamento + '/cancelar', { method: 'POST' })
+                .then(function (r) { return r.json(); })
+                .then(function () {
+                    showToast('Pagamento expirado. O pedido foi cancelado. Inicie novamente.', 'error');
+                    setTimeout(function () { window.location.href = 'inicio.html'; }, 2000);
+                })
+                .catch(function () {
+                    showToast('Tempo esgotado. Redirecionando...', 'error');
+                    setTimeout(function () { window.location.href = 'inicio.html'; }, 1500);
+                });
+        }, PIX_EXPIRY_MINUTES * 60 * 1000);
     }
 
     function iniciarPollStatus() {
@@ -324,6 +377,7 @@
 
         function pararPolling() {
             stopped = true;
+            pararTemporizadorPix();
             pendingTimeouts.forEach(function (t) { clearTimeout(t); });
             pendingTimeouts.length = 0;
             if (pollStatusInterval) { clearInterval(pollStatusInterval); pollStatusInterval = null; }

@@ -542,6 +542,53 @@ router.post('/cartao',
 );
 
 /**
+ * Explicação da API [POST /api/cliente/pagamento/:pedidoId/cancelar]
+ *
+ * Cancela um pedido pendente (PIX expirado).
+ * Requer autenticação de cliente.
+ * 
+ * Params: { pedidoId: string }
+ * Response: { success, message }
+ */
+router.post('/:pedidoId/cancelar',
+  clienteAuthMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { pedidoId } = req.params;
+      const clienteId = req.cliente!.id;
+
+      const pedido = await prisma.pedido.findFirst({
+        where: { id: pedidoId, clienteId }
+      });
+
+      if (!pedido) {
+        throw ApiError.notFound('Pedido não encontrado');
+      }
+
+      if (pedido.status !== 'PENDENTE' && pedido.status !== 'AGUARDANDO_PAGAMENTO') {
+        throw ApiError.badRequest(`Pedido não pode ser cancelado (status: ${pedido.status})`);
+      }
+
+      await prisma.pedido.update({
+        where: { id: pedido.id },
+        data: { status: 'CANCELADO' }
+      });
+
+      logger.info('[Pagamento] Pedido cancelado por expiração do PIX', {
+        context: { pedidoId, clienteId }
+      });
+
+      res.json({
+        success: true,
+        message: 'Pedido cancelado. O tempo para pagamento expirou.'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
  * Explicação da API [GET /api/cliente/pagamento/:pedidoId/status]
  * 
  * Consulta status do pagamento de um pedido.

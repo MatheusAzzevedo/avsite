@@ -17,6 +17,9 @@ let pedidoId = '';
 let pedidoData = null;
 let pixPollingInterval = null;
 let pixPollingTimeout = null;
+let pixExpiryTimerId = null;
+let pixExpiryIntervalId = null;
+const PIX_EXPIRY_MINUTES = 15;
 
 // ============================================================
 // Inicialização
@@ -194,6 +197,9 @@ function setupPixButton() {
             // Inicia polling de status
             startPixPolling();
 
+            // Inicia temporizador de 15 min
+            startPixExpiryTimer();
+
         } catch (error) {
             console.error('[Pagamento PIX] Erro:', error);
             showAlert('error', error.message || 'Erro ao gerar QR Code PIX. Tente novamente.');
@@ -257,6 +263,48 @@ function displayPixQrCode(data) {
     });
 }
 
+function stopPixExpiryTimer() {
+    if (pixExpiryTimerId) { clearTimeout(pixExpiryTimerId); pixExpiryTimerId = null; }
+    if (pixExpiryIntervalId) { clearInterval(pixExpiryIntervalId); pixExpiryIntervalId = null; }
+    const el = document.getElementById('pixCountdown');
+    if (el) el.textContent = '';
+}
+
+function startPixExpiryTimer() {
+    stopPixExpiryTimer();
+    if (!pedidoId) return;
+    let segundosRestantes = PIX_EXPIRY_MINUTES * 60;
+    const countdownEl = document.getElementById('pixCountdown');
+
+    function atualizarExibicao() {
+        if (!countdownEl) return;
+        const min = Math.floor(segundosRestantes / 60);
+        const seg = segundosRestantes % 60;
+        countdownEl.textContent = 'Tempo restante: ' + min + ':' + (seg < 10 ? '0' : '') + seg + ' (pagamento expira em ' + PIX_EXPIRY_MINUTES + ' min)';
+        if (segundosRestantes <= 60) countdownEl.style.color = '#dc2626';
+    }
+
+    pixExpiryIntervalId = setInterval(() => {
+        segundosRestantes--;
+        atualizarExibicao();
+        if (segundosRestantes <= 0) stopPixExpiryTimer();
+    }, 1000);
+    atualizarExibicao();
+
+    pixExpiryTimerId = setTimeout(async () => {
+        stopPixExpiryTimer();
+        if (pixPollingInterval) { clearInterval(pixPollingInterval); pixPollingInterval = null; }
+        if (pixPollingTimeout) { clearTimeout(pixPollingTimeout); pixPollingTimeout = null; }
+        try {
+            await clienteAuth.fetchAuth(`/cliente/pagamento/${pedidoId}/cancelar`, { method: 'POST' });
+            showAlert('error', 'Pagamento expirado. O pedido foi cancelado. Inicie novamente.');
+        } catch (e) {
+            showAlert('error', 'Tempo esgotado. Redirecionando...');
+        }
+        setTimeout(() => { window.location.href = '/cliente/inicio.html'; }, 2000);
+    }, PIX_EXPIRY_MINUTES * 60 * 1000);
+}
+
 /**
  * Explicação da função [startPixPolling]:
  * Inicia verificação agressiva do status do pagamento PIX para que o
@@ -282,6 +330,7 @@ function startPixPolling() {
 
     function stopPolling() {
         stopped = true;
+        stopPixExpiryTimer();
         pendingTimeouts.forEach(t => clearTimeout(t));
         pendingTimeouts.length = 0;
         if (pixPollingInterval) { clearInterval(pixPollingInterval); pixPollingInterval = null; }

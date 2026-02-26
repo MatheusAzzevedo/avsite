@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-02-25 - feat: temporizador 15 min no PIX da excursão pedagógica
+
+### Arquivos Modificados
+- `api/src/routes/pagamento.routes.ts` [POST /:pedidoId/cancelar - cancela pedido PENDENTE/AGUARDANDO_PAGAMENTO]
+- `api/public/cliente/js/checkout.js` [Temporizador 15 min ao gerar QR Code; countdown; cancelar e redirecionar para inicio ao expirar]
+- `api/public/cliente/js/pagamento.js` [Temporizador 15 min ao gerar QR Code; countdown; cancelar e redirecionar ao expirar]
+- `api/public/cliente/pagamento.html` [Div pixCountdown para exibir tempo restante]
+
+### Alterações
+- Ao gerar o QR Code PIX na compra da excursão pedagógica, inicia temporizador de 15 minutos. Se o pagamento não for finalizado nesse prazo, o pedido é cancelado via API e o fluxo redireciona para a página inicial do cliente. Countdown visível na tela. Aplica-se ao checkout integrado e à página de pagamento (Meus Pedidos → Pagar).
+
+---
+
 ## 2026-02-25 - fix: reverter tamanho da logo no mobile
 
 ### Arquivos Modificados

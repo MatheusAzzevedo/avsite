@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-25) - feat: logo aumentada 30%
+### Última atualização (2026-02-25) - feat: temporizador 15 min no PIX
+- **api/src/routes/pagamento.routes.ts** [POST /:pedidoId/cancelar]
+- **api/public/cliente/js/checkout.js**, **pagamento.js** [Temporizador 15 min; countdown; cancelar e redirecionar ao expirar]
+
+Resumo: QR Code PIX da excursão pedagógica expira em 15 minutos. Se não pagar, pedido é cancelado e o fluxo volta para a página inicial.
+
+### Versão anterior (2026-02-25) - feat: logo aumentada 30%
 - **api/public/css/** (avoar-top-header, style, responsive, footer) [Logo header, footer e menu lateral +30%]
 - **api/public/admin/login.html** [Logo login admin +30%]
 - **api/public/cliente/*.html** (inicio, dashboard, pacotes-viagens, pagamento, checkout, pedidos, excursao, configuracoes, login, registro) [Logo navbar e sidebar +30%]
