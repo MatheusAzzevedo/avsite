@@ -78,6 +78,16 @@
     animation: fadeInUp 0.8s ease-out;
 }
 
+.section-text .section-subtitle {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.5;
+    text-align: center;
+    margin: 0.75rem 0 0 0;
+    animation: fadeInUp 0.8s ease-out 0.1s both;
+}
+
 .section-cta {
     display: flex;
     justify-content: center;
