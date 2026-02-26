@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-26 - feat: legenda Projetos Pedagógicos alterada
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Legenda da seção Projetos Pedagógicos: "Onde o saber encontra seu destino"]
+
+### Alterações
+- Frase abaixo do título "Projetos Pedagógicos" alterada para "Onde o saber encontra seu destino".
+
+---
+
 ## 2026-02-26 - feat: botão Inscrições/Login abaixo do texto descritivo
 
 ### Arquivos Modificados

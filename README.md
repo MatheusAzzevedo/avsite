@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: botão abaixo do texto descritivo
+### Última atualização (2026-02-26) - feat: legenda Projetos Pedagógicos
+- **api/public/index-10.html** [Legenda: "Onde o saber encontra seu destino"]
+
+Resumo: Frase abaixo do título "Projetos Pedagógicos" alterada para "Onde o saber encontra seu destino".
+
+### Versão anterior (2026-02-26) - feat: botão abaixo do texto descritivo
 - **api/public/index-10.html**, **css/avoar-sections-page.css** [Botão Inscrições/Login movido para abaixo do texto descritivo]
 
 Resumo: Botão "Inscrições / Login" posicionado abaixo do texto "Transformamos viagens em experiências educativas...".
