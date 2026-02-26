@@ -61,7 +61,7 @@
         }
 
         .login-logo-link img {
-            max-width: 220px;
+            max-width: 286px;
             height: auto;
             display: block;
         }
@@ -203,6 +203,34 @@
             cursor: pointer;
         }
 
+        .login-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-system-link {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-system-link:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -214,6 +242,11 @@
             <img src="../images/background/Logo avorar.webp" alt="Avoar Turismo Pedagógico">
         </a>
         <h1 class="login-title">Login</h1>
+
+        <div class="login-buttons">
+            <a href="https://avoar-production.up.railway.app/auth/login" target="_blank" rel="noopener noreferrer" class="btn-system-link">Sistema Avoar</a>
+            <a href="https://avoarturismo.com.br/admin/login.html" class="btn-system-link">Admin Site Avoar</a>
+        </div>
 
         <div id="errorMessage" class="error-message">
             <i class="fas fa-exclamation-circle"></i>

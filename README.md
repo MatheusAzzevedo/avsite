@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-18) - feat: redes sociais no header
+### Última atualização (2026-02-25) - feat: logo aumentada 30%
+- **api/public/css/** (avoar-top-header, style, responsive, footer) [Logo header, footer e menu lateral +30%]
+- **api/public/admin/login.html** [Logo login admin +30%]
+- **api/public/cliente/*.html** (inicio, dashboard, pacotes-viagens, pagamento, checkout, pedidos, excursao, configuracoes, login, registro) [Logo navbar e sidebar +30%]
+
+Resumo: Logotipo Avoar aumentada em 30% no header, footer, perfil do cliente e tela de login do administrador.
+
+### Versão anterior (2026-02-18) - feat: redes sociais no header
 - **api/public/*.html** (index-10, index-11, about, contact, blog, portfolio, nossos-roteiros) [Botão Administrativo substituído por ícones Facebook, Instagram, LinkedIn]
 - **api/public/css/avoar-top-header.css** [Estilos .header-social]
 

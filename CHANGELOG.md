@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-02-25 - fix: reverter tamanho da logo no mobile
+
+### Arquivos Modificados
+- `api/public/css/footer.css`, `css/footer.css` [Footer logo mobile (480px): 130px → 100px]
+- `api/public/css/responsive.css` [Main-logo menu lateral mobile (767px): 208px → 160px]
+- `api/public/cliente/login.html`, `registro.html` [Breakpoints mobile: 169px → 130px, 143px → 110px]
+
+### Alterações
+- Tamanho da logo no mobile revertido ao original. Desktop mantém o aumento de 30%.
+
+---
+
+## 2026-02-25 - feat: logo aumentada 30% no header, footer, perfil cliente e admin
+
+### Arquivos Modificados
+- `api/public/css/avoar-top-header.css`, `css/avoar-top-header.css` [Header logo: 50px → 65px]
+- `api/public/css/style.css`, `css/style.css` [Alt-logo: 192px → 250px]
+- `api/public/css/responsive.css` [Main-logo menu lateral desktop: 160px → 208px]
+- `api/public/css/footer.css`, `css/footer.css` [Footer logo: 120px → 156px; mobile mantido 100px]
+- `api/public/admin/login.html` [Login logo: 220px → 286px]
+- `api/public/cliente/*.html` (inicio, dashboard, pacotes-viagens, pagamento, checkout, pedidos, excursao, configuracoes, checkout-convencional) [navbar-logo: 36px → 47px; sidebar-logo: 40px → 52px]
+- `api/public/cliente/login.html`, `registro.html` [login-logo/register-logo base: 160px → 208px; breakpoints mobile revertidos]
+
+### Alterações
+- Logotipo Avoar aumentada em 30% no header (top e menu lateral), footer, perfil do cliente (navbar e sidebar) e tela de login do administrador. Tamanho no mobile revertido ao original.
+
+---
+
 ## 2026-02-18 - feat: redes sociais no header em vez do botão Administrativo
 
 ### Arquivos Modificados

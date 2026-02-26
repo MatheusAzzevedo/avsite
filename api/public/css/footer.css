@@ -44,7 +44,7 @@
 }
 
 .footer-brand img {
-  width: 120px;
+  width: 156px;
   height: auto;
   margin-bottom: 8px;
 }
@@ -160,6 +160,15 @@
 
 .footer-copyright a:hover {
   color: #ffaa00;
+}
+
+.footer-copyright a.footer-admin-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-copyright a.footer-admin-link:hover {
+  color: inherit;
 }
 
 .footer-legal-links {
