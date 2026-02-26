@@ -1,5 +1,61 @@
 # Changelog
 
+## 2026-02-26 - feat: botão Extração Completa na Lista de Alunos
+
+### Arquivos Modificados
+- `api/src/routes/lista-alunos.routes.ts` [Nova rota GET /excursao/:id/exportar-completa; Excel com todos os dados do aluno, médicos, pedido, cliente e responsável financeiro]
+- `api/public/admin/listas.html` [Botão "Extração Completa" ao lado de Exportar Excel]
+- `api/public/admin/js/listas.js` [Função exportarExtracaoCompleta e listener do botão]
+
+### Alterações
+- Novo botão "Extração Completa" na Lista de Alunos exporta xlsx com todas as informações preenchidas no ato da compra: dados do aluno (nome, idade, data nascimento, escola, série, turma, unidade, CPF, RG, responsável, telefone, email, observações), informações médicas (alergias, plano de saúde, medicamentos febre/alergia), dados do pedido (status, datas, valor), cliente e responsável financeiro (nome, CPF, endereço, etc.).
+
+---
+
+## 2026-02-26 - feat: subtítulo em Projetos Pedagógicos
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Subtítulo "Onde a teoria vira prática e o mundo vira sala de aula." abaixo do título Projetos Pedagógicos]
+- `api/public/css/avoar-sections-page.css` [Estilo .section-subtitle para o novo texto]
+
+### Alterações
+- Texto "Onde a teoria vira prática e o mundo vira sala de aula." adicionado logo abaixo do título "Projetos Pedagógicos" na seção da página inicial.
+
+---
+
+## 2026-02-26 - feat: novo slogan na página inicial
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Título principal: "Conheça mais sobre a Avoar e Turismo" → "Avoar Turismo: Onde o saber encontra o seu destino."]
+
+### Alterações
+- Slogan da hero section da página inicial substituído pelo novo texto de destaque.
+
+---
+
+## 2026-02-26 - feat: carrossel Sobre Nós clicável com lightbox fullscreen
+
+### Arquivos Modificados
+- `api/public/about.html` [Overlay fullscreen para galeria com botões prev/next e fechar]
+- `api/public/css/about-page.css` [Estilos lightbox; cursor pointer nos slides; responsivo]
+- `api/public/js/about-page.js` [Clique nos slides abre lightbox; navegação prev/next; ESC para fechar; setas do teclado]
+
+### Alterações
+- Fotos do carrossel "Momentos que transformam" (Sobre Nós) agora são clicáveis. Ao clicar, a imagem abre em tela cheia com botões para anterior/próxima, fechar (X), e suporte a teclado (ESC, setas).
+
+---
+
+## 2026-02-26 - fix: remover texto "Angra dos Reis" da seção Biologia Marinha
+
+### Arquivos Modificados
+- `api/public/index-11.html` [Título "Angra dos Reis 2024" → "Nossas Experiências 2024"; descrição sem "em Angra dos Reis"]
+- `index-11.html` [Mesma alteração para consistência]
+
+### Alterações
+- Texto "Angra dos Reis" removido da seção de vídeo da página Biologia Marinha. Título e descrição ajustados para manter o contexto sem menção ao local.
+
+---
+
 ## 2026-02-25 - feat: temporizador 15 min no PIX da excursão pedagógica
 
 ### Arquivos Modificados

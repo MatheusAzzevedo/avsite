@@ -366,6 +366,81 @@ function voltarParaExcursoes(event) {
 }
 
 /**
+ * Explicação da função [exportarExtracaoCompleta]
+ * Exporta TODAS as informações preenchidas no ato da compra: dados do aluno,
+ * informações médicas, dados do pedido, cliente e responsável financeiro.
+ */
+async function exportarExtracaoCompleta() {
+    if (!currentExcursaoId) {
+        console.error('[Listas] Nenhuma excursão selecionada');
+        return;
+    }
+
+    try {
+        const filterStatusPedido = document.getElementById('filterStatusPedido').value;
+        const params = new URLSearchParams();
+        if (filterStatusPedido) params.append('statusPedido', filterStatusPedido);
+
+        console.log('[Listas] Exportando extração completa da excursão:', currentExcursaoId);
+
+        const btn = document.getElementById('btnExtracaoCompleta');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            console.error('[Listas] Token não encontrado');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/exportar-completa?${params.toString()}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                console.error('[Listas] Não autorizado');
+                window.location.href = 'login.html';
+                return;
+            }
+            throw new Error(`Erro ao exportar Excel: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = 'extracao_completa.xlsx';
+        if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+            if (filenameMatch) filename = filenameMatch[1];
+        }
+
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        console.log('[Listas] Extração completa exportada com sucesso');
+        showSuccess('Extração completa exportada com sucesso!');
+
+    } catch (error) {
+        console.error('[Listas] Erro ao exportar extração completa:', error);
+        showError('Erro ao exportar extração completa. Tente novamente.');
+    } finally {
+        const btn = document.getElementById('btnExtracaoCompleta');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-file-medical-alt"></i> Extração Completa';
+    }
+}
+
+/**
  * Explicação da função [exportarExcel]
  * Exporta lista de alunos para Excel
  */
@@ -659,6 +734,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnExportar = document.getElementById('btnExportar');
     if (btnExportar) btnExportar.addEventListener('click', exportarExcel);
+
+    const btnExtracaoCompleta = document.getElementById('btnExtracaoCompleta');
+    if (btnExtracaoCompleta) btnExtracaoCompleta.addEventListener('click', exportarExtracaoCompleta);
 
     const btnAtualizarPagamentosTodas = document.getElementById('btnAtualizarPagamentosTodas');
     if (btnAtualizarPagamentosTodas) btnAtualizarPagamentosTodas.addEventListener('click', atualizarPagamentosTodas);

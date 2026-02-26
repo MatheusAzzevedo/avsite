@@ -7,7 +7,8 @@
  * Rotas disponíveis:
  * - GET /api/admin/listas/excursoes - Listar excursões pedagógicas com contagem de alunos
  * - GET /api/admin/listas/excursao/:id/alunos - Buscar alunos de uma excursão específica
- * - GET /api/admin/listas/excursao/:id/exportar - Exportar Excel de alunos
+ * - GET /api/admin/listas/excursao/:id/exportar - Exportar Excel de alunos (lista resumida)
+ * - GET /api/admin/listas/excursao/:id/exportar-completa - Exportar Excel com todas as informações preenchidas na compra
  * - POST /api/admin/listas/atualizar-pagamentos-todas - Atualizar status de pagamento de todas as listas (consulta Asaas)
  * - POST /api/admin/listas/excursao/:id/atualizar-pagamentos - Atualizar status de pagamento de uma excursão
  */
@@ -432,6 +433,199 @@ router.post('/excursao/:id/atualizar-pagamentos',
       logger.error('[Listas] Erro ao atualizar pagamentos', {
         context: {
           error: error instanceof Error ? error.message : 'Unknown',
+          excursaoId: req.params.id,
+          adminId: req.user?.id
+        }
+      });
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [GET /api/admin/listas/excursao/:id/exportar-completa]
+ *
+ * Exporta TODAS as informações preenchidas no ato da compra em Excel (.xlsx).
+ * Inclui: dados do aluno, informações médicas, dados do pedido, cliente e responsável financeiro.
+ *
+ * Params: { id: string } - ID da excursão pedagógica
+ * Query params:
+ * - statusPedido (opcional): filtrar por status do pedido
+ *
+ * Response: arquivo Excel (.xlsx)
+ */
+router.get('/excursao/:id/exportar-completa',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { statusPedido } = req.query;
+
+      logger.info('[Listas] Iniciando extração completa de Excel', {
+        context: {
+          adminId: req.user!.id,
+          excursaoId: id,
+          statusPedido: statusPedido || 'todos'
+        }
+      });
+
+      const excursao = await prisma.excursaoPedagogica.findUnique({
+        where: { id },
+        select: { id: true, codigo: true, titulo: true }
+      });
+
+      if (!excursao) {
+        logger.warn('[Listas] Excursão não encontrada para extração completa', {
+          context: { excursaoId: id }
+        });
+        throw ApiError.notFound('Excursão pedagógica não encontrada');
+      }
+
+      const wherePedido: any = { excursaoPedagogicaId: id };
+      if (statusPedido && typeof statusPedido === 'string') {
+        wherePedido.status = statusPedido;
+      }
+
+      const pedidos = await prisma.pedido.findMany({
+        where: wherePedido,
+        orderBy: { createdAt: 'asc' },
+        include: {
+          itens: { orderBy: { nomeAluno: 'asc' } },
+          cliente: {
+            select: { nome: true, email: true, telefone: true }
+          }
+        }
+      });
+
+      const alunos = pedidos.flatMap(pedido =>
+        pedido.itens.map(item => ({
+          item,
+          pedido,
+          cliente: pedido.cliente,
+          dadosResp: pedido.dadosResponsavelFinanceiro as Record<string, string> | null
+        }))
+      );
+
+      if (alunos.length === 0) {
+        logger.warn('[Listas] Nenhum aluno para extração completa', {
+          context: { excursaoId: id }
+        });
+        throw ApiError.badRequest('Nenhum aluno encontrado para exportar');
+      }
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Extração Completa');
+
+      const formatDate = (d: Date | null | undefined) =>
+        d ? new Date(d).toLocaleDateString('pt-BR') : '';
+
+      worksheet.columns = [
+        { header: 'Nome do Aluno', key: 'nomeAluno', width: 25 },
+        { header: 'Idade', key: 'idadeAluno', width: 8 },
+        { header: 'Data Nascimento', key: 'dataNascimento', width: 14 },
+        { header: 'Escola', key: 'escolaAluno', width: 25 },
+        { header: 'Série', key: 'serieAluno', width: 15 },
+        { header: 'Turma', key: 'turma', width: 10 },
+        { header: 'Unidade Colégio', key: 'unidadeColegio', width: 18 },
+        { header: 'CPF Aluno', key: 'cpfAluno', width: 18 },
+        { header: 'RG Aluno', key: 'rgAluno', width: 15 },
+        { header: 'Responsável', key: 'responsavel', width: 22 },
+        { header: 'Tel. Responsável', key: 'telefoneResponsavel', width: 18 },
+        { header: 'Email Responsável', key: 'emailResponsavel', width: 25 },
+        { header: 'Observações', key: 'observacoes', width: 25 },
+        { header: 'Alergias/Cuidados', key: 'alergiasCuidados', width: 30 },
+        { header: 'Plano de Saúde', key: 'planoSaude', width: 20 },
+        { header: 'Medic. Febre', key: 'medicamentosFebre', width: 18 },
+        { header: 'Medic. Alergia', key: 'medicamentosAlergia', width: 18 },
+        { header: 'Status Pedido', key: 'statusPedido', width: 18 },
+        { header: 'Data Pedido', key: 'dataPedido', width: 14 },
+        { header: 'Data Pagamento', key: 'dataPagamento', width: 14 },
+        { header: 'Valor Unitário', key: 'valorUnitario', width: 14 },
+        { header: 'Cliente (Nome)', key: 'clienteNome', width: 22 },
+        { header: 'Cliente (Email)', key: 'clienteEmail', width: 25 },
+        { header: 'Cliente (Tel)', key: 'clienteTelefone', width: 18 },
+        { header: 'Resp. Fin. Nome', key: 'respNome', width: 22 },
+        { header: 'Resp. Fin. CPF', key: 'respCpf', width: 18 },
+        { header: 'Resp. Fin. Email', key: 'respEmail', width: 25 },
+        { header: 'Resp. Fin. Endereço', key: 'respEndereco', width: 30 }
+      ];
+
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE0E0E0' }
+      };
+
+      alunos.forEach(({ item, pedido, cliente, dadosResp }) => {
+        if (!item.nomeAluno || item.nomeAluno.trim().length < 2) return;
+
+        worksheet.addRow({
+          nomeAluno: item.nomeAluno || '',
+          idadeAluno: item.idadeAluno ?? '',
+          dataNascimento: formatDate(item.dataNascimento),
+          escolaAluno: item.escolaAluno || '',
+          serieAluno: item.serieAluno || '',
+          turma: item.turma || '',
+          unidadeColegio: item.unidadeColegio || '',
+          cpfAluno: item.cpfAluno || '',
+          rgAluno: item.rgAluno || '',
+          responsavel: item.responsavel || '',
+          telefoneResponsavel: item.telefoneResponsavel || '',
+          emailResponsavel: item.emailResponsavel || '',
+          observacoes: item.observacoes || '',
+          alergiasCuidados: item.alergiasCuidados || '',
+          planoSaude: item.planoSaude || '',
+          medicamentosFebre: item.medicamentosFebre || '',
+          medicamentosAlergia: item.medicamentosAlergia || '',
+          statusPedido: pedido.status || '',
+          dataPedido: formatDate(pedido.createdAt),
+          dataPagamento: formatDate(pedido.dataPagamento),
+          valorUnitario: Number(pedido.valorUnitario).toFixed(2),
+          clienteNome: cliente?.nome || '',
+          clienteEmail: cliente?.email || '',
+          clienteTelefone: cliente?.telefone || '',
+          respNome: dadosResp ? `${dadosResp.nome || ''} ${dadosResp.sobrenome || ''}`.trim() : '',
+          respCpf: dadosResp?.cpf || '',
+          respEmail: dadosResp?.email || '',
+          respEndereco: dadosResp
+            ? [dadosResp.endereco, dadosResp.numero, dadosResp.complemento, dadosResp.bairro, dadosResp.cidade, dadosResp.estado, dadosResp.cep]
+              .filter(Boolean)
+              .join(', ')
+            : ''
+        });
+      });
+
+      const nomeArquivo = `extracao_completa_${excursao.codigo}_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+      logger.info('[Listas] Extração completa gerada com sucesso', {
+        context: {
+          adminId: req.user!.id,
+          excursaoId: id,
+          totalAlunos: alunos.filter(a => a.item.nomeAluno && a.item.nomeAluno.trim().length >= 2).length,
+          nomeArquivo
+        }
+      });
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${nomeArquivo}"`);
+
+      await workbook.xlsx.write(res);
+      res.end();
+
+      await prisma.activityLog.create({
+        data: {
+          action: 'export',
+          entity: 'lista_alunos',
+          entityId: excursao.id,
+          description: `Extração completa exportada: ${excursao.titulo} (${alunos.length} alunos)`,
+          userId: req.user!.id,
+          userEmail: req.user!.email
+        }
+      });
+    } catch (error) {
+      logger.error('[Listas] Erro ao exportar extração completa', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown error',
           excursaoId: req.params.id,
           adminId: req.user?.id
         }

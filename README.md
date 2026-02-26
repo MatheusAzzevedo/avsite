@@ -4,7 +4,33 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-25) - feat: temporizador 15 min no PIX
+### Última atualização (2026-02-26) - feat: Extração Completa na Lista de Alunos
+- **api/src/routes/lista-alunos.routes.ts** [Rota GET /exportar-completa]
+- **api/public/admin/listas.html**, **js/listas.js** [Botão Extração Completa e função de exportação]
+
+Resumo: Botão "Extração Completa" na Lista de Alunos exporta xlsx com todas as informações preenchidas na compra: dados do aluno, informações médicas, pedido, cliente e responsável financeiro.
+
+### Versão anterior (2026-02-26) - feat: subtítulo em Projetos Pedagógicos
+- **api/public/index-10.html**, **css/avoar-sections-page.css** [Subtítulo "Onde a teoria vira prática e o mundo vira sala de aula." na seção Projetos Pedagógicos]
+
+Resumo: Novo texto de destaque adicionado logo abaixo do título Projetos Pedagógicos na página inicial.
+
+### Versão anterior (2026-02-26) - feat: novo slogan na página inicial
+- **api/public/index-10.html** [Título hero: "Avoar Turismo: Onde o saber encontra o seu destino."]
+
+Resumo: Slogan da página inicial substituído pelo novo texto de destaque.
+
+### Versão anterior (2026-02-26) - feat: carrossel Sobre Nós clicável com lightbox
+- **api/public/about.html**, **css/about-page.css**, **js/about-page.js** [Fotos do carrossel "Momentos que transformam" clicáveis; lightbox fullscreen com navegação prev/next]
+
+Resumo: Ao clicar em qualquer foto do carrossel na página Sobre Nós, a imagem abre em tela cheia. Botões para anterior/próxima, fechar (X), e teclado (ESC, setas).
+
+### Versão anterior (2026-02-26) - fix: remover texto Angra dos Reis da Biologia Marinha
+- **api/public/index-11.html**, **index-11.html** [Título e descrição da seção de vídeo sem menção a Angra dos Reis]
+
+Resumo: Texto "Angra dos Reis" removido da seção de vídeo da página Biologia Marinha. Título alterado para "Nossas Experiências 2024" e descrição para "Conheça nossas experiências através deste vídeo."
+
+### Versão anterior (2026-02-25) - feat: temporizador 15 min no PIX
 - **api/src/routes/pagamento.routes.ts** [POST /:pedidoId/cancelar]
 - **api/public/cliente/js/checkout.js**, **pagamento.js** [Temporizador 15 min; countdown; cancelar e redirecionar ao expirar]
 
