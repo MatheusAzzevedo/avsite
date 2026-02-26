@@ -413,8 +413,8 @@ async function exportarExtracaoCompleta() {
         const contentDisposition = response.headers.get('Content-Disposition');
         let filename = 'extracao_completa.xlsx';
         if (contentDisposition) {
-            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
-            if (filenameMatch) filename = filenameMatch[1];
+            const m = contentDisposition.match(/filename="([^"]+)"|filename\*?=(?:UTF-8'')?([^;\s]+)/i);
+            if (m) filename = (m[1] || m[2] || '').trim().replace(/\.xlsx_?$/, '.xlsx');
         }
 
         a.download = filename;
@@ -485,10 +485,10 @@ async function exportarExcel() {
         const contentDisposition = response.headers.get('Content-Disposition');
         let filename = 'lista_alunos.xlsx';
         if (contentDisposition) {
-            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
-            if (filenameMatch) filename = filenameMatch[1];
+            const m = contentDisposition.match(/filename="([^"]+)"|filename\*?=(?:UTF-8'')?([^;\s]+)/i);
+            if (m) filename = (m[1] || m[2] || '').trim().replace(/\.xlsx_?$/, '.xlsx');
         }
-        
+
         a.download = filename;
         document.body.appendChild(a);
         a.click();
