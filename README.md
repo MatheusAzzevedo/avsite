@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: logo hero 50% maior e gap 20px
+### Última atualização (2026-02-26) - feat: botão abaixo do texto descritivo
+- **api/public/index-10.html**, **css/avoar-sections-page.css** [Botão Inscrições/Login movido para abaixo do texto descritivo]
+
+Resumo: Botão "Inscrições / Login" posicionado abaixo do texto "Transformamos viagens em experiências educativas...".
+
+### Versão anterior (2026-02-26) - feat: logo hero 50% maior e gap 20px
 - **api/public/css/avoar-sections-page.css** [Logo +50%; gap 20px]
 
 Resumo: Logo acima do título na hero aumentada em 50%. Gap entre logo e título definido em 20px.

@@ -134,6 +134,10 @@
     text-align: left;
 }
 
+.section-bottom .section-cta {
+    align-self: center;
+}
+
 /* ========================================
    Ícones de Navegação (apenas seção 1)
    ======================================== */

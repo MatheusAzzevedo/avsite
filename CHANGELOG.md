@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-26 - feat: botão Inscrições/Login abaixo do texto descritivo
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Botão movido de section-text para section-bottom, abaixo do texto descritivo]
+- `api/public/css/avoar-sections-page.css` [.section-bottom .section-cta com align-self: center]
+
+### Alterações
+- Botão "Inscrições / Login" posicionado abaixo do texto "Transformamos viagens em experiências educativas...".
+
+---
+
 ## 2026-02-26 - feat: logo hero 50% maior e gap 20px
 
 ### Arquivos Modificados
