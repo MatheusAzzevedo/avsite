@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-26 - feat: seed no deploy para criar usuários admin
+
+### Arquivos Modificados
+- `api/railway.json` [startCommand: seed incluído antes do npm start]
+- `api/Procfile` [seed incluído antes do npm start]
+
+### Alterações
+- Seed passa a rodar automaticamente em cada deploy no Railway. Os novos usuários admin serão criados/atualizados no próximo deploy.
+
+---
+
 ## 2026-02-26 - feat: novos usuários admin no seed
 
 ### Arquivos Modificados

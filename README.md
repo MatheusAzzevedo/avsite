@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: novos usuários admin
+### Última atualização (2026-02-26) - feat: seed no deploy
+- **api/railway.json**, **api/Procfile** [Seed roda automaticamente no deploy]
+
+Resumo: Seed incluído no comando de start do Railway. Próximo deploy criará os usuários admin automaticamente.
+
+### Versão anterior (2026-02-26) - feat: novos usuários admin
 - **api/prisma/seed.ts** [5 novos usuários: Gilmar, Contato, Andrea, Stefania, José Flávio]
 
 Resumo: Novos usuários admin no seed. Login = email, senha = nome + 123. Executar `npm run seed` para aplicar.
