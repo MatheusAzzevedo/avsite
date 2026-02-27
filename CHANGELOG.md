@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-26 - feat: logo Lavoar.png no corpo do e-mail
+
+### Arquivos Modificados
+- `api/src/templates/email-confirmacao-pedido.ts` [Logo do e-mail alterada para Lavoar.png]
+- `api/public/images/LOGO-EMAIL-README.md` [Documentação atualizada]
+
+### Alterações
+- Corpo do e-mail de confirmação de pedido passa a exibir a logo Lavoar.png no header.
+
+---
+
 ## 2026-02-26 - feat: legenda Projetos Pedagógicos alterada
 
 ### Arquivos Modificados

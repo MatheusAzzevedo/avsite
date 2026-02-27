@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: legenda Projetos Pedagógicos
+### Última atualização (2026-02-26) - feat: logo Lavoar.png no e-mail
+- **api/src/templates/email-confirmacao-pedido.ts**, **api/public/images/LOGO-EMAIL-README.md** [Logo do e-mail: Lavoar.png]
+
+Resumo: Corpo do e-mail de confirmação de pedido exibe a logo Lavoar.png no header.
+
+### Versão anterior (2026-02-26) - feat: legenda Projetos Pedagógicos
 - **api/public/index-10.html** [Legenda: "Onde o saber encontra seu destino"]
 
 Resumo: Frase abaixo do título "Projetos Pedagógicos" alterada para "Onde o saber encontra seu destino".
