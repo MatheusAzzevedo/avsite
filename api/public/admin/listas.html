@@ -79,10 +79,20 @@
             padding-top: 1rem;
             border-top: 1px solid var(--light-border);
             flex-wrap: wrap;
-            align-items: center;
+            align-items: stretch;
         }
 
-        .excursao-card-actions .btn-ver-alunos {
+        /* Ações principais: tamanho uniforme, distribuição igual */
+        .excursao-card-actions .btn-ver-alunos,
+        .excursao-card-actions .btn-exportar-excel-card,
+        .excursao-card-actions .btn-extracao-completa-card {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Ação destrutiva separada à direita (padrão UI) */
+        .excursao-card-actions .btn-deletar-excursao {
+            margin-left: auto;
             flex-shrink: 0;
         }
 
@@ -166,6 +176,21 @@
 
             .excursao-stats {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .excursao-card-actions {
+                flex-direction: column;
+            }
+
+            .excursao-card-actions .btn-ver-alunos,
+            .excursao-card-actions .btn-exportar-excel-card,
+            .excursao-card-actions .btn-extracao-completa-card {
+                min-width: 0;
+            }
+
+            .excursao-card-actions .btn-deletar-excursao {
+                margin-left: 0;
+                align-self: flex-end;
             }
         }
     </style>
