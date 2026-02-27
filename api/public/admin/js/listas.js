@@ -132,11 +132,17 @@ function renderExcursoes() {
                     </div>
                 ` : ''}
 
-                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--light-border);">
-                    <button type="button" class="btn btn-primary btn-ver-alunos" data-excursao-id="${escapeHtml(excursao.id)}" style="flex: 1;">
+                <div class="excursao-card-actions">
+                    <button type="button" class="btn btn-primary btn-sm btn-ver-alunos" data-excursao-id="${escapeHtml(excursao.id)}">
                         <i class="fas fa-users"></i> Ver Alunos
                     </button>
-                    <button type="button" class="btn btn-danger btn-deletar-excursao" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-titulo="${escapeHtml(excursao.titulo)}">
+                    <button type="button" class="btn btn-success btn-sm btn-exportar-excel-card" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-codigo="${escapeHtml(excursao.codigo)}" title="Exportar Excel (apenas pagamento confirmado)">
+                        <i class="fas fa-file-excel"></i> Exportar Excel
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm btn-extracao-completa-card" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-codigo="${escapeHtml(excursao.codigo)}" title="Extração completa (apenas pagamento confirmado)">
+                        <i class="fas fa-file-medical-alt"></i> Extração Completa
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm btn-deletar-excursao" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-titulo="${escapeHtml(excursao.titulo)}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -372,19 +378,25 @@ function voltarParaExcursoes(event) {
  * Explicação da função [exportarExtracaoCompleta]
  * Exporta TODAS as informações preenchidas no ato da compra: dados do aluno,
  * informações médicas, dados do pedido, cliente e responsável financeiro.
+ * Aceita excursaoId/codigo opcionais para uso nos cards da página inicial.
  */
-async function exportarExtracaoCompleta() {
-    if (!currentExcursaoId) {
+async function exportarExtracaoCompleta(opts = {}) {
+    const excursaoId = opts.excursaoId ?? currentExcursaoId;
+    const codigo = opts.codigo ?? currentExcursaoCodigo;
+    const btn = opts.button ?? document.getElementById('btnExtracaoCompleta');
+
+    if (!excursaoId) {
         console.error('[Listas] Nenhuma excursão selecionada');
         return;
     }
 
     try {
-        console.log('[Listas] Exportando extração completa da excursão (apenas pagamento confirmado):', currentExcursaoId);
+        console.log('[Listas] Exportando extração completa da excursão (apenas pagamento confirmado):', excursaoId);
 
-        const btn = document.getElementById('btnExtracaoCompleta');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        }
 
         const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
         if (!token) {
@@ -393,7 +405,7 @@ async function exportarExtracaoCompleta() {
             return;
         }
 
-        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/exportar-completa`, {
+        const response = await fetch(`/api/admin/listas/excursao/${excursaoId}/exportar-completa`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -414,7 +426,7 @@ async function exportarExtracaoCompleta() {
         a.href = url;
 
         const hoje = new Date().toISOString().split('T')[0];
-        const filename = `extracao_completa_${currentExcursaoCodigo}_${hoje}.xlsx`;
+        const filename = `extracao_completa_${codigo}_${hoje}.xlsx`;
 
         a.download = filename;
         document.body.appendChild(a);
@@ -429,28 +441,36 @@ async function exportarExtracaoCompleta() {
         console.error('[Listas] Erro ao exportar extração completa:', error);
         showError('Erro ao exportar extração completa. Tente novamente.');
     } finally {
-        const btn = document.getElementById('btnExtracaoCompleta');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-file-medical-alt"></i> Extração Completa';
+        const resetBtn = opts.button ?? document.getElementById('btnExtracaoCompleta');
+        if (resetBtn) {
+            resetBtn.disabled = false;
+            resetBtn.innerHTML = '<i class="fas fa-file-medical-alt"></i> Extração Completa';
+        }
     }
 }
 
 /**
  * Explicação da função [exportarExcel]
- * Exporta lista de alunos para Excel
+ * Exporta lista de alunos para Excel.
+ * Aceita excursaoId/codigo opcionais para uso nos cards da página inicial.
  */
-async function exportarExcel() {
-    if (!currentExcursaoId) {
+async function exportarExcel(opts = {}) {
+    const excursaoId = opts.excursaoId ?? currentExcursaoId;
+    const codigo = opts.codigo ?? currentExcursaoCodigo;
+    const btn = opts.button ?? document.getElementById('btnExportar');
+
+    if (!excursaoId) {
         console.error('[Listas] Nenhuma excursão selecionada');
         return;
     }
 
     try {
-        console.log('[Listas] Exportando Excel da excursão (apenas pagamento confirmado):', currentExcursaoId);
+        console.log('[Listas] Exportando Excel da excursão (apenas pagamento confirmado):', excursaoId);
 
-        const btn = document.getElementById('btnExportar');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        }
 
         const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
         if (!token) {
@@ -459,7 +479,7 @@ async function exportarExcel() {
             return;
         }
 
-        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/exportar`, {
+        const response = await fetch(`/api/admin/listas/excursao/${excursaoId}/exportar`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -481,7 +501,7 @@ async function exportarExcel() {
         a.href = url;
 
         const hoje = new Date().toISOString().split('T')[0];
-        const filename = `lista_${currentExcursaoCodigo}_${hoje}.xlsx`;
+        const filename = `lista_${codigo}_${hoje}.xlsx`;
 
         a.download = filename;
         document.body.appendChild(a);
@@ -496,9 +516,11 @@ async function exportarExcel() {
         console.error('[Listas] Erro ao exportar Excel:', error);
         showError('Erro ao exportar Excel. Tente novamente.');
     } finally {
-        const btn = document.getElementById('btnExportar');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-file-excel"></i> Exportar Excel';
+        const resetBtn = opts.button ?? document.getElementById('btnExportar');
+        if (resetBtn) {
+            resetBtn.disabled = false;
+            resetBtn.innerHTML = '<i class="fas fa-file-excel"></i> Exportar Excel';
+        }
     }
 }
 
@@ -698,6 +720,8 @@ document.addEventListener('DOMContentLoaded', () => {
         excursoesList.addEventListener('click', function (e) {
             const btnVer = e.target.closest('.btn-ver-alunos');
             const btnDeletar = e.target.closest('.btn-deletar-excursao');
+            const btnExportar = e.target.closest('.btn-exportar-excel-card');
+            const btnExtracao = e.target.closest('.btn-extracao-completa-card');
             if (btnVer) {
                 e.preventDefault();
                 const id = btnVer.getAttribute('data-excursao-id');
@@ -707,6 +731,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const id = btnDeletar.getAttribute('data-excursao-id');
                 const titulo = btnDeletar.getAttribute('data-excursao-titulo') || '';
                 if (id) deletarExcursao(id, titulo);
+            } else if (btnExportar) {
+                e.preventDefault();
+                const id = btnExportar.getAttribute('data-excursao-id');
+                const codigo = btnExportar.getAttribute('data-excursao-codigo') || '';
+                if (id) exportarExcel({ excursaoId: id, codigo, button: btnExportar });
+            } else if (btnExtracao) {
+                e.preventDefault();
+                const id = btnExtracao.getAttribute('data-excursao-id');
+                const codigo = btnExtracao.getAttribute('data-excursao-codigo') || '';
+                if (id) exportarExtracaoCompleta({ excursaoId: id, codigo, button: btnExtracao });
             }
         });
     }

@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: seed no deploy
+### Última atualização (2026-02-26) - feat: botões Excel na página inicial de Listas
+- **api/public/admin/js/listas.js**, **listas.html** [Exportar Excel e Extração Completa nos cards; Ver Alunos menor]
+
+Resumo: Botões de extração Excel disponíveis na página inicial de Listas de Alunos, ao lado de "Ver Alunos" (menor). Permite exportar sem abrir a lista.
+
+### Versão anterior (2026-02-26) - feat: seed no deploy
 - **api/railway.json**, **api/Procfile** [Seed roda automaticamente no deploy]
 
 Resumo: Seed incluído no comando de start do Railway. Próximo deploy criará os usuários admin automaticamente.

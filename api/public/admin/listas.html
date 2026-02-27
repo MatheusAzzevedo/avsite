@@ -72,6 +72,20 @@
             margin-top: 0.5rem;
         }
 
+        .excursao-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-border);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .excursao-card-actions .btn-ver-alunos {
+            flex-shrink: 0;
+        }
+
         .alunos-table {
             margin-top: 2rem;
         }
@@ -248,6 +262,10 @@
                 <div class="card">
                     <div class="card-header">
                         <h2>Excursões Pedagógicas</h2>
+                        <p class="export-legend" style="margin: 0.5rem 0 0 0;">
+                            <i class="fas fa-info-circle"></i>
+                            Nas extrações em Excel, apenas alunos com pagamento confirmado são incluídos.
+                        </p>
                         <div class="filters">
                             <div class="filter-group">
                                 <label for="filterStatus">Status</label>

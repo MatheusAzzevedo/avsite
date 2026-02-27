@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-02-26 - feat: botões Excel na página inicial de Listas de Alunos
+
+### Arquivos Modificados
+- `api/public/admin/js/listas.js` [Botões Exportar Excel e Extração Completa nos cards; Ver Alunos menor; funções exportarExcel/exportarExtracaoCompleta aceitam opts]
+- `api/public/admin/listas.html` [Layout excursao-card-actions; nota sobre extrações Excel]
+
+### Alterações
+- Botões "Exportar Excel" e "Extração Completa" adicionados na página inicial de Listas de Alunos, ao lado de "Ver Alunos". Botão "Ver Alunos" reduzido (btn-sm). Extrações funcionam diretamente nos cards sem precisar abrir a lista de alunos.
+
+---
+
 ## 2026-02-26 - feat: seed no deploy para criar usuários admin
 
 ### Arquivos Modificados
