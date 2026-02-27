@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: remover frase descritiva da hero
+### Última atualização (2026-02-26) - feat: novos usuários admin
+- **api/prisma/seed.ts** [5 novos usuários: Gilmar, Contato, Andrea, Stefania, José Flávio]
+
+Resumo: Novos usuários admin no seed. Login = email, senha = nome + 123. Executar `npm run seed` para aplicar.
+
+### Versão anterior (2026-02-26) - feat: remover frase descritiva da hero
 - **api/public/index-10.html** [Frase "Transformamos viagens em experiências educativas..." removida da hero]
 
 Resumo: Frase descritiva abaixo do título na hero da seção 1 removida.

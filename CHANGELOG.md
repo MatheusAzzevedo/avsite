@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-26 - feat: novos usuários admin no seed
+
+### Arquivos Modificados
+- `api/prisma/seed.ts` [5 novos usuários admin: Gilmar, Contato, Andrea, Stefania, José Flávio]
+
+### Alterações
+- Novos usuários do painel administrativo adicionados ao seed. Login = email, senha = nome + 123 (José Flávio: Jose123). Executar `npm run seed` para aplicar.
+
+---
+
 ## 2026-02-26 - feat: remover frase descritiva da hero seção 1
 
 ### Arquivos Modificados

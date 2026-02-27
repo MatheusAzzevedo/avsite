@@ -40,6 +40,38 @@ async function main() {
   console.log(`   🔑 Senha: admin123\n`);
 
   // ===========================================
+  // CRIAR USUÁRIOS ADMIN ADICIONAIS
+  // ===========================================
+  // Regra: login = email, senha = nome + 123 (primeira letra maiúscula)
+  // José Flávio: senha = Jose123
+  // ===========================================
+
+  const usuariosAdmin = [
+    { name: 'Gilmar', email: 'gilmar@avoarturismo.com.br', password: 'Gilmar123' },
+    { name: 'Contato', email: 'contato@avoarturismo.com.br', password: 'Contato123' },
+    { name: 'Andrea', email: 'andrea.batista66@yahoo.com.br', password: 'Andrea123' },
+    { name: 'Stefania', email: 'stefaniabarreiros92@gmail.com', password: 'Stefania123' },
+    { name: 'José Flávio', email: 'flaviofigo07@gmail.com', password: 'Jose123' }
+  ];
+
+  for (const u of usuariosAdmin) {
+    const hashedPwd = await bcrypt.hash(u.password, 10);
+    await prisma.user.upsert({
+      where: { email: u.email },
+      update: { password: hashedPwd, name: u.name },
+      create: {
+        email: u.email,
+        password: hashedPwd,
+        name: u.name,
+        role: 'ADMIN',
+        active: true
+      }
+    });
+    console.log(`   ✅ Admin: ${u.name} (${u.email})`);
+  }
+  console.log('');
+
+  // ===========================================
   // CATEGORIAS DE EXCURSÃO (Viagens) - padrão
   // ===========================================
   const categoriasPadrao = [
