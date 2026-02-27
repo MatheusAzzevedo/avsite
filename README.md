@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: logo Lavoar.png no e-mail
+### Última atualização (2026-02-26) - feat: remover frase descritiva da hero
+- **api/public/index-10.html** [Frase "Transformamos viagens em experiências educativas..." removida da hero]
+
+Resumo: Frase descritiva abaixo do título na hero da seção 1 removida.
+
+### Versão anterior (2026-02-26) - feat: logo Lavoar.png no e-mail
 - **api/src/templates/email-confirmacao-pedido.ts**, **api/public/images/LOGO-EMAIL-README.md** [Logo do e-mail: Lavoar.png]
 
 Resumo: Corpo do e-mail de confirmação de pedido exibe a logo Lavoar.png no header.

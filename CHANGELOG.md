@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-26 - feat: remover frase descritiva da hero seção 1
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Removida frase "Transformamos viagens em experiências educativas..." da hero]
+
+### Alterações
+- Frase descritiva abaixo do título na hero da seção 1 removida.
+
+---
+
 ## 2026-02-26 - feat: logo Lavoar.png no corpo do e-mail
 
 ### Arquivos Modificados
