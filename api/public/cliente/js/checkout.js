@@ -242,6 +242,7 @@
                     if (pixBox) pixBox.classList.remove('show');
                     if (cartaoBox) cartaoBox.classList.add('show');
                     pararTemporizadorPix();
+                    popularParcelas(valorTotal);
                 });
             }
             var btnCopiarPix = document.getElementById('btnCopiarPix');
@@ -492,6 +493,28 @@
         });
     }
 
+    /**
+     * Explicação da função [popularParcelas]:
+     * Popula o select de parcelas com opções de 1x a 12x baseado no valor total.
+     * Exibe o valor de cada parcela formatado em BRL.
+     * Parcela mínima: R$ 5,00 (regra Asaas).
+     */
+    function popularParcelas(valor) {
+        var select = document.getElementById('installmentCount');
+        if (!select) return;
+        select.innerHTML = '';
+        var maxParcelas = 12;
+        var parcelaMinima = 5;
+        for (var i = 1; i <= maxParcelas; i++) {
+            var valorParcela = valor / i;
+            if (i > 1 && valorParcela < parcelaMinima) break;
+            var option = document.createElement('option');
+            option.value = i;
+            option.textContent = i + 'x de R$ ' + formatBRL(valorParcela) + (i === 1 ? ' (à vista)' : ' sem juros');
+            select.appendChild(option);
+        }
+    }
+
     function pagarComCartao() {
         var btn = document.getElementById('btnPagarCartao');
         var num = onlyDigits(document.getElementById('cardNumber').value);
@@ -523,6 +546,9 @@
             showToast('Preencha CPF (11 dígitos), CEP (8 dígitos) e telefone.', 'error');
             return;
         }
+        var installmentSelect = document.getElementById('installmentCount');
+        var installmentCount = installmentSelect ? parseInt(installmentSelect.value, 10) : 1;
+
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
         clienteAuth.fetchAuth('/cliente/pagamento/cartao', {
@@ -530,7 +556,8 @@
             body: JSON.stringify({
                 pedidoId: pedidoIdPagamento,
                 creditCard: creditCard,
-                creditCardHolderInfo: creditCardHolderInfo
+                creditCardHolderInfo: creditCardHolderInfo,
+                installmentCount: installmentCount >= 2 ? installmentCount : undefined
             })
         }).then(function (r) { return r.json(); }).then(function (data) {
             btn.disabled = false;

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-03-02 - feat: parcelamento no cartão de crédito (excursões pedagógicas)
+
+### Arquivos Modificados
+- `api/public/cliente/checkout.html` [Select de parcelas (1x a 12x) no formulário de cartão]
+- `api/public/cliente/js/checkout.js` [Função popularParcelas calcula e exibe parcelas; installmentCount enviado no payload]
+- `api/src/schemas/pagamento.schema.ts` [Campo installmentCount (1-12, opcional) no schema Zod]
+- `api/src/routes/pagamento.routes.ts` [Extrai installmentCount do body; repassa para Asaas apenas em excursões pedagógicas]
+- `api/src/config/asaas.ts` [Quando parcelas >= 2: envia installmentCount, installmentValue e totalValue ao Asaas]
+
+### Alterações
+- Pagamento com cartão em excursões pedagógicas agora permite parcelamento. O select exibe de 1x (à vista) até 12x sem juros, respeitando parcela mínima de R$ 5,00 (regra Asaas). Backend só envia parcelamento para pedidos de excursão pedagógica; excursões convencionais continuam à vista.
+
+---
+
+## 2026-03-02 - feat: indicador "Deslize para explorar" na página inicial
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Indicador com texto e seta na primeira seção]
+- `api/public/css/avoar-sections-page.css` [Estilos e animação de pulsação; suporte a prefers-reduced-motion]
+
+### Alterações
+- Adicionado indicador "Deslize para explorar" com seta para baixo na seção hero da página inicial. Link para #section-2. Animação de pulsação na seta; fade-in suave no indicador. Respeita prefers-reduced-motion.
+
+---
+
 ## 2026-03-02 - fix: cursor pointer em itens clicáveis da página Pacotes de Viagens
 
 ### Arquivos Modificados

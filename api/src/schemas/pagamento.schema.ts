@@ -52,7 +52,13 @@ export const criarPagamentoCartaoSchema = z.object({
     postalCode: z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido'),
     addressNumber: z.string().min(1, 'Número do endereço é obrigatório'),
     phone: z.string().regex(/^\d{10,11}$/, 'Telefone inválido (apenas números)')
-  })
+  }),
+  installmentCount: z
+    .number()
+    .int('Número de parcelas deve ser inteiro')
+    .min(1, 'Mínimo 1 parcela')
+    .max(12, 'Máximo 12 parcelas')
+    .optional()
 });
 
 /**

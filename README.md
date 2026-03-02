@@ -4,7 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-02) - fix: cursor pointer em Pacotes de Viagens
+### Última atualização (2026-03-02) - feat: parcelamento no cartão (excursões pedagógicas)
+- **api/public/cliente/checkout.html** [Select de parcelas no formulário de cartão]
+- **api/public/cliente/js/checkout.js** [Função popularParcelas; envio de installmentCount no payload]
+- **api/src/schemas/pagamento.schema.ts** [Campo installmentCount opcional no schema Zod]
+- **api/src/routes/pagamento.routes.ts** [Extrai installmentCount e repassa para Asaas apenas em pedagógicas]
+- **api/src/config/asaas.ts** [Envia installmentCount, installmentValue e totalValue ao Asaas]
+
+Resumo: Pagamento com cartão em excursões pedagógicas agora permite parcelamento de 1x a 12x (parcela mínima R$ 5,00). Select de parcelas exibe valor por parcela. Backend envia os campos de parcelamento à API Asaas apenas para pedidos pedagógicos.
+
+### Versão anterior (2026-03-02) - feat: indicador Deslize para explorar
+- **api/public/index-10.html**, **css/avoar-sections-page.css** [Indicador com texto, seta e animação de pulsação na hero]
+
+Resumo: Indicador "Deslize para explorar" na primeira seção da página inicial, com seta para baixo e animação de pulsação. Link leva à segunda seção. Respeita prefers-reduced-motion.
+
+### Versão anterior (2026-03-02) - fix: cursor pointer em Pacotes de Viagens
 - **api/public/cliente/pacotes-viagens.html** [cursor: pointer em links, botões, filtros e cards]
 
 Resumo: Corrigido o cursor do mouse na página Pacotes de Viagens. A regra universal `cursor: auto` impedia o ícone de "mão" (pointer) ao passar sobre itens clicáveis. Agora links da navegação, botões, filtros de categoria e cards de viagem exibem o cursor correto.
@@ -18,11 +32,6 @@ Resumo: E-mail do rodapé alterado de contato@avoar.com.br para contato@avoartur
 - **api/public/admin/js/listas.js**, **listas.html** [Exportar Excel e Extração Completa nos cards; Ver Alunos menor]
 
 Resumo: Botões de extração Excel disponíveis na página inicial de Listas de Alunos, ao lado de "Ver Alunos" (menor). Permite exportar sem abrir a lista.
-
-### Versão anterior (2026-02-26) - feat: seed no deploy
-- **api/railway.json**, **api/Procfile** [Seed roda automaticamente no deploy]
-
-Resumo: Seed incluído no comando de start do Railway. Próximo deploy criará os usuários admin automaticamente.
 
 ### Versão anterior (2026-02-26) - feat: novos usuários admin
 - **api/prisma/seed.ts** [5 novos usuários: Gilmar, Contato, Andrea, Stefania, José Flávio]

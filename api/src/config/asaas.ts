@@ -236,6 +236,7 @@ export async function criarCobrancaCartaoAsaas(dados: {
     addressNumber: string;
     phone: string;
   };
+  installmentCount?: number;
 }) {
   const baseUrl = asaasEnv === 'sandbox'
     ? 'https://sandbox.asaas.com/api/v3'
@@ -264,10 +265,16 @@ export async function criarCobrancaCartaoAsaas(dados: {
   const dueDate = new Date();
   dueDate.setDate(dueDate.getDate() + 1);
 
-  const body = {
+  const installments = dados.installmentCount && dados.installmentCount >= 2
+    ? dados.installmentCount
+    : undefined;
+
+  const body: Record<string, unknown> = {
     customer: asaasCustomer.id,
     billingType: 'CREDIT_CARD',
-    value: dados.valor,
+    value: installments
+      ? parseFloat((dados.valor / installments).toFixed(2))
+      : dados.valor,
     description: dados.descricao,
     externalReference: dados.externalReference,
     dueDate: dueDate.toISOString().split('T')[0],
@@ -288,8 +295,14 @@ export async function criarCobrancaCartaoAsaas(dados: {
     }
   };
 
+  if (installments) {
+    body.installmentCount = installments;
+    body.installmentValue = parseFloat((dados.valor / installments).toFixed(2));
+    body.totalValue = dados.valor;
+  }
+
   logger.info('[Asaas Cartão] Criando cobrança com cartão', {
-    context: { customerId: asaasCustomer.id, valor: dados.valor, reference: dados.externalReference }
+    context: { customerId: asaasCustomer.id, valor: dados.valor, parcelas: installments || 1, reference: dados.externalReference }
   });
 
   const response = await fetch(`${baseUrl}/payments`, {

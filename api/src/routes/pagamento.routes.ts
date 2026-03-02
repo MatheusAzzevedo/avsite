@@ -303,11 +303,11 @@ router.post('/cartao',
   validateBody(criarPagamentoCartaoSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pedidoId, creditCard, creditCardHolderInfo } = req.body;
+      const { pedidoId, creditCard, creditCardHolderInfo, installmentCount } = req.body;
       const clienteId = req.cliente!.id;
 
       logger.info('[Pagamento Cartão] Processando pagamento com cartão', {
-        context: { pedidoId, clienteId }
+        context: { pedidoId, clienteId, parcelas: installmentCount || 1 }
       });
 
       if (!verificarConfigAsaas()) {
@@ -409,6 +409,10 @@ router.post('/cartao',
       const tituloExcursao = pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão';
       const descricao = `Excursão: ${tituloExcursao} - ${pedido.quantidade}x passagens`;
 
+      const parcelas = isPedagogica && installmentCount && installmentCount >= 2
+        ? installmentCount
+        : undefined;
+
       const cobranca = await criarCobrancaCartaoAsaas({
         clienteEmail,
         clienteNome,
@@ -418,13 +422,14 @@ router.post('/cartao',
         descricao,
         externalReference: pedido.id,
         creditCard: {
-          holderName: creditCardHolderNameFinal, // Pedagógica: nome do responsável (nunca do aluno)
+          holderName: creditCardHolderNameFinal,
           number: creditCard.number,
           expiryMonth: creditCard.expiryMonth,
           expiryYear: creditCard.expiryYear,
           ccv: creditCard.ccv
         },
-        creditCardHolderInfo: creditCardHolderInfoFinal
+        creditCardHolderInfo: creditCardHolderInfoFinal,
+        installmentCount: parcelas
       });
 
       const statusPedido = cobranca.status === 'CONFIRMED' || cobranca.status === 'RECEIVED'
