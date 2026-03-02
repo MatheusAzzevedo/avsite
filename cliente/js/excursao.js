@@ -65,7 +65,8 @@
             inclusos: trunc(exc.inclusos, 2000),
             recomendacoes: trunc(exc.recomendacoes, 2000),
             local: trunc(exc.local, 200),
-            horario: trunc(exc.horario, 100)
+            horario: trunc(exc.horario, 100),
+            maxInstallments: exc.maxInstallments || 1
         };
     }
 

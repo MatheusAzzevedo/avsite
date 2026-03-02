@@ -4,14 +4,16 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-02) - feat: parcelamento no cartão (excursões pedagógicas)
-- **api/public/cliente/checkout.html** [Select de parcelas no formulário de cartão]
-- **api/public/cliente/js/checkout.js** [Função popularParcelas; envio de installmentCount no payload]
-- **api/src/schemas/pagamento.schema.ts** [Campo installmentCount opcional no schema Zod]
-- **api/src/routes/pagamento.routes.ts** [Extrai installmentCount e repassa para Asaas apenas em pedagógicas]
-- **api/src/config/asaas.ts** [Envia installmentCount, installmentValue e totalValue ao Asaas]
+### Última atualização (2026-03-02) - feat: parcelas configuráveis por excursão pedagógica
+- **api/prisma/schema.prisma** [Campo maxInstallments no model ExcursaoPedagogica]
+- **api/src/schemas/excursao-pedagogica.schema.ts** [maxInstallments no schema Zod de create/update]
+- **api/public/admin/excursao-pedagogica-editor.html** [Select "Máximo de parcelas no cartão" no editor]
+- **api/public/admin/js/excursao-pedagogica-editor.js** [Carrega e salva maxInstallments]
+- **api/public/cliente/js/excursao.js**, **cliente/js/excursao.js** [payloadCheckout inclui maxInstallments]
+- **api/public/cliente/js/checkout.js** [popularParcelas usa maxInstallments da excursão; oculta select se 1x]
+- **api/src/routes/pagamento.routes.ts** [Valida installmentCount contra maxInstallments da excursão]
 
-Resumo: Pagamento com cartão em excursões pedagógicas agora permite parcelamento de 1x a 12x (parcela mínima R$ 5,00). Select de parcelas exibe valor por parcela. Backend envia os campos de parcelamento à API Asaas apenas para pedidos pedagógicos.
+Resumo: O admin agora define, por excursão pedagógica, o número máximo de parcelas no cartão (1x a 12x). O checkout exibe apenas as parcelas permitidas. Backend valida que o cliente não exceda o limite configurado. Campo aplicado via prisma db push no deploy.
 
 ### Versão anterior (2026-03-02) - feat: indicador Deslize para explorar
 - **api/public/index-10.html**, **css/avoar-sections-page.css** [Indicador com texto, seta e animação de pulsação na hero]

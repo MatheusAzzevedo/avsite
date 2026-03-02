@@ -1,16 +1,18 @@
 # Changelog
 
-## 2026-03-02 - feat: parcelamento no cartão de crédito (excursões pedagógicas)
+## 2026-03-02 - feat: parcelas configuráveis por excursão pedagógica (admin)
 
 ### Arquivos Modificados
-- `api/public/cliente/checkout.html` [Select de parcelas (1x a 12x) no formulário de cartão]
-- `api/public/cliente/js/checkout.js` [Função popularParcelas calcula e exibe parcelas; installmentCount enviado no payload]
-- `api/src/schemas/pagamento.schema.ts` [Campo installmentCount (1-12, opcional) no schema Zod]
-- `api/src/routes/pagamento.routes.ts` [Extrai installmentCount do body; repassa para Asaas apenas em excursões pedagógicas]
-- `api/src/config/asaas.ts` [Quando parcelas >= 2: envia installmentCount, installmentValue e totalValue ao Asaas]
+- `api/prisma/schema.prisma` [Campo maxInstallments (Int?) no model ExcursaoPedagogica]
+- `api/src/schemas/excursao-pedagogica.schema.ts` [maxInstallments (1-12, opcional) no schema Zod de create/update]
+- `api/public/admin/excursao-pedagogica-editor.html` [Select "Máximo de parcelas no cartão" (1x a 12x) no editor]
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Carrega e salva maxInstallments na excursão]
+- `api/public/cliente/js/excursao.js`, `cliente/js/excursao.js` [payloadCheckout inclui maxInstallments]
+- `api/public/cliente/js/checkout.js` [popularParcelas usa maxInstallments da excursão; oculta select quando 1x]
+- `api/src/routes/pagamento.routes.ts` [Valida installmentCount contra maxInstallments da excursão; rejeita se exceder]
 
 ### Alterações
-- Pagamento com cartão em excursões pedagógicas agora permite parcelamento. O select exibe de 1x (à vista) até 12x sem juros, respeitando parcela mínima de R$ 5,00 (regra Asaas). Backend só envia parcelamento para pedidos de excursão pedagógica; excursões convencionais continuam à vista.
+- O administrador agora define, por excursão pedagógica, o número máximo de parcelas no cartão (1x a 12x). No checkout, o select de parcelas exibe apenas as opções permitidas pela excursão (respeitando também a parcela mínima de R$ 5,00 do Asaas). Se maxInstallments = 1, o select é ocultado. Backend valida que o cliente não envie parcelas acima do permitido. Campo criado via prisma db push no deploy.
 
 ---
 

@@ -495,23 +495,28 @@
 
     /**
      * Explicação da função [popularParcelas]:
-     * Popula o select de parcelas com opções de 1x a 12x baseado no valor total.
-     * Exibe o valor de cada parcela formatado em BRL.
-     * Parcela mínima: R$ 5,00 (regra Asaas).
+     * Popula o select de parcelas baseado no valor total e no maxInstallments da excursão.
+     * O admin define o máximo de parcelas por excursão; a parcela mínima é R$ 5,00 (regra Asaas).
      */
     function popularParcelas(valor) {
         var select = document.getElementById('installmentCount');
         if (!select) return;
         select.innerHTML = '';
-        var maxParcelas = 12;
+        var maxDefinidoAdmin = (excursao && excursao.maxInstallments) ? parseInt(excursao.maxInstallments, 10) : 1;
+        if (isNaN(maxDefinidoAdmin) || maxDefinidoAdmin < 1) maxDefinidoAdmin = 1;
+        if (maxDefinidoAdmin > 12) maxDefinidoAdmin = 12;
         var parcelaMinima = 5;
-        for (var i = 1; i <= maxParcelas; i++) {
+        for (var i = 1; i <= maxDefinidoAdmin; i++) {
             var valorParcela = valor / i;
             if (i > 1 && valorParcela < parcelaMinima) break;
             var option = document.createElement('option');
             option.value = i;
             option.textContent = i + 'x de R$ ' + formatBRL(valorParcela) + (i === 1 ? ' (à vista)' : ' sem juros');
             select.appendChild(option);
+        }
+        var group = document.getElementById('installmentGroup');
+        if (group) {
+            group.style.display = maxDefinidoAdmin > 1 ? '' : 'none';
         }
     }
 

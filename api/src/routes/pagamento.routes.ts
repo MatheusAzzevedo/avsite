@@ -409,6 +409,17 @@ router.post('/cartao',
       const tituloExcursao = pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão';
       const descricao = `Excursão: ${tituloExcursao} - ${pedido.quantidade}x passagens`;
 
+      const maxPermitido = isPedagogica && pedido.excursaoPedagogica?.maxInstallments
+        ? pedido.excursaoPedagogica.maxInstallments
+        : 1;
+
+      if (installmentCount && installmentCount > maxPermitido) {
+        return res.status(400).json({
+          success: false,
+          error: `Esta excursão permite no máximo ${maxPermitido}x. Você selecionou ${installmentCount}x.`
+        });
+      }
+
       const parcelas = isPedagogica && installmentCount && installmentCount >= 2
         ? installmentCount
         : undefined;

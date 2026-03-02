@@ -54,7 +54,14 @@ const excursaoPedagogicaBaseSchema = {
   local: z.string().max(200).optional().nullable(),
   horario: z.string().max(100).optional().nullable(),
   tags: z.array(z.string()).optional().default([]),
-  galeria: z.array(z.string()).optional().default([])
+  galeria: z.array(z.string()).optional().default([]),
+  maxInstallments: z
+    .number()
+    .int('Número de parcelas deve ser inteiro')
+    .min(1, 'Mínimo 1 parcela')
+    .max(12, 'Máximo 12 parcelas')
+    .optional()
+    .nullable()
 };
 
 /**

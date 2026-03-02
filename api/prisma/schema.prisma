@@ -184,6 +184,7 @@ model ExcursaoPedagogica {
   local           String?
   horario         String?
   tags            String[]
+  maxInstallments Int?           // Máximo de parcelas no cartão (1-12); null = 1 (à vista)
   destino         String?        // Nome do destino (usado pela API para gerar codigo)
   dataDestino     DateTime?      // Data do destino (usado pela API para gerar codigo)
   createdAt       DateTime       @default(now())
