@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-03-02 - fix: cursor pointer em itens clicáveis da página Pacotes de Viagens
+
+### Arquivos Modificados
+- `api/public/cliente/pacotes-viagens.html` [Removido cursor: auto !important do *; adicionado cursor: pointer em links, botões, filtros e cards]
+
+### Alterações
+- A regra `* { cursor: auto !important }` impedia o cursor pointer em links e botões, pois elementos filhos (ícones, imagens) recebiam cursor auto. Removida essa regra e aplicado cursor: pointer explicitamente em todos os elementos interativos (nav, filtros, cards).
+
+---
+
 ## 2026-03-02 - feat: e-mail do rodapé alterado para contato@avoarturismo.com.br
 
 ### Arquivos Modificados

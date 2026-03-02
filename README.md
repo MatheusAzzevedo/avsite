@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-02) - feat: e-mail do rodapé alterado
+### Última atualização (2026-03-02) - fix: cursor pointer em Pacotes de Viagens
+- **api/public/cliente/pacotes-viagens.html** [cursor: pointer em links, botões, filtros e cards]
+
+Resumo: Corrigido o cursor do mouse na página Pacotes de Viagens. A regra universal `cursor: auto` impedia o ícone de "mão" (pointer) ao passar sobre itens clicáveis. Agora links da navegação, botões, filtros de categoria e cards de viagem exibem o cursor correto.
+
+### Versão anterior (2026-03-02) - feat: e-mail do rodapé alterado
 - **api/public/includes/footer.html**, **includes/footer.html** e páginas públicas [E-mail de contato no rodapé]
 
 Resumo: E-mail do rodapé alterado de contato@avoar.com.br para contato@avoarturismo.com.br em todos os footers e páginas públicas do site.
