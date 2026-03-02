@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-02-26) - feat: botões Excel na página inicial de Listas
+### Última atualização (2026-03-02) - feat: e-mail do rodapé alterado
+- **api/public/includes/footer.html**, **includes/footer.html** e páginas públicas [E-mail de contato no rodapé]
+
+Resumo: E-mail do rodapé alterado de contato@avoar.com.br para contato@avoarturismo.com.br em todos os footers e páginas públicas do site.
+
+### Versão anterior (2026-02-26) - feat: botões Excel na página inicial de Listas
 - **api/public/admin/js/listas.js**, **listas.html** [Exportar Excel e Extração Completa nos cards; Ver Alunos menor]
 
 Resumo: Botões de extração Excel disponíveis na página inicial de Listas de Alunos, ao lado de "Ver Alunos" (menor). Permite exportar sem abrir a lista.

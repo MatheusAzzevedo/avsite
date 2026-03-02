@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-03-02 - feat: e-mail do rodapé alterado para contato@avoarturismo.com.br
+
+### Arquivos Modificados
+- `api/public/includes/footer.html`, `includes/footer.html` [E-mail de contato no rodapé]
+- `api/public/*.html` (index-10, index-11, about, blog, blog-single, contact, portfolio, portfolio-single, nossos-roteiros) [E-mail no footer de cada página]
+- `blog.html` [E-mail no rodapé]
+
+### Alterações
+- E-mail de contato no rodapé do site alterado de contato@avoar.com.br para contato@avoarturismo.com.br em todos os footers e páginas públicas.
+
+---
+
 ## 2026-02-26 - feat: botões Excel na página inicial de Listas de Alunos
 
 ### Arquivos Modificados
