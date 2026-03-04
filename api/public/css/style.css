@@ -1126,6 +1126,11 @@ form label.error{
   transform: skewX(-45deg);
 }
 
+/* Logo desktop no menu lateral; logo-mobile oculta (usada apenas em max-width: 767px) */
+.main-nav-outer .main-logo-box .logo-mobile {
+  display: none;
+}
+
 .main-nav-outer .main-logo-box{
   position:relative;
   padding: 0px 54px;

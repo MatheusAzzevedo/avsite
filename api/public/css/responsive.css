@@ -904,6 +904,15 @@
 		margin-bottom: 32px;
 	}
 
+	/* Logo branca no menu mobile (fundo escuro #2B2B2B) */
+	.main-nav-outer .main-logo-box .logo-desktop {
+		display: none !important;
+	}
+	.main-nav-outer .main-logo-box .logo-mobile {
+		display: block !important;
+		max-width: 160px;
+	}
+
 	.main-nav-outer .main-logo-box img {
 		max-width: 160px;
 	}

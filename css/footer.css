@@ -249,6 +249,11 @@
     padding-bottom: 30px;
   }
 
+  /* Logo 80% maior na versão mobile (156px * 1.8 ≈ 281px) */
+  .footer-brand img {
+    width: 281px;
+  }
+
   .footer-nav {
     padding-left: 0;
   }
@@ -298,8 +303,9 @@
     padding-bottom: 20px;
   }
 
+  /* Logo 80% maior na versão mobile (156px * 1.8 ≈ 281px) */
   .footer-brand img {
-    width: 100px;
+    width: 281px;
   }
 
   .footer-info p,

@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-04) - feat: upload de documento em excursões pedagógicas
+### Última atualização (2026-03-04) - feat: logo branca no menu mobile
+- **Páginas HTML** [main-logo-box com logo-desktop e logo-mobile; logo-mobile usa Lavoar branco.png]
+- **api/public/css/style.css**, **css/style.css** [.logo-mobile oculta por padrão]
+- **api/public/css/responsive.css**, **css/responsive.css** [767px: exibir logo-mobile, ocultar logo-desktop]
+
+Resumo: No menu lateral mobile (até 767px), o logotipo passa a ser Lavoar branco.png para melhor contraste no fundo escuro do overlay.
+
+### Versão anterior (2026-03-04) - feat: upload de documento em excursões pedagógicas
 - **api/prisma**, **excursao-pedagogica.schema**, **upload.routes** [documentoUrl, documentoNome; rota /uploads/document]
 - **excursao-pedagogica-editor** [Seção de upload antes de Imagens; PDF, DOCX, XLS, XLSX]
 - **cliente/excursao** [Link de download na aba O que está incluso]

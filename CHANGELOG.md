@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-03-04 - feat: logo branca (Lavoar branco) no menu mobile
+
+### Arquivos Modificados
+- `api/public/index-10.html`, `index-11.html`, `about.html`, `blog.html`, `blog-single.html`, `contact.html`, `portfolio.html`, `portfolio-single.html`, `nossos-roteiros.html` [main-logo-box: segunda img logo-mobile com Lavoar branco.png]
+- `about.html`, `blog.html`, `blog-single.html`, `contact.html`, `portfolio.html`, `portfolio-single.html`, `index-11.html` (raiz) [idem]
+- `api/public/css/style.css`, `css/style.css` [.main-logo-box .logo-mobile { display: none } por padrão]
+- `api/public/css/responsive.css`, `css/responsive.css` [767px: logo-desktop none, logo-mobile block]
+- `images/Lavoar branco.png` [cópia em images na raiz para páginas raiz]
+
+### Alterações
+- No menu lateral mobile (max-width: 767px), o logotipo passa a ser Lavoar branco.png em vez da logo colorida, para melhor contraste no fundo escuro (#2B2B2B).
+
+---
+
+## 2026-03-04 - feat: logo do footer 80% maior na versão mobile
+
+### Arquivos Modificados
+- `api/public/css/footer.css` [.footer-brand img width: 281px nos media queries max-width 768px e 480px]
+- `css/footer.css` [.footer-brand img width: 281px nos media queries max-width 768px e 480px]
+
+### Alterações
+- O logotipo do footer passa a ter 281px de largura (≈ 80% maior que os 156px base) em telas mobile (até 768px e 480px).
+
+---
+
 ## 2026-03-04 - feat: upload de documento (PDF, DOCX, XLS, XLSX) em excursões pedagógicas
 
 ### Arquivos Modificados
