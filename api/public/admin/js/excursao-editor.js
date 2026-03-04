@@ -85,6 +85,11 @@ async function loadExcursao(excursaoId) {
     document.getElementById('excursaoDuracao').value = excursao.duracao || '';
     document.getElementById('excursaoCategoria').value = excursao.categoria || '';
     document.getElementById('excursaoStatus').value = (excursao.status || 'ATIVO').toLowerCase();
+    var dataExcursaoEl = document.getElementById('excursaoDataExcursao');
+    if (dataExcursaoEl && excursao.dataExcursao) {
+      var d = new Date(excursao.dataExcursao);
+      dataExcursaoEl.value = d.toISOString().slice(0, 10);
+    }
     document.getElementById('excursaoDescricao').innerHTML = excursao.descricao || '';
     document.getElementById('excursaoInclusos').value = excursao.inclusos || '';
     document.getElementById('excursaoRecomendacoes').value = excursao.recomendacoes || '';
@@ -253,6 +258,10 @@ function getExcursaoData() {
     local: document.getElementById('excursaoLocal').value.trim(),
     horario: document.getElementById('excursaoHorario').value.trim(),
     tags: tags,
+    dataExcursao: (function () {
+      var el = document.getElementById('excursaoDataExcursao');
+      return el && el.value ? el.value.trim() : null;
+    })(),
   };
 }
 

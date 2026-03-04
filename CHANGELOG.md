@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-03-04 - feat: upload de documento (PDF, DOCX, XLS, XLSX) em excursões pedagógicas
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Campos documentoUrl e documentoNome no ExcursaoPedagogica]
+- `api/src/schemas/excursao-pedagogica.schema.ts` [documentoUrl e documentoNome no Zod]
+- `api/src/routes/upload.routes.ts` [Rota POST /uploads/document para PDF, DOCX, XLS, XLSX]
+- `api/public/js/api-client.js` [UploadManager.uploadDocument]
+- `api/public/admin/excursao-pedagogica-editor.html` [Seção Documento para Download antes de Imagens]
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Upload, remoção, load e save do documento]
+- `api/public/cliente/excursao.html` [Container do link de download na aba Inclusos]
+- `api/public/cliente/js/excursao.js` [Exibe link de download quando documentoUrl existe]
+- `api/prisma/migration-add-documento-excursao-pedagogica.sql` [Migration SQL]
+
+### Alterações
+- Campo de upload de documento (PDF, DOCX, XLS, XLSX) antes da seção Imagens no editor de excursões pedagógicas. O documento fica disponível para download na página da excursão (aba "O que está incluso"). Executar `npx prisma db push` ou migration SQL para aplicar no banco.
+
+---
+
 ## 2026-03-04 - feat: primeira seção Sobre nós com fundo branco
 
 ### Arquivos Modificados

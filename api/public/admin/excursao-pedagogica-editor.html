@@ -121,6 +121,26 @@
                             </div>
                         </div>
                         <div style="background-color: var(--light-bg); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 2rem;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.25rem;"><i class="fas fa-file-pdf" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Documento para Download</h3>
+                            <p style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 1rem;">O documento ficará disponível para o usuário fazer download na página da excursão.</p>
+                            <div class="form-group">
+                                <label for="documentoUpload"><i class="fas fa-cloud-upload-alt" style="margin-right: 0.25rem;"></i> Enviar arquivo</label>
+                                <input type="file" id="documentoUpload" class="form-control" accept=".pdf,.docx,.xls,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                                <small style="color: var(--text-light);">Formatos aceitos: PDF, DOCX, XLS, XLSX (máx. 20MB)</small>
+                            </div>
+                            <div id="documentoPreviewContainer" style="display: none; margin-top: 1rem; padding: 1rem; background: white; border-radius: var(--radius-md); border: 1px solid var(--light-border);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                                    <div>
+                                        <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                        <span id="documentoPreviewNome">Documento anexado</span>
+                                    </div>
+                                    <button type="button" id="btnRemoverDocumento" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Remover</button>
+                                </div>
+                            </div>
+                            <input type="hidden" id="documentoUrlData" value="">
+                            <input type="hidden" id="documentoNomeData" value="">
+                        </div>
+                        <div style="background-color: var(--light-bg); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 2rem;">
                             <h3 style="margin-bottom: 1rem; font-size: 1.25rem;"><i class="fas fa-images" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Imagens</h3>
                             <div class="form-row">
                                 <div class="form-group" style="flex: 1;">

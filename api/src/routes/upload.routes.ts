@@ -51,6 +51,55 @@ const upload = multer({
   }
 });
 
+// Multer para documentos (PDF, DOCX, XLS, XLSX) - armazena em disco
+const DOCS_DIR = path.join(UPLOAD_DIR, 'documentos');
+if (!fs.existsSync(DOCS_DIR)) {
+  fs.mkdirSync(DOCS_DIR, { recursive: true });
+}
+
+const documentMimeTypes = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // docx
+  'application/vnd.ms-excel', // xls
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // xlsx
+];
+
+const documentStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, DOCS_DIR),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname) || getExtensionFromMime(file.mimetype);
+    cb(null, `${uuidv4()}${ext}`);
+  }
+});
+
+function getExtensionFromMime(mime: string): string {
+  const map: Record<string, string> = {
+    'application/pdf': '.pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+    'application/vnd.ms-excel': '.xls',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx'
+  };
+  return map[mime] || '';
+}
+
+const documentFilter = (
+  _req: Express.Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
+  if (documentMimeTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Tipo de arquivo não permitido. Use: PDF, DOCX, XLS ou XLSX'));
+  }
+};
+
+const uploadDocument = multer({
+  storage: documentStorage,
+  fileFilter: documentFilter,
+  limits: { fileSize: 20 * 1024 * 1024 } // 20MB
+});
+
 // Aplica autenticação
 router.use(authMiddleware);
 
@@ -105,6 +154,39 @@ router.post('/',
           originalName: uploadRecord.originalName,
           url: `${baseUrl}${uploadRecord.url}`,
           size: uploadRecord.size
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * POST /api/uploads/document
+ * Upload de documento (PDF, DOCX, XLS, XLSX) para excursões pedagógicas
+ */
+router.post('/document',
+  uploadDocument.single('file'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.file) {
+        throw ApiError.badRequest('Nenhum arquivo enviado');
+      }
+
+      logger.info(`[Upload] Documento: ${req.file.originalname}`);
+
+      const url = `/uploads/documentos/${req.file.filename}`;
+      const baseUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+
+      res.status(201).json({
+        success: true,
+        message: 'Documento enviado com sucesso',
+        data: {
+          url,
+          fullUrl: `${baseUrl}${url}`,
+          originalName: req.file.originalname,
+          filename: req.file.filename
         }
       });
     } catch (error) {

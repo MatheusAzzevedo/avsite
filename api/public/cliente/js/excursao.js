@@ -52,6 +52,18 @@
         if (infoHorario) infoHorario.textContent = exc.horario || 'Não informado';
         if (infoDuracao) infoDuracao.textContent = exc.duracao || 'Não informado';
 
+        // Documento para download
+        const docContainer = document.getElementById('documentoDownloadContainer');
+        const docLink = document.getElementById('documentoDownloadLink');
+        const docNome = document.getElementById('documentoDownloadNome');
+        if (docContainer && docLink && docNome && exc.documentoUrl) {
+            docContainer.style.display = 'block';
+            var baseUrl = window.location.origin;
+            docLink.href = exc.documentoUrl.indexOf('http') === 0 ? exc.documentoUrl : baseUrl + exc.documentoUrl;
+            docLink.download = exc.documentoNome || exc.documentoUrl.split('/').pop() || 'documento';
+            docNome.textContent = exc.documentoNome || 'Baixar documento';
+        }
+
         // Carregar galeria (se houver múltiplas imagens)
         const galleryThumbs = document.getElementById('galleryThumbs');
         if (galleryThumbs && exc.imagemCapa) {

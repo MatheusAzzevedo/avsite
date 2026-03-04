@@ -216,13 +216,19 @@ router.post('/',
       
       const slug = generateUniqueSlug(baseSlug, existingSlugs);
 
-      // Extrai galeria para criar separadamente
-      const { galeria, ...excursaoData } = data;
+      // Extrai galeria e trata dataExcursao
+      const { galeria, dataExcursao, ...excursaoData } = data;
+      const parseDateStr = (s: unknown): Date | undefined => {
+        if (s == null || String(s).trim() === '') return undefined;
+        const str = String(s).trim();
+        return /^\d{4}-\d{2}-\d{2}$/.test(str) ? new Date(str + 'T12:00:00.000Z') : undefined;
+      };
 
       // Cria excursão
       const excursao = await prisma.excursao.create({
         data: {
           ...excursaoData,
+          dataExcursao: parseDateStr(dataExcursao),
           slug,
           authorId: req.user!.id,
           galeria: galeria?.length ? {
@@ -335,16 +341,24 @@ router.put('/:id',
         slug = generateUniqueSlug(baseSlug, existingSlugs);
       }
 
-      // Extrai galeria para atualizar separadamente
-      const { galeria, ...excursaoData } = data;
+      // Extrai galeria e trata dataExcursao
+      const { galeria, dataExcursao, ...excursaoData } = data;
+      const parseDateStr = (s: unknown): Date | null | undefined => {
+        if (s == null) return undefined;
+        if (String(s).trim() === '') return null;
+        const str = String(s).trim();
+        return /^\d{4}-\d{2}-\d{2}$/.test(str) ? new Date(str + 'T12:00:00.000Z') : undefined;
+      };
+
+      const updatePayload: Record<string, unknown> = { ...excursaoData, slug };
+      if (dataExcursao !== undefined) {
+        updatePayload.dataExcursao = parseDateStr(dataExcursao);
+      }
 
       // Atualiza excursão
       const excursao = await prisma.excursao.update({
         where: { id },
-        data: {
-          ...excursaoData,
-          slug
-        },
+        data: updatePayload as Parameters<typeof prisma.excursao.update>[0]['data'],
         include: {
           galeria: {
             orderBy: { ordem: 'asc' }

@@ -90,6 +90,13 @@ async function loadExcursaoPedagogica(excursaoId) {
       renderGalleryPreviewPedagogica();
     }
 
+    if (excursao.documentoUrl) {
+      document.getElementById('documentoUrlData').value = excursao.documentoUrl || '';
+      document.getElementById('documentoNomeData').value = excursao.documentoNome || excursao.documentoUrl.split('/').pop() || '';
+      document.getElementById('documentoPreviewNome').textContent = excursao.documentoNome || excursao.documentoUrl.split('/').pop() || 'Documento anexado';
+      document.getElementById('documentoPreviewContainer').style.display = 'block';
+    }
+
     console.log('[Excursão Pedagógica Editor] Carregada com sucesso');
   } catch (error) {
     console.error('[Excursão Pedagógica Editor] Erro ao carregar:', error);
@@ -118,6 +125,41 @@ function removeImagePedagogica(dataInputId, containerId, fileInputId) {
   document.getElementById(dataInputId).value = '';
   document.getElementById(fileInputId).value = '';
   document.getElementById(containerId).style.display = 'none';
+}
+
+async function handleDocumentUploadPedagogica(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if (file.size > 20 * 1024 * 1024) {
+    showNotificationPedagogica('O documento deve ter no máximo 20MB', 'error');
+    return;
+  }
+  var allowed = ['.pdf', '.docx', '.xls', '.xlsx'];
+  var ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+  if (allowed.indexOf(ext) === -1) {
+    showNotificationPedagogica('Formato não permitido. Use: PDF, DOCX, XLS ou XLSX.', 'error');
+    return;
+  }
+  try {
+    showNotificationPedagogica('Enviando documento...', 'info');
+    var res = await UploadManager.uploadDocument(file);
+    document.getElementById('documentoUrlData').value = res.url || res.fullUrl || '';
+    document.getElementById('documentoNomeData').value = res.originalName || file.name || '';
+    document.getElementById('documentoPreviewNome').textContent = res.originalName || file.name || 'Documento anexado';
+    document.getElementById('documentoPreviewContainer').style.display = 'block';
+    input.value = '';
+    showNotificationPedagogica('Documento enviado com sucesso!', 'success');
+  } catch (err) {
+    console.error('[Excursão Pedagógica] Erro ao enviar documento:', err);
+    showNotificationPedagogica(err.message || 'Erro ao enviar documento.', 'error');
+  }
+}
+
+function removeDocumentoPedagogica() {
+  document.getElementById('documentoUrlData').value = '';
+  document.getElementById('documentoNomeData').value = '';
+  document.getElementById('documentoUpload').value = '';
+  document.getElementById('documentoPreviewContainer').style.display = 'none';
 }
 
 function handleGalleryUploadPedagogica(input) {
@@ -216,6 +258,14 @@ function getExcursaoPedagogicaData() {
     })(),
     dataFimInscricoes: (function () {
       var el = document.getElementById('excursaoDataFimInscricoes');
+      return el && el.value ? el.value.trim() : null;
+    })(),
+    documentoUrl: (function () {
+      var el = document.getElementById('documentoUrlData');
+      return el && el.value ? el.value.trim() : null;
+    })(),
+    documentoNome: (function () {
+      var el = document.getElementById('documentoNomeData');
       return el && el.value ? el.value.trim() : null;
     })()
   };
@@ -320,6 +370,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var saveInactiveBtn = document.querySelector('.btn-secondary[data-action="save-inactive"]');
   if (saveInactiveBtn) {
     saveInactiveBtn.addEventListener('click', saveAsInactivePedagogica);
+  }
+
+  var documentoUploadInput = document.getElementById('documentoUpload');
+  if (documentoUploadInput) {
+    documentoUploadInput.addEventListener('change', function () {
+      handleDocumentUploadPedagogica(this);
+    });
+  }
+  var btnRemoverDocumento = document.getElementById('btnRemoverDocumento');
+  if (btnRemoverDocumento) {
+    btnRemoverDocumento.addEventListener('click', removeDocumentoPedagogica);
   }
 
   var imagemCapaInput = document.getElementById('imagemCapa');

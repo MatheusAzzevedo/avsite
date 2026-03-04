@@ -641,6 +641,21 @@ const UploadManager = {
   },
 
   /**
+   * Faz upload de documento (PDF, DOCX, XLS, XLSX) para excursões pedagógicas
+   * @param {File} file
+   * @returns {Promise<object>} { url, originalName, filename }
+   */
+  async uploadDocument(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiRequest('/uploads/document', {
+      method: 'POST',
+      body: formData
+    });
+    return response.data;
+  },
+
+  /**
    * Exclui uma imagem
    * @param {string} id 
    * @returns {Promise<boolean>}

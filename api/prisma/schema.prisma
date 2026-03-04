@@ -108,6 +108,7 @@ model Excursao {
   local           String?
   horario         String?
   tags            String[]
+  dataExcursao    DateTime?      // Data da excursão
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
@@ -188,6 +189,8 @@ model ExcursaoPedagogica {
   destino         String?        // Nome do destino (usado pela API para gerar codigo)
   dataDestino     DateTime?      // Data do destino / da excursão (usado pela API para gerar codigo)
   dataFimInscricoes DateTime?    // Data final de inscrições (campo oculto no admin)
+  documentoUrl     String?       // URL do documento (PDF, DOCX, XLS, XLSX) para download
+  documentoNome    String?       // Nome amigável do documento para exibição
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 

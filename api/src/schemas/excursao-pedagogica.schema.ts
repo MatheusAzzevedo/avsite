@@ -68,7 +68,9 @@ const excursaoPedagogicaBaseSchema = {
     .max(12, 'Máximo 12 parcelas')
     .optional()
     .nullable(),
-  dataFimInscricoes: dataFimInscricoesSchema
+  dataFimInscricoes: dataFimInscricoesSchema,
+  documentoUrl: z.string().max(500).optional().nullable(),
+  documentoNome: z.string().max(200).optional().nullable()
 };
 
 /**
