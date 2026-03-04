@@ -262,12 +262,13 @@ router.post('/',
 
       const { galeria, codigo, destino, dataDestino, dataFimInscricoes, ...excursaoData } = data;
 
-      const dataDestinoValue = dataDestinoFinal ?? (dataDestino != null && String(dataDestino).trim() && /^\d{4}-\d{2}-\d{2}$/.test(String(dataDestino).trim())
-        ? new Date(String(dataDestino).trim() + 'T12:00:00.000Z')
-        : undefined;
-      const dataFimInscricoesValue = dataFimInscricoes != null && String(dataFimInscricoes).trim() && /^\d{4}-\d{2}-\d{2}$/.test(String(dataFimInscricoes).trim())
-        ? new Date(String(dataFimInscricoes).trim() + 'T12:00:00.000Z')
-        : undefined;
+      const parseDateStr = (s: unknown): Date | undefined => {
+        if (s == null || String(s).trim() === '') return undefined;
+        const str = String(s).trim();
+        return /^\d{4}-\d{2}-\d{2}$/.test(str) ? new Date(str + 'T12:00:00.000Z') : undefined;
+      };
+      const dataDestinoValue = dataDestinoFinal ?? parseDateStr(dataDestino);
+      const dataFimInscricoesValue = parseDateStr(dataFimInscricoes);
 
       const excursao = await prisma.excursaoPedagogica.create({
         data: {
