@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-03-04 - feat: novo tema claro para header e footer
+
+### Arquivos Modificados
+- `api/public/css/avoar-top-header.css`, `css/avoar-top-header.css` [Fundo #f2f2f2, textos e ícones #2b2b2b]
+- `api/public/css/footer.css`, `css/footer.css` [Fundo #f2f2f2, textos e ícones #2b2b2b, títulos laranja com text-shadow]
+
+### Alterações
+- Header e footer passam a ter fundo cinza claro (#f2f2f2). Textos e ícones alterados para #2b2b2b. Títulos do footer mantêm laranja com sombreado sutil.
+
+---
+
+## 2026-03-04 - feat: campo Data da Excursão em excursões convencionais
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Campo dataExcursao (DateTime?) no model Excursao]
+- `api/src/schemas/excursao.schema.ts` [dataExcursao no Zod create/update]
+- `api/src/routes/excursao.routes.ts` [Tratamento de dataExcursao no create/update]
+- `api/public/admin/excursao-editor.html` [Input Data da Excursão em Informações Básicas]
+- `api/public/admin/js/excursao-editor.js` [Carrega e envia dataExcursao]
+- `api/prisma/migration-add-data-excursao-convencional.sql` [Migration SQL]
+
+### Alterações
+- Campo "Data da Excursão" adicionado ao cadastro de excursões convencionais. Execute `npx prisma db push` ou a migration SQL para aplicar no banco.
+
+---
+
 ## 2026-03-04 - feat: campos Data da Excursão e Data Final de Inscrições
 
 ### Arquivos Modificados

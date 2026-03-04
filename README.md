@@ -4,7 +4,19 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-04) - feat: campos Data da Excursão e Data Final de Inscrições
+### Última atualização (2026-03-04) - feat: novo tema claro para header e footer
+- **api/public/css/avoar-top-header.css**, **css/avoar-top-header.css** [Fundo #f2f2f2, textos e ícones #2b2b2b]
+- **api/public/css/footer.css**, **css/footer.css** [Fundo #f2f2f2, textos e ícones #2b2b2b, títulos laranja com text-shadow]
+
+Resumo: Header e footer com fundo cinza claro (#f2f2f2), textos e ícones em #2b2b2b. Títulos do footer mantêm a cor laranja com sombreado sutil para destaque.
+
+### Versão anterior (2026-03-04) - feat: campo Data da Excursão em excursões convencionais
+- **api/prisma/schema.prisma**, **excursao.schema.ts**, **excursao.routes.ts** [Campo dataExcursao]
+- **api/public/admin/excursao-editor.html**, **excursao-editor.js** [Input Data da Excursão]
+
+Resumo: Campo "Data da Excursão" no editor de excursões convencionais. Executar `npx prisma db push` ou migration SQL para aplicar.
+
+### Versão anterior (2026-03-04) - feat: campos Data da Excursão e Data Final de Inscrições
 - **api/prisma/schema.prisma**, **excursao-pedagogica.schema.ts**, **excursao-pedagogica.routes.ts** [Campo dataFimInscricoes; dataDestino como Data da Excursão]
 - **api/public/admin/excursao-pedagogica-editor.html**, **excursao-pedagogica-editor.js** [Input Data da Excursão visível; Data Final de Inscrições oculto]
 
