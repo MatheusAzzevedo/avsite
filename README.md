@@ -4,7 +4,19 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-02) - feat: parcelas configuráveis por excursão pedagógica
+### Última atualização (2026-03-04) - feat: campos Data da Excursão e Data Final de Inscrições
+- **api/prisma/schema.prisma**, **excursao-pedagogica.schema.ts**, **excursao-pedagogica.routes.ts** [Campo dataFimInscricoes; dataDestino como Data da Excursão]
+- **api/public/admin/excursao-pedagogica-editor.html**, **excursao-pedagogica-editor.js** [Input Data da Excursão visível; Data Final de Inscrições oculto]
+
+Resumo: Campo "Data da Excursão" visível no editor (usa dataDestino). Campo "Data Final de Inscrições" adicionado no formulário mas oculto. Executar `npx prisma db push` ou migration SQL para aplicar.
+
+### Versão anterior (2026-03-04) - feat: botão lixeira para deletar excursão pedagógica
+- **api/public/admin/js/excursoes-pedagogicas.js** [Botão lixeira no card; confirmação e exclusão via ExcursaoPedagogicaManager]
+- **api/src/routes/excursao-pedagogica.routes.ts** [Verifica pedidos vinculados antes de excluir; retorna mensagem clara se bloqueado]
+
+Resumo: Botão de lixeira em cada excursão pedagógica no painel admin permite exclusão permanente após confirmação. API bloqueia exclusão quando há pedidos vinculados e retorna mensagem informativa.
+
+### Versão anterior (2026-03-02) - feat: parcelas configuráveis por excursão pedagógica
 - **api/prisma/schema.prisma** [Campo maxInstallments no model ExcursaoPedagogica]
 - **api/src/schemas/excursao-pedagogica.schema.ts** [maxInstallments no schema Zod de create/update]
 - **api/public/admin/excursao-pedagogica-editor.html** [Select "Máximo de parcelas no cartão" no editor]

@@ -62,6 +62,17 @@ async function loadExcursaoPedagogica(excursaoId) {
       Array.isArray(excursao.tags) ? excursao.tags.join(', ') : '';
     document.getElementById('excursaoMaxInstallments').value = excursao.maxInstallments || '1';
 
+    var dataDestinoEl = document.getElementById('excursaoDataExcursao');
+    if (dataDestinoEl && excursao.dataDestino) {
+      var d = new Date(excursao.dataDestino);
+      dataDestinoEl.value = d.toISOString().slice(0, 10);
+    }
+    var dataFimEl = document.getElementById('excursaoDataFimInscricoes');
+    if (dataFimEl && excursao.dataFimInscricoes) {
+      var df = new Date(excursao.dataFimInscricoes);
+      dataFimEl.value = df.toISOString().slice(0, 10);
+    }
+
     if (excursao.imagemCapa) {
       document.getElementById('imagemCapaData').value = excursao.imagemCapa;
       document.getElementById('previewCapa').src = excursao.imagemCapa;
@@ -198,7 +209,15 @@ function getExcursaoPedagogicaData() {
     local: document.getElementById('excursaoLocal').value.trim(),
     horario: document.getElementById('excursaoHorario').value.trim(),
     tags: tags,
-    maxInstallments: parseInt(document.getElementById('excursaoMaxInstallments').value, 10) || 1
+    maxInstallments: parseInt(document.getElementById('excursaoMaxInstallments').value, 10) || 1,
+    dataDestino: (function () {
+      var el = document.getElementById('excursaoDataExcursao');
+      return el && el.value ? el.value.trim() : null;
+    })(),
+    dataFimInscricoes: (function () {
+      var el = document.getElementById('excursaoDataFimInscricoes');
+      return el && el.value ? el.value.trim() : null;
+    })()
   };
 }
 

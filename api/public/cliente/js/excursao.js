@@ -125,8 +125,8 @@
         };
     }
 
-    function irParaCheckout() {
-        if (!excursao) return;
+    async function irParaCheckout() {
+        if (!excursao || !excursao.codigo) return;
         const quantidade = parseInt(document.getElementById('quantity').value, 10) || 1;
         
         if (quantidade < 1) {
@@ -142,7 +142,17 @@
         }
         
         try {
-            var payload = payloadCheckout(excursao, quantidade);
+            var excursaoAtual = excursao;
+            try {
+                var res = await fetch('/api/cliente/pedidos/excursao/' + encodeURIComponent(excursao.codigo));
+                var data = await res.json();
+                if (res.ok && data.success && data.data) {
+                    excursaoAtual = data.data;
+                }
+            } catch (e) {
+                console.warn('[Excursao] Não foi possível atualizar dados; usando cache local.', e);
+            }
+            var payload = payloadCheckout(excursaoAtual, quantidade);
             localStorage.setItem('checkout_excursao', JSON.stringify(payload));
             window.location.href = 'checkout.html';
         } catch (e) {

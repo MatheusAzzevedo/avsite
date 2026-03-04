@@ -203,6 +203,66 @@
 }
 
 /* ========================================
+   Indicador "Deslize para explorar" (apenas seção 1)
+   ======================================== */
+
+.slide-explore-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    opacity: 0.95;
+    transition: opacity 0.3s ease, color 0.3s ease;
+    animation: slideExploreFadeIn 1s ease-out 0.5s both;
+}
+
+.slide-explore-indicator:hover {
+    opacity: 1;
+    color: #ffffff;
+}
+
+.slide-explore-text {
+    text-transform: none;
+    white-space: nowrap;
+}
+
+.slide-explore-arrow {
+    font-size: 1.2rem;
+    animation: slideExplorePulse 2s ease-in-out infinite;
+}
+
+@keyframes slideExploreFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 0.95;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes slideExplorePulse {
+    0%, 100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(6px);
+        opacity: 0.8;
+    }
+}
+
+/* ========================================
    Telas grandes (1600x900+) - conteúdo mais extenso
    ======================================== */
 
@@ -315,6 +375,15 @@
         font-size: 0.64rem;
     }
 
+    .slide-explore-indicator {
+        bottom: 1.5rem;
+        font-size: 0.8rem;
+    }
+
+    .slide-explore-arrow {
+        font-size: 1rem;
+    }
+
     .section-overlay {
         background: rgba(0, 0, 0, 0.6);
     }
@@ -392,6 +461,15 @@
         font-size: 0.6rem;
     }
 
+    .slide-explore-indicator {
+        bottom: 1rem;
+        font-size: 0.75rem;
+    }
+
+    .slide-explore-arrow {
+        font-size: 0.9rem;
+    }
+
     .section-overlay {
         background: rgba(0, 0, 0, 0.65);
     }
@@ -408,6 +486,14 @@
     }
 
     .section-bottom {
+        animation: none;
+    }
+
+    .slide-explore-indicator {
+        animation: slideExploreFadeIn 0.5s ease-out 0.5s both;
+    }
+
+    .slide-explore-arrow {
         animation: none;
     }
 }

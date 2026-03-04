@@ -17,6 +17,12 @@ const dataDestinoSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'dataDestino deve estar no formato YYYY-MM-DD');
 
+const dataFimInscricoesSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'dataFimInscricoes deve estar no formato YYYY-MM-DD')
+  .optional()
+  .nullable();
+
 /**
  * Schema base para excursão pedagógica
  * codigo: opcional na criação (se omitido, destino + dataDestino geram o código)
@@ -61,7 +67,8 @@ const excursaoPedagogicaBaseSchema = {
     .min(1, 'Mínimo 1 parcela')
     .max(12, 'Máximo 12 parcelas')
     .optional()
-    .nullable()
+    .nullable(),
+  dataFimInscricoes: dataFimInscricoesSchema
 };
 
 /**
@@ -83,7 +90,8 @@ const baseSchemaForUpdate = {
   ...excursaoPedagogicaBaseSchema,
   codigo: codigoSchema.optional(),
   destino: z.string().max(200).optional().nullable(),
-  dataDestino: dataDestinoSchema.optional().nullable()
+  dataDestino: dataDestinoSchema.optional().nullable(),
+  dataFimInscricoes: dataFimInscricoesSchema
 };
 
 /**

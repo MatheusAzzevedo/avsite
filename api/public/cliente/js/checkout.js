@@ -751,6 +751,20 @@
             return;
         }
 
+        if (excursao.codigo) {
+            try {
+                var resExc = await fetch('/api/cliente/pedidos/excursao/' + encodeURIComponent(excursao.codigo));
+                if (resExc && resExc.ok) {
+                    var dataExc = await resExc.json();
+                    if (dataExc.success && dataExc.data && dataExc.data.maxInstallments != null) {
+                        excursao.maxInstallments = dataExc.data.maxInstallments;
+                    }
+                }
+            } catch (e) {
+                console.warn('[Checkout] Não foi possível atualizar maxInstallments; usando cache.', e);
+            }
+        }
+
         if (!excursao.codigo || !excursao.quantidade) {
             showToast('Nenhuma excursão selecionada. Redirecionando...', 'error');
             setTimeout(function () { window.location.href = 'inicio.html'; }, 1500);

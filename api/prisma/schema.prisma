@@ -186,7 +186,8 @@ model ExcursaoPedagogica {
   tags            String[]
   maxInstallments Int?           // Máximo de parcelas no cartão (1-12); null = 1 (à vista)
   destino         String?        // Nome do destino (usado pela API para gerar codigo)
-  dataDestino     DateTime?      // Data do destino (usado pela API para gerar codigo)
+  dataDestino     DateTime?      // Data do destino / da excursão (usado pela API para gerar codigo)
+  dataFimInscricoes DateTime?    // Data final de inscrições (campo oculto no admin)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 

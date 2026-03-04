@@ -81,13 +81,60 @@
           '</div>' +
           '<div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--light-border); margin-top: auto;">' +
             '<strong style="color: var(--primary-color); font-size: 1.25rem;">' + formatPrice(e.preco) + '</strong>' +
-            '<a href="excursao-pedagogica-editor.html?id=' + encodeURIComponent(e.id) + '" class="btn btn-sm btn-secondary" style="text-decoration: none;"><i class="fas fa-edit"></i> Editar</a>' +
+            '<div style="display: flex; gap: 0.5rem;">' +
+              '<a href="excursao-pedagogica-editor.html?id=' + encodeURIComponent(e.id) + '" class="btn btn-sm btn-secondary" style="text-decoration: none;"><i class="fas fa-edit"></i> Editar</a>' +
+              '<button type="button" class="btn btn-sm btn-danger btn-delete-excursao-pedagogica" data-id="' + escapeHtml(e.id) + '" data-titulo="' + escapeHtml(e.titulo) + '" data-codigo="' + escapeHtml(e.codigo) + '" title="Excluir permanentemente"><i class="fas fa-trash"></i></button>' +
+            '</div>' +
           '</div>' +
         '</div>';
       
       
       grid.appendChild(card);
     });
+
+    // Event listeners para botões de excluir
+    grid.querySelectorAll('.btn-delete-excursao-pedagogica').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        deleteExcursaoPedagogica(
+          this.getAttribute('data-id') || '',
+          this.getAttribute('data-titulo') || '',
+          this.getAttribute('data-codigo') || ''
+        );
+      });
+    });
+  }
+
+  /**
+   * Explicação da função [deleteExcursaoPedagogica]
+   * Exclui permanentemente uma excursão pedagógica após confirmação do usuário.
+   * Usa confirmDelete para dialog de confirmação e ExcursaoPedagogicaManager.delete para a API.
+   */
+  function deleteExcursaoPedagogica(id, titulo, codigo) {
+    var label = codigo ? '[' + codigo + '] ' + titulo : titulo;
+    if (typeof confirmDelete === 'function') {
+      confirmDelete(label + ' (excursão pedagógica)', doDelete);
+    } else if (confirm('Tem certeza que deseja excluir permanentemente a excursão "' + label + '"? Esta ação não pode ser desfeita.')) {
+      doDelete();
+    } else {
+      return;
+    }
+    function doDelete() {
+      if (typeof ExcursaoPedagogicaManager === 'undefined' || !ExcursaoPedagogicaManager.delete) {
+        console.error('[Excursões Pedagógicas] ExcursaoPedagogicaManager.delete não disponível');
+        if (typeof showToast === 'function') showToast('Erro: API não disponível.', 'error');
+        return;
+      }
+      ExcursaoPedagogicaManager.delete(id).then(function() {
+        console.log('[Excursões Pedagógicas] Excursão excluída:', id);
+        if (typeof showToast === 'function') showToast('Excursão excluída com sucesso.', 'success');
+        loadExcursoesPedagogicas();
+      }).catch(function(err) {
+        console.error('[Excursões Pedagógicas] Erro ao excluir:', err);
+        var msg = (err && err.message) ? err.message : 'Erro ao excluir excursão.';
+        if (err && err.response && err.response.data && err.response.data.message) msg = err.response.data.message;
+        if (typeof showToast === 'function') showToast(msg, 'error');
+      });
+    }
   }
   window.loadExcursoesPedagogicas = loadExcursoesPedagogicas;
   document.addEventListener('DOMContentLoaded', function() {

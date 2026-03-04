@@ -260,14 +260,22 @@ router.post('/',
 
       const slug = generateUniqueSlug(baseSlug, existingSlugs);
 
-      const { galeria, codigo, destino, dataDestino, ...excursaoData } = data;
+      const { galeria, codigo, destino, dataDestino, dataFimInscricoes, ...excursaoData } = data;
+
+      const dataDestinoValue = dataDestinoFinal ?? (dataDestino != null && String(dataDestino).trim() && /^\d{4}-\d{2}-\d{2}$/.test(String(dataDestino).trim())
+        ? new Date(String(dataDestino).trim() + 'T12:00:00.000Z')
+        : undefined;
+      const dataFimInscricoesValue = dataFimInscricoes != null && String(dataFimInscricoes).trim() && /^\d{4}-\d{2}-\d{2}$/.test(String(dataFimInscricoes).trim())
+        ? new Date(String(dataFimInscricoes).trim() + 'T12:00:00.000Z')
+        : undefined;
 
       const excursao = await prisma.excursaoPedagogica.create({
         data: {
           ...excursaoData,
           codigo: codigoFinal,
           destino: destinoFinal ?? undefined,
-          dataDestino: dataDestinoFinal ?? undefined,
+          dataDestino: dataDestinoValue,
+          dataFimInscricoes: dataFimInscricoesValue,
           slug,
           authorId: req.user!.id,
           galeria: galeria?.length ? {
@@ -398,12 +406,19 @@ router.put('/:id',
         slug = generateUniqueSlug(baseSlug, existingSlugs);
       }
 
-      const { galeria, dataDestino, ...excursaoData } = data;
+      const { galeria, dataDestino, dataFimInscricoes, ...excursaoData } = data;
       const updateData: Record<string, unknown> = { ...excursaoData, slug };
       if (dataDestino != null && String(dataDestino).trim() !== '') {
         const str = String(dataDestino).trim();
         if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
           updateData.dataDestino = new Date(str + 'T12:00:00.000Z');
+        }
+      }
+      if (dataFimInscricoes != null) {
+        if (String(dataFimInscricoes).trim() === '') {
+          updateData.dataFimInscricoes = null;
+        } else if (/^\d{4}-\d{2}-\d{2}$/.test(String(dataFimInscricoes).trim())) {
+          updateData.dataFimInscricoes = new Date(String(dataFimInscricoes).trim() + 'T12:00:00.000Z');
         }
       }
 
@@ -526,6 +541,19 @@ router.delete('/:id',
           context: { excursaoId: id, userId, userEmail }
         });
         throw ApiError.notFound('Excursão pedagógica não encontrada');
+      }
+
+      // Verifica se há pedidos vinculados
+      const pedidosCount = await prisma.pedido.count({
+        where: { excursaoPedagogicaId: id }
+      });
+      if (pedidosCount > 0) {
+        logger.warn(`[AVSITE-API] ⚠️ Excursão Pedagógica - Exclusão BLOQUEADA - Possui pedidos vinculados`, {
+          context: { excursaoId: id, codigo: existing.codigo, pedidosCount, userId, userEmail }
+        });
+        throw ApiError.badRequest(
+          `Não é possível excluir: existem ${pedidosCount} pedido(s) vinculado(s) a esta excursão. Remova ou cancele os pedidos primeiro.`
+        );
       }
 
       // Exclui excursão (galeria é excluída em cascata)

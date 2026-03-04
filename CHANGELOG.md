@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-03-04 - feat: campos Data da Excursão e Data Final de Inscrições
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Campo dataFimInscricoes (DateTime?) no ExcursaoPedagogica]
+- `api/src/schemas/excursao-pedagogica.schema.ts` [dataFimInscricoes no Zod create/update]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Tratamento de dataDestino e dataFimInscricoes no create/update]
+- `api/public/admin/excursao-pedagogica-editor.html` [Input Data da Excursão (visível); Data Final de Inscrições (oculto)]
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Carrega e envia dataDestino e dataFimInscricoes]
+- `api/prisma/migration-add-data-fim-inscricoes.sql` [Migration SQL para coluna dataFimInscricoes]
+
+### Alterações
+- Campo "Data da Excursão" visível no editor, mapeado para dataDestino. Campo "Data Final de Inscrições" adicionado no formulário mas oculto (display:none), para uso futuro. Execute a migration SQL ou `npx prisma db push` para aplicar no banco.
+
+---
+
+## 2026-03-04 - feat: botão lixeira para deletar excursão pedagógica
+
+### Arquivos Modificados
+- `api/public/admin/js/excursoes-pedagogicas.js` [Botão de lixeira em cada card; função deleteExcursaoPedagogica com confirmação; listeners]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Verificação de pedidos vinculados antes de excluir; mensagem clara se houver pedidos]
+
+### Alterações
+- Botão de lixeira (ícone fa-trash) adicionado em cada card de excursão pedagógica no painel admin. Ao clicar, exibe confirmação antes de excluir permanentemente. API impede exclusão se houver pedidos vinculados e retorna mensagem informativa.
+
+---
+
 ## 2026-03-02 - feat: parcelas configuráveis por excursão pedagógica (admin)
 
 ### Arquivos Modificados
