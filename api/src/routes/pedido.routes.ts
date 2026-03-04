@@ -339,7 +339,9 @@ router.get('/',
                 subtitulo: true,
                 imagemCapa: true,
                 local: true,
-                horario: true
+                horario: true,
+                documentoUrl: true,
+                documentoNome: true
               }
             },
             excursao: {

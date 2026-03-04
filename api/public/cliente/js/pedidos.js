@@ -116,8 +116,16 @@
                     var tipoLabel = pedido.tipo === 'CONVENCIONAL' ? 'Viagem convencional' : 'Excursão pedagógica';
                     var statusLabel = statusLabels[pedido.status] || pedido.status;
                     var showPayButton = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
+                    var excPed = pedido.excursaoPedagogica;
+                    var docUrl = excPed && excPed.documentoUrl ? excPed.documentoUrl : null;
+                    var docNome = (excPed && excPed.documentoNome) || (docUrl ? docUrl.split('/').pop() : '') || 'Documento';
+                    var baseUrl = window.location.origin;
+                    var docHref = docUrl ? (docUrl.indexOf('http') === 0 ? docUrl : baseUrl + docUrl) : '#';
                     var payButtonHtml = showPayButton
                         ? '<a href="/cliente/pagamento.html?pedidoId=' + pedido.id + '" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar</a>'
+                        : '';
+                    var docButtonHtml = docUrl
+                        ? '<a href="' + docHref + '" target="_blank" rel="noopener" class="btn-download-doc"><i class="fas fa-download"></i> Download</a>'
                         : '';
                     var valorTotal = Number(pedido.valorTotal);
                     var valorStr = isNaN(valorTotal) ? '0,00' : valorTotal.toFixed(2);
@@ -136,7 +144,7 @@
                         '</div>' +
                         '<div class="pedido-footer">' +
                         '<div class="pedido-valor">R$ <span>' + valorStr + '</span></div>' +
-                        payButtonHtml +
+                        '<div style="display: flex; gap: 0.75rem; align-items: center;">' + docButtonHtml + payButtonHtml + '</div>' +
                         '</div>' +
                         '</div>';
                 });
