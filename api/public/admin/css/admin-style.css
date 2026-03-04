@@ -745,6 +745,13 @@ a[href="config-pagamento.html"] {
     align-items: stretch;
 }
 
+/* Grid de 2 colunas para excursões convencionais */
+#excursoesGrid.excursoes-convencionais-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
 /* Grid fixo de 3 colunas para excursões pedagógicas - preenche da esquerda para direita */
 .excursoes-pedagogicas-grid {
     display: grid;
@@ -759,6 +766,13 @@ a[href="config-pagamento.html"] {
 #excursoesGrid .excursao-card {
     min-width: 0;
     height: 100%;
+}
+
+/* Cards de excursões convencionais - layout em 2 colunas */
+#excursoesGrid.excursoes-convencionais-grid .excursao-card {
+    display: flex;
+    flex-direction: column;
+    background: white;
 }
 
 /* Cards de excursões pedagógicas - layout flexível */
@@ -800,6 +814,7 @@ a[href="config-pagamento.html"] {
 @media (max-width: 768px) {
     .excursoes-grid,
     #excursoesGrid,
+    .excursoes-convencionais-grid,
     .excursoes-pedagogicas-grid {
         grid-template-columns: 1fr;
     }
