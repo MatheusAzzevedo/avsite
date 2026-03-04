@@ -4,7 +4,18 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-04) - feat: novo tema claro para header e footer
+### Última atualização (2026-03-04) - feat: primeira seção Sobre nós com fundo branco
+- **api/public/css/about-page.css**, **css/about-page.css** [.about-hero-modern: fundo #f2f2f2, textos #2b2b2b, laranjas com text-shadow]
+
+Resumo: Primeira seção da página Sobre nós com fundo branco, textos escuros e elementos laranja com sombreado sutil.
+
+### Versão anterior (2026-03-04) - feat: logo colorida no header e footer
+- **Páginas HTML do site** [Header e footer exibem Logo Avoar svg colorida.svg em todas as páginas]
+- **includes/footer.html** [Logo do rodapé atualizada]
+
+Resumo: Logo colorida no header e no footer em todas as páginas do site público.
+
+### Versão anterior (2026-03-04) - feat: novo tema claro para header e footer
 - **api/public/css/avoar-top-header.css**, **css/avoar-top-header.css** [Fundo #f2f2f2, textos e ícones #2b2b2b]
 - **api/public/css/footer.css**, **css/footer.css** [Fundo #f2f2f2, textos e ícones #2b2b2b, títulos laranja com text-shadow]
 

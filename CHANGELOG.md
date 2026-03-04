@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-03-04 - feat: primeira seção Sobre nós com fundo branco
+
+### Arquivos Modificados
+- `api/public/css/about-page.css`, `css/about-page.css` [.about-hero-modern: background #f2f2f2, textos #2b2b2b, laranjas com text-shadow]
+
+### Alterações
+- Primeira seção da página Sobre nós com fundo branco (#f2f2f2). Textos em #2b2b2b. Textos laranjas (eyebrow, indicadores +1.500, +20, 98%) mantêm cor com sombreado.
+
+---
+
+## 2026-03-04 - feat: logo colorida no header e footer
+
+### Arquivos Modificados
+- Páginas HTML do site (index-10, index-11, about, blog, contact, nossos-roteiros, portfolio, etc.) [Header e footer usam Logo Avoar svg colorida.svg]
+- `api/public/includes/footer.html`, `includes/footer.html` [Logo do footer]
+- `images/Logo Avoar svg colorida.svg` [Cópia para pasta raiz]
+
+### Alterações
+- Header e footer passam a exibir a logo colorida (Logo Avoar svg colorida.svg) em todas as páginas do site.
+
+---
+
 ## 2026-03-04 - feat: novo tema claro para header e footer
 
 ### Arquivos Modificados
