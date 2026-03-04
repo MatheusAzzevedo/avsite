@@ -4,7 +4,10 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-04) - feat: logo branca no menu mobile
+### Última atualização (2026-03-04) - feat: logo do menu mobile 25% maior
+- **api/public/css/responsive.css**, **css/responsive.css** [.main-logo-box .logo-mobile e img: max-width 200px]
+
+Resumo: O logotipo do menu lateral mobile aumenta 25% (160px → 200px).
 - **Páginas HTML** [main-logo-box com logo-desktop e logo-mobile; logo-mobile usa Lavoar branco.png]
 - **api/public/css/style.css**, **css/style.css** [.logo-mobile oculta por padrão]
 - **api/public/css/responsive.css**, **css/responsive.css** [767px: exibir logo-mobile, ocultar logo-desktop]

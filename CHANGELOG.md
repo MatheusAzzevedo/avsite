@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-03-04 - feat: logo do menu mobile 25% maior
+
+### Arquivos Modificados
+- `api/public/css/responsive.css`, `css/responsive.css` [.main-logo-box .logo-mobile e img: max-width 160px → 200px]
+
+### Alterações
+- O logotipo do menu lateral mobile passa a ter max-width 200px (25% maior que os 160px anteriores).
+
+---
+
 ## 2026-03-04 - feat: logo branca (Lavoar branco) no menu mobile
 
 ### Arquivos Modificados

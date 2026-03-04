@@ -820,13 +820,13 @@
 		padding-top: 45px;
 	}
 
-	/* Logo branca no menu mobile (fundo escuro) */
+	/* Logo branca no menu mobile (fundo escuro); 25% maior (160px → 200px) */
 	.main-nav-outer .main-logo-box .logo-desktop {
 		display: none !important;
 	}
 	.main-nav-outer .main-logo-box .logo-mobile {
 		display: block !important;
-		max-width: 160px;
+		max-width: 200px;
 	}
 
 	.banner-section .slide-item h1{
