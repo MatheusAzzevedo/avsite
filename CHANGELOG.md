@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-03-06 - feat: header e footer unificados com logo Lavoar.png em todas as páginas
+
+### Arquivos Modificados
+- `api/public/index-10.html` [Social links mobile com URLs corretas]
+- `api/public/blog.html`, `blog-single.html`, `portfolio.html`, `portfolio-single.html` [main-header-bar alt-logo; social links; typo Avorar→Avoar; nav unificada em blog-single]
+
+### Alterações
+- Header e footer idênticos em todas as páginas do site (Início, Biologia Marinha, Sobre Nós, Blog, Contato, Excursões, Nossos Roteiros). Logo Lavoar.png no header e footer. main-header-bar com classe alt-logo para mobile. Links de redes sociais corretos. Correção typo "Avorar"→"Avoar". Navegação unificada (ordem: Início, Nossos Roteiros, Pacote de Viagens, Biologia Marinha, Sobre Nós, Blog, Contato).
+
+---
+
 ## 2026-03-06 - feat: vinheta Avoar como loading em todas as páginas do site
 
 ### Arquivos Modificados

@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-06) - feat: vinheta Avoar como loading em todas as páginas
+### Última atualização (2026-03-06) - feat: header e footer unificados com Lavoar.png
+- **api/public/*.html** [Header e footer idênticos; Lavoar.png; alt-logo mobile; social links; typo Avorar→Avoar; nav unificada]
+
+Resumo: Header e footer iguais em todas as páginas do site. Logo Lavoar.png no header e footer. Navegação e redes sociais padronizadas.
+
+### Versão anterior (2026-03-06) - feat: vinheta Avoar como loading em todas as páginas
 - **api/public/css/style.css** [Preloader com vinheta; removido preloader.gif]
 - **api/public/*.html** [Todas as páginas: preloader com vídeo Vinheta_Avoar(1).webm]
 - **api/public/js/custom-script.js** [Pausa vídeo ao esconder preloader]

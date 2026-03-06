@@ -44,7 +44,7 @@
 }
 
 .footer-brand img {
-  width: 211px;
+  width: 222px;
   height: auto;
   margin-bottom: 8px;
 }
@@ -250,9 +250,9 @@
     padding-bottom: 30px;
   }
 
-  /* Logo 35% maior (281px * 1.35 ≈ 379px em mobile) */
+  /* Logo mobile (5% maior que antes) */
   .footer-brand img {
-    width: 379px;
+    width: 398px;
   }
 
   .footer-nav {
@@ -305,9 +305,9 @@
     padding-bottom: 20px;
   }
 
-  /* Logo 35% maior (281px * 1.35 ≈ 379px em mobile) */
+  /* Logo mobile 480px (5% maior) */
   .footer-brand img {
-    width: 379px;
+    width: 398px;
   }
 
   .footer-info p,

@@ -904,17 +904,17 @@
 		margin-bottom: 32px;
 	}
 
-	/* Logo no menu mobile (fundo escuro #2B2B2B); 35% maior (200px → 270px) */
+	/* Logo no menu mobile (fundo escuro #2B2B2B); 5% maior (270px → 284px) */
 	.main-nav-outer .main-logo-box .logo-desktop {
 		display: none !important;
 	}
 	.main-nav-outer .main-logo-box .logo-mobile {
 		display: block !important;
-		max-width: 270px;
+		max-width: 284px;
 	}
 
 	.main-nav-outer .main-logo-box img {
-		max-width: 270px;
+		max-width: 284px;
 	}
 
 	.main-nav-outer .main-nav-box .main-nav {
