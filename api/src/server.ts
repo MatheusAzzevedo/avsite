@@ -106,6 +106,7 @@ app.use('/images', express.static(path.join(__dirname, '../public/images')));
 app.use('/fonts', express.static(path.join(__dirname, '../public/fonts')));
 app.use('/admin', express.static(path.join(__dirname, '../public/admin')));
 app.use('/cliente', express.static(path.join(__dirname, '../public/cliente')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Middleware de logging detalhado para API (após middlewares de parser)
 app.use('/api/', requestLoggerMiddleware);

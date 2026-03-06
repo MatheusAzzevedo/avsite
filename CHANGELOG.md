@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-03-06 - feat: vinheta Avoar como loading da página Biologia Marinha
+
+### Arquivos Modificados
+- `api/public/index-11.html` [Preloader com vídeo Vinheta_Avoar(1).webm no lugar do ícone animado; script para pausar vídeo ao carregar]
+- `api/public/css/avoar-sections-page.css` [Estilos .preloader-vinheta e .preloader-vinheta-video]
+- `api/src/server.ts` [express.static(public) para servir arquivos na raiz de public, incluindo a vinheta]
+
+### Alterações
+- A página Biologia Marinha (/biologia-marinha) passa a exibir o vídeo Vinheta_Avoar(1).webm como indicador de carregamento no lugar do ícone animado rosa. O vídeo é centralizado, reproduz em loop durante o load e é pausado quando a página termina de carregar.
+
+---
+
+## 2026-03-06 - feat: layout e botão Lista de Alunos nos cards de excursões pedagógicas
+
+### Arquivos Modificados
+- `api/public/admin/js/excursoes-pedagogicas.js` [Valor em linha separada; botões Editar, Lista de Alunos e Excluir abaixo do valor]
+- `api/public/admin/js/listas.js` [Suporte a ?excursaoId=xxx na URL para abrir diretamente a lista de alunos]
+
+### Alterações
+- Na página Excursões Pedagógicas Cadastradas, o valor passa a ficar em linha acima dos botões. Abaixo do valor, botões: Editar, Lista de Alunos (novo) e Excluir. O botão Lista de Alunos leva para listas.html?excursaoId=xxx e abre automaticamente a view de alunos daquela excursão.
+
+---
+
+## 2026-03-06 - feat: pesquisa e filtros na listagem de excursões pedagógicas
+
+### Arquivos Modificados
+- `api/public/admin/listas.html` [Barra de pesquisa com lupa; filtros: status, data excursão, horário, data de registro; botão Limpar]
+- `api/public/admin/js/listas.js` [getFilteredExcursoes, limparFiltros; busca em nome/código/localidade; filtros client-side]
+- `api/src/routes/lista-alunos.routes.ts` [campo dataDestino no retorno de GET /excursoes para filtro por data]
+
+### Alterações
+- Pesquisa completa na listagem de excursões pedagógicas: busca por nome, código e localidade (texto); filtros por status (Ativo/Inativo), data da excursão, horário e data de registro. Botão Limpar reseta filtros. Filtros aplicados client-side sobre dados carregados.
+
+---
+
 ## 2026-03-06 - feat: script de otimização de imagens (batch Sharp)
 
 ### Arquivos Modificados

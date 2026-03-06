@@ -6,6 +6,7 @@
  * 
  * Funcionalidades:
  * - Listar excursões pedagógicas com estatísticas de alunos
+ * - Pesquisa e filtros: nome, código, localidade, status, data, horário, data de registro
  * - Visualizar lista de alunos de uma excursão específica
  * - Filtrar alunos por status do pedido
  * - Exportar lista de alunos em Excel
@@ -63,24 +64,96 @@ async function loadExcursoes() {
 }
 
 /**
+ * Explicação da função [getFilteredExcursoes]
+ * Aplica filtros client-side (pesquisa, data, horário, data de registro) sobre excursoesData.
+ * O filtro de status é aplicado no servidor via loadExcursoes.
+ */
+function getFilteredExcursoes() {
+    const searchText = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+    const filterData = document.getElementById('filterData')?.value || '';
+    const filterHorario = (document.getElementById('filterHorario')?.value || '').trim().toLowerCase();
+    const filterDataRegistro = document.getElementById('filterDataRegistro')?.value || '';
+
+    return excursoesData.filter(excursao => {
+        if (searchText) {
+            const titulo = (excursao.titulo || '').toLowerCase();
+            const subtitulo = (excursao.subtitulo || '').toLowerCase();
+            const codigo = (excursao.codigo || '').toLowerCase();
+            const local = (excursao.local || '').toLowerCase();
+            const matchSearch = titulo.includes(searchText) || subtitulo.includes(searchText) ||
+                codigo.includes(searchText) || local.includes(searchText);
+            if (!matchSearch) return false;
+        }
+
+        if (filterData && excursao.dataDestino) {
+            const dataDestStr = excursao.dataDestino instanceof Date
+                ? excursao.dataDestino.toISOString().split('T')[0]
+                : String(excursao.dataDestino).split('T')[0];
+            if (dataDestStr !== filterData) return false;
+        } else if (filterData && !excursao.dataDestino) {
+            return false;
+        }
+
+        if (filterHorario && excursao.horario) {
+            if (!String(excursao.horario).toLowerCase().includes(filterHorario)) return false;
+        } else if (filterHorario && !excursao.horario) {
+            return false;
+        }
+
+        if (filterDataRegistro && excursao.createdAt) {
+            const createdAtStr = excursao.createdAt instanceof Date
+                ? excursao.createdAt.toISOString().split('T')[0]
+                : String(excursao.createdAt).split('T')[0];
+            if (createdAtStr !== filterDataRegistro) return false;
+        } else if (filterDataRegistro && !excursao.createdAt) {
+            return false;
+        }
+
+        return true;
+    });
+}
+
+/**
+ * Explicação da função [limparFiltros]
+ * Limpa todos os campos de busca e filtros client-side, mantendo apenas o status.
+ */
+function limparFiltros() {
+    const searchInput = document.getElementById('searchInput');
+    const filterData = document.getElementById('filterData');
+    const filterHorario = document.getElementById('filterHorario');
+    const filterDataRegistro = document.getElementById('filterDataRegistro');
+    if (searchInput) searchInput.value = '';
+    if (filterData) filterData.value = '';
+    if (filterHorario) filterHorario.value = '';
+    if (filterDataRegistro) filterDataRegistro.value = '';
+    renderExcursoes();
+    console.log('[Listas] Filtros de pesquisa e data limpos');
+}
+
+/**
  * Explicação da função [renderExcursoes]
  * Renderiza lista de excursões no DOM
  */
 function renderExcursoes() {
     const container = document.getElementById('excursoesList');
+    const filtered = getFilteredExcursoes();
 
-    if (excursoesData.length === 0) {
+    if (filtered.length === 0) {
+        const hasFilters = document.getElementById('searchInput')?.value?.trim() ||
+            document.getElementById('filterData')?.value ||
+            document.getElementById('filterHorario')?.value?.trim() ||
+            document.getElementById('filterDataRegistro')?.value;
         container.innerHTML = `
             <div class="empty-state">
-                <i class="fas fa-inbox"></i>
-                <h3>Nenhum registro</h3>
-                <p>Não há excursões pedagógicas com compras ainda.</p>
+                <i class="fas fa-${hasFilters ? 'search' : 'inbox'}"></i>
+                <h3>${hasFilters ? 'Nenhum resultado' : 'Nenhum registro'}</h3>
+                <p>${hasFilters ? 'Nenhuma excursão encontrada com os filtros aplicados. Tente ajustar os critérios.' : 'Não há excursões pedagógicas com compras ainda.'}</p>
             </div>
         `;
         return;
     }
 
-    container.innerHTML = excursoesData.map(excursao => {
+    container.innerHTML = filtered.map(excursao => {
         const statusClass = excursao.status === 'ATIVO' ? 'badge-success' : 'badge-warning';
         
         // Monta badges de status de pedidos
@@ -749,6 +822,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterStatus = document.getElementById('filterStatus');
     if (filterStatus) filterStatus.addEventListener('change', loadExcursoes);
 
+    const searchInput = document.getElementById('searchInput');
+    const filterData = document.getElementById('filterData');
+    const filterHorario = document.getElementById('filterHorario');
+    const filterDataRegistro = document.getElementById('filterDataRegistro');
+    const btnLimparFiltros = document.getElementById('btnLimparFiltros');
+
+    if (searchInput) searchInput.addEventListener('input', () => { renderExcursoes(); });
+    if (searchInput) searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') renderExcursoes(); });
+    if (filterData) filterData.addEventListener('change', () => { renderExcursoes(); });
+    if (filterHorario) filterHorario.addEventListener('input', () => { renderExcursoes(); });
+    if (filterHorario) filterHorario.addEventListener('keyup', (e) => { if (e.key === 'Enter') renderExcursoes(); });
+    if (filterDataRegistro) filterDataRegistro.addEventListener('change', () => { renderExcursoes(); });
+    if (btnLimparFiltros) btnLimparFiltros.addEventListener('click', limparFiltros);
+
     const btnVoltar = document.getElementById('btnVoltarExcursoes');
     if (btnVoltar) btnVoltar.addEventListener('click', function (e) { e.preventDefault(); voltarParaExcursoes(e); });
 
@@ -764,7 +851,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterStatusPedido = document.getElementById('filterStatusPedido');
     if (filterStatusPedido) filterStatusPedido.addEventListener('change', loadAlunos);
 
-    loadExcursoes();
+    loadExcursoes().then(() => {
+        const params = new URLSearchParams(window.location.search);
+        const excursaoId = params.get('excursaoId');
+        if (excursaoId) {
+            console.log('[Listas] Abrindo lista de alunos via URL (excursaoId):', excursaoId);
+            abrirListaAlunos(excursaoId);
+        }
+    });
 
     // Mostrar botão de toggle em mobile
     if (window.innerWidth <= 768) {

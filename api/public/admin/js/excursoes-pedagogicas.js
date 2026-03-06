@@ -79,11 +79,12 @@
           '<div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">' +
             '<span class="badge badge-info">' + capitalizeFirst(e.categoria || '') + '</span>' +
           '</div>' +
-          '<div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--light-border); margin-top: auto;">' +
-            '<strong style="color: var(--primary-color); font-size: 1.25rem;">' + formatPrice(e.preco) + '</strong>' +
-            '<div style="display: flex; gap: 0.5rem;">' +
+          '<div style="padding-top: 1rem; border-top: 1px solid var(--light-border); margin-top: auto;">' +
+            '<div style="margin-bottom: 0.75rem;"><strong style="color: var(--primary-color); font-size: 1.25rem;">' + formatPrice(e.preco) + '</strong></div>' +
+            '<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">' +
               '<a href="excursao-pedagogica-editor.html?id=' + encodeURIComponent(e.id) + '" class="btn btn-sm btn-secondary" style="text-decoration: none;"><i class="fas fa-edit"></i> Editar</a>' +
-              '<button type="button" class="btn btn-sm btn-danger btn-delete-excursao-pedagogica" data-id="' + escapeHtml(e.id) + '" data-titulo="' + escapeHtml(e.titulo) + '" data-codigo="' + escapeHtml(e.codigo) + '" title="Excluir permanentemente"><i class="fas fa-trash"></i></button>' +
+              '<a href="listas.html?excursaoId=' + encodeURIComponent(e.id) + '" class="btn btn-sm btn-primary" style="text-decoration: none;"><i class="fas fa-list-alt"></i> Lista de Alunos</a>' +
+              '<button type="button" class="btn btn-sm btn-danger btn-delete-excursao-pedagogica" data-id="' + escapeHtml(e.id) + '" data-titulo="' + escapeHtml(e.titulo) + '" data-codigo="' + escapeHtml(e.codigo) + '" title="Excluir permanentemente"><i class="fas fa-trash"></i> Excluir</button>' +
             '</div>' +
           '</div>' +
         '</div>';

@@ -4,7 +4,27 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-06) - feat: script de otimização de imagens
+### Última atualização (2026-03-06) - feat: vinheta Avoar como loading na Biologia Marinha
+- **api/public/index-11.html** [Preloader com vídeo Vinheta_Avoar(1).webm]
+- **api/public/css/avoar-sections-page.css** [Estilos da preloader com vinheta]
+- **api/src/server.ts** [express.static(public) para servir vinheta e outros arquivos da raiz]
+
+Resumo: A página Biologia Marinha exibe o vídeo Vinheta_Avoar(1).webm como loading no lugar do ícone animado. Vídeo centralizado, autoplay durante o carregamento e pausado quando a página carrega.
+
+### Versão anterior (2026-03-06) - feat: layout e botão Lista de Alunos em excursões pedagógicas
+- **api/public/admin/js/excursoes-pedagogicas.js** [Valor em linha separada; botões Editar, Lista de Alunos, Excluir]
+- **api/public/admin/js/listas.js** [Query param excursaoId abre diretamente a lista de alunos]
+
+Resumo: Na página Excursões Pedagógicas, o valor fica acima dos botões. Novo botão "Lista de Alunos" leva para a listagem de alunos daquela excursão. URL listas.html?excursaoId=xxx abre a view automaticamente.
+
+### Versão anterior (2026-03-06) - feat: pesquisa e filtros na listagem de excursões
+- **api/public/admin/listas.html** [Barra de pesquisa com lupa; filtros data, horário, data registro; botão Limpar]
+- **api/public/admin/js/listas.js** [Funções getFilteredExcursoes e limparFiltros; busca em nome/código/localidade]
+- **api/src/routes/lista-alunos.routes.ts** [Campo dataDestino no retorno da API]
+
+Resumo: Na página Listas de Alunos (excursões pedagógicas), pesquisa por nome, código ou localidade; filtros por status, data da excursão, horário e data de registro. Botão Limpar reseta filtros. Filtros aplicados client-side após carregamento.
+
+### Versão anterior (2026-03-06) - feat: script de otimização de imagens
 - **api/scripts/optimize-images.js** [Script batch Sharp: resize max 1920px, recompressão JPEG/PNG]
 - **api/package.json** [npm run optimize:images]
 

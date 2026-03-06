@@ -100,11 +100,41 @@
             margin-top: 2rem;
         }
 
+        .search-filters-panel {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-bar-wrapper {
+            position: relative;
+            max-width: 400px;
+            margin-bottom: 1rem;
+        }
+
+        .search-bar-wrapper .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light, #6c757d);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .search-bar-wrapper .search-input {
+            padding-left: 2.25rem;
+            border-radius: var(--radius-md, 6px);
+        }
+
         .filters {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
             flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-actions .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
         }
 
         .filter-group {
@@ -191,6 +221,14 @@
             .excursao-card-actions .btn-deletar-excursao {
                 margin-left: 0;
                 align-self: flex-end;
+            }
+
+            .search-bar-wrapper {
+                max-width: 100%;
+            }
+
+            .filters {
+                flex-direction: column;
             }
         }
     </style>
@@ -291,20 +329,43 @@
                             <i class="fas fa-info-circle"></i>
                             Nas extrações em Excel, apenas alunos com pagamento confirmado são incluídos.
                         </p>
-                        <div class="filters">
-                            <div class="filter-group">
-                                <label for="filterStatus">Status</label>
-                                <select id="filterStatus" class="form-control">
-                                    <option value="">Todos</option>
-                                    <option value="ATIVO">Ativo</option>
-                                    <option value="INATIVO">Inativo</option>
-                                </select>
+                        <div class="search-filters-panel">
+                            <div class="search-bar-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" id="searchInput" class="form-control search-input" placeholder="Pesquisar por nome, código ou localidade..." title="Busca em título, subtítulo, código e local">
                             </div>
-                            <div class="filter-group" style="align-self: flex-end;">
-                                <label>&nbsp;</label>
-                                <button type="button" id="btnAtualizarPagamentosTodas" class="btn btn-primary btn-sm" title="Consultar Asaas e atualizar status de pagamento de todas as listas">
-                                    <i class="fas fa-sync-alt"></i> Atualizar
-                                </button>
+                            <div class="filters">
+                                <div class="filter-group">
+                                    <label for="filterStatus">Status</label>
+                                    <select id="filterStatus" class="form-control">
+                                        <option value="">Todos</option>
+                                        <option value="ATIVO">Ativo</option>
+                                        <option value="INATIVO">Inativo</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filterData">Data (excursão)</label>
+                                    <input type="date" id="filterData" class="form-control" title="Filtrar pela data do destino da excursão">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filterHorario">Horário</label>
+                                    <input type="text" id="filterHorario" class="form-control" placeholder="Ex: 13h30" title="Filtrar pelo horário da excursão">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filterDataRegistro">Data de registro</label>
+                                    <input type="date" id="filterDataRegistro" class="form-control" title="Filtrar pela data de criação do registro">
+                                </div>
+                                <div class="filter-group filter-actions">
+                                    <label>&nbsp;</label>
+                                    <div class="filter-buttons">
+                                        <button type="button" id="btnLimparFiltros" class="btn btn-secondary btn-sm" title="Limpar todos os filtros">
+                                            <i class="fas fa-times"></i> Limpar
+                                        </button>
+                                        <button type="button" id="btnAtualizarPagamentosTodas" class="btn btn-primary btn-sm" title="Consultar Asaas e atualizar status de pagamento de todas as listas">
+                                            <i class="fas fa-sync-alt"></i> Atualizar
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
