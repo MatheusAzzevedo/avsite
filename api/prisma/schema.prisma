@@ -321,6 +321,9 @@ model Pedido {
   dataConfirmacao          DateTime?
   emailConfirmacaoEnviado  Boolean   @default(false)
 
+  // Snapshot da excursão pedagógica quando esta foi excluída (mantém histórico no cliente)
+  excursaoPedagogicaSnapshot Json? // { titulo, codigo, documentoUrl, documentoNome }
+
   // Relacionamentos
   cliente            Cliente             @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   excursao           Excursao?           @relation(fields: [excursaoId], references: [id])

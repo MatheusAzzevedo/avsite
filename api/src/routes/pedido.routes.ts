@@ -31,6 +31,23 @@ import { ExcursaoStatus, PedidoStatus } from '@prisma/client';
 
 const router = Router();
 
+/** Monta excursaoPedagogica a partir do snapshot quando a excursão foi excluída (histórico do cliente) */
+function resolveExcursaoPedagogicaParaCliente(pedido: { excursaoPedagogica: unknown; excursaoPedagogicaSnapshot?: unknown }): Record<string, unknown> | null {
+  if (pedido.excursaoPedagogica) {
+    return pedido.excursaoPedagogica as Record<string, unknown>;
+  }
+  const snap = pedido.excursaoPedagogicaSnapshot as { titulo?: string; codigo?: string; documentoUrl?: string | null; documentoNome?: string | null } | null;
+  if (snap && typeof snap === 'object' && snap.titulo) {
+    return {
+      titulo: snap.titulo,
+      codigo: snap.codigo ?? '',
+      documentoUrl: snap.documentoUrl ?? null,
+      documentoNome: snap.documentoNome ?? null
+    };
+  }
+  return null;
+}
+
 /**
  * Explicação da API [GET /api/cliente/pedidos/excursao/:codigo]
  * 
@@ -383,12 +400,16 @@ router.get('/',
         });
       }
 
-      // Formata dados
-      const data = pedidos.map(p => ({
-        ...p,
-        valorUnitario: Number(p.valorUnitario),
-        valorTotal: Number(p.valorTotal)
-      }));
+      // Formata dados (usa snapshot quando excursão pedagógica foi excluída)
+      const data = pedidos.map(p => {
+        const excursaoPedagogica = resolveExcursaoPedagogicaParaCliente(p);
+        return {
+          ...p,
+          valorUnitario: Number(p.valorUnitario),
+          valorTotal: Number(p.valorTotal),
+          excursaoPedagogica: excursaoPedagogica
+        };
+      });
 
       res.json({
         success: true,
@@ -486,14 +507,15 @@ router.get('/:id',
         context: { pedidoId: id, clienteId, status: pedido.status }
       });
 
-      // Formata dados (pedido pode ser de excursão pedagógica ou normal)
+      // Formata dados (usa snapshot quando excursão pedagógica foi excluída)
+      const excursaoPedagogicaResolved = resolveExcursaoPedagogicaParaCliente(pedido);
       const data = {
         ...pedido,
         valorUnitario: Number(pedido.valorUnitario),
         valorTotal: Number(pedido.valorTotal),
         excursaoPedagogica: pedido.excursaoPedagogica
           ? { ...pedido.excursaoPedagogica, preco: Number(pedido.excursaoPedagogica.preco) }
-          : null,
+          : excursaoPedagogicaResolved,
         excursao: pedido.excursao
           ? { ...pedido.excursao, preco: Number(pedido.excursao.preco) }
           : null

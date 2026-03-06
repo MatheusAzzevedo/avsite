@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-03-06 - feat: excluir excursão pedagógica mesmo com pedidos vinculados (histórico preservado)
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Campo excursaoPedagogicaSnapshot no Pedido]
+- `api/prisma/migration-add-excursao-pedagogica-snapshot.sql` [Migration SQL]
+- `api/src/routes/excursao-pedagogica.routes.ts` [DELETE: desvincula pedidos, salva snapshot, exclui excursão]
+- `api/src/routes/pedido.routes.ts` [resolveExcursaoPedagogicaParaCliente; GET usa snapshot para histórico]
+
+### Alterações
+- O botão de excluir excursão pedagógica passa a funcionar mesmo quando há pessoas/pedidos vinculados. Antes de excluir, a API salva um snapshot (titulo, codigo, documentoUrl, documentoNome) nos pedidos e desvincula a referência. O histórico continua visível na página Meus Pedidos do cliente. Executar migration SQL ou `npx prisma db push`.
+
+---
+
 ## 2026-03-04 - feat: logo do menu mobile 25% maior
 
 ### Arquivos Modificados

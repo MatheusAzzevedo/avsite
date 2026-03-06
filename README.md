@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-04) - feat: logo do menu mobile 25% maior
+### Última atualização (2026-03-06) - feat: excluir excursão pedagógica com pedidos vinculados
+- **api/prisma/schema.prisma** [excursaoPedagogicaSnapshot em Pedido]
+- **api/src/routes/excursao-pedagogica.routes.ts** [DELETE desvincula pedidos, salva snapshot, exclui excursão]
+- **api/src/routes/pedido.routes.ts** [GET pedidos usa snapshot quando excursão foi excluída; histórico mantido]
+
+Resumo: Exclusão de excursão pedagógica passa a funcionar mesmo com pedidos vinculados. Snapshot (título, código, documento) é salvo nos pedidos para manter histórico na página Meus Pedidos. Executar migration ou `npx prisma db push`.
+
+### Versão anterior (2026-03-04) - feat: logo do menu mobile 25% maior
 - **api/public/css/responsive.css**, **css/responsive.css** [.main-logo-box .logo-mobile e img: max-width 200px]
 
 Resumo: O logotipo do menu lateral mobile aumenta 25% (160px → 200px).

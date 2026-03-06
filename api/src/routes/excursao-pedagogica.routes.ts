@@ -544,17 +544,27 @@ router.delete('/:id',
         throw ApiError.notFound('Excursão pedagógica não encontrada');
       }
 
-      // Verifica se há pedidos vinculados
+      // Desvincula pedidos e salva snapshot para manter histórico do cliente
       const pedidosCount = await prisma.pedido.count({
         where: { excursaoPedagogicaId: id }
       });
       if (pedidosCount > 0) {
-        logger.warn(`[AVSITE-API] ⚠️ Excursão Pedagógica - Exclusão BLOQUEADA - Possui pedidos vinculados`, {
-          context: { excursaoId: id, codigo: existing.codigo, pedidosCount, userId, userEmail }
+        const snapshot = {
+          titulo: existing.titulo,
+          codigo: existing.codigo,
+          documentoUrl: existing.documentoUrl ?? null,
+          documentoNome: existing.documentoNome ?? null
+        };
+        await prisma.pedido.updateMany({
+          where: { excursaoPedagogicaId: id },
+          data: {
+            excursaoPedagogicaId: null,
+            excursaoPedagogicaSnapshot: snapshot as object
+          }
         });
-        throw ApiError.badRequest(
-          `Não é possível excluir: existem ${pedidosCount} pedido(s) vinculado(s) a esta excursão. Remova ou cancele os pedidos primeiro.`
-        );
+        logger.info(`[AVSITE-API] 📋 Excursão Pedagógica - Snapshot salvo em ${pedidosCount} pedido(s) para histórico`, {
+          context: { excursaoId: id, codigo: existing.codigo, pedidosCount }
+        });
       }
 
       // Exclui excursão (galeria é excluída em cascata)
