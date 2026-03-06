@@ -208,7 +208,7 @@
 
 .slide-explore-indicator {
     position: absolute;
-    bottom: -6rem;
+    bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -223,6 +223,7 @@
     opacity: 0.95;
     transition: opacity 0.3s ease, color 0.3s ease;
     animation: slideExploreFadeIn 1s ease-out 0.5s both;
+    z-index: 3;
 }
 
 .slide-explore-indicator:hover {
@@ -376,7 +377,7 @@
     }
 
     .slide-explore-indicator {
-        bottom: -6rem;
+        bottom: 1.5rem;
         font-size: 0.8rem;
     }
 
@@ -462,7 +463,7 @@
     }
 
     .slide-explore-indicator {
-        bottom: -6rem;
+        bottom: 1.25rem;
         font-size: 0.75rem;
     }
 

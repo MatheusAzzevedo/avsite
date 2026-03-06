@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-03-06 - feat: indicador Deslize para explorar visível na Biologia Marinha
+
+### Arquivos Modificados
+- `api/public/css/avoar-sections-page.css` [.slide-explore-indicator bottom: -6rem → 2rem para visibilidade; z-index: 3; media queries 1.5rem/1.25rem]
+- `index-11.html` [Indicador "Deslize para explorar" adicionado na primeira seção]
+- `css/avoar-sections-page.css` [Estilos .slide-explore-indicator adicionados para suportar index-11.html da raiz]
+
+### Alterações
+- Indicador "Deslize para explorar" reposicionado com bottom: 2rem (antes -6rem, ficava fora da viewport por overflow:hidden). Adicionado na primeira seção da index-11.html na raiz. Estilos do indicador incluídos no css/avoar-sections-page.css da raiz.
+
+---
+
 ## 2026-03-06 - feat: header e footer unificados com logo Lavoar.png em todas as páginas
 
 ### Arquivos Modificados
