@@ -6,6 +6,8 @@
 	//Hide Loading Box (Preloader)
 	function handlePreloader() {
 		if($('.preloader').length){
+			var v = document.querySelector('.preloader-vinheta-video');
+			if (v) v.pause();
 			$('body').addClass('page-loaded');
 			$('.preloader').delay(0).fadeOut(0);
 		}

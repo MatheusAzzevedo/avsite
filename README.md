@@ -4,12 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-06) - feat: vinheta Avoar como loading na Biologia Marinha
-- **api/public/index-11.html** [Preloader com vídeo Vinheta_Avoar(1).webm]
-- **api/public/css/avoar-sections-page.css** [Estilos da preloader com vinheta]
-- **api/src/server.ts** [express.static(public) para servir vinheta e outros arquivos da raiz]
+### Última atualização (2026-03-06) - feat: vinheta Avoar como loading em todas as páginas
+- **api/public/css/style.css** [Preloader com vinheta; removido preloader.gif]
+- **api/public/*.html** [Todas as páginas: preloader com vídeo Vinheta_Avoar(1).webm]
+- **api/public/js/custom-script.js** [Pausa vídeo ao esconder preloader]
 
-Resumo: A página Biologia Marinha exibe o vídeo Vinheta_Avoar(1).webm como loading no lugar do ícone animado. Vídeo centralizado, autoplay durante o carregamento e pausado quando a página carrega.
+Resumo: A vinheta Vinheta_Avoar(1).webm é o loading exibido ao trocar de página em todo o site (Início, Sobre Nós, Blog, Contato, Excursões, Biologia Marinha, etc.), substituindo o ícone animado rosa.
 
 ### Versão anterior (2026-03-06) - feat: layout e botão Lista de Alunos em excursões pedagógicas
 - **api/public/admin/js/excursoes-pedagogicas.js** [Valor em linha separada; botões Editar, Lista de Alunos, Excluir]

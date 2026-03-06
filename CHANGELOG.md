@@ -1,14 +1,15 @@
 # Changelog
 
-## 2026-03-06 - feat: vinheta Avoar como loading da página Biologia Marinha
+## 2026-03-06 - feat: vinheta Avoar como loading em todas as páginas do site
 
 ### Arquivos Modificados
-- `api/public/index-11.html` [Preloader com vídeo Vinheta_Avoar(1).webm no lugar do ícone animado; script para pausar vídeo ao carregar]
-- `api/public/css/avoar-sections-page.css` [Estilos .preloader-vinheta e .preloader-vinheta-video]
-- `api/src/server.ts` [express.static(public) para servir arquivos na raiz de public, incluindo a vinheta]
+- `api/public/css/style.css` [Preloader com vinheta: removido preloader.gif; estilos .preloader-vinheta-video]
+- `api/public/*.html` [index-10, index-11, about, blog, blog-single, contact, nossos-roteiros, portfolio, portfolio-single: preloader com vídeo Vinheta_Avoar(1).webm]
+- `api/public/js/custom-script.js` [handlePreloader pausa o vídeo antes de esconder]
+- `api/public/css/avoar-sections-page.css` [Removidos estilos duplicados de preloader-vinheta]
 
 ### Alterações
-- A página Biologia Marinha (/biologia-marinha) passa a exibir o vídeo Vinheta_Avoar(1).webm como indicador de carregamento no lugar do ícone animado rosa. O vídeo é centralizado, reproduz em loop durante o load e é pausado quando a página termina de carregar.
+- O vídeo Vinheta_Avoar(1).webm passa a ser o loading de todas as páginas do site. Ao trocar de página (navegação entre Início, Sobre Nós, Blog, Contato, Excursões, Biologia Marinha, etc.), a vinheta é exibida no lugar do ícone animado rosa até a página carregar.
 
 ---
 

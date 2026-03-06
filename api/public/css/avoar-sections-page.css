@@ -1,26 +1,6 @@
 /* Avoar Sections Page - Estilos para página inicial com 5 seções fullscreen */
 
 /* ========================================
-   Preloader com vinheta (Biologia Marinha)
-   ======================================== */
-
-.preloader-vinheta {
-    background-image: none;
-    background-color: #0a0a0a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.preloader-vinheta-video {
-    max-width: 90vw;
-    max-height: 90vh;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-}
-
-/* ========================================
    Configuração Base das Seções
    ======================================== */
 
