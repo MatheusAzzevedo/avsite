@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-06) - feat: excluir excursão pedagógica com pedidos vinculados
+### Última atualização (2026-03-06) - feat: logo Lavoar.png no header e footer, 35% maior
+- **Páginas HTML** [Logo Avoar svg e Lavoar branco substituídas por Lavoar.png no header e footer]
+- **api/public/css**, **css/** [Tamanhos de logo aumentados 35%: header 88px, footer 211px/379px mobile, menu overlay 270px]
+- **images/Lavoar.png** [Cópia para pasta raiz para páginas fora de api/public]
+
+Resumo: Logo Lavoar.png (Avoar Turismo Pedagógico e Viagens) no header e footer de todas as páginas do site. Tamanhos 35% maiores.
+
+### Versão anterior (2026-03-06) - feat: excluir excursão pedagógica com pedidos vinculados
 - **api/prisma/schema.prisma** [excursaoPedagogicaSnapshot em Pedido]
 - **api/src/routes/excursao-pedagogica.routes.ts** [DELETE desvincula pedidos, salva snapshot, exclui excursão]
 - **api/src/routes/pedido.routes.ts** [GET pedidos usa snapshot quando excursão foi excluída; histórico mantido]

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-03-06 - feat: logo Lavoar.png no header e footer, 35% maior
+
+### Arquivos Modificados
+- `api/public/index-10.html`, `index-11.html`, `about.html`, `blog.html`, `blog-single.html`, `contact.html`, `portfolio.html`, `portfolio-single.html`, `nossos-roteiros.html` (api/public e raiz) [Logo Avoar svg e Lavoar branco → Lavoar.png]
+- `api/public/includes/footer.html`, `includes/footer.html` [Logo svg → Lavoar.png]
+- `api/public/css/avoar-top-header.css`, `css/avoar-top-header.css` [header-logo img: 65px → 88px]
+- `api/public/css/style.css`, `css/style.css` [alt-logo-box img: 250px → 338px]
+- `api/public/css/footer.css`, `css/footer.css` [footer-brand img: 156px → 211px; mobile 281px → 379px]
+- `api/public/css/responsive.css`, `css/responsive.css` [main-logo-box mobile: 200px → 270px]
+- `images/Lavoar.png` [cópia de api/public/images para raiz]
+
+### Alterações
+- Logo do header e footer passa a ser Lavoar.png (Turismo Pedagógico e Viagens). Tamanhos aumentados 35%: header 65→88px, alt-logo 250→338px, footer 156→211px (mobile 379px), menu mobile 200→270px.
+
+---
+
 ## 2026-03-06 - feat: excluir excursão pedagógica mesmo com pedidos vinculados (histórico preservado)
 
 ### Arquivos Modificados
