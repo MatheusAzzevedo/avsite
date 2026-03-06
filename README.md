@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-06) - feat: logo Lavoar.png no header e footer, 35% maior
+### Última atualização (2026-03-06) - feat: indicador Deslize para explorar na Biologia Marinha
+- **api/public/css/avoar-sections-page.css** [.slide-explore-indicator bottom: -6rem em todas as breakpoints]
+- **api/public/index-11.html** [Indicador na primeira seção da página Biologia Marinha]
+
+Resumo: Indicador "Deslize para explorar" agora usa bottom: -6rem e foi adicionado à primeira seção (hero com vídeo) da página Biologia Marinha.
+
+### Versão anterior (2026-03-06) - feat: logo Lavoar.png no header e footer, 35% maior
 - **Páginas HTML** [Logo Avoar svg e Lavoar branco substituídas por Lavoar.png no header e footer]
 - **api/public/css**, **css/** [Tamanhos de logo aumentados 35%: header 88px, footer 211px/379px mobile, menu overlay 270px]
 - **images/Lavoar.png** [Cópia para pasta raiz para páginas fora de api/public]

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-03-06 - feat: indicador Deslize para explorar na Biologia Marinha; bottom -6rem
+
+### Arquivos Modificados
+- `api/public/css/avoar-sections-page.css` [.slide-explore-indicator bottom: 2rem → -6rem; media queries 1.5rem/-5rem → -6rem]
+- `api/public/index-11.html` [Indicador "Deslize para explorar" adicionado na primeira seção da página Biologia Marinha]
+
+### Alterações
+- Indicador "Deslize para explorar" reposicionado com bottom: -6rem (antes 2rem, estava muito alto). Indicador adicionado na primeira seção (vídeo) da página /biologia-marinha, linkando para #section-2.
+
+---
+
 ## 2026-03-06 - feat: logo Lavoar.png no header e footer, 35% maior
 
 ### Arquivos Modificados
