@@ -63,6 +63,9 @@ npm run prisma:push
 # Popular banco com dados iniciais
 npm run seed
 
+# Otimizar imagens (Imagens para o site, FOTOS AVOAR PREFERIDAS)
+npm run optimize:images
+
 # Desenvolvimento
 npm run dev
 

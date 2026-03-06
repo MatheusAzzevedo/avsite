@@ -14,7 +14,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "optimize:images": "node scripts/optimize-images.js"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",

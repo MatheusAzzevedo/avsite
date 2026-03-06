@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-03-06 - feat: script de otimização de imagens (batch Sharp)
+
+### Arquivos Modificados
+- `api/scripts/optimize-images.js` [Novo: script que otimiza imagens nas pastas Imagens para o site, Biologia marinha, Pagina Inicial, FOTOS AVOAR PREFERIDAS]
+- `api/package.json` [Script npm run optimize:images]
+- `api/README.md` [Documentação do comando]
+
+### Alterações
+- Script batch com Sharp que redimensiona (max 1920px) e recompressa (JPEG q82, PNG comp9) imagens nas pastas especificadas. Substitui arquivos no lugar sem alterar nomes ou formatos. Uso: `npm run optimize:images` (a partir da pasta api/).
+
+---
+
 ## 2026-03-06 - feat: indicador Deslize para explorar na Biologia Marinha; bottom -6rem
 
 ### Arquivos Modificados

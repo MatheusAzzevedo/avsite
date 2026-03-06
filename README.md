@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-06) - feat: indicador Deslize para explorar na Biologia Marinha
+### Última atualização (2026-03-06) - feat: script de otimização de imagens
+- **api/scripts/optimize-images.js** [Script batch Sharp: resize max 1920px, recompressão JPEG/PNG]
+- **api/package.json** [npm run optimize:images]
+
+Resumo: Script otimiza imagens nas pastas Imagens para o site, Biologia marinha, Pagina Inicial e FOTOS AVOAR PREFERIDAS. Reduz tamanho sem reupload. Executar: `cd api && npm run optimize:images`.
+
+### Versão anterior (2026-03-06) - feat: indicador Deslize para explorar na Biologia Marinha
 - **api/public/css/avoar-sections-page.css** [.slide-explore-indicator bottom: -6rem em todas as breakpoints]
 - **api/public/index-11.html** [Indicador na primeira seção da página Biologia Marinha]
 
