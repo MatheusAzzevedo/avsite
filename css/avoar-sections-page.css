@@ -186,7 +186,7 @@
 
 .slide-explore-indicator {
     position: absolute;
-    bottom: 2rem;
+    bottom: 0.75rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

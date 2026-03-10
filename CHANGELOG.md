@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-03-09 - fix: formatação de valores no checkout convencional (R$ X.XXX,XX)
+
+### Arquivos Modificados
+- `api/public/cliente/js/checkout-convencional.js` [formatMoney passa a forçar duas casas decimais, separador de milhar com ponto e separador decimal com vírgula no formato "R$ X.XXX,XX"]
+- `api/public/cliente/js/pagamento.js` [formatMoney padroniza exibição de valores na tela de pagamento no formato "R$ X.XXX,XX"]
+
+### Alterações
+- Os valores exibidos no resumo do pedido do checkout convencional agora seguem rigidamente o padrão brasileiro "R$ X.XXX,XX", com ponto para milhares e vírgula para centavos, evitando variações de espaço especial ou formatações inconsistentes entre navegadores.
+
+---
+
+## 2026-03-09 - fix: indicador Deslize para explorar abaixo dos botões na página inicial
+
+### Arquivos Modificados
+- `api/public/css/avoar-sections-page.css` [.slide-explore-indicator bottom: 2rem → 0.75rem (desktop), 1.5rem → 1rem (tablets) e 1.25rem → 0.75rem (mobile)]
+- `css/avoar-sections-page.css` [.slide-explore-indicator bottom: 2rem → 0.75rem na versão raiz]
+
+### Alterações
+- O indicador "Deslize para explorar" na seção 1 da página inicial foi reposicionado ligeiramente mais para baixo, abaixo da área de interação dos botões e ícones de navegação, evitando que o link fique "por cima" dos botões e atrapalhe cliques, mantendo-o visível próximo ao rodapé em todas as resoluções.
+
+---
+
 ## 2026-03-06 - feat: indicador Deslize para explorar visível na Biologia Marinha
 
 ### Arquivos Modificados

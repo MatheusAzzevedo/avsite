@@ -464,14 +464,14 @@ function setupCardForm() {
  */
 function setupCardMasks() {
     // Máscara número do cartão: 0000 0000 0000 0000
-    document.getElementById('cardNumber').addEventListener('input', function(e) {
+    document.getElementById('cardNumber').addEventListener('input', function (e) {
         let val = e.target.value.replace(/\D/g, '');
         val = val.replace(/(\d{4})(?=\d)/g, '$1 ');
         e.target.value = val.substring(0, 19);
     });
 
     // Máscara validade: MM/AAAA
-    document.getElementById('cardExpiry').addEventListener('input', function(e) {
+    document.getElementById('cardExpiry').addEventListener('input', function (e) {
         let val = e.target.value.replace(/\D/g, '');
         if (val.length >= 2) {
             val = val.substring(0, 2) + '/' + val.substring(2, 6);
@@ -480,12 +480,12 @@ function setupCardMasks() {
     });
 
     // Máscara CVV: apenas números
-    document.getElementById('cardCvv').addEventListener('input', function(e) {
+    document.getElementById('cardCvv').addEventListener('input', function (e) {
         e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
     });
 
     // Máscara CPF: 000.000.000-00
-    document.getElementById('holderCpf').addEventListener('input', function(e) {
+    document.getElementById('holderCpf').addEventListener('input', function (e) {
         let val = e.target.value.replace(/\D/g, '');
         if (val.length <= 11) {
             val = val.replace(/(\d{3})(\d)/, '$1.$2');
@@ -498,7 +498,7 @@ function setupCardMasks() {
     // Máscara CEP: 00000-000 (formatação automática na digitação)
     const holderPostalCode = document.getElementById('holderPostalCode');
     if (holderPostalCode) {
-        holderPostalCode.addEventListener('input', function(e) {
+        holderPostalCode.addEventListener('input', function (e) {
             let val = e.target.value.replace(/\D/g, '').slice(0, 8);
             if (val.length > 5) {
                 val = val.slice(0, 5) + '-' + val.slice(5, 8);
@@ -508,7 +508,7 @@ function setupCardMasks() {
     }
 
     // Máscara telefone: (00) 00000-0000
-    document.getElementById('holderPhone').addEventListener('input', function(e) {
+    document.getElementById('holderPhone').addEventListener('input', function (e) {
         let val = e.target.value.replace(/\D/g, '');
         if (val.length <= 11) {
             val = val.replace(/^(\d{2})(\d)/, '($1) $2');
@@ -629,7 +629,18 @@ function showPageError(message) {
  * Formata valor numérico para moeda brasileira (R$ X.XXX,XX).
  */
 function formatMoney(value) {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    const number = Number(value);
+
+    if (!isFinite(number)) {
+        return 'R$ 0,00';
+    }
+
+    const fixed = number.toFixed(2); // sempre duas casas decimais
+    const [integerPart, decimalPart] = fixed.split('.');
+
+    const withThousands = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return `R$ ${withThousands},${decimalPart}`;
 }
 
 // ============================================================

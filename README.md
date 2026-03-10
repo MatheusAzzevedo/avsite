@@ -4,12 +4,17 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-06) - feat: indicador Deslize para explorar visível na Biologia Marinha
-- **api/public/css/avoar-sections-page.css** [Indicador com bottom 2rem; z-index 3; responsivo]
-- **index-11.html** [Indicador na primeira seção]
-- **css/avoar-sections-page.css** [Estilos do indicador para versão raiz]
+### Última atualização (2026-03-09) - fix: formatação de valores no checkout convencional e na página de pagamento (R$ X.XXX,XX)
+- **api/public/cliente/js/checkout-convencional.js** [formatMoney passa a retornar valores no padrão "R$ X.XXX,XX", com ponto para milhar e vírgula para centavos]
+- **api/public/cliente/js/pagamento.js** [formatMoney unifica a exibição dos valores de PIX e cartão no padrão "R$ X.XXX,XX"]
 
-Resumo: Indicador "Deslize para explorar" ajustado para ficar visível (bottom 2rem em vez de -6rem). Adicionado na index-11.html da raiz e estilos no css raiz para suportar ambas as versões da página Biologia Marinha.
+Resumo: Valores do resumo do pedido no checkout convencional e na tela de pagamento agora são sempre exibidos com duas casas decimais e formatação brasileira de moeda, garantindo consistência visual e evitando diferenças de formatação entre navegadores.
+
+### Versão anterior (2026-03-09) - fix: indicador Deslize para explorar abaixo dos botões na página inicial
+- **api/public/css/avoar-sections-page.css** [bottom ajustado para 0.75rem (desktop), 1rem (tablets) e 0.75rem (mobile) para não sobrepor os botões da seção 1]
+- **css/avoar-sections-page.css** [bottom 0.75rem na versão raiz da página inicial]
+
+Resumo: Indicador "Deslize para explorar" da hero da página inicial reposicionado um pouco mais para baixo, abaixo da área dos botões e ícones de navegação, evitando que o link fique sobre eles e atrapalhe a interação, mantendo a visibilidade próxima ao rodapé em todas as resoluções.
 
 ### Versão anterior (2026-03-06) - feat: header e footer unificados com Lavoar.png
 - **api/public/*.html** [Header e footer idênticos; Lavoar.png; alt-logo mobile; social links; typo Avorar→Avoar; nav unificada]

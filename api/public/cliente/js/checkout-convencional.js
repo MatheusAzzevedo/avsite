@@ -309,7 +309,18 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
 
 // Helpers
 function formatMoney(value) {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    const number = Number(value);
+
+    if (!isFinite(number)) {
+        return 'R$ 0,00';
+    }
+
+    const fixed = number.toFixed(2); // sempre duas casas decimais
+    const [integerPart, decimalPart] = fixed.split('.');
+
+    const withThousands = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return `R$ ${withThousands},${decimalPart}`;
 }
 
 function showError(msg) {
