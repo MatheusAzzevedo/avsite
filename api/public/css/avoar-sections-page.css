@@ -237,6 +237,7 @@
 .slide-explore-text {
     text-transform: none;
     white-space: nowrap;
+    font-size: 1rem;
 }
 
 .slide-explore-arrow {
