@@ -66,6 +66,35 @@
                     </button>
                 </div>
                 <div class="card-body">
+                    <div id="filtersBar" class="filters-bar" style="display: none; margin-bottom: 1.5rem;">
+                        <div class="filters-row" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                            <div>
+                                <label for="filtroDataDe" style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem;">Data De</label>
+                                <input type="date" id="filtroDataDe" class="filter-select" style="padding: 0.5rem;">
+                            </div>
+                            <div>
+                                <label for="filtroDataAte" style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem;">Até</label>
+                                <input type="date" id="filtroDataAte" class="filter-select" style="padding: 0.5rem;">
+                            </div>
+                            <div>
+                                <label for="filtroExcursao" style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem;">Excursão</label>
+                                <select id="filtroExcursao" class="filter-select">
+                                    <option value="">Todos</option>
+                                    <option value="ativo">Ativa</option>
+                                    <option value="inativo">Inativa</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="filtroPagamento" style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem;">Pagamento</label>
+                                <select id="filtroPagamento" class="filter-select">
+                                    <option value="">Todos</option>
+                                    <option value="pendente">Pendente</option>
+                                    <option value="concluido">Concluído</option>
+                                </select>
+                            </div>
+                            <button type="button" id="btnLimparFiltros" class="btn btn-secondary btn-sm">Limpar</button>
+                        </div>
+                    </div>
                     <div id="loadingState" style="text-align: center; padding: 3rem;">
                         <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
                         <p style="margin-top: 1rem;">Carregando...</p>

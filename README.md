@@ -4,10 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-12) - feat: Listagem Convencional
-- **api/src/routes/listagem-convencional.routes.ts** [Lista pedidos convencionais, detalhes, exclusão, exportação Excel]
-- **api/public/admin/listagem-convencional.html**, **js/listagem-convencional.js** [Tabela de compras com View, Excluir e Extração .xlsx]
-- **api/public/admin/css/admin-style.css** [badge-secondary para status]
+### Última atualização (2026-03-12) - feat: filtros e pendentes na Listagem Convencional
+- **api/src/routes/listagem-convencional.routes.ts** [excursaoAtivo no retorno]
+- **api/public/admin/listagem-convencional.html** [Filtros: Data De/Até, Excursão, Pagamento, Limpar]
+- **api/public/admin/js/listagem-convencional.js** [Filtros client-side, deletePedido corrigido]
+
+Resumo: Listagem exibe pedidos pendentes. Filtros por data, excursão ativa/inativa e pagamento (pendente/concluído). Botão Limpar reseta filtros. Corrigido exclusão de pedidos.
+
+### Versão anterior (2026-03-12) - feat: Listagem Convencional
+- **api/public/admin/listagem-convencional.html**, **js/listagem-convencional.js** [Tabela com View, Excluir e Extração .xlsx]
 - **api/public/admin/*.html** [Link no menu lateral]
 
 Resumo: Nova página "Listagem Convencional" no admin para visualizar compras de viagens convencionais. Tabela com viagem, cliente, passageiros, valor, status e data. Botão View abre modal com detalhes completos dos compradores e passageiros. Botão Excluir remove pedido. Botão "Extração Excel" exporta todos os dados em .xlsx.

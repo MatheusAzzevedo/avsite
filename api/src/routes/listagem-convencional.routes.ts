@@ -53,7 +53,7 @@ router.get('/',
         orderBy: { createdAt: 'desc' },
         include: {
           excursao: {
-            select: { id: true, titulo: true, slug: true, preco: true }
+            select: { id: true, titulo: true, slug: true, preco: true, status: true }
           },
           cliente: {
             select: { id: true, nome: true, email: true, telefone: true }
@@ -66,6 +66,7 @@ router.get('/',
         id: p.id,
         excursaoTitulo: p.excursao?.titulo || 'N/D',
         excursaoSlug: p.excursao?.slug || null,
+        excursaoAtivo: p.excursao?.status === 'ATIVO',
         quantidade: p.quantidade,
         valorUnitario: Number(p.valorUnitario),
         valorTotal: Number(p.valorTotal),

@@ -52,6 +52,7 @@ async function loadPedidos() {
     }
 
     tableContainer.style.display = 'block';
+    document.getElementById('filtersBar').style.display = 'block';
     renderTable();
   } catch (error) {
     console.error('[Listagem Convencional] Erro:', error);
@@ -93,12 +94,60 @@ function escapeHtml(str) {
 }
 
 /**
+ * Explicação da função [getFilteredPedidos]
+ * Aplica filtros de data, excursão ativa e status de pagamento.
+ */
+function getFilteredPedidos() {
+  const dataDe = document.getElementById('filtroDataDe').value;
+  const dataAte = document.getElementById('filtroDataAte').value;
+  const excursaoFiltro = document.getElementById('filtroExcursao').value;
+  const pagamentoFiltro = document.getElementById('filtroPagamento').value;
+
+  return pedidosData.filter(p => {
+    const dataPedido = p.dataPedido ? new Date(p.dataPedido) : null;
+    if (dataDe && dataPedido) {
+      const d = new Date(dataDe);
+      d.setHours(0, 0, 0, 0);
+      if (dataPedido < d) return false;
+    }
+    if (dataAte && dataPedido) {
+      const d = new Date(dataAte);
+      d.setHours(23, 59, 59, 999);
+      if (dataPedido > d) return false;
+    }
+    if (excursaoFiltro === 'ativo' && !p.excursaoAtivo) return false;
+    if (excursaoFiltro === 'inativo' && p.excursaoAtivo) return false;
+    if (pagamentoFiltro === 'pendente') {
+      if (p.status !== 'PENDENTE' && p.status !== 'AGUARDANDO_PAGAMENTO') return false;
+    }
+    if (pagamentoFiltro === 'concluido') {
+      if (p.status !== 'PAGO' && p.status !== 'CONFIRMADO') return false;
+    }
+    return true;
+  });
+}
+
+/**
  * Explicação da função [renderTable]
- * Renderiza a tabela de pedidos no DOM
+ * Renderiza a tabela de pedidos no DOM (aplica filtros)
  */
 function renderTable() {
+  const filtered = getFilteredPedidos();
   const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = pedidosData.map(p => {
+  const emptyState = document.getElementById('emptyState');
+  const tableContainer = document.getElementById('tableContainer');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    emptyState.style.display = 'block';
+    emptyState.innerHTML = '<i class="fas fa-filter" style="font-size: 4rem; color: var(--text-light); opacity: 0.5;"></i><h3 style="color: var(--text-light); margin-top: 1rem;">Nenhum resultado com os filtros aplicados</h3><p style="color: var(--text-light);">Ajuste os filtros ou clique em Limpar para ver todos.</p>';
+    tableContainer.style.display = 'none';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+  tableContainer.style.display = 'block';
+  tbody.innerHTML = filtered.map(p => {
     const statusClass = {
       PAGO: 'badge-success',
       CONFIRMADO: 'badge-success',
@@ -202,27 +251,32 @@ function closeModal() {
  * Exclui um pedido após confirmação
  */
 function deletePedido(pedidoId, titulo) {
+  if (!confirm('Excluir o pedido "' + (titulo || 'N/D') + '"? Esta ação não pode ser desfeita.')) {
+    return;
+  }
   const doDelete = async () => {
     try {
-    const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
-    const response = await fetch(API_BASE + '/' + encodeURIComponent(pedidoId), {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+      const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+      const response = await fetch(API_BASE + '/' + encodeURIComponent(pedidoId), {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
 
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || errData.message || 'Erro ao excluir');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || 'Erro ao excluir');
+      }
+
+      if (typeof showToast === 'function') showToast('Pedido excluído com sucesso', 'success');
+      else alert('Pedido excluído com sucesso.');
+      loadPedidos();
+    } catch (error) {
+      console.error('[Listagem Convencional] Erro ao excluir:', error);
+      if (typeof showToast === 'function') showToast(error.message || 'Erro ao excluir', 'error');
+      else alert(error.message || 'Erro ao excluir.');
     }
-
-    if (typeof showToast === 'function') showToast('Pedido excluído com sucesso', 'success');
-    else alert('Pedido excluído com sucesso.');
-    loadPedidos();
-  } catch (error) {
-    console.error('[Listagem Convencional] Erro ao excluir:', error);
-    if (typeof showToast === 'function') showToast(error.message || 'Erro ao excluir', 'error');
-    else alert(error.message || 'Erro ao excluir.');
-  }
+  };
+  doDelete();
 }
 
 /**
@@ -256,6 +310,18 @@ async function exportarExcel() {
   }
 }
 
+/**
+ * Explicação da função [limparFiltros]
+ * Reseta todos os filtros e re-renderiza a tabela.
+ */
+function limparFiltros() {
+  document.getElementById('filtroDataDe').value = '';
+  document.getElementById('filtroDataAte').value = '';
+  document.getElementById('filtroExcursao').value = '';
+  document.getElementById('filtroPagamento').value = '';
+  renderTable();
+}
+
 // Inicialização
 document.addEventListener('DOMContentLoaded', function () {
   loadPedidos();
@@ -264,5 +330,10 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('btnFecharModal').addEventListener('click', closeModal);
   document.getElementById('modalDetalhes').addEventListener('click', function (e) {
     if (e.target === this) closeModal();
+  });
+  document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
+  ['filtroDataDe', 'filtroDataAte', 'filtroExcursao', 'filtroPagamento'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', renderTable);
   });
 });

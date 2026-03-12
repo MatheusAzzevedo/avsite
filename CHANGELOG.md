@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-03-12 - feat: filtros e pedidos pendentes na Listagem Convencional
+
+### Arquivos Modificados
+- `api/src/routes/listagem-convencional.routes.ts` [excursao.status e excursaoAtivo no retorno para filtro]
+- `api/public/admin/listagem-convencional.html` [Barra de filtros: Data De/Até, Excursão (Todos/Ativa/Inativa), Pagamento (Todos/Pendente/Concluído), Limpar]
+- `api/public/admin/js/listagem-convencional.js` [getFilteredPedidos, limparFiltros, deletePedido com confirm e doDelete; filtros aplicados ao renderizar]
+
+### Alterações
+- Listagem exibe pedidos pendentes (PENDENTE, AGUARDANDO_PAGAMENTO) com status "Pendente" e "Aguardando Pagamento". Filtros: Data De/Até, Excursão (Ativa/Inativa), Pagamento (Pendente/Concluído). Botão Limpar reseta filtros. Corrigido deletePedido que não executava a exclusão.
+
+---
+
 ## 2026-03-12 - feat: página Listagem Convencional no admin
 
 ### Arquivos Modificados
