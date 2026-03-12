@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-09) - fix: formatação de valores no checkout convencional e na página de pagamento (R$ X.XXX,XX)
+### Última atualização (2026-03-06) - feat: logo do header 15% maior em todo o site
+- **api/public/css/avoar-top-header.css**, **css/avoar-top-header.css** [header-logo img: 92px→106px, 88px→101px]
+- **api/public/css/style.css**, **css/style.css** [alt-logo-box img: 355px→408px, 338px→389px]
+- **api/public/css/responsive.css**, **css/responsive.css** [main-logo-box logo mobile: 284px→327px, 270px→311px]
+
+Resumo: Logo do header aumentada 15% em todas as variantes: top header desktop, alt-logo na barra (tablet) e menu overlay mobile.
+
+### Versão anterior (2026-03-09) - fix: formatação de valores no checkout convencional e na página de pagamento (R$ X.XXX,XX)
 - **api/public/cliente/js/checkout-convencional.js** [formatMoney passa a retornar valores no padrão "R$ X.XXX,XX", com ponto para milhar e vírgula para centavos]
 - **api/public/cliente/js/pagamento.js** [formatMoney unifica a exibição dos valores de PIX e cartão no padrão "R$ X.XXX,XX"]
 

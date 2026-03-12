@@ -1001,7 +1001,7 @@ form label.error{
 }
 
 .main-header-bar .alt-logo-box img{
-  width: 338px;
+  width: 389px; /* 15% maior que 338px */
   max-width: none;
 }
 

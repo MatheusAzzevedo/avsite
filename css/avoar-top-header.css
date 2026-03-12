@@ -46,7 +46,7 @@
     }
 
     .avoar-top-header .header-logo img {
-        height: 88px;
+        height: 101px; /* 15% maior que 88px */
         width: auto;
         max-width: none;
     }

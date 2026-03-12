@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-03-06 - feat: logo do header 15% maior em todo o site
+
+### Arquivos Modificados
+- `api/public/css/avoar-top-header.css`, `css/avoar-top-header.css` [header-logo img height: 92px→106px, 88px→101px]
+- `api/public/css/style.css`, `css/style.css` [alt-logo-box img width: 355px→408px, 338px→389px]
+- `api/public/css/responsive.css`, `css/responsive.css` [main-logo-box logo-mobile/img max-width: 284px→327px, 270px→311px]
+
+### Alterações
+- Logo do header aumentada 15% em todo o site: top header desktop (avoar-top-header), alt-logo na header bar (tablet), menu overlay mobile (main-logo-box).
+
+---
+
 ## 2026-03-09 - fix: formatação de valores no checkout convencional (R$ X.XXX,XX)
 
 ### Arquivos Modificados
