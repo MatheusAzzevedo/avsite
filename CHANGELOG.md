@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-03-12 - feat: página Listagem Convencional no admin
+
+### Arquivos Modificados
+- `api/src/routes/listagem-convencional.routes.ts` [Novo: GET / lista pedidos tipo CONVENCIONAL; GET /exportar gera Excel; GET /:id detalhes; DELETE /:id exclui pedido]
+- `api/src/server.ts` [Registro da rota /api/admin/listagem-convencional]
+- `api/public/admin/listagem-convencional.html` [Nova página: tabela de compras, botões View e Excluir, modal de detalhes, botão Extração Excel]
+- `api/public/admin/js/listagem-convencional.js` [Carrega pedidos, renderiza tabela, modal detalhes, exclusão, exportação .xlsx]
+- `api/public/admin/css/admin-style.css` [Classe badge-secondary para status EXPIRADO]
+- `api/public/admin/*.html` [Link "Listagem Convencional" no menu lateral de todas as páginas admin]
+
+### Alterações
+- Nova página "Listagem Convencional" no painel admin. Lista todas as compras de excursões convencionais em tabela com viagem, cliente, passageiros, valor total, status e data. Botão View abre modal com detalhes completos (dados do comprador, dados dos passageiros, endereços, etc.). Botão Excluir remove o pedido com confirmação. Botão "Extração Excel" exporta todos os dados em .xlsx. Rotas protegidas por auth admin.
+
+---
+
 ## 2026-03-12 - fix: rota de download de documentos (404 Rota não encontrada)
 
 ### Arquivos Modificados

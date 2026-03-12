@@ -531,6 +531,11 @@ a[href="config-pagamento.html"] {
     color: #164e63;
 }
 
+.badge-secondary {
+    background-color: #e5e7eb;
+    color: #4b5563;
+}
+
 /* ============================================
    FILTROS E BUSCA
    ============================================ */

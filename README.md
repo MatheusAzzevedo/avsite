@@ -4,7 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-12) - fix: download de documentos (rota 404)
+### Última atualização (2026-03-12) - feat: Listagem Convencional
+- **api/src/routes/listagem-convencional.routes.ts** [Lista pedidos convencionais, detalhes, exclusão, exportação Excel]
+- **api/public/admin/listagem-convencional.html**, **js/listagem-convencional.js** [Tabela de compras com View, Excluir e Extração .xlsx]
+- **api/public/admin/css/admin-style.css** [badge-secondary para status]
+- **api/public/admin/*.html** [Link no menu lateral]
+
+Resumo: Nova página "Listagem Convencional" no admin para visualizar compras de viagens convencionais. Tabela com viagem, cliente, passageiros, valor, status e data. Botão View abre modal com detalhes completos dos compradores e passageiros. Botão Excluir remove pedido. Botão "Extração Excel" exporta todos os dados em .xlsx.
+
+### Versão anterior (2026-03-12) - fix: download de documentos (rota 404)
 - **api/src/routes/documentos.routes.ts** [Nova rota GET /api/documentos/download/:filename]
 - **api/public/cliente/js/pedidos.js**, **excursao.js** [Links de download usam rota de API]
 
