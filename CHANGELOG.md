@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-03-12 - fix: rota de download de documentos (404 Rota não encontrada)
+
+### Arquivos Modificados
+- `api/src/routes/documentos.routes.ts` [Novo: GET /api/documentos/download/:filename serve arquivo ou retorna mensagem amigável se inexistente]
+- `api/src/server.ts` [Registro da rota /api/documentos]
+- `api/public/cliente/js/pedidos.js` [Link Download usa /api/documentos/download/:filename em vez de /uploads/documentos/:filename]
+- `api/public/cliente/js/excursao.js` [Link documento na aba Inclusos usa /api/documentos/download/:filename]
+
+### Alterações
+- Botão Download (Meus Pedidos) e link de documento (página da excursão) passam a usar a rota de API GET /api/documentos/download/:filename. Corrige o erro 404 "Rota não encontrada" ao baixar documentos. Quando o arquivo não existe (ex.: filesystem efêmero no Railway após deploy), a API retorna mensagem amigável orientando o usuário a entrar em contato.
+
+---
+
 ## 2026-03-06 - feat: logo do header 15% maior em todo o site
 
 ### Arquivos Modificados

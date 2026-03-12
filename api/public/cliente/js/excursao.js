@@ -58,9 +58,9 @@
         const docNome = document.getElementById('documentoDownloadNome');
         if (docContainer && docLink && docNome && exc.documentoUrl) {
             docContainer.style.display = 'block';
-            var baseUrl = window.location.origin;
-            docLink.href = exc.documentoUrl.indexOf('http') === 0 ? exc.documentoUrl : baseUrl + exc.documentoUrl;
-            docLink.download = exc.documentoNome || exc.documentoUrl.split('/').pop() || 'documento';
+            var docFilename = exc.documentoUrl.split('/').pop();
+            docLink.href = '/api/documentos/download/' + encodeURIComponent(docFilename);
+            docLink.download = exc.documentoNome || docFilename || 'documento';
             docNome.textContent = exc.documentoNome || 'Baixar documento';
         }
 

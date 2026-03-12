@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-06) - feat: logo do header 15% maior em todo o site
+### Última atualização (2026-03-12) - fix: download de documentos (rota 404)
+- **api/src/routes/documentos.routes.ts** [Nova rota GET /api/documentos/download/:filename]
+- **api/public/cliente/js/pedidos.js**, **excursao.js** [Links de download usam rota de API]
+
+Resumo: Download de documentos das excursões pedagógicas corrigido. O botão Download (Meus Pedidos) e o link na página da excursão agora usam a rota /api/documentos/download/:filename, que serve o arquivo ou retorna mensagem amigável quando ele não existe (ex.: após deploy no Railway).
+
+### Versão anterior (2026-03-06) - feat: logo do header 15% maior em todo o site
 - **api/public/css/avoar-top-header.css**, **css/avoar-top-header.css** [header-logo img: 92px→106px, 88px→101px]
 - **api/public/css/style.css**, **css/style.css** [alt-logo-box img: 355px→408px, 338px→389px]
 - **api/public/css/responsive.css**, **css/responsive.css** [main-logo-box logo mobile: 284px→327px, 270px→311px]

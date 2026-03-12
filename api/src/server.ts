@@ -43,6 +43,7 @@ import listaAlunosRoutes from './routes/lista-alunos.routes';
 import categoriasExcursaoRoutes from './routes/categorias-excursao.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 import adminEmailRoutes from './routes/admin-email.routes';
+import documentosRoutes from './routes/documentos.routes';
 
 // Importa utilitários
 import { prisma } from './config/database';
@@ -175,6 +176,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 
 // Rotas públicas (para site e integrações externas)
 app.use('/api/public', publicRoutes);
+app.use('/api/documentos', documentosRoutes);
 
 // Webhooks (públicos - gateways de pagamento)
 app.use('/api/webhooks', webhookRoutes);

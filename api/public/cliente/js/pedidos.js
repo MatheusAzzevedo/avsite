@@ -119,8 +119,8 @@
                     var excPed = pedido.excursaoPedagogica;
                     var docUrl = excPed && excPed.documentoUrl ? excPed.documentoUrl : null;
                     var docNome = (excPed && excPed.documentoNome) || (docUrl ? docUrl.split('/').pop() : '') || 'Documento';
-                    var baseUrl = window.location.origin;
-                    var docHref = docUrl ? (docUrl.indexOf('http') === 0 ? docUrl : baseUrl + docUrl) : '#';
+                    var docFilename = docUrl ? docUrl.split('/').pop() : null;
+                    var docHref = docFilename ? '/api/documentos/download/' + encodeURIComponent(docFilename) : '#';
                     var payButtonHtml = showPayButton
                         ? '<a href="/cliente/pagamento.html?pedidoId=' + pedido.id + '" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar</a>'
                         : '';
