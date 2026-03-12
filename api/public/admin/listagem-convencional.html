@@ -68,6 +68,13 @@
                 <div class="card-body">
                     <div id="filtersBar" class="filters-bar" style="display: none; margin-bottom: 1.5rem;">
                         <div class="filters-row" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                            <div class="search-box" style="flex: 1; min-width: 220px;">
+                                <label for="filtroBusca" style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem;">Pesquisar</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-light); font-size: 0.9rem;"></i>
+                                    <input type="text" id="filtroBusca" class="filter-select" placeholder="Viagem, Cliente ou Valor..." style="padding: 0.5rem 0.5rem 0.5rem 2.25rem; width: 100%; box-sizing: border-box;">
+                                </div>
+                            </div>
                             <div>
                                 <label for="filtroDataDe" style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem;">Data De</label>
                                 <input type="date" id="filtroDataDe" class="filter-select" style="padding: 0.5rem;">

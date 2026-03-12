@@ -95,15 +95,27 @@ function escapeHtml(str) {
 
 /**
  * Explicação da função [getFilteredPedidos]
- * Aplica filtros de data, excursão ativa e status de pagamento.
+ * Aplica filtros de busca, data, excursão ativa e status de pagamento.
  */
 function getFilteredPedidos() {
+  const busca = (document.getElementById('filtroBusca')?.value || '').trim().toLowerCase();
   const dataDe = document.getElementById('filtroDataDe').value;
   const dataAte = document.getElementById('filtroDataAte').value;
   const excursaoFiltro = document.getElementById('filtroExcursao').value;
   const pagamentoFiltro = document.getElementById('filtroPagamento').value;
 
   return pedidosData.filter(p => {
+    if (busca) {
+      const viagem = (p.excursaoTitulo || '').toLowerCase();
+      const cliente = ((p.cliente && p.cliente.nome) || '').toLowerCase();
+      const valorStr = String(p.valorTotal || '').replace('.', ',');
+      const valorFormatado = formatMoney(p.valorTotal).toLowerCase().replace(/\s/g, '');
+      const buscaSemEspaco = busca.replace(/\s/g, '');
+      const matchViagem = viagem.includes(busca);
+      const matchCliente = cliente.includes(busca);
+      const matchValor = valorStr.includes(busca) || valorFormatado.includes(buscaSemEspaco);
+      if (!matchViagem && !matchCliente && !matchValor) return false;
+    }
     const dataPedido = p.dataPedido ? new Date(p.dataPedido) : null;
     if (dataDe && dataPedido) {
       const d = new Date(dataDe);
@@ -315,6 +327,8 @@ async function exportarExcel() {
  * Reseta todos os filtros e re-renderiza a tabela.
  */
 function limparFiltros() {
+  const elBusca = document.getElementById('filtroBusca');
+  if (elBusca) elBusca.value = '';
   document.getElementById('filtroDataDe').value = '';
   document.getElementById('filtroDataAte').value = '';
   document.getElementById('filtroExcursao').value = '';
@@ -332,6 +346,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.target === this) closeModal();
   });
   document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
+  const elBusca = document.getElementById('filtroBusca');
+  if (elBusca) elBusca.addEventListener('input', renderTable);
   ['filtroDataDe', 'filtroDataAte', 'filtroExcursao', 'filtroPagamento'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', renderTable);

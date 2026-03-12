@@ -203,3 +203,40 @@
 .avoar-top-header {
     animation: slideDown 0.5s ease-out;
 }
+
+/* ========================================
+   Sobre Nós e Contato: logo Lavoar.png +10%
+   ======================================== */
+
+@media only screen and (min-width: 992px) {
+    .about-page-dark .avoar-top-header .header-logo img,
+    .contact-page-dark .avoar-top-header .header-logo img {
+        height: 117px; /* 106px + 10% */
+    }
+}
+
+.main-header-bar.alt-logo .alt-logo-box img {
+    width: 408px;
+}
+.about-page-dark .main-header-bar.alt-logo .alt-logo-box img,
+.contact-page-dark .main-header-bar.alt-logo .alt-logo-box img {
+    width: 449px; /* 408px + 10% */
+}
+
+/* ========================================
+   Sobre Nós e Contato - Logo Lavoar.png + 10%
+   ======================================== */
+
+@media only screen and (min-width: 992px) {
+    .about-page-dark .avoar-top-header .header-logo img,
+    .contact-page-dark .avoar-top-header .header-logo img {
+        height: 117px; /* 10% maior que 106px */
+    }
+}
+
+/* Alt-logo (tablet 768-991px) - 10% maior */
+.about-page-dark .main-header-bar .alt-logo-box img,
+.contact-page-dark .main-header-bar .alt-logo-box img {
+    width: 449px; /* 10% maior que 408px */
+    max-width: none;
+}
