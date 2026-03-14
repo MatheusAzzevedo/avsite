@@ -3,6 +3,107 @@
  * Menu mobile (hamburger/sidebar) e logout externalizados para compatibilidade com CSP.
  */
 (function() {
+    /**
+     * Explicação da função [showToastPedidos]:
+     * Exibe uma mensagem estilo toast no topo da tela de Meus Pedidos.
+     * type: 'success' | 'error' | 'info'.
+     */
+    function showToastPedidos(message, type) {
+        type = type || 'info';
+        var el = document.getElementById('checkoutToast');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'checkoutToast';
+            document.body.appendChild(el);
+        }
+        // Estilos básicos inline para não depender de CSS externo
+        if (!el.dataset.styled) {
+            el.style.position = 'fixed';
+            el.style.top = '1rem';
+            el.style.left = '50%';
+            el.style.transform = 'translateX(-50%)';
+            el.style.zIndex = '9999';
+            el.style.padding = '0.75rem 1.25rem';
+            el.style.borderRadius = '10px';
+            el.style.boxShadow = '0 4px 14px rgba(0,0,0,0.15)';
+            el.style.maxWidth = '90%';
+            el.style.display = 'none';
+            el.style.alignItems = 'center';
+            el.style.gap = '0.75rem';
+            el.style.fontWeight = '500';
+            el.style.fontSize = '0.9rem';
+            el.style.background = '#e0f2fe';
+            el.style.color = '#0369a1';
+            el.style.border = '1px solid #7dd3fc';
+            el.dataset.styled = '1';
+        }
+
+        if (type === 'error') {
+            el.style.background = '#fee2e2';
+            el.style.color = '#991b1b';
+            el.style.border = '1px solid #fca5a5';
+        } else if (type === 'success') {
+            el.style.background = '#dcfce7';
+            el.style.color = '#166534';
+            el.style.border = '1px solid #86efac';
+        } else {
+            el.style.background = '#e0f2fe';
+            el.style.color = '#0369a1';
+            el.style.border = '1px solid #7dd3fc';
+        }
+
+        el.textContent = message;
+        el.setAttribute('role', 'alert');
+        el.style.display = 'flex';
+
+        setTimeout(function() {
+            el.style.display = 'none';
+        }, 5000);
+    }
+
+    function bindDownloadButtons() {
+        var buttons = document.querySelectorAll('.btn-download-doc');
+        if (!buttons || !buttons.length) return;
+
+        buttons.forEach(function(btn) {
+            if (btn.dataset.bound === '1') return;
+            btn.dataset.bound = '1';
+
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var href = btn.getAttribute('href');
+                if (!href || href === '#') {
+                    showToastPedidos('Arquivo não está mais disponível.', 'error');
+                    return;
+                }
+
+                fetch(href)
+                    .then(function(res) {
+                        var ct = (res.headers.get('content-type') || '').toLowerCase();
+
+                        if (!res.ok || ct.indexOf('application/json') === 0) {
+                            // Provavelmente resposta de erro da API
+                            return res
+                                .clone()
+                                .json()
+                                .then(function() {
+                                    showToastPedidos('Arquivo não está mais disponível.', 'error');
+                                })
+                                .catch(function() {
+                                    showToastPedidos('Arquivo não está mais disponível.', 'error');
+                                });
+                        }
+
+                        // Sucesso: abre o PDF/arquivo em nova aba (download normal)
+                        window.open(href, '_blank');
+                        return null;
+                    })
+                    .catch(function() {
+                        showToastPedidos('Arquivo não está mais disponível.', 'error');
+                    });
+            });
+        });
+    }
     function initMobileMenu() {
         var sidebar = document.getElementById('sidebar');
         var overlay = document.getElementById('sidebarOverlay');
@@ -148,6 +249,9 @@
                         '</div>' +
                         '</div>';
                 });
+
+                // Vincula handlers de download após renderizar todos os cards
+                bindDownloadButtons();
             } else {
                 renderEmpty();
             }
