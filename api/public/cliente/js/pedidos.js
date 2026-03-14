@@ -125,7 +125,7 @@
                         ? '<a href="/cliente/pagamento.html?pedidoId=' + pedido.id + '" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar</a>'
                         : '';
                     var docButtonHtml = docUrl
-                        ? '<a href="' + docHref + '" target="_blank" rel="noopener" class="btn-download-doc"><i class="fas fa-download"></i> Download</a>'
+                        ? '<a href="' + docHref + '" target="_blank" rel="noopener" class="btn-download-doc"><i class="fas fa-download"></i> ' + docNome + '</a>'
                         : '';
                     var valorTotal = Number(pedido.valorTotal);
                     var valorStr = isNaN(valorTotal) ? '0,00' : valorTotal.toFixed(2);
