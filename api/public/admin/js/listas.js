@@ -338,7 +338,7 @@ function renderAlunos() {
         return;
     }
 
-    tbody.innerHTML = alunosData.map(aluno => {
+    tbody.innerHTML = alunosData.map((aluno, index) => {
         const statusClass = getStatusBadgeClass(aluno.statusPedido);
         const dataPedido = aluno.dataPedido ? formatDateBR(aluno.dataPedido) : '-';
 
@@ -355,9 +355,14 @@ function renderAlunos() {
                 </td>
                 <td>${dataPedido}</td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-primary btn-enviar-email" data-pedido-id="${aluno.pedidoId}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Enviar e-mail de confirmação">
-                        <i class="fas fa-envelope"></i> Enviar E-mail
-                    </button>
+                    <div class="table-actions">
+                        <button type="button" class="btn btn-sm btn-primary btn-enviar-email" data-pedido-id="${aluno.pedidoId}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Enviar e-mail de confirmação">
+                            <i class="fas fa-envelope"></i> Enviar E-mail
+                        </button>
+                        <button type="button" class="btn btn-sm btn-secondary btn-detalhes-aluno" data-aluno-index="${index}" title="Ver detalhes completos do aluno">
+                            <i class="fas fa-user"></i> Detalhes
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
@@ -365,6 +370,120 @@ function renderAlunos() {
 
     // Anexar event listeners aos botões de envio
     attachEmailButtonListeners();
+    attachDetalhesButtonListeners();
+}
+
+/**
+ * Explicação da função [attachDetalhesButtonListeners]
+ * Conecta os botões "Detalhes" de cada aluno ao modal de informações completas.
+ */
+function attachDetalhesButtonListeners() {
+    console.log('[Listas] Anexando listeners de detalhes de aluno...');
+    const btnsDetalhes = document.querySelectorAll('.btn-detalhes-aluno');
+    btnsDetalhes.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const indexStr = this.getAttribute('data-aluno-index');
+            const index = typeof indexStr === 'string' ? parseInt(indexStr, 10) : NaN;
+            if (Number.isNaN(index) || !alunosData[index]) {
+                showError('Não foi possível localizar os dados completos deste aluno.');
+                console.error('[Listas] Índice de aluno inválido ao abrir detalhes:', indexStr);
+                return;
+            }
+            abrirDetalhesAluno(index);
+        });
+    });
+}
+
+/**
+ * Explicação da função [abrirDetalhesAluno]
+ * Monta e exibe o modal com todas as informações registradas do aluno selecionado.
+ */
+function abrirDetalhesAluno(alunoIndex) {
+    const aluno = alunosData[alunoIndex];
+    if (!aluno) {
+        showError('Dados do aluno não encontrados.');
+        console.error('[Listas] Dados do aluno não encontrados para índice:', alunoIndex);
+        return;
+    }
+
+    console.log('[Listas] Abrindo detalhes do aluno:', {
+        index: alunoIndex,
+        nome: aluno.nomeAluno,
+        pedidoId: aluno.pedidoId
+    });
+
+    const tituloEl = document.getElementById('modalAlunoDetalhesTitulo');
+    const bodyEl = document.getElementById('modalAlunoDetalhesBody');
+    if (!tituloEl || !bodyEl) {
+        console.error('[Listas] Elementos do modal de detalhes de aluno não encontrados.');
+        showError('Não foi possível abrir os detalhes do aluno.');
+        return;
+    }
+
+    const safe = (value) => (value ? escapeHtml(String(value)) : '-');
+    const safeDate = (value) => (value ? formatDateBR(value) : '-');
+
+    tituloEl.textContent = aluno.nomeAluno ? `Detalhes de ${aluno.nomeAluno}` : 'Detalhes do Aluno';
+
+    const cliente = aluno.cliente || {};
+
+    bodyEl.innerHTML = `
+        <div class="detail-section">
+            <h4>Dados do Aluno</h4>
+            <div class="detail-row"><span class="detail-label">Nome:</span><span>${safe(aluno.nomeAluno)}</span></div>
+            <div class="detail-row"><span class="detail-label">Idade:</span><span>${safe(aluno.idadeAluno)}</span></div>
+            <div class="detail-row"><span class="detail-label">Data de Nascimento:</span><span>${safeDate(aluno.dataNascimento)}</span></div>
+            <div class="detail-row"><span class="detail-label">Escola:</span><span>${safe(aluno.escolaAluno)}</span></div>
+            <div class="detail-row"><span class="detail-label">Série:</span><span>${safe(aluno.serieAluno)}</span></div>
+            <div class="detail-row"><span class="detail-label">Turma:</span><span>${safe(aluno.turma)}</span></div>
+            <div class="detail-row"><span class="detail-label">Unidade do Colégio:</span><span>${safe(aluno.unidadeColegio)}</span></div>
+            <div class="detail-row"><span class="detail-label">CPF:</span><span>${safe(aluno.cpfAluno)}</span></div>
+            <div class="detail-row"><span class="detail-label">RG:</span><span>${safe(aluno.rgAluno)}</span></div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Responsável</h4>
+            <div class="detail-row"><span class="detail-label">Nome:</span><span>${safe(aluno.responsavel)}</span></div>
+            <div class="detail-row"><span class="detail-label">Telefone:</span><span>${safe(aluno.telefoneResponsavel)}</span></div>
+            <div class="detail-row"><span class="detail-label">E-mail:</span><span>${safe(aluno.emailResponsavel)}</span></div>
+            <div class="detail-row"><span class="detail-label">Observações:</span><span>${safe(aluno.observacoes)}</span></div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Informações Médicas</h4>
+            <div class="detail-row"><span class="detail-label">Alergias/Cuidados:</span><span>${safe(aluno.alergiasCuidados)}</span></div>
+            <div class="detail-row"><span class="detail-label">Plano de Saúde:</span><span>${safe(aluno.planoSaude)}</span></div>
+            <div class="detail-row"><span class="detail-label">Medicamentos para Febre:</span><span>${safe(aluno.medicamentosFebre)}</span></div>
+            <div class="detail-row"><span class="detail-label">Medicamentos para Alergia:</span><span>${safe(aluno.medicamentosAlergia)}</span></div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Dados do Pedido</h4>
+            <div class="detail-row"><span class="detail-label">ID do Pedido:</span><span>${safe(aluno.pedidoId)}</span></div>
+            <div class="detail-row"><span class="detail-label">Status do Pedido:</span><span>${safe(formatStatusPedido(aluno.statusPedido))}</span></div>
+            <div class="detail-row"><span class="detail-label">Data do Pedido:</span><span>${safeDate(aluno.dataPedido)}</span></div>
+            <div class="detail-row"><span class="detail-label">Data de Pagamento:</span><span>${safeDate(aluno.dataPagamento)}</span></div>
+            <div class="detail-row"><span class="detail-label">Data de Confirmação:</span><span>${safeDate(aluno.dataConfirmacao)}</span></div>
+            <div class="detail-row"><span class="detail-label">Valor Unitário:</span><span>${aluno.valorUnitario != null ? escapeHtml(String(aluno.valorUnitario.toFixed ? aluno.valorUnitario.toFixed(2) : aluno.valorUnitario)) : '-'}</span></div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Cliente (Comprador)</h4>
+            <div class="detail-row"><span class="detail-label">Nome:</span><span>${safe(cliente.nome)}</span></div>
+            <div class="detail-row"><span class="detail-label">E-mail:</span><span>${safe(cliente.email)}</span></div>
+            <div class="detail-row"><span class="detail-label">Telefone:</span><span>${safe(cliente.telefone)}</span></div>
+        </div>
+    `;
+
+    if (typeof openModal === 'function') {
+        openModal('modalAlunoDetalhes');
+    } else {
+        const overlay = document.getElementById('modalAlunoDetalhes');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
 }
 
 /**
@@ -850,6 +969,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const filterStatusPedido = document.getElementById('filterStatusPedido');
     if (filterStatusPedido) filterStatusPedido.addEventListener('change', loadAlunos);
+
+    const btnFecharModalAluno = document.getElementById('btnFecharModalAluno');
+    if (btnFecharModalAluno) {
+        btnFecharModalAluno.addEventListener('click', () => {
+            if (typeof closeModal === 'function') {
+                closeModal('modalAlunoDetalhes');
+            } else {
+                const overlay = document.getElementById('modalAlunoDetalhes');
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+    }
+
+    const btnFecharModalAlunoFooter = document.getElementById('btnFecharModalAlunoFooter');
+    if (btnFecharModalAlunoFooter) {
+        btnFecharModalAlunoFooter.addEventListener('click', () => {
+            if (typeof closeModal === 'function') {
+                closeModal('modalAlunoDetalhes');
+            } else {
+                const overlay = document.getElementById('modalAlunoDetalhes');
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+    }
 
     loadExcursoes().then(() => {
         const params = new URLSearchParams(window.location.search);

@@ -450,6 +450,26 @@
         </main>
     </div>
 
+    <!-- Modal: Detalhes do Aluno -->
+    <div id="modalAlunoDetalhes" class="modal-overlay hidden" role="dialog" aria-labelledby="modalAlunoDetalhesTitulo" aria-modal="true">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalAlunoDetalhesTitulo">Detalhes do Aluno</h3>
+                <button type="button" class="modal-close" id="btnFecharModalAluno" aria-label="Fechar detalhes do aluno">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body" id="modalAlunoDetalhesBody">
+                <!-- Conteúdo preenchido via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnFecharModalAlunoFooter">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="../js/api-client.js"></script>
     <script src="js/admin-main.js"></script>

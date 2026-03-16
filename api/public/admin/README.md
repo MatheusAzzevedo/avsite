@@ -162,7 +162,8 @@ No editor de posts/excursões, use a barra de ferramentas para formatar o texto.
 Clique nas áreas de upload para selecionar imagens do seu computador.
 
 ### Modais
-Clique fora do modal ou no botão X para fechar.
+- Clique fora do modal ou no botão X para fechar.
+- Na página `listas.html`, cada aluno da Lista de Alunos possui ações de "Enviar E-mail" e **"Detalhes"**; o botão "Detalhes" abre um modal com todas as informações cadastradas do aluno (dados pessoais, responsável, informações médicas e dados do pedido/cliente) diretamente a partir dos dados já carregados na tabela.
 
 ## 🔍 Bibliotecas Externas
 

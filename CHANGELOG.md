@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-03-16 - feat: detalhes completos do aluno na lista administrativa
+
+### Arquivos Modificados
+- `api/public/admin/listas.html` [Modal de detalhes do aluno adicionado na view de Lista de Alunos]
+- `api/public/admin/js/listas.js` [Botão "Detalhes" ao lado de "Enviar E-mail" com popup exibindo todos os dados do aluno, responsável, informações médicas, pedido e cliente]
+
+### Alterações
+- Na página administrativa de Listas de Alunos, cada linha de aluno agora possui um botão "Detalhes" ao lado de "Enviar E-mail". Ao clicar, abre-se um modal reutilizando o sistema de modais do admin, mostrando todas as informações cadastradas daquele aluno (dados pessoais, responsável, informações médicas, status e datas do pedido, valor e dados do cliente comprador), sem novas chamadas de API.
+
+---
+
 ## 2026-03-12 - feat: filtros e pedidos pendentes na Listagem Convencional
 
 ### Arquivos Modificados
