@@ -30,3 +30,5 @@ Thumbs.db
 
 # Prisma
 prisma/migrations/**/migration.sql.bak
+.agent/
+backup_railway.sql
