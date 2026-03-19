@@ -65,7 +65,7 @@ const PORT = process.env.PORT || 3001;
 // Isso permite que o Express reconheça o IP real do cliente através do header X-Forwarded-For
 app.set('trust proxy', 1);
 
-// Helmet para segurança (CSP: frame-src para Heyzine e YouTube embed em /biologia-marinha)
+// Helmet para segurança
 const defaultDirectives = contentSecurityPolicy.getDefaultDirectives();
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -74,7 +74,9 @@ app.use(helmet({
       ...defaultDirectives,
       "frame-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
       "child-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
-      "script-src": [...(defaultDirectives["script-src"] || []), "'sha256-Ew7NVX5Yr58KbeiZir/ChTfyxGLuqd/yGYxo/ZlGhCU='"],
+      "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://*.googletagmanager.com", "https://www.google-analytics.com", "https://ssl.google-analytics.com"],
+      "connect-src": ["'self'", "https://www.google-analytics.com", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://*.g.doubleclick.net", "https://avoarturismo.com.br", "http://localhost:3001"],
+      "img-src": ["'self'", "data:", "https://www.googletagmanager.com", "https://www.google-analytics.com", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://*.g.doubleclick.net", "https://*.google.com", "https://*.google.com.br"],
     },
   },
 }));

@@ -4,10 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-19) - feat: suporte a Google Tag (gtag.js)
-- **api/public/ (diversos .html)** [Scripts gtag.js adicionados ao <head>]
+### Última atualização (2026-03-19) - feat: suporte global ao Google Tag (gtag.js) e ajuste de CSP
+- **api/src/server.ts** [Ajuste de diretivas de segurança (CSP) no Helmet]
+- **api/public/js/gtag-init.js** [Novo script de inicialização da Google Tag]
+- **api/public/ (diversos .html)** [Scripts externalizados adicionados ao <head> de 20+ páginas]
 
-Resumo: Adicionado suporte global ao Google Tag (gtag.js) em todas as páginas públicas do site e na área do cliente (ID G-V8B6Q1ZBRY) para monitoramento de tráfego e análises de conversão em todo o fluxo.
+Resumo: Adicionado suporte global ao Google Tag (gtag.js) com ID G-V8B6Q1ZBRY. A lógica de inicialização foi externalizada em `gtag-init.js` e as políticas de CSP foram relaxadas no servidor para permitir a coleta correta de dados de tráfego e conversão.
 
 ### Versão anterior (2026-03-12) - feat: filtros e pendentes na Listagem Convencional
 - **api/src/routes/listagem-convencional.routes.ts** [excursaoAtivo no retorno]

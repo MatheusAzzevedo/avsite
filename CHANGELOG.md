@@ -1,12 +1,16 @@
 # Changelog
 
-## 2026-03-19 - feat: adicionar suporte a Google Tag (gtag.js) em todas as páginas públicas
+## 2026-03-19 - feat: suporte global ao Google Tag (gtag.js) e ajuste de CSP
 
 ### Arquivos Modificados
-- `api/public/*.html` e `api/public/cliente/*.html` [Inserção do script gtag.js (G-V8B6Q1ZBRY) no <head> para monitoramento de tráfego e conversões]
+- `api/src/server.ts` [Ajuste de CSP (helmet) para permitir scripts e conexões do Google Analytics e Tag Manager]
+- `api/public/js/gtag-init.js` [Criação do script centralizado de inicialização da tag]
+- `api/public/*.html` e `api/public/cliente/*.html` [Inclusão do script externalizado no <head>]
 
-### Alterações
-- Todas as páginas públicas do site e as páginas da área do cliente agora contam com o script global do Google Tag (gtag.js) configurado com o ID G-V8B6Q1ZBRY, garantindo a coleta de dados de analytics em todo o fluxo de navegação e compra.
+### Detalhes das Alterações
+- **Explicação do Arquivo `api/src/server.ts`**: Atualizadas as diretivas da Content Security Policy (via `helmet`) para permitir o carregamento de scripts (`script-src`), conexões de dados (`connect-src`) e imagens (`img-src`) dos domínios `googletagmanager.com` e `google-analytics.com`. Adicionada a diretiva `'unsafe-inline'` para compatibilidade necessária do script de inicialização.
+- **Explicação do Arquivo `api/public/js/gtag-init.js`**: Novo arquivo que contém o código de inicialização do Google Tag (ID G-V8B6Q1ZBRY). Externalizar este código permite que os navegadores o executem mesmo sob políticas restritas de CSP que bloqueiam scripts inline por padrão.
+- **Explicação dos Arquivos HTML**: Todos os 20+ arquivos das pastas `api/public/` e `api/public/cliente/` foram atualizados para carregar o `gtag-init.js` de forma externa, garantindo a coleta de analytics em todo o site.
 
 ---
 
