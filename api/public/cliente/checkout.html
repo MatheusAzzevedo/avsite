@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Dados dos Alunos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
     <style>
         :root {
             --primary-color: #EA580C;
@@ -17,8 +28,18 @@
             --danger-color: #dc2626;
             --danger-bg: #fee2e2;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: var(--text-dark); }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: var(--text-dark);
+        }
 
         /* Mosaico de fundo - cobre todo o viewport */
         .checkout-hero {
@@ -27,6 +48,7 @@
             padding-bottom: 2rem;
             width: 100%;
         }
+
         .checkout-bg {
             position: fixed;
             inset: 0;
@@ -44,32 +66,94 @@
             overflow: hidden;
             background: #1a1a1a;
         }
+
         .checkout-bg .mosaico-item {
             background-size: cover;
             background-position: center;
             opacity: 0;
             animation: fadeInCheckoutImg 1s ease-in-out forwards;
         }
-        .checkout-bg .mosaico-item:nth-child(1) { animation-delay: 0.03s; }
-        .checkout-bg .mosaico-item:nth-child(2) { animation-delay: 0.06s; }
-        .checkout-bg .mosaico-item:nth-child(3) { animation-delay: 0.09s; }
-        .checkout-bg .mosaico-item:nth-child(4) { animation-delay: 0.12s; }
-        .checkout-bg .mosaico-item:nth-child(5) { animation-delay: 0.15s; }
-        .checkout-bg .mosaico-item:nth-child(6) { animation-delay: 0.18s; }
-        .checkout-bg .mosaico-item:nth-child(7) { animation-delay: 0.21s; }
-        .checkout-bg .mosaico-item:nth-child(8) { animation-delay: 0.24s; }
-        .checkout-bg .mosaico-item:nth-child(9) { animation-delay: 0.27s; }
-        .checkout-bg .mosaico-item:nth-child(10) { animation-delay: 0.3s; }
-        .checkout-bg .mosaico-item:nth-child(11) { animation-delay: 0.33s; }
-        .checkout-bg .mosaico-item:nth-child(12) { animation-delay: 0.36s; }
-        .checkout-bg .mosaico-item:nth-child(13) { animation-delay: 0.39s; }
-        .checkout-bg .mosaico-item:nth-child(14) { animation-delay: 0.42s; }
-        .checkout-bg .mosaico-item:nth-child(15) { animation-delay: 0.45s; }
-        .checkout-bg .mosaico-item:nth-child(16) { animation-delay: 0.48s; }
-        .checkout-bg .mosaico-item:nth-child(17) { animation-delay: 0.51s; }
-        .checkout-bg .mosaico-item:nth-child(18) { animation-delay: 0.54s; }
-        .checkout-bg .mosaico-item:nth-child(19) { animation-delay: 0.57s; }
-        .checkout-bg .mosaico-item:nth-child(20) { animation-delay: 0.6s; }
+
+        .checkout-bg .mosaico-item:nth-child(1) {
+            animation-delay: 0.03s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(2) {
+            animation-delay: 0.06s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(3) {
+            animation-delay: 0.09s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(4) {
+            animation-delay: 0.12s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(5) {
+            animation-delay: 0.15s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(6) {
+            animation-delay: 0.18s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(7) {
+            animation-delay: 0.21s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(8) {
+            animation-delay: 0.24s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(9) {
+            animation-delay: 0.27s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(10) {
+            animation-delay: 0.3s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(11) {
+            animation-delay: 0.33s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(12) {
+            animation-delay: 0.36s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(13) {
+            animation-delay: 0.39s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(14) {
+            animation-delay: 0.42s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(15) {
+            animation-delay: 0.45s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(16) {
+            animation-delay: 0.48s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(17) {
+            animation-delay: 0.51s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(18) {
+            animation-delay: 0.54s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(19) {
+            animation-delay: 0.57s;
+        }
+
+        .checkout-bg .mosaico-item:nth-child(20) {
+            animation-delay: 0.6s;
+        }
+
         .checkout-bg::after {
             content: '';
             position: absolute;
@@ -77,11 +161,16 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 1;
         }
-        @keyframes fadeInCheckoutImg { to { opacity: 0.25; } }
+
+        @keyframes fadeInCheckoutImg {
+            to {
+                opacity: 0.25;
+            }
+        }
 
         .navbar {
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -91,13 +180,53 @@
             z-index: 1000;
             border-bottom: 3px solid var(--primary-color);
         }
-        .navbar-brand { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-decoration: none; display: flex; align-items: center; }
-        .navbar-brand:hover { color: var(--primary-dark); }
-        .navbar-logo { height: 47px; width: auto; display: block; }
-        .navbar-left { display: flex; align-items: center; gap: 1.5rem; }
-        .navbar-menu { display: flex; gap: 1.5rem; align-items: center; }
-        .navbar-link { text-decoration: none; color: #333; transition: color 0.2s; font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; }
-        .navbar-link:hover { color: var(--primary-color); }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand:hover {
+            color: var(--primary-dark);
+        }
+
+        .navbar-logo {
+            height: 47px;
+            width: auto;
+            display: block;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .navbar-link {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+        }
+
+        .navbar-link:hover {
+            color: var(--primary-color);
+        }
+
         .btn-logout {
             padding: 0.6rem 1.2rem;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
@@ -109,7 +238,11 @@
             font-size: 0.9rem;
             transition: all 0.2s ease;
         }
-        .btn-logout:hover { opacity: 0.95; transform: translateY(-1px); }
+
+        .btn-logout:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
 
         /* Hamburger - oculto no desktop */
         .btn-hamburger {
@@ -141,10 +274,12 @@
             transition: opacity 0.3s ease;
             pointer-events: none;
         }
+
         .sidebar-overlay.open {
             opacity: 1;
             pointer-events: auto;
         }
+
         .sidebar {
             position: fixed;
             top: 0;
@@ -161,17 +296,24 @@
             overflow-y: auto;
             pointer-events: none;
         }
+
         .sidebar.open {
             transform: translateX(0);
             pointer-events: auto;
         }
+
         .sidebar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
-        .sidebar-logo { height: 52px; width: auto; }
+
+        .sidebar-logo {
+            height: 52px;
+            width: auto;
+        }
+
         .btn-close-sidebar {
             background: none;
             border: none;
@@ -180,11 +322,13 @@
             cursor: pointer;
             padding: 0.25rem;
         }
+
         .sidebar-nav {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
+
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -196,11 +340,19 @@
             border-radius: 8px;
             transition: all 0.2s ease;
         }
-        .sidebar-link:hover, .sidebar-link.active {
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
             background: rgba(255, 92, 0, 0.2);
             color: #ff5c00;
         }
-        .sidebar-link i { width: 24px; text-align: center; font-size: 1.1rem; }
+
+        .sidebar-link i {
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
         .sidebar .btn-logout {
             width: 100%;
             margin-top: 1.5rem;
@@ -209,27 +361,65 @@
             color: #fff;
             border: none;
         }
+
         .sidebar .btn-logout:hover {
             background: rgba(255, 92, 0, 0.5);
             color: #fff;
         }
 
-        .checkout-container { position: relative; z-index: 2; max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .checkout-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
         .checkout-header-card {
             background: #fff;
             padding: 1.5rem 2rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
             margin-bottom: 1.5rem;
         }
-        .checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; }
 
-        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.06); padding: 2rem; margin-bottom: 1.5rem; }
-        .card-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--light-border); }
-        .card-header h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
 
-        .page-title { font-size: 1.75rem; color: var(--text-dark); margin-bottom: 0.25rem; }
-        .subtitle { color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-border);
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
 
         /* Formulário: seções e labels organizadas - fundo branco para leitura */
         .form-section {
@@ -237,8 +427,9 @@
             background: #fff;
             padding: 1.5rem 2rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
         }
+
         .form-section-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -248,7 +439,11 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .form-section-title i { color: var(--primary-color); }
+
+        .form-section-title i {
+            color: var(--primary-color);
+        }
+
         .form-section-subtitle {
             font-size: 0.9rem;
             color: var(--text-light);
@@ -264,8 +459,15 @@
             overflow: hidden;
             background: white;
         }
-        .aluno-dropdown:hover { border-color: var(--primary-light); }
-        .aluno-dropdown[open] { border-color: var(--primary-color); }
+
+        .aluno-dropdown:hover {
+            border-color: var(--primary-light);
+        }
+
+        .aluno-dropdown[open] {
+            border-color: var(--primary-color);
+        }
+
         .aluno-dropdown-header {
             display: flex;
             align-items: center;
@@ -278,22 +480,57 @@
             list-style: none;
             user-select: none;
         }
-        .aluno-dropdown-header::-webkit-details-marker { display: none; }
-        .aluno-dropdown-header::marker { content: none; }
-        .aluno-summary-text { display: block; }
-        .aluno-summary-hint { display: block; font-size: 0.8rem; color: var(--primary-color); font-weight: 600; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.03em; }
+
+        .aluno-dropdown-header::-webkit-details-marker {
+            display: none;
+        }
+
+        .aluno-dropdown-header::marker {
+            content: none;
+        }
+
+        .aluno-summary-text {
+            display: block;
+        }
+
+        .aluno-summary-hint {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
         .aluno-dropdown-header i.fa-chevron-down {
             color: var(--primary-color);
             transition: transform 0.2s;
         }
-        .aluno-dropdown[open] .aluno-dropdown-header i.fa-chevron-down { transform: rotate(180deg); }
+
+        .aluno-dropdown[open] .aluno-dropdown-header i.fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
         .aluno-dropdown-content {
             padding: 1rem 1.25rem 1.25rem 1.25rem;
             border-top: 1px solid var(--light-border);
         }
-        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
-        .form-grid-full { grid-column: 1 / -1; }
-        .form-group { margin-bottom: 0; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
         .form-group label {
             display: block;
             margin-bottom: 0.35rem;
@@ -301,9 +538,21 @@
             font-size: 0.9rem;
             color: var(--text-dark);
         }
-        .form-group label .required { color: var(--danger-color); }
-        .form-group .label-hint { font-size: 0.8rem; color: var(--text-light); font-weight: 400; margin-top: 0.15rem; }
-        .form-group input, .form-group textarea, .form-group select {
+
+        .form-group label .required {
+            color: var(--danger-color);
+        }
+
+        .form-group .label-hint {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 400;
+            margin-top: 0.15rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.75rem 1rem;
             border: 2px solid var(--light-border);
@@ -311,14 +560,19 @@
             font-size: 1rem;
             transition: border-color 0.2s;
         }
-        .form-group input:focus, .form-group textarea:focus {
+
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: var(--primary-color);
         }
-        .form-group input.input-invalid, .form-group textarea.input-invalid {
+
+        .form-group input.input-invalid,
+        .form-group textarea.input-invalid {
             border-color: var(--danger-color);
             background-color: #fef2f2;
         }
+
         .form-group .field-error-msg {
             display: block;
             font-size: 0.8rem;
@@ -326,8 +580,19 @@
             margin-top: 0.35rem;
         }
 
-        .resumo-item { display: flex; justify-content: space-between; margin: 0.75rem 0; }
-        .resumo-total { font-size: 1.25rem; font-weight: bold; color: var(--primary-color); padding-top: 1rem; border-top: 2px solid var(--light-border); }
+        .resumo-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.75rem 0;
+        }
+
+        .resumo-total {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            padding-top: 1rem;
+            border-top: 2px solid var(--light-border);
+        }
 
         .btn-finalizar {
             width: 100%;
@@ -342,8 +607,16 @@
             margin-top: 2rem;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .btn-finalizar:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35); }
-        .btn-finalizar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-finalizar:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
+        }
+
+        .btn-finalizar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
         /* Bloco de erro: título + lista (quais campos e por quê) */
         .error {
@@ -355,21 +628,87 @@
             display: none;
             border: 1px solid #fecaca;
         }
-        .error.show { display: block; }
-        .error-summary-title { font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
-        .error-summary-list { margin: 0; padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.6; }
-        .error-summary-list li { margin-bottom: 0.25rem; }
 
-        .order-summary { background: var(--light-bg); padding: 2rem; border-radius: 12px; height: fit-content; position: sticky; top: 2rem; }
-        .order-summary h2 { margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
-        .order-summary .price-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.95rem; }
-        .order-summary .price-row.total { font-size: 1.125rem; font-weight: 700; border-top: 2px solid var(--light-border); margin-top: 0.5rem; padding-top: 1rem; color: var(--primary-color); }
-        .order-summary ul { margin: 0; padding-left: 1.25rem; color: var(--text-light); font-size: 0.875rem; line-height: 1.8; }
+        .error.show {
+            display: block;
+        }
+
+        .error-summary-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .error-summary-list {
+            margin: 0;
+            padding-left: 1.25rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .error-summary-list li {
+            margin-bottom: 0.25rem;
+        }
+
+        .order-summary {
+            background: var(--light-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .order-summary h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .order-summary .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .order-summary .price-row.total {
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-top: 2px solid var(--light-border);
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            color: var(--primary-color);
+        }
+
+        .order-summary ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            line-height: 1.8;
+        }
 
         /* Etapa de pagamento (após criar pedido) */
-        .checkout-step-pagamento { display: none; margin-top: 1rem; }
-        .checkout-step-pagamento.show { display: block; }
-        .payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+        .checkout-step-pagamento {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .checkout-step-pagamento.show {
+            display: block;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
         .payment-option {
             border: 2px solid var(--light-border);
             border-radius: 12px;
@@ -378,17 +717,73 @@
             cursor: pointer;
             transition: var(--transition, all 0.2s);
         }
-        .payment-option:hover { border-color: var(--primary-color); background: rgba(234, 88, 12, 0.05); }
-        .payment-option.selected { border-color: var(--primary-color); background: rgba(234, 88, 12, 0.08); }
-        .payment-option i { font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem; }
-        .payment-option h3 { font-size: 1rem; margin-bottom: 0.25rem; }
-        .pix-box, .cartao-box { display: none; margin-top: 1.5rem; padding: 1.5rem; background: var(--light-bg); border-radius: 12px; }
-        .pix-box.show, .cartao-box.show { display: block; }
-        .pix-qr { text-align: center; margin: 1rem 0; }
-        .pix-qr img { max-width: 220px; height: auto; }
-        .btn-copy-pix { margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .btn-copy-pix:hover { background: var(--primary-dark); }
-        .pagamento-valor { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); margin-bottom: 1rem; }
+
+        .payment-option:hover {
+            border-color: var(--primary-color);
+            background: rgba(234, 88, 12, 0.05);
+        }
+
+        .payment-option.selected {
+            border-color: var(--primary-color);
+            background: rgba(234, 88, 12, 0.08);
+        }
+
+        .payment-option i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-option h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .pix-box,
+        .cartao-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--light-bg);
+            border-radius: 12px;
+        }
+
+        .pix-box.show,
+        .cartao-box.show {
+            display: block;
+        }
+
+        .pix-qr {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .pix-qr img {
+            max-width: 220px;
+            height: auto;
+        }
+
+        .btn-copy-pix {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-copy-pix:hover {
+            background: var(--primary-dark);
+        }
+
+        .pagamento-valor {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
 
         /* Toast / mensagens na tela (substitui alert) */
         .checkout-toast {
@@ -399,7 +794,7 @@
             z-index: 9999;
             padding: 1rem 1.5rem;
             border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
             max-width: 90%;
             display: none;
             align-items: center;
@@ -407,19 +802,67 @@
             font-weight: 500;
             animation: toastIn 0.3s ease;
         }
-        .checkout-toast.show { display: flex; }
-        .checkout-toast.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-        .checkout-toast.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-        .checkout-toast.info { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
-        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-        .pix-qr .pix-code-text { font-size: 0.75rem; color: var(--text-light); margin-top: 0.5rem; word-break: break-all; max-height: 60px; overflow-y: auto; }
+
+        .checkout-toast.show {
+            display: flex;
+        }
+
+        .checkout-toast.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .checkout-toast.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .checkout-toast.info {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #7dd3fc;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .pix-qr .pix-code-text {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            word-break: break-all;
+            max-height: 60px;
+            overflow-y: auto;
+        }
 
         /* Tablet: coluna única */
         @media (max-width: 900px) {
-            .checkout-grid { grid-template-columns: 1fr; }
-            .order-summary { position: static; }
-            .form-grid { grid-template-columns: 1fr; }
-            .payment-methods { grid-template-columns: 1fr; }
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Mobile: layout e toque */
@@ -429,10 +872,24 @@
                 padding: 0.75rem 1rem;
                 gap: 0.5rem;
             }
-            .btn-hamburger { display: flex; }
-            .navbar-menu { display: none; }
-            .navbar-left { gap: 0.75rem; flex-wrap: wrap; }
-            .navbar-brand { font-size: 1.1rem; }
+
+            .btn-hamburger {
+                display: flex;
+            }
+
+            .navbar-menu {
+                display: none;
+            }
+
+            .navbar-left {
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
             .navbar-link {
                 font-size: 0.9rem;
                 padding: 0.5rem 0;
@@ -440,46 +897,86 @@
                 display: inline-flex;
                 align-items: center;
             }
+
             .checkout-container {
                 margin: 1rem auto;
                 padding: 0 0.75rem;
             }
-            .page-title { font-size: 1.4rem; margin-bottom: 0.2rem; }
-            .subtitle { font-size: 0.9rem; margin-bottom: 1rem; }
+
+            .page-title {
+                font-size: 1.4rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+
             .card {
                 padding: 1.25rem;
                 margin-bottom: 1rem;
                 border-radius: 10px;
             }
-            .card-header { margin-bottom: 1rem; padding-bottom: 0.75rem; }
-            .card-header h2 { font-size: 1.1rem; }
-            .form-section { margin-bottom: 1.5rem; }
-            .form-section-title { font-size: 1rem; margin-bottom: 0.75rem; }
+
+            .card-header {
+                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
+            }
+
+            .card-header h2 {
+                font-size: 1.1rem;
+            }
+
+            .form-section {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-section-title {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
             .form-group input,
             .form-group textarea,
             .form-group select {
                 padding: 0.85rem 1rem;
-                font-size: 16px; /* evita zoom no iOS */
+                font-size: 16px;
+                /* evita zoom no iOS */
                 min-height: 44px;
             }
-            .form-group textarea { min-height: 80px; }
+
+            .form-group textarea {
+                min-height: 80px;
+            }
+
             .aluno-dropdown-header {
                 padding: 0.9rem 1rem;
                 font-size: 0.95rem;
                 min-height: 48px;
             }
-            .aluno-dropdown-content { padding: 0.9rem 1rem; }
+
+            .aluno-dropdown-content {
+                padding: 0.9rem 1rem;
+            }
+
             .btn-finalizar {
                 padding: 1rem;
                 font-size: 1rem;
                 min-height: 48px;
                 margin-top: 1.5rem;
             }
+
             .order-summary {
                 padding: 1.25rem;
                 border-radius: 10px;
             }
-            .order-summary h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+
+            .order-summary h2 {
+                font-size: 1.1rem;
+                margin-bottom: 1rem;
+            }
+
             .payment-option {
                 padding: 1.25rem 1rem;
                 min-height: 80px;
@@ -488,16 +985,36 @@
                 align-items: center;
                 justify-content: center;
             }
-            .payment-option i { font-size: 1.75rem; }
-            .payment-option h3 { font-size: 0.95rem; }
-            .pix-box, .cartao-box { padding: 1rem; margin-top: 1rem; }
-            .pix-qr img { max-width: 200px; }
+
+            .payment-option i {
+                font-size: 1.75rem;
+            }
+
+            .payment-option h3 {
+                font-size: 0.95rem;
+            }
+
+            .pix-box,
+            .cartao-box {
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+
+            .pix-qr img {
+                max-width: 200px;
+            }
+
             .btn-copy-pix {
                 padding: 0.85rem 1.25rem;
                 min-height: 44px;
                 font-size: 0.95rem;
             }
-            .pagamento-valor { font-size: 1.1rem; margin-bottom: 0.75rem; }
+
+            .pagamento-valor {
+                font-size: 1.1rem;
+                margin-bottom: 0.75rem;
+            }
+
             .checkout-toast {
                 top: max(0.5rem, env(safe-area-inset-top));
                 left: 0.75rem;
@@ -507,9 +1024,21 @@
                 padding: 0.85rem 1rem;
                 font-size: 0.9rem;
             }
-            .resumo-item { font-size: 0.9rem; margin: 0.5rem 0; }
-            .resumo-total { font-size: 1.1rem; padding-top: 0.75rem; }
-            .error { padding: 1rem; margin: 0.75rem 0; }
+
+            .resumo-item {
+                font-size: 0.9rem;
+                margin: 0.5rem 0;
+            }
+
+            .resumo-total {
+                font-size: 1.1rem;
+                padding-top: 0.75rem;
+            }
+
+            .error {
+                padding: 1rem;
+                margin: 0.75rem 0;
+            }
         }
 
         @media (max-width: 480px) {
@@ -517,38 +1046,62 @@
                 grid-template-columns: repeat(2, 1fr);
                 grid-template-rows: repeat(10, 1fr);
             }
-            .navbar { padding: 0.6rem 0.75rem; }
-            .checkout-container { padding: 0 0.5rem; }
-            .card { padding: 1rem; }
-            .form-grid { gap: 1rem; }
+
+            .navbar {
+                padding: 0.6rem 0.75rem;
+            }
+
+            .checkout-container {
+                padding: 0 0.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .form-grid {
+                gap: 1rem;
+            }
+
             .order-summary .price-row.total,
-            .order-summary .price-row { font-size: 0.9rem; }
-            .order-summary-grid-2 { grid-template-columns: 1fr !important; }
+            .order-summary .price-row {
+                font-size: 0.9rem;
+            }
+
+            .order-summary-grid-2 {
+                grid-template-columns: 1fr !important;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
     <aside class="sidebar" id="sidebar" aria-label="Menu de navegação">
         <div class="sidebar-header">
-            <a href="../index-10.html"><img src="../images/background/Logo.webp" alt="Avoar Turismo" class="sidebar-logo"></a>
-            <button type="button" class="btn-close-sidebar" id="closeSidebarBtn" aria-label="Fechar menu"><i class="fas fa-times"></i></button>
+            <a href="../index-10.html"><img src="../images/background/Logo.webp" alt="Avoar Turismo"
+                    class="sidebar-logo"></a>
+            <button type="button" class="btn-close-sidebar" id="closeSidebarBtn" aria-label="Fechar menu"><i
+                    class="fas fa-times"></i></button>
         </div>
         <nav class="sidebar-nav">
             <a href="inicio.html" class="sidebar-link"><i class="fas fa-home"></i> Início</a>
             <a href="pacotes-viagens.html" class="sidebar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
             <a href="pedidos.html" class="sidebar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html" class="sidebar-link"><i class="fas fa-cog"></i> Configurações</a>
-            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i>
+                Sair</button>
         </nav>
     </aside>
 
     <nav class="navbar">
         <div class="navbar-left">
-            <a href="../index-10.html" class="navbar-brand"><img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo"></a>
+            <a href="../index-10.html" class="navbar-brand"><img src="../images/background/Logo.webp"
+                    alt="Avoar Turismo" class="navbar-logo"></a>
             <a href="#" id="voltarLink" class="navbar-link"><i class="fas fa-arrow-left"></i> Voltar</a>
         </div>
-        <button type="button" class="btn-hamburger" id="hamburgerBtn" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
+        <button type="button" class="btn-hamburger" id="hamburgerBtn" aria-label="Abrir menu"><i
+                class="fas fa-bars"></i></button>
         <div class="navbar-menu">
             <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
             <a href="pacotes-viagens.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
@@ -562,199 +1115,265 @@
 
     <div class="checkout-hero">
         <div class="checkout-bg" id="checkoutBg" aria-hidden="true">
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250627-WA0021.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0007.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250517-WA0011.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0008.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0019.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250627-WA0021.jpg')">
+            </div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0007.jpg')">
+            </div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250517-WA0011.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0008.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0019.jpg')">
+            </div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg')"></div>
         </div>
 
-    <div class="checkout-container">
-        <div class="checkout-header-card">
-            <h1 class="page-title">Checkout</h1>
-            <p class="subtitle">Preencha os dados de cada participante. Campos com <span class="required">*</span> são obrigatórios.</p>
-        </div>
+        <div class="checkout-container">
+            <div class="checkout-header-card">
+                <h1 class="page-title">Checkout</h1>
+                <p class="subtitle">Preencha os dados de cada participante. Campos com <span class="required">*</span>
+                    são obrigatórios.</p>
+            </div>
 
-        <div class="checkout-grid">
-            <!-- Coluna esquerda: formulário -->
-            <div>
-                <div class="card">
-                    <div class="card-header"><h2>Resumo do Pedido</h2></div>
-                    <div class="resumo-item"><span>Excursão:</span><strong id="resumoTitulo"></strong></div>
-                    <div class="resumo-item"><span>Quantidade:</span><strong id="resumoQtd"></strong></div>
-                    <div class="resumo-item"><span>Valor Unitário:</span><strong>R$ <span id="resumoValorUnit"></span></strong></div>
-                    <div class="resumo-item resumo-total"><span>Total:</span><span>R$ <span id="resumoTotal"></span></span></div>
+            <div class="checkout-grid">
+                <!-- Coluna esquerda: formulário -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Resumo do Pedido</h2>
+                        </div>
+                        <div class="resumo-item"><span>Excursão:</span><strong id="resumoTitulo"></strong></div>
+                        <div class="resumo-item"><span>Quantidade:</span><strong id="resumoQtd"></strong></div>
+                        <div class="resumo-item"><span>Valor Unitário:</span><strong>R$ <span
+                                    id="resumoValorUnit"></span></strong></div>
+                        <div class="resumo-item resumo-total"><span>Total:</span><span>R$ <span
+                                    id="resumoTotal"></span></span></div>
+                    </div>
+
+                    <div id="error" class="error"></div>
+
+                    <form id="checkoutForm">
+                        <div id="responsavelContainer"></div>
+                        <div id="alunosContainer"></div>
+                        <button type="submit" class="btn-finalizar" id="finalizarBtn">
+                            <i class="fas fa-check-circle"></i> Finalizar Pedido
+                        </button>
+                    </form>
+
+                    <!-- Etapa 2: Pagamento (exibida após criar o pedido) -->
+                    <div id="checkoutStepPagamento" class="card checkout-step-pagamento">
+                        <div class="card-header">
+                            <h2><i class="fas fa-credit-card"></i> Pagamento</h2>
+                        </div>
+                        <p class="subtitle" style="margin-bottom: 1rem;">Escolha a forma de pagamento para o valor do
+                            pedido.</p>
+                        <div class="pagamento-valor" id="pagamentoValor">R$ 0,00</div>
+
+                        <div class="payment-methods">
+                            <div class="payment-option" id="opcaoPix" data-metodo="pix">
+                                <i class="fas fa-qrcode"></i>
+                                <h3>PIX</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-light);">Pagamento instantâneo</p>
+                            </div>
+                            <div class="payment-option" id="opcaoCartao" data-metodo="cartao">
+                                <i class="fas fa-credit-card"></i>
+                                <h3>Cartão de crédito</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-light);">Pague com cartão</p>
+                            </div>
+                        </div>
+
+                        <div id="pixBox" class="pix-box">
+                            <p style="margin-bottom: 0.5rem;"><strong>Escaneie o QR Code ou copie o código PIX:</strong>
+                            </p>
+                            <div class="pix-qr" id="pixQrContainer"></div>
+                            <div style="text-align: center;">
+                                <button type="button" class="btn-copy-pix" id="btnCopiarPix"><i class="fas fa-copy"></i>
+                                    Copiar código PIX</button>
+                            </div>
+                            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-light);">Após o pagamento,
+                                o status será atualizado automaticamente.</p>
+                        </div>
+
+                        <div id="cartaoBox" class="cartao-box">
+                            <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-light);"><i
+                                    class="fas fa-info-circle"></i> Os dados do titular do cartão devem ser do
+                                <strong>responsável financeiro</strong> (quem fará o pagamento).
+                            </p>
+                            <form id="formCartao">
+                                <div class="form-grid">
+                                    <div class="form-group form-grid-full">
+                                        <label for="cardNumber">Número do cartão <span class="required">*</span></label>
+                                        <input type="text" id="cardNumber" name="cardNumber"
+                                            placeholder="0000 0000 0000 0000" maxlength="19" required>
+                                    </div>
+                                    <div class="form-group form-grid-full">
+                                        <label for="cardHolder">Nome no cartão <span class="required">*</span></label>
+                                        <input type="text" id="cardHolder" name="cardHolder"
+                                            placeholder="Como está no cartão" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cardExpiry">Validade (MM/AA) <span class="required">*</span></label>
+                                        <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/AA"
+                                            maxlength="5" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cardCvv">CVV <span class="required">*</span></label>
+                                        <input type="text" id="cardCvv" name="cardCvv" placeholder="123" maxlength="4"
+                                            required>
+                                    </div>
+                                    <div class="form-group form-grid-full">
+                                        <label for="cardHolderName">Nome completo (titular) <span
+                                                class="required">*</span></label>
+                                        <input type="text" id="cardHolderName" name="cardHolderName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cardHolderEmail">Email <span class="required">*</span></label>
+                                        <input type="email" id="cardHolderEmail" name="cardHolderEmail" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cardHolderCpf">CPF <span class="required">*</span></label>
+                                        <input type="text" id="cardHolderCpf" name="cardHolderCpf"
+                                            placeholder="000.000.000-00" maxlength="14" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cardHolderCep">CEP <span class="required">*</span></label>
+                                        <input type="text" id="cardHolderCep" name="cardHolderCep"
+                                            placeholder="00000-000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cardHolderAddressNumber">Número <span
+                                                class="required">*</span></label>
+                                        <input type="text" id="cardHolderAddressNumber" name="cardHolderAddressNumber"
+                                            required>
+                                    </div>
+                                    <div class="form-group form-grid-full">
+                                        <label for="cardHolderPhone">Telefone <span class="required">*</span></label>
+                                        <input type="tel" id="cardHolderPhone" name="cardHolderPhone"
+                                            placeholder="(11) 99999-9999" maxlength="16" required>
+                                    </div>
+                                    <div class="form-group form-grid-full" id="installmentGroup">
+                                        <label for="installmentCount">Parcelas</label>
+                                        <select id="installmentCount" name="installmentCount" class="form-control"
+                                            style="width:100%;padding:0.65rem 0.75rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.95rem;">
+                                            <option value="1">1x (à vista)</option>
+                                        </select>
+                                        <small id="installmentInfo"
+                                            style="color: var(--text-light); font-size: 0.8rem;"></small>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-finalizar" id="btnPagarCartao"
+                                    style="margin-top: 1rem;">
+                                    <i class="fas fa-lock"></i> Pagar com cartão
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="error" class="error"></div>
+                <!-- Coluna direita: Dados da viagem (igual ao admin) -->
+                <div>
+                    <div class="order-summary">
+                        <h2>Dados da viagem</h2>
 
-                <form id="checkoutForm">
-                    <div id="responsavelContainer"></div>
-                    <div id="alunosContainer"></div>
-                    <button type="submit" class="btn-finalizar" id="finalizarBtn">
-                        <i class="fas fa-check-circle"></i> Finalizar Pedido
-                    </button>
-                </form>
-
-                <!-- Etapa 2: Pagamento (exibida após criar o pedido) -->
-                <div id="checkoutStepPagamento" class="card checkout-step-pagamento">
-                    <div class="card-header">
-                        <h2><i class="fas fa-credit-card"></i> Pagamento</h2>
-                    </div>
-                    <p class="subtitle" style="margin-bottom: 1rem;">Escolha a forma de pagamento para o valor do pedido.</p>
-                    <div class="pagamento-valor" id="pagamentoValor">R$ 0,00</div>
-
-                    <div class="payment-methods">
-                        <div class="payment-option" id="opcaoPix" data-metodo="pix">
-                            <i class="fas fa-qrcode"></i>
-                            <h3>PIX</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-light);">Pagamento instantâneo</p>
+                        <div style="padding: 1rem 0; border-bottom: 1px solid var(--light-border);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-weight: 600; font-size: 0.95rem;">Produto</span>
+                                <span style="font-weight: 600; font-size: 0.95rem;">Subtotal</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <span id="dadosViagemProduto"
+                                    style="color: var(--text-light); font-size: 0.9rem; flex: 1;">—</span>
+                                <span id="dadosViagemSubtotal"
+                                    style="font-weight: 600; color: #000; white-space: nowrap; margin-left: 1rem;">R$
+                                    0,00</span>
+                            </div>
                         </div>
-                        <div class="payment-option" id="opcaoCartao" data-metodo="cartao">
-                            <i class="fas fa-credit-card"></i>
-                            <h3>Cartão de crédito</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-light);">Pague com cartão</p>
-                        </div>
-                    </div>
 
-                    <div id="pixBox" class="pix-box">
-                        <p style="margin-bottom: 0.5rem;"><strong>Escaneie o QR Code ou copie o código PIX:</strong></p>
-                        <div class="pix-qr" id="pixQrContainer"></div>
-                        <div style="text-align: center;">
-                            <button type="button" class="btn-copy-pix" id="btnCopiarPix"><i class="fas fa-copy"></i> Copiar código PIX</button>
-                        </div>
-                        <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-light);">Após o pagamento, o status será atualizado automaticamente.</p>
-                    </div>
+                        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--light-border);">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.125rem;">Sobre o Passeio</h3>
+                            <div id="dadosViagemSobre"
+                                style="color: var(--text-light); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                                —</div>
 
-                    <div id="cartaoBox" class="cartao-box">
-                        <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-light);"><i class="fas fa-info-circle"></i> Os dados do titular do cartão devem ser do <strong>responsável financeiro</strong> (quem fará o pagamento).</p>
-                        <form id="formCartao">
-                            <div class="form-grid">
-                                <div class="form-group form-grid-full">
-                                    <label for="cardNumber">Número do cartão <span class="required">*</span></label>
-                                    <input type="text" id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                            <div style="margin-bottom: 1.5rem;">
+                                <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; font-weight: 600;">O que está
+                                    incluso</h4>
+                                <ul id="dadosViagemInclusos">—</ul>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; font-weight: 600;">Recomendações
+                                </h4>
+                                <ul id="dadosViagemRecomendacoes">—</ul>
+                            </div>
+
+                            <div class="order-summary-grid-2"
+                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                                <div>
+                                    <h4
+                                        style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem; font-weight: 500;">
+                                        Local de Saída</h4>
+                                    <p id="dadosViagemLocal" style="margin: 0; font-size: 0.9rem; font-weight: 600;">—
+                                    </p>
                                 </div>
-                                <div class="form-group form-grid-full">
-                                    <label for="cardHolder">Nome no cartão <span class="required">*</span></label>
-                                    <input type="text" id="cardHolder" name="cardHolder" placeholder="Como está no cartão" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cardExpiry">Validade (MM/AA) <span class="required">*</span></label>
-                                    <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/AA" maxlength="5" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cardCvv">CVV <span class="required">*</span></label>
-                                    <input type="text" id="cardCvv" name="cardCvv" placeholder="123" maxlength="4" required>
-                                </div>
-                                <div class="form-group form-grid-full">
-                                    <label for="cardHolderName">Nome completo (titular) <span class="required">*</span></label>
-                                    <input type="text" id="cardHolderName" name="cardHolderName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cardHolderEmail">Email <span class="required">*</span></label>
-                                    <input type="email" id="cardHolderEmail" name="cardHolderEmail" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cardHolderCpf">CPF <span class="required">*</span></label>
-                                    <input type="text" id="cardHolderCpf" name="cardHolderCpf" placeholder="000.000.000-00" maxlength="14" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cardHolderCep">CEP <span class="required">*</span></label>
-                                    <input type="text" id="cardHolderCep" name="cardHolderCep" placeholder="00000-000" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cardHolderAddressNumber">Número <span class="required">*</span></label>
-                                    <input type="text" id="cardHolderAddressNumber" name="cardHolderAddressNumber" required>
-                                </div>
-                                <div class="form-group form-grid-full">
-                                    <label for="cardHolderPhone">Telefone <span class="required">*</span></label>
-                                    <input type="tel" id="cardHolderPhone" name="cardHolderPhone" placeholder="(11) 99999-9999" maxlength="16" required>
-                                </div>
-                                <div class="form-group form-grid-full" id="installmentGroup">
-                                    <label for="installmentCount">Parcelas</label>
-                                    <select id="installmentCount" name="installmentCount" class="form-control" style="width:100%;padding:0.65rem 0.75rem;border:1px solid #d1d5db;border-radius:8px;font-size:0.95rem;">
-                                        <option value="1">1x (à vista)</option>
-                                    </select>
-                                    <small id="installmentInfo" style="color: var(--text-light); font-size: 0.8rem;"></small>
+                                <div>
+                                    <h4
+                                        style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem; font-weight: 500;">
+                                        Horário</h4>
+                                    <p id="dadosViagemHorario" style="margin: 0; font-size: 0.9rem; font-weight: 600;">—
+                                    </p>
                                 </div>
                             </div>
-                            <button type="submit" class="btn-finalizar" id="btnPagarCartao" style="margin-top: 1rem;">
-                                <i class="fas fa-lock"></i> Pagar com cartão
-                            </button>
-                        </form>
+                        </div>
+
+                        <div style="margin: 1.5rem 0;">
+                            <div class="price-row"><span>Subtotal</span><strong id="dadosViagemTotalLabel">R$
+                                    0,00</strong></div>
+                            <div class="price-row total"><span>Total</span><strong id="dadosViagemTotal">R$
+                                    0,00</strong></div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Coluna direita: Dados da viagem (igual ao admin) -->
-            <div>
-                <div class="order-summary">
-                    <h2>Dados da viagem</h2>
-
-                    <div style="padding: 1rem 0; border-bottom: 1px solid var(--light-border);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="font-weight: 600; font-size: 0.95rem;">Produto</span>
-                            <span style="font-weight: 600; font-size: 0.95rem;">Subtotal</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <span id="dadosViagemProduto" style="color: var(--text-light); font-size: 0.9rem; flex: 1;">—</span>
-                            <span id="dadosViagemSubtotal" style="font-weight: 600; color: #000; white-space: nowrap; margin-left: 1rem;">R$ 0,00</span>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--light-border);">
-                        <h3 style="margin-bottom: 1rem; font-size: 1.125rem;">Sobre o Passeio</h3>
-                        <div id="dadosViagemSobre" style="color: var(--text-light); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">—</div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; font-weight: 600;">O que está incluso</h4>
-                            <ul id="dadosViagemInclusos">—</ul>
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; font-weight: 600;">Recomendações</h4>
-                            <ul id="dadosViagemRecomendacoes">—</ul>
-                        </div>
-
-                        <div class="order-summary-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                            <div>
-                                <h4 style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem; font-weight: 500;">Local de Saída</h4>
-                                <p id="dadosViagemLocal" style="margin: 0; font-size: 0.9rem; font-weight: 600;">—</p>
-                            </div>
-                            <div>
-                                <h4 style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem; font-weight: 500;">Horário</h4>
-                                <p id="dadosViagemHorario" style="margin: 0; font-size: 0.9rem; font-weight: 600;">—</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="margin: 1.5rem 0;">
-                        <div class="price-row"><span>Subtotal</span><strong id="dadosViagemTotalLabel">R$ 0,00</strong></div>
-                        <div class="price-row total"><span>Total</span><strong id="dadosViagemTotal">R$ 0,00</strong></div>
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
     </div><!-- fim checkout-hero -->
 
     <script src="js/auth-manager.js"></script>
     <script src="js/checkout.js"></script>
 </body>
+
 </html>

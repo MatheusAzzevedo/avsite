@@ -1,672 +1,785 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<title>Avoar Turismo</title>
-<!-- Stylesheets -->
-<link href="css/bootstrap.css" rel="stylesheet">
-<link href="css/style.css" rel="stylesheet">
-<link href="css/avoar-custom.css" rel="stylesheet">
-<link href="css/about-page.css" rel="stylesheet">
-<link href="css/consultant-form.css" rel="stylesheet">
-<link href="css/testimonials.css" rel="stylesheet">
-<link href="css/avoar-top-header.css" rel="stylesheet">
-<link href="css/footer.css" rel="stylesheet">
-<link rel="shortcut icon" href="images/favicon%20avoar.png" type="image/png">
-<link rel="icon" href="images/favicon%20avoar.png" type="image/png">
-<!-- Responsive -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link href="css/responsive.css" rel="stylesheet">
-<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]--> 
+    <meta charset="utf-8">
+    <title>Avoar Turismo</title>
+    <!-- Stylesheets -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/avoar-custom.css" rel="stylesheet">
+    <link href="css/about-page.css" rel="stylesheet">
+    <link href="css/consultant-form.css" rel="stylesheet">
+    <link href="css/testimonials.css" rel="stylesheet">
+    <link href="css/avoar-top-header.css" rel="stylesheet">
+    <link href="css/footer.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/favicon%20avoar.png" type="image/png">
+    <link rel="icon" href="images/favicon%20avoar.png" type="image/png">
+    <!-- Responsive -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link href="css/responsive.css" rel="stylesheet">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
+
+    <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
 
 </head>
 
 <body class="about-page-dark">
-  <div class="site-container">
-    <div class="cursor"></div>
-    <!-- Preloader com vinheta Avoar -->
-    <div class="preloader">
-        <video class="preloader-vinheta-video" autoplay muted playsinline loop>
-            <source src="/Vinheta_Avoar(1).webm" type="video/webm">
-        </video>
-    </div>
-
-    <a href="https://wa.me/553125147884" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
-
-    <div class="menu-backdrop"></div>
-
-    <!-- Top Header (Desktop Only) - Novo header do site -->
-    <header class="avoar-top-header">
-        <div class="header-logo">
-            <a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48"></a>
+    <div class="site-container">
+        <div class="cursor"></div>
+        <!-- Preloader com vinheta Avoar -->
+        <div class="preloader">
+            <video class="preloader-vinheta-video" autoplay muted playsinline loop>
+                <source src="/Vinheta_Avoar(1).webm" type="video/webm">
+            </video>
         </div>
-        <nav class="header-nav">
-            <a href="/">Início</a>
-            <a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a>
-            <a href="/excursoes">Pacote de Viagens</a>
-            <a href="/biologia-marinha">Biologia Marinha</a>
-            <a href="/sobre-nos" class="active">Sobre Nós</a>
-            <a href="/blog">Blog</a>
-            <a href="/contato">Contato</a>
-        </nav>
-        <div class="header-login">
-            <div class="header-social">
-                <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+
+        <a href="https://wa.me/553125147884" class="whatsapp-float" target="_blank" rel="noopener"
+            aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
+
+        <div class="menu-backdrop"></div>
+
+        <!-- Top Header (Desktop Only) - Novo header do site -->
+        <header class="avoar-top-header">
+            <div class="header-logo">
+                <a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48"></a>
             </div>
-            <a href="/cliente/login.html" class="btn-login" style="text-decoration: none;">Login</a>
-        </div>
-    </header>
-    <!--End Top Header-->
-
-    <!-- Main Header Bar-->
-    <header class="main-header-bar alt-logo">
-        <div class="line-one"></div>
-        <div class="line-two"></div>
-        <!--Header-Upper-->
-        <div class="header-bar-inner">
-            <div class="outer-box clearfix">
-                
-                <!--Nav Toggler-->
-                <div class="nav-toggler"><button class="toggler-btn"><span class="bar bar-one"></span><span class="bar bar-two"></span><span class="bar bar-three"></span></button></div>
-                
-                <!--Social Links-->
-                <div class="social-links">
-                    <ul class="clearfix">
-                        <li><a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener"><span class="fab fa-instagram"></span></a></li>
-                    </ul>
+            <nav class="header-nav">
+                <a href="/">Início</a>
+                <a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank"
+                    rel="noopener noreferrer">Nossos Roteiros</a>
+                <a href="/excursoes">Pacote de Viagens</a>
+                <a href="/biologia-marinha">Biologia Marinha</a>
+                <a href="/sobre-nos" class="active">Sobre Nós</a>
+                <a href="/blog">Blog</a>
+                <a href="/contato">Contato</a>
+            </nav>
+            <div class="header-login">
+                <div class="header-social">
+                    <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank"
+                        rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer"
+                        aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank"
+                        rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
-                
-                <!--Copyright Text-->
-                <div class="copyright">&copy; Avoar Turismo 2026</div>
+                <a href="/cliente/login.html" class="btn-login" style="text-decoration: none;">Login</a>
             </div>
+        </header>
+        <!--End Top Header-->
 
-            <!--Alt Logo Box-->
-            <div class="alt-logo-box"><a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48"></a></div>
-            
-            <!--Nav Bg Box-->
-            <div class="nav-bg-box"></div>
-            
-            <!--Main Nav Outer-->
-            <div class="main-nav-outer">
-                <div class="nav-closer"><img src="images/icons/close-icon.png" alt=""></div>
-                <div class="outer-nav-box">
-                    <div class="top-bg"></div>
-                    <div class="bottom-bg"></div>
-                    <div class="main-nav-box" data-scrollbar="">
-                        <!--Logo Box-->
-                        <div class="main-logo-box"><a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" class="logo-desktop" width="340" height="48"><img src="images/Lavoar%20branco.png" alt="Avoar Turismo" class="logo-mobile" width="340" height="48"></a></div>
-                        <div class="main-nav">
-                            <ul class="navigation">
-                                <li><a href="/">Início</a></li>
-                                <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a></li>
-                                <li><a href="/excursoes">Pacote de Viagens</a></li>
-                                <li><a href="/biologia-marinha">Biologia Marinha</a></li>
-                                <li class="current"><a href="/sobre-nos">Sobre Nós</a></li>
-                                <li><a href="/blog">Blog</a></li>
-                                <li><a href="/contato">Contato</a></li>
-                                <li><a href="/admin/login.html">Administrativo</a></li>
-                                <li><a href="/cliente/login.html">Login</a></li>
-                            </ul>
+        <!-- Main Header Bar-->
+        <header class="main-header-bar alt-logo">
+            <div class="line-one"></div>
+            <div class="line-two"></div>
+            <!--Header-Upper-->
+            <div class="header-bar-inner">
+                <div class="outer-box clearfix">
+
+                    <!--Nav Toggler-->
+                    <div class="nav-toggler"><button class="toggler-btn"><span class="bar bar-one"></span><span
+                                class="bar bar-two"></span><span class="bar bar-three"></span></button></div>
+
+                    <!--Social Links-->
+                    <div class="social-links">
+                        <ul class="clearfix">
+                            <li><a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener"><span
+                                        class="fab fa-instagram"></span></a></li>
+                        </ul>
+                    </div>
+
+                    <!--Copyright Text-->
+                    <div class="copyright">&copy; Avoar Turismo 2026</div>
+                </div>
+
+                <!--Alt Logo Box-->
+                <div class="alt-logo-box"><a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" width="340"
+                            height="48"></a></div>
+
+                <!--Nav Bg Box-->
+                <div class="nav-bg-box"></div>
+
+                <!--Main Nav Outer-->
+                <div class="main-nav-outer">
+                    <div class="nav-closer"><img src="images/icons/close-icon.png" alt=""></div>
+                    <div class="outer-nav-box">
+                        <div class="top-bg"></div>
+                        <div class="bottom-bg"></div>
+                        <div class="main-nav-box" data-scrollbar="">
+                            <!--Logo Box-->
+                            <div class="main-logo-box"><a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo"
+                                        class="logo-desktop" width="340" height="48"><img
+                                        src="images/Lavoar%20branco.png" alt="Avoar Turismo" class="logo-mobile"
+                                        width="340" height="48"></a></div>
+                            <div class="main-nav">
+                                <ul class="navigation">
+                                    <li><a href="/">Início</a></li>
+                                    <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank"
+                                            rel="noopener noreferrer">Nossos Roteiros</a></li>
+                                    <li><a href="/excursoes">Pacote de Viagens</a></li>
+                                    <li><a href="/biologia-marinha">Biologia Marinha</a></li>
+                                    <li class="current"><a href="/sobre-nos">Sobre Nós</a></li>
+                                    <li><a href="/blog">Blog</a></li>
+                                    <li><a href="/contato">Contato</a></li>
+                                    <li><a href="/admin/login.html">Administrativo</a></li>
+                                    <li><a href="/cliente/login.html">Login</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!--End Header Upper-->
-    </header>
-    <!--End Main Header -->
+            <!--End Header Upper-->
+        </header>
+        <!--End Main Header -->
 
-    <div class="scroll-container">
-        <div class="main-content-container" id="scroll-container">
-            
-            <!-- Hero Section -->
-            <section class="about-hero-modern" id="to-top-div">
-                <div class="auto-container">
-                    <div class="hero-content">
-                        <div class="hero-text">
-                            <span class="eyebrow">Turismo Pedagógico</span>
-                            <h1>Transformamos aprendizado em experiência</h1>
-                            <p class="hero-lead">Há mais de uma década conectando escolas a destinos que inspiram, educam e transformam. Cada viagem é planejada para ampliar horizontes e fortalecer o conhecimento em campo.</p>
-                            <div class="hero-stats-inline">
-                                <div class="stat-inline">
-                                    <strong>+1.500</strong>
-                                    <span>Alunos</span>
-                                </div>
-                                <div class="stat-inline">
-                                    <strong>+20</strong>
-                                    <span>Escolas</span>
-                                </div>
-                                <div class="stat-inline">
-                                    <strong>98%</strong>
-                                    <span>Satisfação</span>
-                                </div>
-                            </div>
-                            <div class="hero-actions">
-                                <a href="/contato" class="theme-btn btn-style-one">Solicitar orçamento</a>
-                            </div>
-                        </div>
-                        <div class="hero-visual">
-                            <div class="hero-image-wrapper">
-                                <img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg" alt="Experiências pedagógicas Avoar Turismo" class="hero-main-image">
-                                <div class="floating-badge">
-                                    <img src="images/logoCadastur.png" alt="CADASTUR - Fazendo o turismo legal" class="badge-logo">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div class="scroll-container">
+            <div class="main-content-container" id="scroll-container">
 
-            <!-- Trust Metrics -->
-            <section class="about-metrics">
-                <div class="auto-container">
-                    <div class="metrics-grid">
-                        <div class="metric-item">
-                            <div class="metric-icon">
-                                <span class="fas fa-shield-check"></span>
-                            </div>
-                            <div class="metric-content">
-                                <h3>Segurança certificada</h3>
-                                <p>Protocolos validados e equipe CADASTUR</p>
-                            </div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-icon">
-                                <span class="fas fa-clipboard-check"></span>
-                            </div>
-                            <div class="metric-content">
-                                <h3>Planejamento pedagógico</h3>
-                                <p>Roteiros alinhados ao currículo escolar</p>
-                            </div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-icon">
-                                <span class="fas fa-headset"></span>
-                            </div>
-                            <div class="metric-content">
-                                <h3>Suporte dedicado</h3>
-                                <p>Acompanhamento completo em todas as etapas</p>
-                            </div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-icon">
-                                <span class="fas fa-mobile-alt"></span>
-                            </div>
-                            <div class="metric-content">
-                                <h3>Pagamento digital</h3>
-                                <p>Plataforma online segura e confiável</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- How We Work -->
-            <section class="about-process">
-                <div class="auto-container">
-                    <div class="section-heading-centered">
-                        <span class="eyebrow">Como funciona</span>
-                        <h2>Do planejamento à execução</h2>
-                        <p>Processo transparente e colaborativo em 4 etapas</p>
-                    </div>
-                    <div class="process-timeline">
-                        <div class="process-step">
-                            <div class="step-number">01</div>
-                            <div class="step-content">
-                                <h3>Escuta ativa</h3>
-                                <p>Entendemos os objetivos pedagógicos, faixa etária e necessidades específicas da instituição.</p>
-                            </div>
-                            <div class="step-visual">
-                                <span class="fas fa-comments"></span>
-                            </div>
-                        </div>
-                        <div class="process-step">
-                            <div class="step-number">02</div>
-                            <div class="step-content">
-                                <h3>Proposta personalizada</h3>
-                                <p>Montamos roteiro sob medida com cronograma, atividades e orçamento detalhado.</p>
-                            </div>
-                            <div class="step-visual">
-                                <span class="fas fa-map-marked-alt"></span>
-                            </div>
-                        </div>
-                        <div class="process-step">
-                            <div class="step-number">03</div>
-                            <div class="step-content">
-                                <h3>Organização completa</h3>
-                                <p>Cuidamos de transporte, hospedagem, alimentação, guias e todas as permissões necessárias.</p>
-                            </div>
-                            <div class="step-visual">
-                                <span class="fas fa-tasks"></span>
-                            </div>
-                        </div>
-                        <div class="process-step">
-                            <div class="step-number">04</div>
-                            <div class="step-content">
-                                <h3>Execução e acompanhamento</h3>
-                                <p>Presença em campo com relatórios em tempo real para coordenação e famílias.</p>
-                            </div>
-                            <div class="step-visual">
-                                <span class="fas fa-route"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Galeria de Imagens Carrossel -->
-            <section class="about-gallery-carousel">
-                <div class="auto-container">
-                    <div class="section-heading-centered">
-                        <span class="eyebrow">Nossas experiências</span>
-                        <h2>Momentos que transformam</h2>
-                    </div>
-                    <div class="gallery-carousel-wrapper">
-                        <button class="gallery-arrow gallery-arrow-prev" aria-label="Anterior">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <div class="gallery-carousel-track-container">
-                            <div class="gallery-carousel-track">
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250517-WA0011.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250517-WA0043.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250524-WA0011.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0008.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg" alt="Experiência Avoar Turismo" loading="lazy"></div>
-                                <div class="gallery-slide"><img src="images/Imagens%20para%20o%20site/parceiros.jpeg" alt="Parceiros Avoar Turismo" loading="lazy"></div>
-                            </div>
-                        </div>
-                        <button class="gallery-arrow gallery-arrow-next" aria-label="Próximo">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Differentials (simplified) -->
-            <section class="about-differentials-modern">
-                <div class="auto-container">
-                    <div class="diff-grid">
-                        <div class="diff-feature">
-                            <div class="feature-header">
-                                <div class="feature-icon">
-                                    <span class="fas fa-chalkboard-teacher"></span>
+                <!-- Hero Section -->
+                <section class="about-hero-modern" id="to-top-div">
+                    <div class="auto-container">
+                        <div class="hero-content">
+                            <div class="hero-text">
+                                <span class="eyebrow">Turismo Pedagógico</span>
+                                <h1>Transformamos aprendizado em experiência</h1>
+                                <p class="hero-lead">Há mais de uma década conectando escolas a destinos que inspiram,
+                                    educam e transformam. Cada viagem é planejada para ampliar horizontes e fortalecer o
+                                    conhecimento em campo.</p>
+                                <div class="hero-stats-inline">
+                                    <div class="stat-inline">
+                                        <strong>+1.500</strong>
+                                        <span>Alunos</span>
+                                    </div>
+                                    <div class="stat-inline">
+                                        <strong>+20</strong>
+                                        <span>Escolas</span>
+                                    </div>
+                                    <div class="stat-inline">
+                                        <strong>98%</strong>
+                                        <span>Satisfação</span>
+                                    </div>
                                 </div>
-                                <h3>Roteiros pedagógicos</h3>
-                            </div>
-                            <p>Construídos com a equipe escolar para alinhar objetivos de aprendizado e vivências práticas.</p>
-                        </div>
-                        <div class="diff-feature">
-                            <div class="feature-header">
-                                <div class="feature-icon">
-                                    <span class="fas fa-user-shield"></span>
+                                <div class="hero-actions">
+                                    <a href="/contato" class="theme-btn btn-style-one">Solicitar orçamento</a>
                                 </div>
-                                <h3>Equipe certificada</h3>
                             </div>
-                            <p>Profissionais CADASTUR e selo de Turismo Responsável do Ministério do Turismo.</p>
-                        </div>
-                        <div class="diff-feature">
-                            <div class="feature-header">
-                                <div class="feature-icon">
-                                    <span class="fas fa-chart-line"></span>
-                                </div>
-                                <h3>Relatórios semanais</h3>
-                            </div>
-                            <p>Acompanhamento transparente com updates para coordenação sobre inscrições e logística.</p>
-                        </div>
-                        <div class="diff-feature">
-                            <div class="feature-header">
-                                <div class="feature-icon">
-                                    <span class="fas fa-lock"></span>
-                                </div>
-                                <h3>Pagamento seguro</h3>
-                            </div>
-                            <p>Contratos e pagamentos 100% digitais via plataforma segura e confiável.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Social Proof (Partners + Numbers) -->
-            <section class="about-social-proof">
-                <div class="auto-container">
-                    <div class="proof-layout proof-layout-stacked">
-                        <div class="proof-visual">
-                            <div class="partners-showcase" id="partners-showcase" role="button" tabindex="0" aria-label="Clique para ampliar em tela cheia">
-                                <img src="images/Imagens%20para%20o%20site/parceiros.jpeg" alt="Colégios parceiros da Avoar Turismo">
-                            </div>
-                        </div>
-                        <div class="proof-text">
-                            <span class="eyebrow">Quem confia</span>
-                            <h2>Parceiros de longa data</h2>
-                            <p>Trabalhamos com instituições de ensino que valorizam aprendizado prático, segurança e experiências memoráveis para seus alunos.</p>
-                            <div class="proof-numbers">
-                                <div class="number-item">
-                                    <strong>+1.500</strong>
-                                    <span>Alunos impactados</span>
-                                </div>
-                                <div class="number-item">
-                                    <strong>+20</strong>
-                                    <span>Escolas parceiras</span>
-                                </div>
-                                <div class="number-item">
-                                    <strong>+60</strong>
-                                    <span>Destinos em 2023</span>
+                            <div class="hero-visual">
+                                <div class="hero-image-wrapper">
+                                    <img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg"
+                                        alt="Experiências pedagógicas Avoar Turismo" class="hero-main-image">
+                                    <div class="floating-badge">
+                                        <img src="images/logoCadastur.png" alt="CADASTUR - Fazendo o turismo legal"
+                                            class="badge-logo">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Values (MVV) -->
-            <section class="about-values-modern">
-                <div class="auto-container">
-                    <div class="section-heading-centered">
-                        <span class="eyebrow">Nossos pilares</span>
-                        <h2>Missão, Visão e Valores</h2>
-                    </div>
-                    <div class="values-grid-modern">
-                        <div class="value-card-modern">
-                            <div class="value-icon">
-                                <span class="far fa-compass"></span>
-                            </div>
-                            <h3>Missão</h3>
-                            <p>Ser referência em turismo pedagógico, proporcionando experiências surpreendentes com roteiros personalizados, qualidade e atendimento excepcional.</p>
-                        </div>
-                        <div class="value-card-modern">
-                            <div class="value-icon">
-                                <span class="far fa-lightbulb"></span>
-                            </div>
-                            <h3>Visão</h3>
-                            <p>Oferecer a melhor solução em turismo pedagógico, promovendo transformação através da experiência e do conhecimento.</p>
-                        </div>
-                        <div class="value-card-modern">
-                            <div class="value-icon">
-                                <span class="fas fa-heart"></span>
-                            </div>
-                            <h3>Valores</h3>
-                            <p>Inovação, colaboração, excelência e paixão pelo que fazemos. Comprometimento com cada detalhe.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CTA Final -->
-            <section class="about-cta-modern">
-                <div class="auto-container">
-                    <div class="cta-box">
-                        <div class="cta-bg-pattern"></div>
-                        <div class="cta-inner">
-                            <div class="cta-text">
-                                <h2>Pronto para criar experiências inesquecíveis?</h2>
-                                <p>Vamos planejar juntos uma excursão pedagógica que inspire seus alunos e fortaleça o aprendizado.</p>
-                            </div>
-                            <div class="cta-actions">
-                                <a href="/contato" class="theme-btn btn-style-one btn-large">Falar com especialista</a>
-                                <a href="https://wa.me/553125147884" target="_blank" rel="noopener" class="theme-btn btn-style-two btn-large">
-                                    <span class="fab fa-whatsapp"></span> WhatsApp
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Testimonials Section -->
-            <section class="testimonials-section">
-                <div class="testimonials-container">
-                    <!-- Header com Rating -->
-                    <div class="testimonials-header">
-                        <span class="testimonials-label">Depoimentos</span>
-                        <h2 class="testimonials-title">Experiências Reais</h2>
-                        
-                        <!-- Google Rating Badge - link para avaliações no Google -->
-                        <a class="google-rating-badge" href="https://www.google.com/search?q=avoar+turismo#lrd=0xa691e2a44f5587:0x4ba6942977995055,1,,,," target="_blank" rel="noopener noreferrer" aria-label="Ver avaliações da Avoar Turismo no Google">
-                            <div class="google-rating-badge-content">
-                                <div class="google-rating-logo">
-                                    <i class="fab fa-google"></i> Google
+                <!-- Trust Metrics -->
+                <section class="about-metrics">
+                    <div class="auto-container">
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <div class="metric-icon">
+                                    <span class="fas fa-shield-check"></span>
                                 </div>
-                                <div class="rating-score">4.9</div>
-                                <div class="rating-stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
+                                <div class="metric-content">
+                                    <h3>Segurança certificada</h3>
+                                    <p>Protocolos validados e equipe CADASTUR</p>
                                 </div>
                             </div>
-                            <span class="google-rating-count">(+27 avaliações)</span>
-                        </a>
+                            <div class="metric-item">
+                                <div class="metric-icon">
+                                    <span class="fas fa-clipboard-check"></span>
+                                </div>
+                                <div class="metric-content">
+                                    <h3>Planejamento pedagógico</h3>
+                                    <p>Roteiros alinhados ao currículo escolar</p>
+                                </div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-icon">
+                                    <span class="fas fa-headset"></span>
+                                </div>
+                                <div class="metric-content">
+                                    <h3>Suporte dedicado</h3>
+                                    <p>Acompanhamento completo em todas as etapas</p>
+                                </div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-icon">
+                                    <span class="fas fa-mobile-alt"></span>
+                                </div>
+                                <div class="metric-content">
+                                    <h3>Pagamento digital</h3>
+                                    <p>Plataforma online segura e confiável</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </section>
 
-                    <!-- Carousel -->
-                    <div class="testimonials-carousel-wrapper" style="position: relative;">
-                        <div class="testimonials-carousel"></div>
-                        
-                        <!-- Navigation Arrows -->
-                        <button class="testimonials-arrow prev" aria-label="Anterior">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="testimonials-arrow next" aria-label="Próximo">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                <!-- How We Work -->
+                <section class="about-process">
+                    <div class="auto-container">
+                        <div class="section-heading-centered">
+                            <span class="eyebrow">Como funciona</span>
+                            <h2>Do planejamento à execução</h2>
+                            <p>Processo transparente e colaborativo em 4 etapas</p>
+                        </div>
+                        <div class="process-timeline">
+                            <div class="process-step">
+                                <div class="step-number">01</div>
+                                <div class="step-content">
+                                    <h3>Escuta ativa</h3>
+                                    <p>Entendemos os objetivos pedagógicos, faixa etária e necessidades específicas da
+                                        instituição.</p>
+                                </div>
+                                <div class="step-visual">
+                                    <span class="fas fa-comments"></span>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">02</div>
+                                <div class="step-content">
+                                    <h3>Proposta personalizada</h3>
+                                    <p>Montamos roteiro sob medida com cronograma, atividades e orçamento detalhado.</p>
+                                </div>
+                                <div class="step-visual">
+                                    <span class="fas fa-map-marked-alt"></span>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">03</div>
+                                <div class="step-content">
+                                    <h3>Organização completa</h3>
+                                    <p>Cuidamos de transporte, hospedagem, alimentação, guias e todas as permissões
+                                        necessárias.</p>
+                                </div>
+                                <div class="step-visual">
+                                    <span class="fas fa-tasks"></span>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">04</div>
+                                <div class="step-content">
+                                    <h3>Execução e acompanhamento</h3>
+                                    <p>Presença em campo com relatórios em tempo real para coordenação e famílias.</p>
+                                </div>
+                                <div class="step-visual">
+                                    <span class="fas fa-route"></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </section>
 
-                    <!-- Dots Navigation -->
-                    <div class="testimonials-dots">
-                        <div class="dot active"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
+                <!-- Galeria de Imagens Carrossel -->
+                <section class="about-gallery-carousel">
+                    <div class="auto-container">
+                        <div class="section-heading-centered">
+                            <span class="eyebrow">Nossas experiências</span>
+                            <h2>Momentos que transformam</h2>
+                        </div>
+                        <div class="gallery-carousel-wrapper">
+                            <button class="gallery-arrow gallery-arrow-prev" aria-label="Anterior">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="gallery-carousel-track-container">
+                                <div class="gallery-carousel-track">
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250517-WA0011.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250517-WA0043.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250524-WA0011.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20251022-WA0008.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg"
+                                            alt="Experiência Avoar Turismo" loading="lazy"></div>
+                                    <div class="gallery-slide"><img
+                                            src="images/Imagens%20para%20o%20site/parceiros.jpeg"
+                                            alt="Parceiros Avoar Turismo" loading="lazy"></div>
+                                </div>
+                            </div>
+                            <button class="gallery-arrow gallery-arrow-next" aria-label="Próximo">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Formulário Fale com um consultor -->
-            <section class="consultant-form-section">
-                <div class="auto-container">
-                    <div class="consultant-form-card">
-                        <h2 class="form-title">Fale com um consultor</h2>
-                        <p class="form-intro">Preencha os campos abaixo para que um de nossos consultores entre em contato com você!</p>
-                        <form class="consultant-form" action="#" method="post" id="consultant-form-about">
-                            <div class="form-row">
+                <!-- Differentials (simplified) -->
+                <section class="about-differentials-modern">
+                    <div class="auto-container">
+                        <div class="diff-grid">
+                            <div class="diff-feature">
+                                <div class="feature-header">
+                                    <div class="feature-icon">
+                                        <span class="fas fa-chalkboard-teacher"></span>
+                                    </div>
+                                    <h3>Roteiros pedagógicos</h3>
+                                </div>
+                                <p>Construídos com a equipe escolar para alinhar objetivos de aprendizado e vivências
+                                    práticas.</p>
+                            </div>
+                            <div class="diff-feature">
+                                <div class="feature-header">
+                                    <div class="feature-icon">
+                                        <span class="fas fa-user-shield"></span>
+                                    </div>
+                                    <h3>Equipe certificada</h3>
+                                </div>
+                                <p>Profissionais CADASTUR e selo de Turismo Responsável do Ministério do Turismo.</p>
+                            </div>
+                            <div class="diff-feature">
+                                <div class="feature-header">
+                                    <div class="feature-icon">
+                                        <span class="fas fa-chart-line"></span>
+                                    </div>
+                                    <h3>Relatórios semanais</h3>
+                                </div>
+                                <p>Acompanhamento transparente com updates para coordenação sobre inscrições e
+                                    logística.</p>
+                            </div>
+                            <div class="diff-feature">
+                                <div class="feature-header">
+                                    <div class="feature-icon">
+                                        <span class="fas fa-lock"></span>
+                                    </div>
+                                    <h3>Pagamento seguro</h3>
+                                </div>
+                                <p>Contratos e pagamentos 100% digitais via plataforma segura e confiável.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Social Proof (Partners + Numbers) -->
+                <section class="about-social-proof">
+                    <div class="auto-container">
+                        <div class="proof-layout proof-layout-stacked">
+                            <div class="proof-visual">
+                                <div class="partners-showcase" id="partners-showcase" role="button" tabindex="0"
+                                    aria-label="Clique para ampliar em tela cheia">
+                                    <img src="images/Imagens%20para%20o%20site/parceiros.jpeg"
+                                        alt="Colégios parceiros da Avoar Turismo">
+                                </div>
+                            </div>
+                            <div class="proof-text">
+                                <span class="eyebrow">Quem confia</span>
+                                <h2>Parceiros de longa data</h2>
+                                <p>Trabalhamos com instituições de ensino que valorizam aprendizado prático, segurança e
+                                    experiências memoráveis para seus alunos.</p>
+                                <div class="proof-numbers">
+                                    <div class="number-item">
+                                        <strong>+1.500</strong>
+                                        <span>Alunos impactados</span>
+                                    </div>
+                                    <div class="number-item">
+                                        <strong>+20</strong>
+                                        <span>Escolas parceiras</span>
+                                    </div>
+                                    <div class="number-item">
+                                        <strong>+60</strong>
+                                        <span>Destinos em 2023</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Values (MVV) -->
+                <section class="about-values-modern">
+                    <div class="auto-container">
+                        <div class="section-heading-centered">
+                            <span class="eyebrow">Nossos pilares</span>
+                            <h2>Missão, Visão e Valores</h2>
+                        </div>
+                        <div class="values-grid-modern">
+                            <div class="value-card-modern">
+                                <div class="value-icon">
+                                    <span class="far fa-compass"></span>
+                                </div>
+                                <h3>Missão</h3>
+                                <p>Ser referência em turismo pedagógico, proporcionando experiências surpreendentes com
+                                    roteiros personalizados, qualidade e atendimento excepcional.</p>
+                            </div>
+                            <div class="value-card-modern">
+                                <div class="value-icon">
+                                    <span class="far fa-lightbulb"></span>
+                                </div>
+                                <h3>Visão</h3>
+                                <p>Oferecer a melhor solução em turismo pedagógico, promovendo transformação através da
+                                    experiência e do conhecimento.</p>
+                            </div>
+                            <div class="value-card-modern">
+                                <div class="value-icon">
+                                    <span class="fas fa-heart"></span>
+                                </div>
+                                <h3>Valores</h3>
+                                <p>Inovação, colaboração, excelência e paixão pelo que fazemos. Comprometimento com cada
+                                    detalhe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA Final -->
+                <section class="about-cta-modern">
+                    <div class="auto-container">
+                        <div class="cta-box">
+                            <div class="cta-bg-pattern"></div>
+                            <div class="cta-inner">
+                                <div class="cta-text">
+                                    <h2>Pronto para criar experiências inesquecíveis?</h2>
+                                    <p>Vamos planejar juntos uma excursão pedagógica que inspire seus alunos e fortaleça
+                                        o aprendizado.</p>
+                                </div>
+                                <div class="cta-actions">
+                                    <a href="/contato" class="theme-btn btn-style-one btn-large">Falar com
+                                        especialista</a>
+                                    <a href="https://wa.me/553125147884" target="_blank" rel="noopener"
+                                        class="theme-btn btn-style-two btn-large">
+                                        <span class="fab fa-whatsapp"></span> WhatsApp
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Testimonials Section -->
+                <section class="testimonials-section">
+                    <div class="testimonials-container">
+                        <!-- Header com Rating -->
+                        <div class="testimonials-header">
+                            <span class="testimonials-label">Depoimentos</span>
+                            <h2 class="testimonials-title">Experiências Reais</h2>
+
+                            <!-- Google Rating Badge - link para avaliações no Google -->
+                            <a class="google-rating-badge"
+                                href="https://www.google.com/search?q=avoar+turismo#lrd=0xa691e2a44f5587:0x4ba6942977995055,1,,,,"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Ver avaliações da Avoar Turismo no Google">
+                                <div class="google-rating-badge-content">
+                                    <div class="google-rating-logo">
+                                        <i class="fab fa-google"></i> Google
+                                    </div>
+                                    <div class="rating-score">4.9</div>
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                                <span class="google-rating-count">(+27 avaliações)</span>
+                            </a>
+                        </div>
+
+                        <!-- Carousel -->
+                        <div class="testimonials-carousel-wrapper" style="position: relative;">
+                            <div class="testimonials-carousel"></div>
+
+                            <!-- Navigation Arrows -->
+                            <button class="testimonials-arrow prev" aria-label="Anterior">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="testimonials-arrow next" aria-label="Próximo">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- Dots Navigation -->
+                        <div class="testimonials-dots">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Formulário Fale com um consultor -->
+                <section class="consultant-form-section">
+                    <div class="auto-container">
+                        <div class="consultant-form-card">
+                            <h2 class="form-title">Fale com um consultor</h2>
+                            <p class="form-intro">Preencha os campos abaixo para que um de nossos consultores entre em
+                                contato com você!</p>
+                            <form class="consultant-form" action="#" method="post" id="consultant-form-about">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="consultant-nome-about">Nome <span class="required">*</span></label>
+                                        <input type="text" id="consultant-nome-about" name="nome" placeholder="Nome"
+                                            required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="consultant-sobrenome-about">Sobrenome <span
+                                                class="required">*</span></label>
+                                        <input type="text" id="consultant-sobrenome-about" name="sobrenome"
+                                            placeholder="Sobrenome" required>
+                                    </div>
+                                </div>
                                 <div class="form-group">
-                                    <label for="consultant-nome-about">Nome <span class="required">*</span></label>
-                                    <input type="text" id="consultant-nome-about" name="nome" placeholder="Nome" required>
+                                    <label for="consultant-email-about">Informe seu melhor e-mail <span
+                                            class="required">*</span></label>
+                                    <input type="email" id="consultant-email-about" name="email"
+                                        placeholder="Melhor e-mail" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="consultant-sobrenome-about">Sobrenome <span class="required">*</span></label>
-                                    <input type="text" id="consultant-sobrenome-about" name="sobrenome" placeholder="Sobrenome" required>
+                                    <label for="consultant-escola-about">Nome da Escola onde trabalha <span
+                                            class="required">*</span></label>
+                                    <input type="text" id="consultant-escola-about" name="escola"
+                                        placeholder="Nome da Escola onde trabalha" required>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="consultant-email-about">Informe seu melhor e-mail <span class="required">*</span></label>
-                                <input type="email" id="consultant-email-about" name="email" placeholder="Melhor e-mail" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="consultant-escola-about">Nome da Escola onde trabalha <span class="required">*</span></label>
-                                <input type="text" id="consultant-escola-about" name="escola" placeholder="Nome da Escola onde trabalha" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="consultant-municipio-about">Município <span class="required">*</span></label>
-                                <input type="text" id="consultant-municipio-about" name="municipio" placeholder="Município" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="consultant-telefone-about">Telefone de contato <span class="required">*</span></label>
-                                <input type="tel" id="consultant-telefone-about" name="telefone" placeholder="Informe o telefone para contato" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="consultant-roteiro-about">Em qual roteiro está interessado(a)?</label>
-                                <input type="text" id="consultant-roteiro-about" name="roteiro" placeholder="Informe o roteiro ao qual tem interesse">
-                            </div>
-                            <div class="form-group">
-                                <label>O roteiro é para qual série? <span class="required">*</span></label>
-                                <div class="radio-group">
-                                    <label class="radio-option">
-                                        <input type="radio" name="serie" value="ensino-infantil" required>
-                                        <span>Ensino infantil</span>
-                                    </label>
-                                    <label class="radio-option">
-                                        <input type="radio" name="serie" value="ensino-fundamental">
-                                        <span>Ensino fundamental</span>
-                                    </label>
-                                    <label class="radio-option">
-                                        <input type="radio" name="serie" value="ensino-medio">
-                                        <span>Ensino médio</span>
-                                    </label>
-                                    <label class="radio-option">
-                                        <input type="radio" name="serie" value="todas">
-                                        <span>Todas as séries</span>
-                                    </label>
+                                <div class="form-group">
+                                    <label for="consultant-municipio-about">Município <span
+                                            class="required">*</span></label>
+                                    <input type="text" id="consultant-municipio-about" name="municipio"
+                                        placeholder="Município" required>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="consultant-mensagem-about">Mensagem</label>
-                                <textarea id="consultant-mensagem-about" name="mensagem" placeholder="Mensagem" rows="4"></textarea>
-                            </div>
-                            <div class="form-submit">
-                                <button type="submit" class="theme-btn btn-style-one">Enviar</button>
-                            </div>
-                        </form>
+                                <div class="form-group">
+                                    <label for="consultant-telefone-about">Telefone de contato <span
+                                            class="required">*</span></label>
+                                    <input type="tel" id="consultant-telefone-about" name="telefone"
+                                        placeholder="Informe o telefone para contato" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="consultant-roteiro-about">Em qual roteiro está interessado(a)?</label>
+                                    <input type="text" id="consultant-roteiro-about" name="roteiro"
+                                        placeholder="Informe o roteiro ao qual tem interesse">
+                                </div>
+                                <div class="form-group">
+                                    <label>O roteiro é para qual série? <span class="required">*</span></label>
+                                    <div class="radio-group">
+                                        <label class="radio-option">
+                                            <input type="radio" name="serie" value="ensino-infantil" required>
+                                            <span>Ensino infantil</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="serie" value="ensino-fundamental">
+                                            <span>Ensino fundamental</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="serie" value="ensino-medio">
+                                            <span>Ensino médio</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="serie" value="todas">
+                                            <span>Todas as séries</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="consultant-mensagem-about">Mensagem</label>
+                                    <textarea id="consultant-mensagem-about" name="mensagem" placeholder="Mensagem"
+                                        rows="4"></textarea>
+                                </div>
+                                <div class="form-submit">
+                                    <button type="submit" class="theme-btn btn-style-one">Enviar</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
+            </div>
         </div>
-    </div>
 
         <!-- Footer -->
-    <!-- Footer -->
-<footer class="site-footer">
-  <div class="auto-container">
-    <div class="footer-content">
-      <!-- Coluna 1: Marca -->
-      <div class="footer-brand">
-        <img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48">
-        <h3>Avoar Turismo Pedagógico e Viagens</h3>
-        <p>Transformamos viagens em experiências educativas que conectam aprendizado, cultura e vivências reais.</p>
-      </div>
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="auto-container">
+                <div class="footer-content">
+                    <!-- Coluna 1: Marca -->
+                    <div class="footer-brand">
+                        <img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48">
+                        <h3>Avoar Turismo Pedagógico e Viagens</h3>
+                        <p>Transformamos viagens em experiências educativas que conectam aprendizado, cultura e
+                            vivências reais.</p>
+                    </div>
 
-      <!-- Coluna 2: Links rápidos -->
-      <div class="footer-nav">
-        <h4>Links Rápidos</h4>
-        <ul>
-          <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a></li>
-          <li><a href="/excursoes">Pacote de Viagens</a></li>
-          <li><a href="/biologia-marinha">Biologia Marinha</a></li>
-          <li><a href="/sobre-nos">Sobre Nós</a></li>
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="/contato">Contato</a></li>
-        </ul>
-      </div>
+                    <!-- Coluna 2: Links rápidos -->
+                    <div class="footer-nav">
+                        <h4>Links Rápidos</h4>
+                        <ul>
+                            <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank"
+                                    rel="noopener noreferrer">Nossos Roteiros</a></li>
+                            <li><a href="/excursoes">Pacote de Viagens</a></li>
+                            <li><a href="/biologia-marinha">Biologia Marinha</a></li>
+                            <li><a href="/sobre-nos">Sobre Nós</a></li>
+                            <li><a href="/blog">Blog</a></li>
+                            <li><a href="/contato">Contato</a></li>
+                        </ul>
+                    </div>
 
-      <!-- Coluna 3: Contato -->
-      <div class="footer-info footer-contact">
-        <h4>Contato</h4>
-        <ul>
-          <li>Telefone: <a href="https://wa.me/553125147884" target="_blank" rel="noopener">(31) 2514-7884</a></li>
-          <li>E-mail: <a href="mailto:contato@avoarturismo.com.br">contato@avoarturismo.com.br</a></li>
-          <li>Endereço: Avenida do Contorno 9681 sala 504 - Prado - Belo Horizonte - MG</li>
-        </ul>
-      </div>
+                    <!-- Coluna 3: Contato -->
+                    <div class="footer-info footer-contact">
+                        <h4>Contato</h4>
+                        <ul>
+                            <li>Telefone: <a href="https://wa.me/553125147884" target="_blank" rel="noopener">(31)
+                                    2514-7884</a></li>
+                            <li>E-mail: <a href="mailto:contato@avoarturismo.com.br">contato@avoarturismo.com.br</a>
+                            </li>
+                            <li>Endereço: Avenida do Contorno 9681 sala 504 - Prado - Belo Horizonte - MG</li>
+                        </ul>
+                    </div>
 
-      <!-- Coluna 4: Redes Sociais -->
-      <div class="footer-social">
-        <h4>Redes Sociais</h4>
-        <div class="footer-social-links">
-          <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <!-- Coluna 4: Redes Sociais -->
+                    <div class="footer-social">
+                        <h4>Redes Sociais</h4>
+                        <div class="footer-social-links">
+                            <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank"
+                                rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer"
+                                aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank"
+                                rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="footer-bottom">
+                    <p class="footer-copyright">
+                        &copy; 2026 <a href="/admin/login.html" class="footer-admin-link">Avoar Turismo</a>. Todos os
+                        direitos reservados.
+                    </p>
+                    <div class="footer-legal-links">
+                        <span>Criado por: </span>
+                        <a href="https://wa.me/5511962605997" target="_blank" rel="noopener noreferrer">Matheus
+                            Azevedo</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Overlay fullscreen para imagem Quem Confia -->
+        <div class="partners-fullscreen-overlay" id="partners-fullscreen-overlay" aria-hidden="true">
+            <img src="images/Imagens%20para%20o%20site/parceiros.jpeg" alt="Colégios parceiros da Avoar Turismo">
+            <span class="close-hint">Clique ou pressione ESC para fechar</span>
         </div>
-      </div>
+
+        <!-- Overlay fullscreen para galeria do carrossel (Momentos que transformam) -->
+        <div class="gallery-fullscreen-overlay" id="gallery-fullscreen-overlay" aria-hidden="true">
+            <button class="gallery-lightbox-close" aria-label="Fechar"><i class="fas fa-times"></i></button>
+            <button class="gallery-lightbox-prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+            <div class="gallery-lightbox-content">
+                <img src="" alt="Experiência Avoar Turismo" id="gallery-lightbox-img">
+            </div>
+            <button class="gallery-lightbox-next" aria-label="Próximo"><i class="fas fa-chevron-right"></i></button>
+            <span class="gallery-lightbox-hint">Clique fora ou pressione ESC para fechar · Use as setas para
+                navegar</span>
+        </div>
+
     </div>
-
-    <!-- Copyright -->
-    <div class="footer-bottom">
-      <p class="footer-copyright">
-        &copy; 2026 <a href="/admin/login.html" class="footer-admin-link">Avoar Turismo</a>. Todos os direitos reservados.
-      </p>
-      <div class="footer-legal-links">
-        <span>Criado por: </span>
-        <a href="https://wa.me/5511962605997" target="_blank" rel="noopener noreferrer">Matheus Azevedo</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<!-- Overlay fullscreen para imagem Quem Confia -->
-<div class="partners-fullscreen-overlay" id="partners-fullscreen-overlay" aria-hidden="true">
-    <img src="images/Imagens%20para%20o%20site/parceiros.jpeg" alt="Colégios parceiros da Avoar Turismo">
-    <span class="close-hint">Clique ou pressione ESC para fechar</span>
-</div>
-
-<!-- Overlay fullscreen para galeria do carrossel (Momentos que transformam) -->
-<div class="gallery-fullscreen-overlay" id="gallery-fullscreen-overlay" aria-hidden="true">
-    <button class="gallery-lightbox-close" aria-label="Fechar"><i class="fas fa-times"></i></button>
-    <button class="gallery-lightbox-prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
-    <div class="gallery-lightbox-content">
-        <img src="" alt="Experiência Avoar Turismo" id="gallery-lightbox-img">
-    </div>
-    <button class="gallery-lightbox-next" aria-label="Próximo"><i class="fas fa-chevron-right"></i></button>
-    <span class="gallery-lightbox-hint">Clique fora ou pressione ESC para fechar · Use as setas para navegar</span>
-</div>
-
-</div>
-<!--End Site Container--> 
+    <!--End Site Container-->
 
 
-<script src="js/jquery.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.fancybox.js"></script>
-<script src="js/smooth-scrollbar.js"></script>
-<script src="js/owl.js"></script>
-<script src="js/cursor-script.js"></script>
-<script src="js/wow.js"></script>
-<script src="js/custom-script.js"></script>
-<script src="js/testimonials.js"></script>
-<script src="js/about-page.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.fancybox.js"></script>
+    <script src="js/smooth-scrollbar.js"></script>
+    <script src="js/owl.js"></script>
+    <script src="js/cursor-script.js"></script>
+    <script src="js/wow.js"></script>
+    <script src="js/custom-script.js"></script>
+    <script src="js/testimonials.js"></script>
+    <script src="js/about-page.js"></script>
 </body>
+
 </html>

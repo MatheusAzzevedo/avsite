@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,15 @@
     <link rel="shortcut icon" href="../images/favicon-avoar.png" type="image/png">
     <link rel="icon" href="../images/favicon-avoar.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
     <style>
         * {
             margin: 0;
@@ -47,26 +57,85 @@
             animation: fadeInImg 1s ease-in-out forwards;
         }
 
-        .login-bg .mosaico-item:nth-child(1) { animation-delay: 0.03s; }
-        .login-bg .mosaico-item:nth-child(2) { animation-delay: 0.06s; }
-        .login-bg .mosaico-item:nth-child(3) { animation-delay: 0.09s; }
-        .login-bg .mosaico-item:nth-child(4) { animation-delay: 0.12s; }
-        .login-bg .mosaico-item:nth-child(5) { animation-delay: 0.15s; }
-        .login-bg .mosaico-item:nth-child(6) { animation-delay: 0.18s; }
-        .login-bg .mosaico-item:nth-child(7) { animation-delay: 0.21s; }
-        .login-bg .mosaico-item:nth-child(8) { animation-delay: 0.24s; }
-        .login-bg .mosaico-item:nth-child(9) { animation-delay: 0.27s; }
-        .login-bg .mosaico-item:nth-child(10) { animation-delay: 0.3s; }
-        .login-bg .mosaico-item:nth-child(11) { animation-delay: 0.33s; }
-        .login-bg .mosaico-item:nth-child(12) { animation-delay: 0.36s; }
-        .login-bg .mosaico-item:nth-child(13) { animation-delay: 0.39s; }
-        .login-bg .mosaico-item:nth-child(14) { animation-delay: 0.42s; }
-        .login-bg .mosaico-item:nth-child(15) { animation-delay: 0.45s; }
-        .login-bg .mosaico-item:nth-child(16) { animation-delay: 0.48s; }
-        .login-bg .mosaico-item:nth-child(17) { animation-delay: 0.51s; }
-        .login-bg .mosaico-item:nth-child(18) { animation-delay: 0.54s; }
-        .login-bg .mosaico-item:nth-child(19) { animation-delay: 0.57s; }
-        .login-bg .mosaico-item:nth-child(20) { animation-delay: 0.6s; }
+        .login-bg .mosaico-item:nth-child(1) {
+            animation-delay: 0.03s;
+        }
+
+        .login-bg .mosaico-item:nth-child(2) {
+            animation-delay: 0.06s;
+        }
+
+        .login-bg .mosaico-item:nth-child(3) {
+            animation-delay: 0.09s;
+        }
+
+        .login-bg .mosaico-item:nth-child(4) {
+            animation-delay: 0.12s;
+        }
+
+        .login-bg .mosaico-item:nth-child(5) {
+            animation-delay: 0.15s;
+        }
+
+        .login-bg .mosaico-item:nth-child(6) {
+            animation-delay: 0.18s;
+        }
+
+        .login-bg .mosaico-item:nth-child(7) {
+            animation-delay: 0.21s;
+        }
+
+        .login-bg .mosaico-item:nth-child(8) {
+            animation-delay: 0.24s;
+        }
+
+        .login-bg .mosaico-item:nth-child(9) {
+            animation-delay: 0.27s;
+        }
+
+        .login-bg .mosaico-item:nth-child(10) {
+            animation-delay: 0.3s;
+        }
+
+        .login-bg .mosaico-item:nth-child(11) {
+            animation-delay: 0.33s;
+        }
+
+        .login-bg .mosaico-item:nth-child(12) {
+            animation-delay: 0.36s;
+        }
+
+        .login-bg .mosaico-item:nth-child(13) {
+            animation-delay: 0.39s;
+        }
+
+        .login-bg .mosaico-item:nth-child(14) {
+            animation-delay: 0.42s;
+        }
+
+        .login-bg .mosaico-item:nth-child(15) {
+            animation-delay: 0.45s;
+        }
+
+        .login-bg .mosaico-item:nth-child(16) {
+            animation-delay: 0.48s;
+        }
+
+        .login-bg .mosaico-item:nth-child(17) {
+            animation-delay: 0.51s;
+        }
+
+        .login-bg .mosaico-item:nth-child(18) {
+            animation-delay: 0.54s;
+        }
+
+        .login-bg .mosaico-item:nth-child(19) {
+            animation-delay: 0.57s;
+        }
+
+        .login-bg .mosaico-item:nth-child(20) {
+            animation-delay: 0.6s;
+        }
 
         .login-bg::after {
             content: '';
@@ -77,7 +146,9 @@
         }
 
         @keyframes fadeInImg {
-            to { opacity: 1; }
+            to {
+                opacity: 1;
+            }
         }
 
         .register-wrapper {
@@ -281,7 +352,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Responsivo - mosaico */
@@ -358,33 +431,56 @@
         }
     </style>
 </head>
+
 <body>
     <div class="login-bg" id="loginBg" aria-hidden="true">
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/%C2%A9Alexandre%20Nery_Avoar_Bernoulli_SP_14.08.2025-180.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1839.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/roger-nobles-yv4jTtDXviw-unsplash.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1775.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/DSC00349.JPG')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_0974.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/Utilizar%20essa%20daqui.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_2295.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1011.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG-20251119-WA0010.jpg')"></div>
-        <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg')"></div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/%C2%A9Alexandre%20Nery_Avoar_Bernoulli_SP_14.08.2025-180.jpg')">
+        </div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1839.jpg')">
+        </div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg')"></div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/roger-nobles-yv4jTtDXviw-unsplash.jpg')">
+        </div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1775.jpg')">
+        </div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/DSC00349.JPG')">
+        </div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_0974.jpg')">
+        </div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg')"></div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/Utilizar%20essa%20daqui.jpg')"></div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_2295.jpg')">
+        </div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg')"></div>
+        <div class="mosaico-item" style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG_1011.jpg')">
+        </div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg')"></div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/FOTOS%20AVOAR%20PREFERIDAS/IMG-20251119-WA0010.jpg')"></div>
+        <div class="mosaico-item"
+            style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg')"></div>
     </div>
 
     <div class="register-wrapper">
         <img src="../images/Logo%20Branca.png" alt="Avoar Turismo Pedagógico" class="register-logo">
-        
+
         <h1 class="register-title">Criar Conta</h1>
         <p class="register-subtitle">Preencha seus dados para começar</p>
 
@@ -399,44 +495,15 @@
         </div>
 
         <form id="registerForm" class="register-form">
-            <input 
-                type="text" 
-                id="nome" 
-                name="nome" 
-                class="form-input"
-                placeholder="Nome completo"
-                required
-                minlength="3"
-            >
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                class="form-input"
-                placeholder="Email"
-                required
-                autocomplete="email"
-            >
-            <input 
-                type="tel" 
-                id="telefone" 
-                name="telefone" 
-                class="form-input"
-                placeholder="Telefone (11) 98888-8888"
-                required
-                maxlength="16"
-            >
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                class="form-input"
-                placeholder="Senha"
-                required
-                minlength="8"
-                autocomplete="new-password"
-            >
-            
+            <input type="text" id="nome" name="nome" class="form-input" placeholder="Nome completo" required
+                minlength="3">
+            <input type="email" id="email" name="email" class="form-input" placeholder="Email" required
+                autocomplete="email">
+            <input type="tel" id="telefone" name="telefone" class="form-input" placeholder="Telefone (11) 98888-8888"
+                required maxlength="16">
+            <input type="password" id="password" name="password" class="form-input" placeholder="Senha" required
+                minlength="8" autocomplete="new-password">
+
             <div class="password-requirements">
                 <strong>A senha deve conter:</strong>
                 <ul>
@@ -465,4 +532,5 @@
     <script src="js/auth-manager.js"></script>
     <script src="js/registro.js"></script>
 </body>
+
 </html>

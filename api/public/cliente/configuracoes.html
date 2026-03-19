@@ -1,30 +1,44 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurações da Conta - Avorar Turismo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
             cursor: auto !important;
         }
-        
-        body { 
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
             min-height: 100vh;
             cursor: default !important;
         }
-        
-        a, button { cursor: pointer !important; }
-        
+
+        a,
+        button {
+            cursor: pointer !important;
+        }
+
         /* NAVBAR */
-        .navbar { 
-            background: #ffffff; 
+        .navbar {
+            background: #ffffff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             padding: 1.2rem 3rem;
             display: flex;
@@ -35,7 +49,7 @@
             z-index: 1000;
             border-bottom: 3px solid #ff5c00;
         }
-        
+
         .navbar-brand {
             font-size: 1.5rem;
             font-weight: 700;
@@ -45,14 +59,19 @@
             gap: 0.5rem;
             white-space: nowrap;
         }
-        .navbar-logo { height: 47px; width: auto; display: block; }
-        
+
+        .navbar-logo {
+            height: 47px;
+            width: auto;
+            display: block;
+        }
+
         .navbar-menu {
             display: flex;
             gap: 2.5rem;
             align-items: center;
         }
-        
+
         .navbar-link {
             text-decoration: none;
             color: #333333;
@@ -65,11 +84,13 @@
             border-bottom: 2px solid transparent;
             padding-bottom: 0.3rem;
         }
-        .navbar-link:hover, .navbar-link.active { 
+
+        .navbar-link:hover,
+        .navbar-link.active {
             color: #ff5c00;
             border-bottom-color: #ff5c00;
         }
-        
+
         .btn-logout {
             padding: 0.7rem 1.5rem;
             background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
@@ -85,11 +106,12 @@
             align-items: center;
             gap: 0.5rem;
         }
+
         .btn-logout:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
         }
-        
+
         .btn-hamburger {
             display: none;
             background: none;
@@ -107,7 +129,7 @@
             position: relative;
             z-index: 1001;
         }
-        
+
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -118,10 +140,12 @@
             transition: opacity 0.3s ease;
             pointer-events: none;
         }
+
         .sidebar-overlay.open {
             opacity: 1;
             pointer-events: auto;
         }
+
         .sidebar {
             position: fixed;
             top: 0;
@@ -138,17 +162,24 @@
             overflow-y: auto;
             pointer-events: none;
         }
+
         .sidebar.open {
             transform: translateX(0);
             pointer-events: auto;
         }
+
         .sidebar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
-        .sidebar-logo { height: 52px; width: auto; }
+
+        .sidebar-logo {
+            height: 52px;
+            width: auto;
+        }
+
         .btn-close-sidebar {
             background: none;
             border: none;
@@ -157,11 +188,13 @@
             cursor: pointer;
             padding: 0.25rem;
         }
+
         .sidebar-nav {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
+
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -173,26 +206,38 @@
             border-radius: 8px;
             transition: all 0.2s ease;
         }
-        .sidebar-link:hover, .sidebar-link.active {
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
             background: rgba(255, 92, 0, 0.2);
             color: #ff5c00;
         }
-        .sidebar-link i { width: 24px; text-align: center; font-size: 1.1rem; }
-        .sidebar .btn-logout { width: 100%; margin-top: 1.5rem; justify-content: center; }
-        
-        .container { 
-            max-width: 600px; 
-            margin: 3rem auto; 
+
+        .sidebar-link i {
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .sidebar .btn-logout {
+            width: 100%;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 3rem auto;
             padding: 0 2rem;
         }
-        
+
         .page-header {
             margin-bottom: 2.5rem;
             animation: slideUp 0.6s ease-out;
         }
-        
-        h1 { 
-            color: #101010; 
+
+        h1 {
+            color: #101010;
             margin-bottom: 0.5rem;
             font-size: 2rem;
             font-weight: 700;
@@ -200,75 +245,75 @@
             align-items: center;
             gap: 0.8rem;
         }
-        
+
         .page-subtitle {
             color: #666666;
             font-size: 0.95rem;
             font-weight: 500;
         }
-        
-        .card { 
-            background: #ffffff; 
-            border-radius: 14px; 
+
+        .card {
+            background: #ffffff;
+            border-radius: 14px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 2.5rem; 
+            padding: 2.5rem;
             margin-bottom: 2rem;
             border-top: 4px solid #ff5c00;
             animation: slideUp 0.6s ease-out;
         }
-        
-        h2 { 
-            color: #ff5c00; 
-            font-size: 1.4rem; 
+
+        h2 {
+            color: #ff5c00;
+            font-size: 1.4rem;
             margin-bottom: 1.5rem;
             font-weight: 700;
             display: flex;
             align-items: center;
             gap: 0.6rem;
         }
-        
-        .form-group { 
+
+        .form-group {
             margin-bottom: 1.8rem;
         }
-        
-        .form-group label { 
-            display: block; 
-            margin-bottom: 0.6rem; 
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.6rem;
             font-weight: 700;
             color: #101010;
             font-size: 0.95rem;
         }
-        
-        .form-group input { 
-            width: 100%; 
-            padding: 1rem; 
-            border: 2px solid #e0e0e0; 
-            border-radius: 10px; 
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 1rem;
             font-family: inherit;
             transition: all 0.3s ease;
             background: #f9f9f9;
         }
-        
-        .form-group input:focus { 
-            outline: none; 
+
+        .form-group input:focus {
+            outline: none;
             border-color: #ff5c00;
             background: #ffffff;
             box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.1);
         }
-        
+
         .form-group input:disabled {
             background: #f0f0f0;
             color: #999999;
             cursor: not-allowed;
         }
-        
-        .btn { 
-            padding: 1rem 2.5rem; 
+
+        .btn {
+            padding: 1rem 2.5rem;
             background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
+            color: white;
+            border: none;
+            border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -278,66 +323,66 @@
             align-items: center;
             gap: 0.6rem;
         }
-        
-        .btn:hover { 
+
+        .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 92, 0, 0.4);
         }
-        
+
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-        
-        .success { 
-            background: #d1fae5; 
-            color: #065f46; 
-            padding: 1.2rem; 
-            border-radius: 10px; 
-            margin-bottom: 1.5rem; 
+
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
             display: none;
             border-left: 4px solid #10b981;
             font-weight: 600;
             animation: slideDown 0.4s ease-out;
         }
-        
-        .success.show { 
-            display: block; 
+
+        .success.show {
+            display: block;
         }
-        
+
         .form-hint {
             font-size: 0.85rem;
             color: #999999;
             margin-top: 0.4rem;
             font-weight: 500;
         }
-        
+
         .card-separator {
             margin: 2.5rem 0;
         }
-        
+
         .btn-secondary {
             background: linear-gradient(135deg, #333333 0%, #101010 100%);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
-        
+
         .btn-secondary:hover {
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
-        
+
         .password-requirements {
             font-size: 0.8rem;
             color: #666666;
             margin-top: 0.5rem;
             line-height: 1.5;
         }
-        
+
         .password-requirements i {
             color: #ff5c00;
             margin-right: 0.25rem;
         }
-        
+
         .oauth-notice {
             background: #f0f9ff;
             border: 1px solid #bae6fd;
@@ -347,7 +392,7 @@
             font-size: 0.95rem;
             font-weight: 500;
         }
-        
+
         .error-msg {
             background: #fee2e2;
             color: #991b1b;
@@ -357,53 +402,57 @@
             border-left: 4px solid #dc2626;
             font-weight: 600;
         }
-        
+
         @keyframes slideUp {
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         @keyframes slideDown {
             from {
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         @media (max-width: 768px) {
             .navbar-menu {
                 display: none;
             }
+
             .btn-hamburger {
                 display: flex;
             }
+
             .navbar {
                 padding: 1rem 1.5rem;
             }
-            
+
             .container {
                 margin: 2rem auto;
                 padding: 0 1rem;
             }
-            
+
             h1 {
                 font-size: 1.6rem;
             }
-            
+
             .card {
                 padding: 1.5rem;
             }
-            
+
             .btn {
                 width: 100%;
                 justify-content: center;
@@ -411,6 +460,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
     <aside class="sidebar" id="sidebar" aria-label="Menu de navegação">
@@ -427,7 +477,8 @@
             <a href="pacotes-viagens.html" class="sidebar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
             <a href="pedidos.html" class="sidebar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html" class="sidebar-link active"><i class="fas fa-cog"></i> Configurações</a>
-            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i>
+                Sair</button>
         </nav>
     </aside>
 
@@ -452,27 +503,27 @@
             <h1><i class="fas fa-user-circle"></i> Configurações da Conta</h1>
             <p class="page-subtitle">Atualize suas informações pessoais</p>
         </div>
-        
+
         <div class="card">
             <h2><i class="fas fa-user"></i> Meus Dados</h2>
             <div id="successMessage" class="success"></div>
-            
+
             <form id="profileForm">
                 <div class="form-group">
                     <label for="nome"><i class="fas fa-user"></i> Nome Completo</label>
                     <input type="text" id="nome" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="email"><i class="fas fa-envelope"></i> Email</label>
                     <input type="email" id="email" required placeholder="seu@email.com">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="telefone"><i class="fas fa-phone"></i> Telefone</label>
                     <input type="tel" id="telefone" placeholder="(11) 99999-9999">
                 </div>
-                
+
                 <button type="submit" class="btn">
                     <i class="fas fa-save"></i> Salvar Alterações
                 </button>
@@ -484,23 +535,31 @@
             <div id="senhaSuccessMessage" class="success"></div>
             <div id="senhaErrorMessage" class="error-msg" style="display: none;"></div>
             <div id="oauthNotice" class="oauth-notice" style="display: none;">
-                <i class="fas fa-info-circle"></i> Sua conta foi criada com Google. Para alterar a senha, use as configurações da sua conta Google.
+                <i class="fas fa-info-circle"></i> Sua conta foi criada com Google. Para alterar a senha, use as
+                configurações da sua conta Google.
             </div>
             <form id="senhaForm">
                 <div class="form-group">
-                    <label for="senhaAtual"><i class="fas fa-key"></i> Senha atual <span style="color: #dc2626;">*</span></label>
-                    <input type="password" id="senhaAtual" name="senhaAtual" required placeholder="Digite sua senha atual" autocomplete="current-password">
+                    <label for="senhaAtual"><i class="fas fa-key"></i> Senha atual <span
+                            style="color: #dc2626;">*</span></label>
+                    <input type="password" id="senhaAtual" name="senhaAtual" required
+                        placeholder="Digite sua senha atual" autocomplete="current-password">
                 </div>
                 <div class="form-group">
-                    <label for="novaSenha"><i class="fas fa-lock"></i> Nova senha <span style="color: #dc2626;">*</span></label>
-                    <input type="password" id="novaSenha" name="novaSenha" required placeholder="Mín. 8 caracteres, maiúscula, minúscula e número" autocomplete="new-password">
+                    <label for="novaSenha"><i class="fas fa-lock"></i> Nova senha <span
+                            style="color: #dc2626;">*</span></label>
+                    <input type="password" id="novaSenha" name="novaSenha" required
+                        placeholder="Mín. 8 caracteres, maiúscula, minúscula e número" autocomplete="new-password">
                     <p class="password-requirements">
-                        <i class="fas fa-check-circle"></i> Mínimo 8 caracteres, com letra maiúscula, minúscula e um número
+                        <i class="fas fa-check-circle"></i> Mínimo 8 caracteres, com letra maiúscula, minúscula e um
+                        número
                     </p>
                 </div>
                 <div class="form-group">
-                    <label for="confirmarSenha"><i class="fas fa-lock"></i> Confirmar nova senha <span style="color: #dc2626;">*</span></label>
-                    <input type="password" id="confirmarSenha" name="confirmarSenha" required placeholder="Repita a nova senha" autocomplete="new-password">
+                    <label for="confirmarSenha"><i class="fas fa-lock"></i> Confirmar nova senha <span
+                            style="color: #dc2626;">*</span></label>
+                    <input type="password" id="confirmarSenha" name="confirmarSenha" required
+                        placeholder="Repita a nova senha" autocomplete="new-password">
                 </div>
                 <button type="submit" class="btn btn-secondary">
                     <i class="fas fa-lock"></i> Alterar Senha
@@ -512,4 +571,5 @@
     <script src="js/auth-manager.js"></script>
     <script src="js/configuracoes.js"></script>
 </body>
+
 </html>

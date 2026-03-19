@@ -1,26 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes da Excursão - Avorar Turismo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
+
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        body { 
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f8f9fa;
             min-height: 100vh;
         }
-        
+
         /* NAVBAR */
-        .navbar { 
-            background: #ffffff; 
+        .navbar {
+            background: #ffffff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             padding: 1.2rem 3rem;
             display: flex;
@@ -31,7 +42,7 @@
             z-index: 1000;
             border-bottom: 3px solid #ff5c00;
         }
-        
+
         .navbar-brand {
             font-size: 1.5rem;
             font-weight: 700;
@@ -41,14 +52,19 @@
             gap: 0.5rem;
             text-decoration: none;
         }
-        .navbar-logo { height: 47px; width: auto; display: block; }
-        
+
+        .navbar-logo {
+            height: 47px;
+            width: auto;
+            display: block;
+        }
+
         .navbar-left {
             display: flex;
             align-items: center;
             gap: 2rem;
         }
-        
+
         .navbar-link {
             text-decoration: none;
             color: #333333;
@@ -59,11 +75,11 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .navbar-link:hover {
             color: #ff5c00;
         }
-        
+
         /* PRODUCT HERO - overlay escuro para legibilidade do texto */
         .product-hero {
             color: #fff;
@@ -71,6 +87,7 @@
             position: relative;
             overflow: hidden;
         }
+
         .product-hero::before {
             content: '';
             position: absolute;
@@ -78,7 +95,10 @@
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.7) 100%);
             z-index: 1;
         }
-        .product-hero .hero-container { z-index: 2; }
+
+        .product-hero .hero-container {
+            z-index: 2;
+        }
 
         .excursao-page-bg .mosaico-item {
             background-size: cover;
@@ -87,26 +107,85 @@
             animation: fadeInExcursaoImg 1s ease-in-out forwards;
         }
 
-        .excursao-page-bg .mosaico-item:nth-child(1) { animation-delay: 0.03s; }
-        .excursao-page-bg .mosaico-item:nth-child(2) { animation-delay: 0.06s; }
-        .excursao-page-bg .mosaico-item:nth-child(3) { animation-delay: 0.09s; }
-        .excursao-page-bg .mosaico-item:nth-child(4) { animation-delay: 0.12s; }
-        .excursao-page-bg .mosaico-item:nth-child(5) { animation-delay: 0.15s; }
-        .excursao-page-bg .mosaico-item:nth-child(6) { animation-delay: 0.18s; }
-        .excursao-page-bg .mosaico-item:nth-child(7) { animation-delay: 0.21s; }
-        .excursao-page-bg .mosaico-item:nth-child(8) { animation-delay: 0.24s; }
-        .excursao-page-bg .mosaico-item:nth-child(9) { animation-delay: 0.27s; }
-        .excursao-page-bg .mosaico-item:nth-child(10) { animation-delay: 0.3s; }
-        .excursao-page-bg .mosaico-item:nth-child(11) { animation-delay: 0.33s; }
-        .excursao-page-bg .mosaico-item:nth-child(12) { animation-delay: 0.36s; }
-        .excursao-page-bg .mosaico-item:nth-child(13) { animation-delay: 0.39s; }
-        .excursao-page-bg .mosaico-item:nth-child(14) { animation-delay: 0.42s; }
-        .excursao-page-bg .mosaico-item:nth-child(15) { animation-delay: 0.45s; }
-        .excursao-page-bg .mosaico-item:nth-child(16) { animation-delay: 0.48s; }
-        .excursao-page-bg .mosaico-item:nth-child(17) { animation-delay: 0.51s; }
-        .excursao-page-bg .mosaico-item:nth-child(18) { animation-delay: 0.54s; }
-        .excursao-page-bg .mosaico-item:nth-child(19) { animation-delay: 0.57s; }
-        .excursao-page-bg .mosaico-item:nth-child(20) { animation-delay: 0.6s; }
+        .excursao-page-bg .mosaico-item:nth-child(1) {
+            animation-delay: 0.03s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(2) {
+            animation-delay: 0.06s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(3) {
+            animation-delay: 0.09s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(4) {
+            animation-delay: 0.12s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(5) {
+            animation-delay: 0.15s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(6) {
+            animation-delay: 0.18s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(7) {
+            animation-delay: 0.21s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(8) {
+            animation-delay: 0.24s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(9) {
+            animation-delay: 0.27s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(10) {
+            animation-delay: 0.3s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(11) {
+            animation-delay: 0.33s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(12) {
+            animation-delay: 0.36s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(13) {
+            animation-delay: 0.39s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(14) {
+            animation-delay: 0.42s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(15) {
+            animation-delay: 0.45s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(16) {
+            animation-delay: 0.48s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(17) {
+            animation-delay: 0.51s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(18) {
+            animation-delay: 0.54s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(19) {
+            animation-delay: 0.57s;
+        }
+
+        .excursao-page-bg .mosaico-item:nth-child(20) {
+            animation-delay: 0.6s;
+        }
 
         .excursao-page-bg::after {
             content: '';
@@ -116,7 +195,11 @@
             z-index: 1;
         }
 
-        @keyframes fadeInExcursaoImg { to { opacity: 0.25; } }
+        @keyframes fadeInExcursaoImg {
+            to {
+                opacity: 0.25;
+            }
+        }
 
         /* Mosaico em toda a página da excursão */
         .excursao-page-bg {
@@ -130,7 +213,11 @@
             overflow: hidden;
             background: #f8f9fa;
         }
-        #excursaoContent { position: relative; min-height: 100vh; }
+
+        #excursaoContent {
+            position: relative;
+            min-height: 100vh;
+        }
 
         .product-hero .hero-container {
             position: relative;
@@ -218,7 +305,7 @@
             background: #fff;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .product-gallery {
@@ -400,7 +487,7 @@
             background: #fff;
             border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 100px;
             height: fit-content;
@@ -700,7 +787,8 @@
                 font-size: 2rem;
             }
 
-            .btn-add-cart, .btn-buy-now {
+            .btn-add-cart,
+            .btn-buy-now {
                 padding: 14px;
                 font-size: 15px;
                 min-height: 48px;
@@ -746,12 +834,14 @@
             color: #fff !important;
             text-decoration: none !important;
         }
+
         #documentoDownloadLink:hover {
             background: #e55200 !important;
             box-shadow: 0 4px 12px rgba(255, 92, 0, 0.4) !important;
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="navbar-left">
@@ -784,27 +874,51 @@
     <div id="excursaoContent" style="display: none;">
         <!-- Mosaico em toda a página -->
         <div class="excursao-page-bg" aria-hidden="true">
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250627-WA0021.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0007.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250517-WA0011.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0008.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0019.jpg')"></div>
-            <div class="mosaico-item" style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0000.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0012.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0361.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0076.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0360.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0091.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0356.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250910-WA0092.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250524-WA0013.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0010.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250725-WA0365.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0003.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0005.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0021.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250627-WA0021.jpg')">
+            </div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0007.jpg')">
+            </div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20250517-WA0011.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251022-WA0008.jpg')"></div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/Biologia%20marinha/IMG-20250628-WA0019.jpg')">
+            </div>
+            <div class="mosaico-item"
+                style="background-image: url('../images/Imagens%20para%20o%20site/IMG-20251119-WA0022.jpg')"></div>
         </div>
         <!-- Product Hero -->
         <section class="product-hero">
@@ -865,9 +979,14 @@
 
                             <!-- Inclusos -->
                             <div id="tab-includes" class="tab-panel">
-                                <div id="documentoDownloadContainer" style="display: none; margin-bottom: 2rem; padding: 1.25rem; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-radius: 12px; border: 2px solid #ff5c00;">
-                                    <h4 style="margin: 0 0 1rem 0; font-size: 1rem; color: #1e293b; font-weight: 600;"><i class="fas fa-file-download" style="margin-right: 0.5rem; color: #ff5c00;"></i>Documento para Download</h4>
-                                    <a id="documentoDownloadLink" href="#" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 1.5rem; background: #ff5c00; color: white !important; border-radius: 8px; text-decoration: none !important; font-weight: 600; font-size: 1rem; box-shadow: 0 2px 8px rgba(255, 92, 0, 0.35); transition: background 0.2s;">
+                                <div id="documentoDownloadContainer"
+                                    style="display: none; margin-bottom: 2rem; padding: 1.25rem; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-radius: 12px; border: 2px solid #ff5c00;">
+                                    <h4 style="margin: 0 0 1rem 0; font-size: 1rem; color: #1e293b; font-weight: 600;">
+                                        <i class="fas fa-file-download"
+                                            style="margin-right: 0.5rem; color: #ff5c00;"></i>Documento para Download
+                                    </h4>
+                                    <a id="documentoDownloadLink" href="#" target="_blank" rel="noopener"
+                                        style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 1.5rem; background: #ff5c00; color: white !important; border-radius: 8px; text-decoration: none !important; font-weight: 600; font-size: 1rem; box-shadow: 0 2px 8px rgba(255, 92, 0, 0.35); transition: background 0.2s;">
                                         <i class="fas fa-download"></i>
                                         <span id="documentoDownloadNome">Baixar documento</span>
                                     </a>
@@ -886,7 +1005,7 @@
                             <!-- Informações Adicionais -->
                             <div id="tab-info" class="tab-panel">
                                 <h3>Informações Importantes</h3>
-                                
+
                                 <div class="info-grid">
                                     <div class="info-item">
                                         <h5>Local de Saída</h5>
@@ -964,4 +1083,5 @@
     <script src="js/auth-manager.js"></script>
     <script src="js/excursao.js"></script>
 </body>
+
 </html>

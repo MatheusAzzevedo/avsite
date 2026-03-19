@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento - Avoar Turismo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
     <style>
         :root {
             --primary-color: #EA580C;
@@ -19,12 +30,22 @@
             --success-color: #16a34a;
             --success-bg: #dcfce7;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: var(--text-dark); }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: var(--text-dark);
+        }
 
         .navbar {
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -34,9 +55,26 @@
             z-index: 1000;
             border-bottom: 3px solid var(--primary-color);
         }
-        .navbar-brand { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-decoration: none; display: flex; align-items: center; }
-        .navbar-brand:hover { color: var(--primary-dark); }
-        .navbar-logo { height: 47px; width: auto; display: block; }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand:hover {
+            color: var(--primary-dark);
+        }
+
+        .navbar-logo {
+            height: 47px;
+            width: auto;
+            display: block;
+        }
+
         .hamburger-btn {
             display: none;
             background: none;
@@ -50,9 +88,28 @@
             align-items: center;
             justify-content: center;
         }
-        .navbar-menu { display: flex; gap: 1.5rem; align-items: center; }
-        .navbar-link { text-decoration: none; color: #333; transition: color 0.2s; font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; }
-        .navbar-link:hover { color: var(--primary-color); }
+
+        .navbar-menu {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .navbar-link {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+        }
+
+        .navbar-link:hover {
+            color: var(--primary-color);
+        }
+
         .btn-logout {
             padding: 0.6rem 1.2rem;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
@@ -64,7 +121,11 @@
             font-size: 0.9rem;
             transition: all 0.2s ease;
         }
-        .btn-logout:hover { opacity: 0.95; transform: translateY(-1px); }
+
+        .btn-logout:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
 
         .mobile-overlay {
             display: none;
@@ -75,7 +136,11 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        .mobile-overlay.active { display: block; opacity: 1; }
+
+        .mobile-overlay.active {
+            display: block;
+            opacity: 1;
+        }
 
         .mobile-sidebar {
             position: fixed;
@@ -91,7 +156,11 @@
             flex-direction: column;
             overflow-y: auto;
         }
-        .mobile-sidebar.active { right: 0; }
+
+        .mobile-sidebar.active {
+            right: 0;
+        }
+
         .mobile-sidebar-header {
             display: flex;
             justify-content: space-between;
@@ -99,7 +168,12 @@
             padding: 1.25rem;
             border-bottom: 2px solid var(--primary-color);
         }
-        .mobile-sidebar-header img { height: 32px; width: auto; }
+
+        .mobile-sidebar-header img {
+            height: 32px;
+            width: auto;
+        }
+
         .mobile-sidebar-close {
             background: none;
             border: none;
@@ -112,12 +186,14 @@
             align-items: center;
             justify-content: center;
         }
+
         .mobile-sidebar-nav {
             display: flex;
             flex-direction: column;
             padding: 1rem 0;
             flex: 1;
         }
+
         .mobile-sidebar-nav a {
             display: flex;
             align-items: center;
@@ -130,13 +206,23 @@
             transition: background 0.2s ease, color 0.2s ease;
             min-height: 48px;
         }
+
         .mobile-sidebar-nav a:hover,
-        .mobile-sidebar-nav a.active { background: #fff7ed; color: var(--primary-color); }
-        .mobile-sidebar-nav a i { width: 20px; text-align: center; }
+        .mobile-sidebar-nav a.active {
+            background: #fff7ed;
+            color: var(--primary-color);
+        }
+
+        .mobile-sidebar-nav a i {
+            width: 20px;
+            text-align: center;
+        }
+
         .mobile-sidebar-footer {
             padding: 1rem 1.5rem;
             border-top: 1px solid var(--light-border);
         }
+
         .mobile-sidebar-footer .btn-logout {
             width: 100%;
             display: flex;
@@ -146,12 +232,31 @@
             min-height: 48px;
         }
 
-        .pagamento-container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .pagamento-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
 
-        .page-title { font-size: 1.75rem; color: var(--text-dark); margin-bottom: 0.25rem; }
-        .subtitle { color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .page-title {
+            font-size: 1.75rem;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
 
-        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.06); padding: 2rem; margin-bottom: 1.5rem; }
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
 
         /* Resumo do pedido */
         .order-summary-bar {
@@ -161,9 +266,22 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        .order-summary-bar .trip-name { font-size: 1.1rem; font-weight: 700; }
-        .order-summary-bar .order-total { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); }
-        .order-summary-bar .order-qty { color: var(--text-light); font-size: 0.9rem; }
+
+        .order-summary-bar .trip-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .order-summary-bar .order-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .order-summary-bar .order-qty {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
 
         /* Tabs de método */
         .method-tabs {
@@ -172,6 +290,7 @@
             border-bottom: 2px solid var(--light-border);
             margin-bottom: 2rem;
         }
+
         .method-tab {
             padding: 1rem 2rem;
             font-size: 1rem;
@@ -186,18 +305,35 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .method-tab:hover { color: var(--primary-color); }
+
+        .method-tab:hover {
+            color: var(--primary-color);
+        }
+
         .method-tab.active {
             color: var(--primary-color);
             border-bottom-color: var(--primary-color);
         }
 
-        .method-panel { display: none; }
-        .method-panel.active { display: block; }
+        .method-panel {
+            display: none;
+        }
+
+        .method-panel.active {
+            display: block;
+        }
 
         /* PIX */
-        .pix-container { text-align: center; }
-        .pix-instructions { margin-bottom: 1.5rem; color: var(--text-light); font-size: 0.95rem; }
+        .pix-container {
+            text-align: center;
+        }
+
+        .pix-instructions {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
         .pix-qrcode-wrapper {
             display: inline-block;
             background: white;
@@ -206,8 +342,16 @@
             border: 2px solid var(--light-border);
             margin-bottom: 1.5rem;
         }
-        .pix-qrcode-wrapper img { width: 250px; height: 250px; }
-        .pix-copy-section { margin-top: 1rem; }
+
+        .pix-qrcode-wrapper img {
+            width: 250px;
+            height: 250px;
+        }
+
+        .pix-copy-section {
+            margin-top: 1rem;
+        }
+
         .pix-copy-input {
             width: 100%;
             max-width: 500px;
@@ -220,6 +364,7 @@
             color: var(--text-dark);
             background: var(--light-bg);
         }
+
         .btn-copy {
             display: inline-flex;
             align-items: center;
@@ -235,8 +380,14 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-        .btn-copy:hover { background: var(--primary-dark); }
-        .btn-copy.copied { background: var(--success-color); }
+
+        .btn-copy:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-copy.copied {
+            background: var(--success-color);
+        }
 
         .pix-waiting {
             margin-top: 1.5rem;
@@ -251,12 +402,26 @@
             gap: 0.75rem;
             justify-content: center;
         }
-        .pix-waiting i { animation: spin 1.5s linear infinite; }
+
+        .pix-waiting i {
+            animation: spin 1.5s linear infinite;
+        }
 
         /* Cartão */
-        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
-        .form-grid-full { grid-column: 1 / -1; }
-        .form-group { margin-bottom: 0; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
         .form-group label {
             display: block;
             margin-bottom: 0.35rem;
@@ -264,7 +429,11 @@
             font-size: 0.9rem;
             color: var(--text-dark);
         }
-        .form-group label .required { color: var(--danger-color); }
+
+        .form-group label .required {
+            color: var(--danger-color);
+        }
+
         .form-group input {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -273,10 +442,12 @@
             font-size: 1rem;
             transition: border-color 0.2s;
         }
+
         .form-group input:focus {
             outline: none;
             border-color: var(--primary-color);
         }
+
         .section-title {
             font-size: 1rem;
             font-weight: 700;
@@ -286,7 +457,10 @@
             padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--light-border);
         }
-        .section-title:first-child { margin-top: 0; }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
 
         .btn-pay {
             width: 100%;
@@ -301,8 +475,16 @@
             margin-top: 2rem;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .btn-pay:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35); }
-        .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-pay:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
+        }
+
+        .btn-pay:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
         .btn-generate-pix {
             padding: 1rem 2rem;
@@ -315,8 +497,16 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .btn-generate-pix:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35); }
-        .btn-generate-pix:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-generate-pix:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
+        }
+
+        .btn-generate-pix:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
         /* Mensagens */
         .alert {
@@ -326,9 +516,24 @@
             font-size: 0.95rem;
             display: none;
         }
-        .alert.show { display: flex; align-items: center; gap: 0.75rem; }
-        .alert-error { background: var(--danger-bg); color: var(--danger-color); border: 1px solid #fecaca; }
-        .alert-success { background: var(--success-bg); color: var(--success-color); border: 1px solid #86efac; }
+
+        .alert.show {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-error {
+            background: var(--danger-bg);
+            color: var(--danger-color);
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            color: var(--success-color);
+            border: 1px solid #86efac;
+        }
 
         /* Popup de confirmação de pagamento */
         .payment-confirm-overlay {
@@ -342,10 +547,17 @@
             padding: 1.5rem;
             animation: fadeIn 0.3s ease;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
+
         .payment-confirm-modal {
             background: white;
             border-radius: 16px;
@@ -356,16 +568,19 @@
             text-align: center;
             animation: slideUp 0.35s ease;
         }
+
         @keyframes slideUp {
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
+
         .payment-confirm-icon {
             width: 72px;
             height: 72px;
@@ -376,21 +591,25 @@
             align-items: center;
             justify-content: center;
         }
+
         .payment-confirm-icon i {
             font-size: 2rem;
             color: #16a34a;
         }
+
         .payment-confirm-title {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 0.5rem;
         }
+
         .payment-confirm-subtitle {
             color: var(--text-light);
             font-size: 0.95rem;
             margin-bottom: 1.5rem;
         }
+
         .payment-confirm-details {
             background: var(--light-bg);
             border-radius: 12px;
@@ -398,6 +617,7 @@
             margin-bottom: 1.5rem;
             text-align: left;
         }
+
         .payment-confirm-row {
             display: flex;
             justify-content: space-between;
@@ -405,23 +625,28 @@
             padding: 0.5rem 0;
             font-size: 0.95rem;
         }
+
         .payment-confirm-row:not(:last-child) {
             border-bottom: 1px solid var(--light-border);
         }
+
         .payment-confirm-row .label {
             color: var(--text-light);
             font-weight: 500;
         }
+
         .payment-confirm-row .valor {
             font-weight: 700;
             color: var(--primary-color);
             font-size: 1.1rem;
         }
+
         .payment-confirm-actions {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
         }
+
         .btn-see-orders {
             display: inline-flex;
             align-items: center;
@@ -438,10 +663,12 @@
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
         }
+
         .btn-see-orders:hover {
             background: var(--primary-dark);
             transform: translateY(-1px);
         }
+
         .btn-whatsapp {
             display: inline-flex;
             align-items: center;
@@ -456,55 +683,158 @@
             text-decoration: none;
             transition: background 0.2s, transform 0.2s;
         }
+
         .btn-whatsapp:hover {
             background: #20bd5a;
             transform: translateY(-1px);
         }
 
         /* Loading */
-        .loading-page { text-align: center; padding: 4rem 2rem; color: var(--text-light); }
-        .loading-page i { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; display: block; }
+        .loading-page {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
 
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .loading-page i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
         @media (max-width: 768px) {
-            .navbar { padding: 0.75rem 1rem; }
-            .navbar-menu { display: none; }
-            .hamburger-btn { display: flex; }
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
 
-            .pagamento-container { margin: 1rem auto; padding: 0 0.75rem; }
-            .page-title { font-size: 1.35rem; }
-            .subtitle { font-size: 0.875rem; }
-            .card { padding: 1.25rem; }
-            .form-grid { grid-template-columns: 1fr; }
-            .form-grid-full { grid-column: 1; }
-            .form-group input { padding: 0.7rem 0.875rem; font-size: 0.95rem; }
-            .method-tabs { margin-bottom: 1.5rem; }
-            .method-tab { padding: 0.75rem 1rem; font-size: 0.9rem; flex: 1; justify-content: center; }
-            .order-summary-bar { flex-direction: column; align-items: flex-start; }
-            .order-summary-bar .order-total { font-size: 1.3rem; }
-            .pix-qrcode-wrapper img { width: 200px; height: 200px; }
-            .pix-copy-input { font-size: 0.75rem; padding: 0.6rem 0.75rem; }
-            .btn-pay, .btn-generate-pix { min-height: 48px; }
-            .btn-copy { min-height: 44px; }
-            .section-title { font-size: 0.95rem; }
+            .navbar-menu {
+                display: none;
+            }
+
+            .hamburger-btn {
+                display: flex;
+            }
+
+            .pagamento-container {
+                margin: 1rem auto;
+                padding: 0 0.75rem;
+            }
+
+            .page-title {
+                font-size: 1.35rem;
+            }
+
+            .subtitle {
+                font-size: 0.875rem;
+            }
+
+            .card {
+                padding: 1.25rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid-full {
+                grid-column: 1;
+            }
+
+            .form-group input {
+                padding: 0.7rem 0.875rem;
+                font-size: 0.95rem;
+            }
+
+            .method-tabs {
+                margin-bottom: 1.5rem;
+            }
+
+            .method-tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .order-summary-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .order-summary-bar .order-total {
+                font-size: 1.3rem;
+            }
+
+            .pix-qrcode-wrapper img {
+                width: 200px;
+                height: 200px;
+            }
+
+            .pix-copy-input {
+                font-size: 0.75rem;
+                padding: 0.6rem 0.75rem;
+            }
+
+            .btn-pay,
+            .btn-generate-pix {
+                min-height: 48px;
+            }
+
+            .btn-copy {
+                min-height: 44px;
+            }
+
+            .section-title {
+                font-size: 0.95rem;
+            }
         }
 
         @media (max-width: 480px) {
-            .page-title { font-size: 1.2rem; }
-            .card { padding: 1rem; border-radius: 10px; }
-            .pix-qrcode-wrapper { padding: 1rem; }
-            .pix-qrcode-wrapper img { width: 180px; height: 180px; }
-            .method-tab { font-size: 0.85rem; padding: 0.65rem 0.75rem; }
-            .payment-confirm-modal { padding: 1.5rem; }
-            .payment-confirm-title { font-size: 1.25rem; }
+            .page-title {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 1rem;
+                border-radius: 10px;
+            }
+
+            .pix-qrcode-wrapper {
+                padding: 1rem;
+            }
+
+            .pix-qrcode-wrapper img {
+                width: 180px;
+                height: 180px;
+            }
+
+            .method-tab {
+                font-size: 0.85rem;
+                padding: 0.65rem 0.75rem;
+            }
+
+            .payment-confirm-modal {
+                padding: 1.5rem;
+            }
+
+            .payment-confirm-title {
+                font-size: 1.25rem;
+            }
         }
     </style>
 </head>
 
 <body>
     <nav class="navbar">
-        <a href="../index-10.html" class="navbar-brand"><img src="../images/background/Logo.webp" alt="Avoar Turismo" class="navbar-logo"></a>
+        <a href="../index-10.html" class="navbar-brand"><img src="../images/background/Logo.webp" alt="Avoar Turismo"
+                class="navbar-logo"></a>
         <div class="navbar-menu">
             <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
             <a href="pacotes-viagens.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
@@ -532,7 +862,8 @@
             <a href="configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
         </nav>
         <div class="mobile-sidebar-footer">
-            <button type="button" class="btn-logout" id="logoutBtnMobile"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            <button type="button" class="btn-logout" id="logoutBtnMobile"><i class="fas fa-sign-out-alt"></i>
+                Sair</button>
         </div>
     </div>
 
@@ -584,7 +915,8 @@
                 <div class="method-panel active" id="panelPix">
                     <div class="pix-container">
                         <p class="pix-instructions">
-                            Clique no botão abaixo para gerar o QR Code PIX. Após o pagamento, a confirmação é automática.
+                            Clique no botão abaixo para gerar o QR Code PIX. Após o pagamento, a confirmação é
+                            automática.
                         </p>
                         <div id="pixGenerateArea">
                             <button class="btn-generate-pix" id="btnGeneratePix">
@@ -606,7 +938,9 @@
                                 <i class="fas fa-spinner"></i>
                                 Aguardando confirmação do pagamento...
                             </div>
-                            <p id="pixCountdown" class="pix-countdown" style="margin-top: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--primary-color);"></p>
+                            <p id="pixCountdown" class="pix-countdown"
+                                style="margin-top: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--primary-color);">
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -622,7 +956,8 @@
                             </div>
                             <div class="form-group form-grid-full">
                                 <label>Número do Cartão <span class="required">*</span></label>
-                                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19"
+                                    required>
                             </div>
                             <div class="form-group">
                                 <label>Validade <span class="required">*</span></label>
@@ -658,7 +993,8 @@
                             </div>
                             <div class="form-group form-grid-full">
                                 <label>Telefone <span class="required">*</span></label>
-                                <input type="text" id="holderPhone" placeholder="(11) 98888-8888" maxlength="15" required>
+                                <input type="text" id="holderPhone" placeholder="(11) 98888-8888" maxlength="15"
+                                    required>
                             </div>
                         </div>
 
@@ -695,7 +1031,8 @@
                         <a href="/cliente/pedidos.html" class="btn-see-orders">
                             <i class="fas fa-list"></i> Ver Meus Pedidos
                         </a>
-                        <a href="https://wa.me/553125147884" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+                        <a href="https://wa.me/553125147884" target="_blank" rel="noopener noreferrer"
+                            class="btn-whatsapp">
                             <i class="fab fa-whatsapp"></i> Para dúvidas entre em contato
                         </a>
                     </div>
@@ -707,35 +1044,36 @@
     <script src="js/auth-manager.js"></script>
     <script src="js/pagamento.js"></script>
     <script>
-    (function() {
-        const hamburger = document.getElementById('hamburgerBtn');
-        const sidebar = document.getElementById('mobileSidebar');
-        const overlay = document.getElementById('mobileOverlay');
-        const closeBtn = document.getElementById('sidebarClose');
-        const logoutMobile = document.getElementById('logoutBtnMobile');
+        (function () {
+            const hamburger = document.getElementById('hamburgerBtn');
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const closeBtn = document.getElementById('sidebarClose');
+            const logoutMobile = document.getElementById('logoutBtnMobile');
 
-        function openMenu() {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+            function openMenu() {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
 
-        function closeMenu() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+            function closeMenu() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
 
-        hamburger.addEventListener('click', openMenu);
-        closeBtn.addEventListener('click', closeMenu);
-        overlay.addEventListener('click', closeMenu);
+            hamburger.addEventListener('click', openMenu);
+            closeBtn.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
 
-        if (logoutMobile) {
-            logoutMobile.addEventListener('click', function() {
-                document.getElementById('logoutBtn').click();
-            });
-        }
-    })();
+            if (logoutMobile) {
+                logoutMobile.addEventListener('click', function () {
+                    document.getElementById('logoutBtn').click();
+                });
+            }
+        })();
     </script>
 </body>
+
 </html>

@@ -1,440 +1,892 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<title id="pageTitle">Avoar Turismo</title>
-<!-- Stylesheets -->
-<link href="css/bootstrap.css" rel="stylesheet">
-<link href="css/style.css" rel="stylesheet">
-<link href="css/avoar-custom.css" rel="stylesheet">
-<link href="css/avoar-top-header.css" rel="stylesheet">
-<link href="css/footer.css" rel="stylesheet">
-<link rel="shortcut icon" href="images/favicon%20avoar.png" type="image/png">
-<link rel="icon" href="images/favicon%20avoar.png" type="image/png">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Responsive -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link href="css/responsive.css" rel="stylesheet">
-<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]--> 
 
-<style>
-    /* Estilos para a página de produto */
-    .product-page { background: #f8f9fa; padding: 0; }
-    .product-hero { background: #000; color: #fff; padding: 60px 0 40px; position: relative; overflow: hidden; }
-    .product-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255, 92, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%); z-index: 1; }
-    .product-hero .auto-container { position: relative; z-index: 2; }
-    .product-breadcrumb { margin-bottom: 20px; }
-    .product-breadcrumb a { color: #ff5c00; text-decoration: none; font-size: 14px; }
-    .product-breadcrumb span { color: #999; margin: 0 10px; }
-    .product-title { font-size: 3rem; font-weight: 700; margin-bottom: 15px; color: #ff5c00; }
-    .product-subtitle { font-size: 1.25rem; color: #ccc; margin-bottom: 30px; }
-    .product-meta { display: flex; gap: 30px; flex-wrap: wrap; }
-    .meta-item { display: flex; align-items: center; gap: 10px; }
-    .meta-item i { color: #ff5c00; font-size: 20px; }
-    .meta-item span { font-size: 14px; color: #ddd; }
-    .product-content { padding: 60px 0; background: #fff; position: relative; z-index: 2; }
-    .content-grid { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
-    .main-content { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    .tab-content-area { background: #fff; }
-    #excursaoContent .product-content .main-content,
-    #excursaoContent .tab-panel,
-    #excursaoContent #excursaoDescricao { background: #fff !important; color: #333; }
-    #excursaoContent .tab-panel h3,
-    #excursaoContent .tab-panel h4 { color: #000; }
-    #excursaoContent .tab-panel p,
-    #excursaoContent .tab-panel ul li { color: #4b5563; }
-    .product-gallery { position: relative; margin-bottom: 30px; }
-    .main-image { width: 100%; height: 500px; object-fit: cover; }
-    .gallery-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 20px; }
-    .thumb { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; }
-    .thumb:hover, .thumb.active { border-color: #ff5c00; }
-    .product-info-tabs { border-top: 1px solid #e5e7eb; }
-    .tab-navigation { display: flex; border-bottom: 2px solid #e5e7eb; background: #f9fafb; }
-    .tab-btn { padding: 18px 30px; border: none; background: none; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.3s; font-size: 15px; }
-    .tab-btn:hover { color: #000; background: rgba(255, 92, 0, 0.05); }
-    .tab-btn.active { color: #000; border-bottom-color: #ff5c00; background: #fff; }
-    .tab-content-area { padding: 30px; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-    .tab-panel h3 { font-size: 1.5rem; margin-bottom: 20px; color: #000; }
-    .tab-panel h4 { font-size: 1.125rem; margin: 25px 0 15px; color: #e55200; font-weight: 600; }
-    .tab-panel p { line-height: 1.8; color: #4b5563; margin-bottom: 15px; }
-    .tab-panel ul { list-style: none; padding: 0; margin: 15px 0; }
-    .tab-panel ul li { padding: 8px 0 8px 25px; position: relative; color: #4b5563; }
-    .tab-panel ul li::before { content: '>'; position: absolute; left: 0; color: #e55200; font-weight: bold; }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; background: #f9fafb; border-radius: 8px; margin: 20px 0; }
-    .info-item h5 { font-size: 0.875rem; color: #6b7280; margin-bottom: 5px; font-weight: 500; }
-    .info-item p { font-size: 1rem; font-weight: 600; color: #000; margin: 0; }
-    .tags-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-    .tag { background: rgba(255, 92, 0, 0.1); color: #e55200; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
-    .purchase-card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: sticky; top: 20px; height: fit-content; }
-    .price-section { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px solid #e5e7eb; }
-    .price-label { font-size: 14px; color: #6b7280; margin-bottom: 5px; }
-    .price { font-size: 2.5rem; font-weight: 700; color: #ff5c00; margin-bottom: 5px; }
-    .price-note { font-size: 13px; color: #ff5c00; font-weight: 500; }
-    .quantity-section { margin-bottom: 25px; }
-    .quantity-label { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #000; }
-    .quantity-control { display: flex; align-items: center; gap: 15px; }
-    .qty-btn { width: 40px; height: 40px; border: 2px solid #e5e7eb; background: #fff; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; color: #000; transition: all 0.3s; }
-    .qty-btn:hover { border-color: #ff5c00; background: #ff5c00; color: #fff; }
-    .qty-input { width: 60px; height: 40px; text-align: center; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; font-weight: 600; }
-    .btn-add-cart { width: 100%; padding: 16px; background: #ff5c00; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .btn-add-cart:hover { background: #e55200; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3); }
-    .btn-buy-now { width: 100%; padding: 16px; background: #000; color: #ff5c00; border: 2px solid #ff5c00; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .btn-buy-now:hover { background: #ff5c00; color: #fff; }
-    .highlights { margin-top: 25px; padding-top: 25px; border-top: 2px solid #e5e7eb; }
-    .highlight-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-    .highlight-item i { color: #ff5c00; font-size: 20px; }
-    .highlight-item span { font-size: 14px; color: #4b5563; }
-    .loading-state { text-align: center; padding: 100px 20px; }
-    .error-state { text-align: center; padding: 100px 20px; }
-    .portfolio-single-container { background: #f5f5f5; }
-    .portfolio-single-container #excursaoContent { position: relative; z-index: 2; }
-    @media (max-width: 992px) { .content-grid { grid-template-columns: 1fr; } .purchase-card { position: static; } .product-title { font-size: 2rem; } .info-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 768px) { .tab-navigation { overflow-x: auto; } .tab-btn { white-space: nowrap; padding: 15px 20px; } .gallery-thumbs { grid-template-columns: repeat(2, 1fr); } .product-meta { flex-direction: column; gap: 15px; } }
-</style>
+<head>
+    <meta charset="utf-8">
+    <title id="pageTitle">Avoar Turismo</title>
+    <!-- Stylesheets -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/avoar-custom.css" rel="stylesheet">
+    <link href="css/avoar-top-header.css" rel="stylesheet">
+    <link href="css/footer.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/favicon%20avoar.png" type="image/png">
+    <link rel="icon" href="images/favicon%20avoar.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Responsive -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link href="css/responsive.css" rel="stylesheet">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
+    <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
+
+    <style>
+        /* Estilos para a página de produto */
+        .product-page {
+            background: #f8f9fa;
+            padding: 0;
+        }
+
+        .product-hero {
+            background: #000;
+            color: #fff;
+            padding: 60px 0 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 92, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            z-index: 1;
+        }
+
+        .product-hero .auto-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .product-breadcrumb {
+            margin-bottom: 20px;
+        }
+
+        .product-breadcrumb a {
+            color: #ff5c00;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .product-breadcrumb span {
+            color: #999;
+            margin: 0 10px;
+        }
+
+        .product-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ff5c00;
+        }
+
+        .product-subtitle {
+            font-size: 1.25rem;
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meta-item i {
+            color: #ff5c00;
+            font-size: 20px;
+        }
+
+        .meta-item span {
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        .product-content {
+            padding: 60px 0;
+            background: #fff;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+        }
+
+        .main-content {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-content-area {
+            background: #fff;
+        }
+
+        #excursaoContent .product-content .main-content,
+        #excursaoContent .tab-panel,
+        #excursaoContent #excursaoDescricao {
+            background: #fff !important;
+            color: #333;
+        }
+
+        #excursaoContent .tab-panel h3,
+        #excursaoContent .tab-panel h4 {
+            color: #000;
+        }
+
+        #excursaoContent .tab-panel p,
+        #excursaoContent .tab-panel ul li {
+            color: #4b5563;
+        }
+
+        .product-gallery {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .gallery-thumbs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .thumb {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .thumb:hover,
+        .thumb.active {
+            border-color: #ff5c00;
+        }
+
+        .product-info-tabs {
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .tab-navigation {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .tab-btn {
+            padding: 18px 30px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .tab-btn:hover {
+            color: #000;
+            background: rgba(255, 92, 0, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #000;
+            border-bottom-color: #ff5c00;
+            background: #fff;
+        }
+
+        .tab-content-area {
+            padding: 30px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .tab-panel h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .tab-panel h4 {
+            font-size: 1.125rem;
+            margin: 25px 0 15px;
+            color: #e55200;
+            font-weight: 600;
+        }
+
+        .tab-panel p {
+            line-height: 1.8;
+            color: #4b5563;
+            margin-bottom: 15px;
+        }
+
+        .tab-panel ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .tab-panel ul li {
+            padding: 8px 0 8px 25px;
+            position: relative;
+            color: #4b5563;
+        }
+
+        .tab-panel ul li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: #e55200;
+            font-weight: bold;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-item h5 {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .info-item p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            margin: 0;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: rgba(255, 92, 0, 0.1);
+            color: #e55200;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .purchase-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .price-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .price-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff5c00;
+            margin-bottom: 5px;
+        }
+
+        .price-note {
+            font-size: 13px;
+            color: #ff5c00;
+            font-weight: 500;
+        }
+
+        .quantity-section {
+            margin-bottom: 25px;
+        }
+
+        .quantity-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .qty-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e5e7eb;
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            transition: all 0.3s;
+        }
+
+        .qty-btn:hover {
+            border-color: #ff5c00;
+            background: #ff5c00;
+            color: #fff;
+        }
+
+        .qty-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .btn-add-cart {
+            width: 100%;
+            padding: 16px;
+            background: #ff5c00;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-add-cart:hover {
+            background: #e55200;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
+        }
+
+        .btn-buy-now {
+            width: 100%;
+            padding: 16px;
+            background: #000;
+            color: #ff5c00;
+            border: 2px solid #ff5c00;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-buy-now:hover {
+            background: #ff5c00;
+            color: #fff;
+        }
+
+        .highlights {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .highlight-item i {
+            color: #ff5c00;
+            font-size: 20px;
+        }
+
+        .highlight-item span {
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .portfolio-single-container {
+            background: #f5f5f5;
+        }
+
+        .portfolio-single-container #excursaoContent {
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 992px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .purchase-card {
+                position: static;
+            }
+
+            .product-title {
+                font-size: 2rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tab-navigation {
+                overflow-x: auto;
+            }
+
+            .tab-btn {
+                white-space: nowrap;
+                padding: 15px 20px;
+            }
+
+            .gallery-thumbs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .product-meta {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
 
 </head>
 
 <body>
-  <div class="site-container">
-    <div class="cursor"></div>
-    <!-- Preloader com vinheta Avoar -->
-    <div class="preloader">
-        <video class="preloader-vinheta-video" autoplay muted playsinline loop>
-            <source src="/Vinheta_Avoar(1).webm" type="video/webm">
-        </video>
-    </div>
-
-    <a href="https://wa.me/553125147884" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
-
-    <div class="menu-backdrop"></div>
-
-    <!-- Top Header (Desktop Only) - Novo header do site -->
-    <header class="avoar-top-header">
-        <div class="header-logo">
-            <a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48"></a>
+    <div class="site-container">
+        <div class="cursor"></div>
+        <!-- Preloader com vinheta Avoar -->
+        <div class="preloader">
+            <video class="preloader-vinheta-video" autoplay muted playsinline loop>
+                <source src="/Vinheta_Avoar(1).webm" type="video/webm">
+            </video>
         </div>
-        <nav class="header-nav">
-            <a href="/">Início</a>
-            <a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a>
-            <a href="/excursoes" class="active">Pacote de Viagens</a>
-            <a href="/biologia-marinha">Biologia Marinha</a>
-            <a href="/sobre-nos">Sobre Nós</a>
-            <a href="/blog">Blog</a>
-            <a href="/contato">Contato</a>
-        </nav>
-        <div class="header-login">
-            <div class="header-social">
-                <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+
+        <a href="https://wa.me/553125147884" class="whatsapp-float" target="_blank" rel="noopener"
+            aria-label="Fale conosco no WhatsApp"><span class="fab fa-whatsapp"></span></a>
+
+        <div class="menu-backdrop"></div>
+
+        <!-- Top Header (Desktop Only) - Novo header do site -->
+        <header class="avoar-top-header">
+            <div class="header-logo">
+                <a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48"></a>
             </div>
-            <a href="/cliente/login.html" class="btn-login" style="text-decoration: none;">Login</a>
-        </div>
-    </header>
-    <!--End Top Header-->
-
-    <!-- Main Header Bar (Mobile) -->
-    <header class="main-header-bar alt-logo">
-        <div class="line-one"></div>
-        <div class="line-two"></div>
-        <div class="header-bar-inner">
-            <div class="outer-box clearfix">
-                <div class="nav-toggler"><button class="toggler-btn"><span class="bar bar-one"></span><span class="bar bar-two"></span><span class="bar bar-three"></span></button></div>
-                <div class="social-links">
-                    <ul class="clearfix">
-                        <li><a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener"><span class="fab fa-instagram"></span></a></li>
-                        <li><a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank" rel="noopener"><span class="fab fa-facebook-f"></span></a></li>
-                        <li><a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank" rel="noopener"><span class="fab fa-linkedin-in"></span></a></li>
-                    </ul>
+            <nav class="header-nav">
+                <a href="/">Início</a>
+                <a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank"
+                    rel="noopener noreferrer">Nossos Roteiros</a>
+                <a href="/excursoes" class="active">Pacote de Viagens</a>
+                <a href="/biologia-marinha">Biologia Marinha</a>
+                <a href="/sobre-nos">Sobre Nós</a>
+                <a href="/blog">Blog</a>
+                <a href="/contato">Contato</a>
+            </nav>
+            <div class="header-login">
+                <div class="header-social">
+                    <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank"
+                        rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer"
+                        aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank"
+                        rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
-                <div class="copyright">&copy; Avoar Turismo 2026</div>
+                <a href="/cliente/login.html" class="btn-login" style="text-decoration: none;">Login</a>
             </div>
-            <div class="alt-logo-box"><a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48"></a></div>
-            <div class="nav-bg-box"></div>
-            <div class="main-nav-outer">
-                <div class="nav-closer"><img src="images/icons/close-icon.png" alt=""></div>
-                <div class="outer-nav-box">
-                    <div class="top-bg"></div>
-                    <div class="bottom-bg"></div>
-                    <div class="main-nav-box" data-scrollbar="">
-                        <div class="main-logo-box"><a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" class="logo-desktop" width="340" height="48"><img src="images/Lavoar%20branco.png" alt="Avoar Turismo" class="logo-mobile" width="340" height="48"></a></div>
-                        <div class="main-nav">
-                            <ul class="navigation">
-                                <li><a href="/">Início</a></li>
-                                <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a></li>
-                                <li class="current"><a href="/excursoes">Pacote de Viagens</a></li>
-                                <li><a href="/biologia-marinha">Biologia Marinha</a></li>
-                                <li><a href="/sobre-nos">Sobre Nós</a></li>
-                                <li><a href="/blog">Blog</a></li>
-                                <li><a href="/contato">Contato</a></li>
-                                <li><a href="/admin/login.html">Administrativo</a></li>
-                                <li><a href="/cliente/login.html">Login</a></li>
-                            </ul>
+        </header>
+        <!--End Top Header-->
+
+        <!-- Main Header Bar (Mobile) -->
+        <header class="main-header-bar alt-logo">
+            <div class="line-one"></div>
+            <div class="line-two"></div>
+            <div class="header-bar-inner">
+                <div class="outer-box clearfix">
+                    <div class="nav-toggler"><button class="toggler-btn"><span class="bar bar-one"></span><span
+                                class="bar bar-two"></span><span class="bar bar-three"></span></button></div>
+                    <div class="social-links">
+                        <ul class="clearfix">
+                            <li><a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener"><span
+                                        class="fab fa-instagram"></span></a></li>
+                            <li><a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank"
+                                    rel="noopener"><span class="fab fa-facebook-f"></span></a></li>
+                            <li><a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/"
+                                    target="_blank" rel="noopener"><span class="fab fa-linkedin-in"></span></a></li>
+                        </ul>
+                    </div>
+                    <div class="copyright">&copy; Avoar Turismo 2026</div>
+                </div>
+                <div class="alt-logo-box"><a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo" width="340"
+                            height="48"></a></div>
+                <div class="nav-bg-box"></div>
+                <div class="main-nav-outer">
+                    <div class="nav-closer"><img src="images/icons/close-icon.png" alt=""></div>
+                    <div class="outer-nav-box">
+                        <div class="top-bg"></div>
+                        <div class="bottom-bg"></div>
+                        <div class="main-nav-box" data-scrollbar="">
+                            <div class="main-logo-box"><a href="/"><img src="images/Lavoar.png" alt="Avoar Turismo"
+                                        class="logo-desktop" width="340" height="48"><img
+                                        src="images/Lavoar%20branco.png" alt="Avoar Turismo" class="logo-mobile"
+                                        width="340" height="48"></a></div>
+                            <div class="main-nav">
+                                <ul class="navigation">
+                                    <li><a href="/">Início</a></li>
+                                    <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank"
+                                            rel="noopener noreferrer">Nossos Roteiros</a></li>
+                                    <li class="current"><a href="/excursoes">Pacote de Viagens</a></li>
+                                    <li><a href="/biologia-marinha">Biologia Marinha</a></li>
+                                    <li><a href="/sobre-nos">Sobre Nós</a></li>
+                                    <li><a href="/blog">Blog</a></li>
+                                    <li><a href="/contato">Contato</a></li>
+                                    <li><a href="/admin/login.html">Administrativo</a></li>
+                                    <li><a href="/cliente/login.html">Login</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </header>
+
+        <div class="scroll-container">
+            <div class="main-content-container portfolio-single-container" id="scroll-container">
+                <div class="body-bg-layer portfolio-single-bg"
+                    style="background-image: url(images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg); opacity: 0.15;">
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state">
+                    <p style="color: #888;">Carregando excursão...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="error-state" style="display: none;">
+                    <h3 style="color: #888;">Excursão não encontrada</h3>
+                    <p style="color: #666;">A excursão que você procura não existe ou foi removida.</p>
+                    <a href="portfolio.html" style="color: #ff5c00; text-decoration: none;">
+                        <i class="fas fa-arrow-left"></i> Voltar às Excursões
+                    </a>
+                </div>
+
+                <!-- Product Content (hidden initially) -->
+                <div id="excursaoContent" style="display: none;">
+                    <!-- Product Hero -->
+                    <section class="product-hero">
+                        <div class="auto-container">
+                            <div class="product-breadcrumb">
+                                <a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank"
+                                    rel="noopener noreferrer">Nossos Roteiros</a>
+                                <span>/</span>
+                                <a href="portfolio.html">Excursões</a>
+                                <span>/</span>
+                                <span id="breadcrumbTitle">-</span>
+                            </div>
+                            <h1 class="product-title" id="excursaoTitulo">-</h1>
+                            <p class="product-subtitle" id="excursaoSubtitulo">-</p>
+                            <div class="product-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="excursaoDuracao">-</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-tag"></i>
+                                    <span id="excursaoCategoria">-</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span id="excursaoLocal">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Product Content -->
+                    <section class="product-content">
+                        <div class="auto-container">
+                            <div class="content-grid">
+                                <!-- Main Content -->
+                                <div class="main-content">
+                                    <!-- Gallery -->
+                                    <div class="product-gallery">
+                                        <img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg" alt=""
+                                            class="main-image" id="mainImage">
+                                        <div class="gallery-thumbs" id="galleryThumbs">
+                                            <!-- Galeria será carregada dinamicamente -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Tabs -->
+                                    <div class="product-info-tabs">
+                                        <div class="tab-navigation">
+                                            <button type="button" class="tab-btn active"
+                                                data-tab="description">Descrição</button>
+                                            <button type="button" class="tab-btn" data-tab="includes">O que está
+                                                incluso</button>
+                                            <button type="button" class="tab-btn" data-tab="info">Informações</button>
+                                        </div>
+
+                                        <div class="tab-content-area">
+                                            <!-- Descrição -->
+                                            <div id="tab-description" class="tab-panel active">
+                                                <h3>Sobre esta Excursão</h3>
+                                                <div id="excursaoDescricao">
+                                                    <!-- Conteúdo será carregado dinamicamente -->
+                                                </div>
+                                            </div>
+
+                                            <!-- Inclusos -->
+                                            <div id="tab-includes" class="tab-panel">
+                                                <h3>O que está incluso</h3>
+                                                <div id="excursaoInclusos">
+                                                    <!-- Conteúdo será carregado dinamicamente -->
+                                                </div>
+
+                                                <h4 style="margin-top: 30px;">Recomendações</h4>
+                                                <div id="excursaoRecomendacoes">
+                                                    <!-- Conteúdo será carregado dinamicamente -->
+                                                </div>
+                                            </div>
+
+                                            <!-- Informações Adicionais -->
+                                            <div id="tab-info" class="tab-panel">
+                                                <h3>Informações Importantes</h3>
+
+                                                <div class="info-grid">
+                                                    <div class="info-item">
+                                                        <h5>Local de Saída</h5>
+                                                        <p id="infoLocal">-</p>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <h5>Horário</h5>
+                                                        <p id="infoHorario">-</p>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <h5>Duração</h5>
+                                                        <p id="infoDuracao">-</p>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <h5>Categoria</h5>
+                                                        <p id="infoCategoria">-</p>
+                                                    </div>
+                                                </div>
+
+                                                <h4>Tags</h4>
+                                                <div class="tags-container" id="excursaoTags">
+                                                    <!-- Tags serão carregadas dinamicamente -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Purchase Card -->
+                                <div class="purchase-card">
+                                    <div class="price-section">
+                                        <div class="price-label">A partir de</div>
+                                        <div class="price" id="excursaoPreco">R$ 0,00</div>
+                                    </div>
+
+                                    <div class="quantity-section">
+                                        <div class="quantity-label">Quantidade</div>
+                                        <div class="quantity-control">
+                                            <button type="button" class="qty-btn" aria-label="Diminuir">−</button>
+                                            <input type="number" id="quantity" class="qty-input" value="1" min="1"
+                                                max="20">
+                                            <button type="button" class="qty-btn" aria-label="Aumentar">+</button>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" class="btn-add-cart">
+                                        <i class="fab fa-whatsapp"></i>
+                                        Saiba mais pelo WhatsApp
+                                    </button>
+
+                                    <button type="button" class="btn-buy-now" id="btnComprarAgora">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        Comprar Agora
+                                    </button>
+
+                                    <div class="highlights">
+                                        <div class="highlight-item">
+                                            <i class="fas fa-shield-alt"></i>
+                                            <span>Pagamento 100% seguro</span>
+                                        </div>
+                                        <div class="highlight-item">
+                                            <i class="fas fa-undo"></i>
+                                            <span>Política de cancelamento</span>
+                                        </div>
+                                        <div class="highlight-item">
+                                            <i class="fas fa-headset"></i>
+                                            <span>Suporte dedicado</span>
+                                        </div>
+                                        <div class="highlight-item">
+                                            <i class="fas fa-qrcode"></i>
+                                            <span>Pagamento via PIX</span>
+                                        </div>
+                                        <div class="highlight-item">
+                                            <i class="fas fa-credit-card"></i>
+                                            <span>Pagamento via cartão de crédito</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+            </div>
         </div>
-    </header>
-
-    <div class="scroll-container">
-        <div class="main-content-container portfolio-single-container" id="scroll-container">
-            <div class="body-bg-layer portfolio-single-bg" style="background-image: url(images/Imagens%20para%20o%20site/IMG-20250517-WA0071.jpg); opacity: 0.15;"></div>
-            
-            <!-- Loading State -->
-            <div id="loadingState" class="loading-state">
-                <p style="color: #888;">Carregando excursão...</p>
-            </div>
-
-            <!-- Error State -->
-            <div id="errorState" class="error-state" style="display: none;">
-                <h3 style="color: #888;">Excursão não encontrada</h3>
-                <p style="color: #666;">A excursão que você procura não existe ou foi removida.</p>
-                <a href="portfolio.html" style="color: #ff5c00; text-decoration: none;">
-                    <i class="fas fa-arrow-left"></i> Voltar às Excursões
-                </a>
-            </div>
-
-            <!-- Product Content (hidden initially) -->
-            <div id="excursaoContent" style="display: none;">
-                <!-- Product Hero -->
-                <section class="product-hero">
-                    <div class="auto-container">
-                        <div class="product-breadcrumb">
-                            <a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a>
-                            <span>/</span>
-                            <a href="portfolio.html">Excursões</a>
-                            <span>/</span>
-                            <span id="breadcrumbTitle">-</span>
-                        </div>
-                        <h1 class="product-title" id="excursaoTitulo">-</h1>
-                        <p class="product-subtitle" id="excursaoSubtitulo">-</p>
-                        <div class="product-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-clock"></i>
-                                <span id="excursaoDuracao">-</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-tag"></i>
-                                <span id="excursaoCategoria">-</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span id="excursaoLocal">-</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Product Content -->
-                <section class="product-content">
-                    <div class="auto-container">
-                        <div class="content-grid">
-                            <!-- Main Content -->
-                            <div class="main-content">
-                                <!-- Gallery -->
-                                <div class="product-gallery">
-                                    <img src="images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg" alt="" class="main-image" id="mainImage">
-                                    <div class="gallery-thumbs" id="galleryThumbs">
-                                        <!-- Galeria será carregada dinamicamente -->
-                                    </div>
-                                </div>
-
-                                <!-- Tabs -->
-                                <div class="product-info-tabs">
-                                    <div class="tab-navigation">
-                                        <button type="button" class="tab-btn active" data-tab="description">Descrição</button>
-                                        <button type="button" class="tab-btn" data-tab="includes">O que está incluso</button>
-                                        <button type="button" class="tab-btn" data-tab="info">Informações</button>
-                                    </div>
-
-                                    <div class="tab-content-area">
-                                        <!-- Descrição -->
-                                        <div id="tab-description" class="tab-panel active">
-                                            <h3>Sobre esta Excursão</h3>
-                                            <div id="excursaoDescricao">
-                                                <!-- Conteúdo será carregado dinamicamente -->
-                                            </div>
-                                        </div>
-
-                                        <!-- Inclusos -->
-                                        <div id="tab-includes" class="tab-panel">
-                                            <h3>O que está incluso</h3>
-                                            <div id="excursaoInclusos">
-                                                <!-- Conteúdo será carregado dinamicamente -->
-                                            </div>
-
-                                            <h4 style="margin-top: 30px;">Recomendações</h4>
-                                            <div id="excursaoRecomendacoes">
-                                                <!-- Conteúdo será carregado dinamicamente -->
-                                            </div>
-                                        </div>
-
-                                        <!-- Informações Adicionais -->
-                                        <div id="tab-info" class="tab-panel">
-                                            <h3>Informações Importantes</h3>
-                                            
-                                            <div class="info-grid">
-                                                <div class="info-item">
-                                                    <h5>Local de Saída</h5>
-                                                    <p id="infoLocal">-</p>
-                                                </div>
-                                                <div class="info-item">
-                                                    <h5>Horário</h5>
-                                                    <p id="infoHorario">-</p>
-                                                </div>
-                                                <div class="info-item">
-                                                    <h5>Duração</h5>
-                                                    <p id="infoDuracao">-</p>
-                                                </div>
-                                                <div class="info-item">
-                                                    <h5>Categoria</h5>
-                                                    <p id="infoCategoria">-</p>
-                                                </div>
-                                            </div>
-
-                                            <h4>Tags</h4>
-                                            <div class="tags-container" id="excursaoTags">
-                                                <!-- Tags serão carregadas dinamicamente -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Purchase Card -->
-                            <div class="purchase-card">
-                                <div class="price-section">
-                                    <div class="price-label">A partir de</div>
-                                    <div class="price" id="excursaoPreco">R$ 0,00</div>
-                                </div>
-
-                                <div class="quantity-section">
-                                    <div class="quantity-label">Quantidade</div>
-                                    <div class="quantity-control">
-                                        <button type="button" class="qty-btn" aria-label="Diminuir">−</button>
-                                        <input type="number" id="quantity" class="qty-input" value="1" min="1" max="20">
-                                        <button type="button" class="qty-btn" aria-label="Aumentar">+</button>
-                                    </div>
-                                </div>
-
-                                <button type="button" class="btn-add-cart">
-                                    <i class="fab fa-whatsapp"></i>
-                                    Saiba mais pelo WhatsApp
-                                </button>
-
-                                <button type="button" class="btn-buy-now" id="btnComprarAgora">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    Comprar Agora
-                                </button>
-
-                                <div class="highlights">
-                                    <div class="highlight-item">
-                                        <i class="fas fa-shield-alt"></i>
-                                        <span>Pagamento 100% seguro</span>
-                                    </div>
-                                    <div class="highlight-item">
-                                        <i class="fas fa-undo"></i>
-                                        <span>Política de cancelamento</span>
-                                    </div>
-                                    <div class="highlight-item">
-                                        <i class="fas fa-headset"></i>
-                                        <span>Suporte dedicado</span>
-                                    </div>
-                                    <div class="highlight-item">
-                                        <i class="fas fa-qrcode"></i>
-                                        <span>Pagamento via PIX</span>
-                                    </div>
-                                    <div class="highlight-item">
-                                        <i class="fas fa-credit-card"></i>
-                                        <span>Pagamento via cartão de crédito</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-        </div>
-    </div>
 
         <!-- Footer -->
-    <!-- Footer -->
-<footer class="site-footer">
-  <div class="auto-container">
-    <div class="footer-content">
-      <!-- Coluna 1: Marca -->
-      <div class="footer-brand">
-        <img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48">
-        <h3>Avoar Turismo Pedagógico e Viagens</h3>
-        <p>Transformamos viagens em experiências educativas que conectam aprendizado, cultura e vivências reais.</p>
-      </div>
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="auto-container">
+                <div class="footer-content">
+                    <!-- Coluna 1: Marca -->
+                    <div class="footer-brand">
+                        <img src="images/Lavoar.png" alt="Avoar Turismo" width="340" height="48">
+                        <h3>Avoar Turismo Pedagógico e Viagens</h3>
+                        <p>Transformamos viagens em experiências educativas que conectam aprendizado, cultura e
+                            vivências reais.</p>
+                    </div>
 
-      <!-- Coluna 2: Links rápidos -->
-      <div class="footer-nav">
-        <h4>Links Rápidos</h4>
-        <ul>
-          <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank" rel="noopener noreferrer">Nossos Roteiros</a></li>
-          <li><a href="/excursoes">Pacote de Viagens</a></li>
-          <li><a href="/biologia-marinha">Biologia Marinha</a></li>
-          <li><a href="/sobre-nos">Sobre Nós</a></li>
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="/contato">Contato</a></li>
-        </ul>
-      </div>
+                    <!-- Coluna 2: Links rápidos -->
+                    <div class="footer-nav">
+                        <h4>Links Rápidos</h4>
+                        <ul>
+                            <li><a href="https://heyzine.com/flip-book/00c4b77d8b.html#page/1" target="_blank"
+                                    rel="noopener noreferrer">Nossos Roteiros</a></li>
+                            <li><a href="/excursoes">Pacote de Viagens</a></li>
+                            <li><a href="/biologia-marinha">Biologia Marinha</a></li>
+                            <li><a href="/sobre-nos">Sobre Nós</a></li>
+                            <li><a href="/blog">Blog</a></li>
+                            <li><a href="/contato">Contato</a></li>
+                        </ul>
+                    </div>
 
-      <!-- Coluna 3: Contato -->
-      <div class="footer-info footer-contact">
-        <h4>Contato</h4>
-        <ul>
-          <li>Telefone: <a href="https://wa.me/553125147884" target="_blank" rel="noopener">(31) 2514-7884</a></li>
-          <li>E-mail: <a href="mailto:contato@avoarturismo.com.br">contato@avoarturismo.com.br</a></li>
-          <li>Endereço: Avenida do Contorno 9681 sala 504 - Prado - Belo Horizonte - MG</li>
-        </ul>
-      </div>
+                    <!-- Coluna 3: Contato -->
+                    <div class="footer-info footer-contact">
+                        <h4>Contato</h4>
+                        <ul>
+                            <li>Telefone: <a href="https://wa.me/553125147884" target="_blank" rel="noopener">(31)
+                                    2514-7884</a></li>
+                            <li>E-mail: <a href="mailto:contato@avoarturismo.com.br">contato@avoarturismo.com.br</a>
+                            </li>
+                            <li>Endereço: Avenida do Contorno 9681 sala 504 - Prado - Belo Horizonte - MG</li>
+                        </ul>
+                    </div>
 
-      <!-- Coluna 4: Redes Sociais -->
-      <div class="footer-social">
-        <h4>Redes Sociais</h4>
-        <div class="footer-social-links">
-          <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-        </div>
-      </div>
+                    <!-- Coluna 4: Redes Sociais -->
+                    <div class="footer-social">
+                        <h4>Redes Sociais</h4>
+                        <div class="footer-social-links">
+                            <a href="https://www.facebook.com/people/Avoar-Turismo/100089301964232/" target="_blank"
+                                rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/avoarturismo/" target="_blank" rel="noopener noreferrer"
+                                aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.linkedin.com/company/avoar-turismo-pedag%C3%B3gico/" target="_blank"
+                                rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="footer-bottom">
+                    <p class="footer-copyright">
+                        &copy; 2026 <a href="/admin/login.html" class="footer-admin-link">Avoar Turismo</a>. Todos os
+                        direitos reservados.
+                    </p>
+                    <div class="footer-legal-links">
+                        <span>Criado por: </span>
+                        <a href="https://wa.me/5511962605997" target="_blank" rel="noopener noreferrer">Matheus
+                            Azevedo</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
     </div>
 
-    <!-- Copyright -->
-    <div class="footer-bottom">
-      <p class="footer-copyright">
-        &copy; 2026 <a href="/admin/login.html" class="footer-admin-link">Avoar Turismo</a>. Todos os direitos reservados.
-      </p>
-      <div class="footer-legal-links">
-        <span>Criado por: </span>
-        <a href="https://wa.me/5511962605997" target="_blank" rel="noopener noreferrer">Matheus Azevedo</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-</div>
-
-<!-- Script do gerenciador de dados -->
-<script src="js/api-client.js"></script>
-<script src="js/jquery.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.fancybox.js"></script>
-<script src="js/smooth-scrollbar.js"></script>
-<script src="js/owl.js"></script>
-<script src="js/cursor-script.js"></script>
-<script src="js/wow.js"></script>
-<script src="js/custom-script.js"></script>
-<script src="js/portfolio-single.js"></script>
+    <!-- Script do gerenciador de dados -->
+    <script src="js/api-client.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.fancybox.js"></script>
+    <script src="js/smooth-scrollbar.js"></script>
+    <script src="js/owl.js"></script>
+    <script src="js/cursor-script.js"></script>
+    <script src="js/wow.js"></script>
+    <script src="js/custom-script.js"></script>
+    <script src="js/portfolio-single.js"></script>
 
 </body>
+
 </html>

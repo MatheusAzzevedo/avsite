@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-03-19 - feat: adicionar suporte a Google Tag (gtag.js) em todas as páginas públicas
+
+### Arquivos Modificados
+- `api/public/*.html` e `api/public/cliente/*.html` [Inserção do script gtag.js (G-V8B6Q1ZBRY) no <head> para monitoramento de tráfego e conversões]
+
+### Alterações
+- Todas as páginas públicas do site e as páginas da área do cliente agora contam com o script global do Google Tag (gtag.js) configurado com o ID G-V8B6Q1ZBRY, garantindo a coleta de dados de analytics em todo o fluxo de navegação e compra.
+
+---
+
 ## 2026-03-16 - feat: detalhes completos do aluno na lista administrativa
 
 ### Arquivos Modificados

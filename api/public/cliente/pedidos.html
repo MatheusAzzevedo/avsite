@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Pedidos - Avoar Turismo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
     <style>
         * {
             cursor: auto !important;
@@ -21,13 +32,14 @@
             cursor: default !important;
         }
 
-        a, button {
+        a,
+        button {
             cursor: pointer !important;
         }
-        
+
         /* NAVBAR */
-        .navbar { 
-            background: #ffffff; 
+        .navbar {
+            background: #ffffff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             padding: 1.2rem 3rem;
             display: flex;
@@ -38,7 +50,7 @@
             z-index: 1000;
             border-bottom: 3px solid #ff5c00;
         }
-        
+
         .navbar-brand {
             font-size: 1.5rem;
             font-weight: 700;
@@ -48,16 +60,21 @@
             gap: 0.5rem;
             white-space: nowrap;
         }
-        .navbar-logo { height: 47px; width: auto; display: block; }
-        
+
+        .navbar-logo {
+            height: 47px;
+            width: auto;
+            display: block;
+        }
+
         .navbar-menu {
             display: flex;
             gap: 2.5rem;
             align-items: center;
         }
-        
-        .navbar a { 
-            text-decoration: none; 
+
+        .navbar a {
+            text-decoration: none;
             color: #333333;
             font-weight: 600;
             font-size: 0.95rem;
@@ -68,7 +85,7 @@
             border-bottom: 2px solid transparent;
             padding-bottom: 0.3rem;
         }
-        
+
         .navbar-link {
             text-decoration: none;
             color: #333333;
@@ -81,10 +98,13 @@
             border-bottom: 2px solid transparent;
             padding-bottom: 0.3rem;
         }
-        .navbar-link:hover, .navbar-link.active {
+
+        .navbar-link:hover,
+        .navbar-link.active {
             color: #ff5c00;
             border-bottom-color: #ff5c00;
         }
+
         .btn-logout {
             padding: 0.7rem 1.5rem;
             background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
@@ -100,10 +120,12 @@
             align-items: center;
             gap: 0.5rem;
         }
+
         .btn-logout:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
         }
+
         .btn-hamburger {
             display: none;
             background: none;
@@ -121,6 +143,7 @@
             position: relative;
             z-index: 1001;
         }
+
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -131,10 +154,12 @@
             transition: opacity 0.3s ease;
             pointer-events: none;
         }
+
         .sidebar-overlay.open {
             opacity: 1;
             pointer-events: auto;
         }
+
         .sidebar {
             position: fixed;
             top: 0;
@@ -151,20 +176,24 @@
             overflow-y: auto;
             pointer-events: none;
         }
+
         .sidebar.open {
             transform: translateX(0);
             pointer-events: auto;
         }
+
         .sidebar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
+
         .sidebar-logo {
             height: 52px;
             width: auto;
         }
+
         .btn-close-sidebar {
             background: none;
             border: none;
@@ -173,11 +202,13 @@
             cursor: pointer;
             padding: 0.25rem;
         }
+
         .sidebar-nav {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
+
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -189,33 +220,38 @@
             border-radius: 8px;
             transition: all 0.2s ease;
         }
-        .sidebar-link:hover, .sidebar-link.active {
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
             background: rgba(255, 92, 0, 0.2);
             color: #ff5c00;
         }
+
         .sidebar-link i {
             width: 24px;
             text-align: center;
             font-size: 1.1rem;
         }
+
         .sidebar .btn-logout {
             width: 100%;
             margin-top: 1.5rem;
             justify-content: center;
         }
-        .container { 
-            max-width: 1000px; 
-            margin: 3rem auto; 
+
+        .container {
+            max-width: 1000px;
+            margin: 3rem auto;
             padding: 0 2rem;
         }
-        
+
         .page-header {
             margin-bottom: 3rem;
             animation: slideUp 0.6s ease-out;
         }
-        
-        h1 { 
-            color: #101010; 
+
+        h1 {
+            color: #101010;
             margin-bottom: 0.5rem;
             font-size: 2.2rem;
             font-weight: 700;
@@ -223,74 +259,74 @@
             align-items: center;
             gap: 0.8rem;
         }
-        
+
         .page-subtitle {
             color: #666666;
             font-size: 1rem;
             font-weight: 500;
         }
-        
-        .pedido-card { 
-            background: #ffffff; 
-            border-radius: 14px; 
+
+        .pedido-card {
+            background: #ffffff;
+            border-radius: 14px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 2rem; 
+            padding: 2rem;
             margin-bottom: 1.5rem;
             transition: all 0.3s ease;
             border-left: 4px solid #ff5c00;
             animation: slideUp 0.6s ease-out;
         }
-        
+
         .pedido-card:hover {
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             transform: translateY(-2px);
         }
-        
-        .pedido-header { 
-            display: flex; 
-            justify-content: space-between; 
+
+        .pedido-header {
+            display: flex;
+            justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 1.5rem;
             gap: 1rem;
         }
-        
-        .pedido-titulo { 
-            font-size: 1.4rem; 
+
+        .pedido-titulo {
+            font-size: 1.4rem;
             color: #101010;
             font-weight: 700;
             flex: 1;
         }
-        
-        .pedido-status { 
-            padding: 0.6rem 1.2rem; 
-            border-radius: 20px; 
-            font-size: 0.85rem; 
+
+        .pedido-status {
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             white-space: nowrap;
         }
-        
-        .status-PENDENTE { 
-            background: #fef3c7; 
+
+        .status-PENDENTE {
+            background: #fef3c7;
             color: #92400e;
             border: 1px solid #fcd34d;
         }
-        
-        .status-PAGO { 
-            background: #d1fae5; 
+
+        .status-PAGO {
+            background: #d1fae5;
             color: #065f46;
             border: 1px solid #6ee7b7;
         }
-        
-        .status-CONFIRMADO { 
-            background: #dbeafe; 
+
+        .status-CONFIRMADO {
+            background: #dbeafe;
             color: #1e40af;
             border: 1px solid #93c5fd;
         }
-        
-        .pedido-info { 
-            color: #666666; 
+
+        .pedido-info {
+            color: #666666;
             font-size: 0.95rem;
             display: flex;
             gap: 2rem;
@@ -299,19 +335,19 @@
             padding-bottom: 1.5rem;
             border-bottom: 1px solid #e5e7eb;
         }
-        
+
         .pedido-info div {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-weight: 600;
         }
-        
+
         .pedido-info i {
             color: #ff5c00;
             font-size: 1rem;
         }
-        
+
         .pedido-tipo {
             font-size: 0.8rem;
             color: #6b7280;
@@ -319,17 +355,17 @@
             display: inline-block;
             margin-bottom: 0.25rem;
         }
-        
+
         .pedido-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
         }
-        
-        .pedido-valor { 
-            font-size: 1.8rem; 
-            color: #ff5c00; 
+
+        .pedido-valor {
+            font-size: 1.8rem;
+            color: #ff5c00;
             font-weight: 700;
         }
 
@@ -348,6 +384,7 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
+
         .btn-pagar:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
@@ -369,47 +406,48 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
+
         .btn-download-doc:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
             color: white;
         }
-        
+
         .status-AGUARDANDO_PAGAMENTO {
             background: #fff7ed;
             color: #9a3412;
             border: 1px solid #fdba74;
         }
-        
+
         .status-EXPIRADO {
             background: #f3f4f6;
             color: #6b7280;
             border: 1px solid #d1d5db;
         }
-        
+
         .status-CANCELADO {
             background: #fee2e2;
             color: #dc2626;
             border: 1px solid #fca5a5;
         }
-        
-        .loading { 
-            text-align: center; 
+
+        .loading {
+            text-align: center;
             padding: 3rem;
             color: #666666;
         }
-        
+
         .loading i {
             font-size: 2.5rem;
             color: #ff5c00;
             margin-bottom: 1rem;
         }
-        
+
         .loading p {
             font-size: 1.1rem;
             font-weight: 600;
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
@@ -417,64 +455,74 @@
             border-radius: 14px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
-        
+
         .empty-state i {
             font-size: 3.5rem;
             color: #ff5c00;
             margin-bottom: 1rem;
             opacity: 0.7;
         }
-        
+
         .empty-state p {
             color: #666666;
             font-size: 1.1rem;
             font-weight: 600;
         }
-        
+
         @keyframes slideUp {
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         @media (max-width: 768px) {
             .navbar-menu {
                 display: none;
             }
+
             .btn-hamburger {
                 display: flex;
             }
+
             .navbar {
                 padding: 1rem 1.5rem;
             }
+
             .container {
                 margin: 2rem auto;
                 padding: 0 1rem;
             }
+
             h1 {
                 font-size: 1.6rem;
             }
+
             .pedido-card {
                 padding: 1.5rem;
             }
+
             .pedido-header {
                 flex-direction: column;
             }
+
             .pedido-info {
                 flex-direction: column;
                 gap: 0.8rem;
             }
+
             .pedido-footer {
                 flex-direction: column;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
     <aside class="sidebar" id="sidebar" aria-label="Menu de navegação">
@@ -491,7 +539,8 @@
             <a href="pacotes-viagens.html" class="sidebar-link"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
             <a href="pedidos.html" class="sidebar-link active"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html" class="sidebar-link"><i class="fas fa-cog"></i> Configurações</a>
-            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            <button type="button" class="btn-logout" id="logoutBtnSidebar"><i class="fas fa-sign-out-alt"></i>
+                Sair</button>
         </nav>
     </aside>
 
@@ -516,7 +565,7 @@
             <h1><i class="fas fa-receipt"></i> Meus Pedidos</h1>
             <p class="page-subtitle">Acompanhe todas as suas excursões e pagamentos</p>
         </div>
-        
+
         <div id="loading" class="loading" style="display: block;">
             <i class="fas fa-spinner fa-spin fa-2x"></i>
             <p>Carregando pedidos...</p>
@@ -528,4 +577,5 @@
     <script src="js/auth-manager.js"></script>
     <script src="js/pedidos.js"></script>
 </body>
+
 </html>

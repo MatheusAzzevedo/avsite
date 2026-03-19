@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,15 @@
     <meta http-equiv="refresh" content="0;url=inicio.html">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
     <style>
         * {
             cursor: auto !important;
@@ -14,22 +24,29 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body { 
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #f6f7f8 0%, #ffffff 100%);
             min-height: 100vh;
             cursor: default !important;
         }
-        
-        a, button, input, select, textarea {
+
+        a,
+        button,
+        input,
+        select,
+        textarea {
             cursor: pointer !important;
         }
-        
-        input[type="text"], input[type="email"], input[type="password"], textarea {
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
             cursor: text !important;
         }
-        
+
         /* NAVBAR */
         .navbar {
             background: #ffffff;
@@ -43,25 +60,30 @@
             z-index: 1000;
             border-bottom: 3px solid #ff5c00;
         }
-        
-        .navbar-brand { 
-            font-size: 1.5rem; 
-            font-weight: 700; 
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
             color: #ff5c00;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        .navbar-logo { height: 47px; width: auto; display: block; }
-        
-        .navbar-menu { 
-            display: flex; 
-            gap: 2.5rem; 
+
+        .navbar-logo {
+            height: 47px;
+            width: auto;
+            display: block;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2.5rem;
             align-items: center;
         }
-        
-        .navbar-link { 
-            text-decoration: none; 
+
+        .navbar-link {
+            text-decoration: none;
             color: #333333;
             font-weight: 600;
             font-size: 0.95rem;
@@ -72,56 +94,57 @@
             border-bottom: 2px solid transparent;
             padding-bottom: 0.3rem;
         }
-        
-        .navbar-link:hover, .navbar-link.active { 
+
+        .navbar-link:hover,
+        .navbar-link.active {
             color: #ff5c00;
             border-bottom-color: #ff5c00;
         }
-        
-        .btn-logout { 
-            padding: 0.7rem 1.5rem; 
+
+        .btn-logout {
+            padding: 0.7rem 1.5rem;
             background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
+            color: white;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             font-size: 0.9rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
         }
-        
-        .btn-logout:hover { 
+
+        .btn-logout:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(255, 92, 0, 0.4);
         }
-        
+
         /* CONTAINER */
-        .container { 
-            max-width: 900px; 
-            margin: 3rem auto; 
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
             padding: 0 2rem;
         }
-        
-        .welcome { 
-            text-align: center; 
+
+        .welcome {
+            text-align: center;
             margin-bottom: 3rem;
             animation: slideUp 0.6s ease-out;
         }
-        
-        .welcome h1 { 
-            font-size: 2.5rem; 
+
+        .welcome h1 {
+            font-size: 2.5rem;
             color: #101010;
             margin-bottom: 0.5rem;
             font-weight: 700;
         }
-        
-        .welcome p { 
-            color: #666666; 
+
+        .welcome p {
+            color: #666666;
             font-size: 1.1rem;
             font-weight: 500;
         }
-        
+
         /* SEARCH BOX */
         .search-box {
             background: #ffffff;
@@ -132,28 +155,28 @@
             border-top: 4px solid #ff5c00;
             animation: slideUp 0.8s ease-out;
         }
-        
-        .search-box h2 { 
-            color: #ff5c00; 
+
+        .search-box h2 {
+            color: #ff5c00;
             margin-bottom: 0.5rem;
             font-size: 1.8rem;
             font-weight: 700;
         }
-        
-        .search-box p { 
-            color: #666666; 
+
+        .search-box p {
+            color: #666666;
             margin-bottom: 2.5rem;
             font-size: 1rem;
             font-weight: 500;
         }
-        
-        .search-form { 
-            display: flex; 
-            gap: 1rem; 
-            max-width: 600px; 
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 600px;
             margin: 0 auto;
         }
-        
+
         .search-input {
             flex: 1;
             padding: 1rem 1.5rem;
@@ -165,14 +188,14 @@
             transition: all 0.3s ease;
             background: #f9f9f9;
         }
-        
-        .search-input:focus { 
-            outline: none; 
+
+        .search-input:focus {
+            outline: none;
             border-color: #ff5c00;
             background: #ffffff;
             box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.1);
         }
-        
+
         .btn-search {
             padding: 1rem 2.5rem;
             background: linear-gradient(135deg, #ff5c00 0%, #eb5909 100%);
@@ -185,20 +208,21 @@
             box-shadow: 0 4px 12px rgba(255, 92, 0, 0.3);
             white-space: nowrap;
         }
-        
-        .btn-search:hover { 
+
+        .btn-search:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 92, 0, 0.4);
         }
-        
-        .btn-search:disabled { 
-            opacity: 0.6; 
+
+        .btn-search:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         /* MESSAGES */
-        .error-message, .loading-message {
+        .error-message,
+        .loading-message {
             margin-top: 2rem;
             padding: 1.2rem 1.5rem;
             border-radius: 10px;
@@ -206,46 +230,49 @@
             font-weight: 600;
             animation: slideDown 0.4s ease-out;
         }
-        
-        .error-message { 
-            background: #fee2e2; 
+
+        .error-message {
+            background: #fee2e2;
             color: #c2410c;
             border-left: 4px solid #dc2626;
         }
-        
-        .error-message.show, .loading-message.show { 
+
+        .error-message.show,
+        .loading-message.show {
             display: block;
         }
-        
-        .loading-message { 
-            background: #dbeafe; 
+
+        .loading-message {
+            background: #dbeafe;
             color: #1e40af;
             border-left: 4px solid #2563eb;
         }
-        
+
         /* ANIMATIONS */
         @keyframes slideUp {
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         @keyframes slideDown {
             from {
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .navbar {
@@ -253,45 +280,46 @@
                 gap: 1rem;
                 padding: 1rem;
             }
-            
+
             .navbar-menu {
                 flex-direction: column;
                 gap: 1rem;
                 width: 100%;
             }
-            
+
             .navbar-link {
                 width: 100%;
                 justify-content: center;
             }
-            
+
             .btn-logout {
                 width: 100%;
             }
-            
+
             .container {
                 margin: 2rem auto;
                 padding: 0 1rem;
             }
-            
+
             .welcome h1 {
                 font-size: 1.8rem;
             }
-            
+
             .search-box {
                 padding: 2rem;
             }
-            
+
             .search-form {
                 flex-direction: column;
             }
-            
+
             .btn-search {
                 width: 100%;
             }
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <a href="../index-10.html" class="navbar-brand" style="text-decoration: none;">
@@ -315,15 +343,9 @@
         <div class="search-box">
             <h2><i class="fas fa-search"></i> Buscar Excursão</h2>
             <p>Insira o código fornecido pela escola ou instituição</p>
-            
+
             <form id="searchForm" class="search-form">
-                <input 
-                    type="text" 
-                    id="codigoInput" 
-                    class="search-input"
-                    placeholder="Ex: ABC-2024-001"
-                    required
-                >
+                <input type="text" id="codigoInput" class="search-input" placeholder="Ex: ABC-2024-001" required>
                 <button type="submit" class="btn-search" id="searchBtn">
                     <i class="fas fa-search"></i> Buscar
                 </button>
@@ -339,4 +361,5 @@
     <script src="js/auth-manager.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
+
 </html>

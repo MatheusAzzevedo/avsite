@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pacotes de Viagens - Avoar Turismo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V8B6Q1ZBRY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V8B6Q1ZBRY');
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -21,11 +32,25 @@
         }
 
         /* Cursor pointer em todos os elementos clicáveis (links, botões, filtros, cards) */
-        a, a *, button, button *, .filter, .filter-tabs .filter,
-        .navbar-link, .navbar-link *, .btn-logout, .hamburger-btn,
-        .mobile-sidebar-nav a, .mobile-sidebar-nav a *,
-        .mobile-sidebar-close, .mobile-overlay,
-        .portfolio-block, .portfolio-block *, .inner-box, .excursao-card-link, .excursao-card-link * {
+        a,
+        a *,
+        button,
+        button *,
+        .filter,
+        .filter-tabs .filter,
+        .navbar-link,
+        .navbar-link *,
+        .btn-logout,
+        .hamburger-btn,
+        .mobile-sidebar-nav a,
+        .mobile-sidebar-nav a *,
+        .mobile-sidebar-close,
+        .mobile-overlay,
+        .portfolio-block,
+        .portfolio-block *,
+        .inner-box,
+        .excursao-card-link,
+        .excursao-card-link * {
             cursor: pointer !important;
         }
 
@@ -51,7 +76,12 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .navbar-logo { height: 47px; width: auto; display: block; }
+
+        .navbar-logo {
+            height: 47px;
+            width: auto;
+            display: block;
+        }
 
         .hamburger-btn {
             display: none;
@@ -86,7 +116,8 @@
             padding-bottom: 0.3rem;
         }
 
-        .navbar-link:hover, .navbar-link.active {
+        .navbar-link:hover,
+        .navbar-link.active {
             color: #ff5c00;
             border-bottom-color: #ff5c00;
         }
@@ -352,7 +383,8 @@
             font-size: 1rem;
         }
 
-        .loading-state, .empty-state {
+        .loading-state,
+        .empty-state {
             text-align: center;
             padding: 3rem;
             color: #666;
@@ -429,6 +461,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <a href="../index-10.html" class="navbar-brand">
@@ -436,7 +469,8 @@
         </a>
         <div class="navbar-menu">
             <a href="inicio.html" class="navbar-link"><i class="fas fa-home"></i> Início</a>
-            <a href="pacotes-viagens.html" class="navbar-link active"><i class="fas fa-suitcase"></i> Pacotes de Viagens</a>
+            <a href="pacotes-viagens.html" class="navbar-link active"><i class="fas fa-suitcase"></i> Pacotes de
+                Viagens</a>
             <a href="pedidos.html" class="navbar-link"><i class="fas fa-list"></i> Meus Pedidos</a>
             <a href="configuracoes.html" class="navbar-link"><i class="fas fa-cog"></i> Configurações</a>
             <button type="button" class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
@@ -461,7 +495,8 @@
             <a href="configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
         </nav>
         <div class="mobile-sidebar-footer">
-            <button type="button" class="btn-logout" id="logoutBtnMobile"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            <button type="button" class="btn-logout" id="logoutBtnMobile"><i class="fas fa-sign-out-alt"></i>
+                Sair</button>
         </div>
     </div>
 
@@ -497,35 +532,36 @@
     <script src="js/auth-manager.js"></script>
     <script src="js/pacotes-viagens.js"></script>
     <script>
-    (function() {
-        const hamburger = document.getElementById('hamburgerBtn');
-        const sidebar = document.getElementById('mobileSidebar');
-        const overlay = document.getElementById('mobileOverlay');
-        const closeBtn = document.getElementById('sidebarClose');
-        const logoutMobile = document.getElementById('logoutBtnMobile');
+        (function () {
+            const hamburger = document.getElementById('hamburgerBtn');
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const closeBtn = document.getElementById('sidebarClose');
+            const logoutMobile = document.getElementById('logoutBtnMobile');
 
-        function openMenu() {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+            function openMenu() {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
 
-        function closeMenu() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+            function closeMenu() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
 
-        hamburger.addEventListener('click', openMenu);
-        closeBtn.addEventListener('click', closeMenu);
-        overlay.addEventListener('click', closeMenu);
+            hamburger.addEventListener('click', openMenu);
+            closeBtn.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
 
-        if (logoutMobile) {
-            logoutMobile.addEventListener('click', function() {
-                document.getElementById('logoutBtn').click();
-            });
-        }
-    })();
+            if (logoutMobile) {
+                logoutMobile.addEventListener('click', function () {
+                    document.getElementById('logoutBtn').click();
+                });
+            }
+        })();
     </script>
 </body>
+
 </html>

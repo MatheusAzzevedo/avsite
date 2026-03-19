@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-03-12) - feat: filtros e pendentes na Listagem Convencional
+### Última atualização (2026-03-19) - feat: suporte a Google Tag (gtag.js)
+- **api/public/ (diversos .html)** [Scripts gtag.js adicionados ao <head>]
+
+Resumo: Adicionado suporte global ao Google Tag (gtag.js) em todas as páginas públicas do site e na área do cliente (ID G-V8B6Q1ZBRY) para monitoramento de tráfego e análises de conversão em todo o fluxo.
+
+### Versão anterior (2026-03-12) - feat: filtros e pendentes na Listagem Convencional
 - **api/src/routes/listagem-convencional.routes.ts** [excursaoAtivo no retorno]
 - **api/public/admin/listagem-convencional.html** [Filtros: Data De/Até, Excursão, Pagamento, Limpar]
 - **api/public/admin/js/listagem-convencional.js** [Filtros client-side, deletePedido corrigido]
