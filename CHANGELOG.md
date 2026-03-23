@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-03-23 - fix: melhorias na estabilidade (Prisma/Docker), logging e histórico de pedidos
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Adicionado `binaryTargets` para compatibilidade com Docker/Alpine]
+- `api/docker-compose.yml` [Aumento de memória do Node.js via `NODE_OPTIONS`]
+- `api/dev.Dockerfile` [Correção de comando `CMD` para ambiente de desenvolvimento]
+- `api/src/routes/excursao.routes.ts` [Explicação do arquivo, logging detalhado, controle de cache e melhoria na lógica de slugs]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Explicação do arquivo, logging detalhado e snapshot para preservação de histórico em exclusões]
+- `.gitignore` & `api/.gitignore` [Inclusão de arquivos de configuração docker local e ajustes de formatação]
+
+### Detalhes das Alterações
+- **Explicação do Arquivo `api/prisma/schema.prisma`**: Adicionado `linux-musl-openssl-3.0.x` ao `binaryTargets` para garantir que o Prisma Client funcione corretamente em containers Alpine.
+- **Explicação do Arquivo `api/docker-compose.yml`**: Configurada a variável de ambiente `NODE_OPTIONS=--max-old-space-size=4096` no serviço da API para evitar erros de falta de memória (OOM).
+- **Explicação do Arquivo `api/src/routes/excursao.routes.ts`**: Implementado logging detalhado (`logger.info` e `logger.error`) em todas as operações CRUD para facilitar o rastreamento em produção. Adicionado cabeçalho `Cache-Control` na listagem. Melhoria na geração de slugs únicos para evitar colisões.
+- **Explicação do Arquivo `api/src/routes/excursao-pedagogica.routes.ts`**: Adicionado logging avançado em todas as rotas. Na exclusão (DELETE), o sistema agora salva um snapshot dos dados da excursão nos pedidos vinculados antes de desvincular a referência, garantindo que o cliente mantenha o histórico completo na sua página de pedidos.
+- **Explicação dos Arquivos `.gitignore`**: Padronizado para ignorar o `dev.Dockerfile` e o `docker-compose.yml` local, que agora são mantidos no repositório mas não devem ser modificados acidentalmente em ambientes de produção.
+
+---
+
 ## 2026-03-19 - feat: suporte global ao Google Tag (gtag.js) e ajuste de CSP
 
 ### Arquivos Modificados

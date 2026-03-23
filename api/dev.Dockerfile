@@ -1,5 +1,6 @@
 # Dockerfile para desenvolvimento da API Avorar
 FROM node:20-alpine
+RUN apk add --no-cache openssl libc6-compat
 
 # Define o diretório de trabalho
 WORKDIR /app
@@ -20,5 +21,5 @@ RUN npx prisma generate
 # Expõe a porta do servidor
 EXPOSE 3001
 
-# Inicia o servidor com nodemon para hot-reloading
-CMD ["npx", "nodemon", "src/server.ts"]
+# Inicia o servidor com o script dev (usa ts-node-dev)
+CMD ["npm", "run", "dev"]

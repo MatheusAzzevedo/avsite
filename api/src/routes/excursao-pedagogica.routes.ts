@@ -11,9 +11,9 @@ import { prisma } from '../config/database';
 import { ApiError } from '../utils/api-error';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody, validateQuery } from '../middleware/validate.middleware';
-import { 
-  createExcursaoPedagogicaSchema, 
-  updateExcursaoPedagogicaSchema, 
+import {
+  createExcursaoPedagogicaSchema,
+  updateExcursaoPedagogicaSchema,
   filterExcursaoPedagogicaSchema,
   FilterExcursaoPedagogicaInput
 } from '../schemas/excursao-pedagogica.schema';
@@ -38,15 +38,15 @@ router.get('/',
       const userEmail = req.user?.email;
 
       logger.info(`[AVSITE-API] 📚 Excursões Pedagógicas - Listagem INICIADA`, {
-        context: { 
-          userId, 
-          userEmail, 
+        context: {
+          userId,
+          userEmail,
           codigo: codigo || 'todos',
-          categoria: categoria || 'todas', 
-          status: status || 'todos', 
+          categoria: categoria || 'todas',
+          status: status || 'todos',
           busca: search || 'sem filtro',
-          page, 
-          limit 
+          page,
+          limit
         }
       });
 
@@ -87,10 +87,31 @@ router.get('/',
           orderBy: { createdAt: 'desc' },
           skip,
           take: limit,
-          include: {
-            galeria: {
-              orderBy: { ordem: 'asc' }
-            }
+          select: {
+            id: true,
+            codigo: true,
+            titulo: true,
+            slug: true,
+            subtitulo: true,
+            preco: true,
+            duracao: true,
+            categoria: true,
+            status: true,
+            imagemCapa: true,
+            descricao: true,
+            inclusos: true,
+            recomendacoes: true,
+            local: true,
+            horario: true,
+            tags: true,
+            maxInstallments: true,
+            destino: true,
+            dataDestino: true,
+            dataFimInscricoes: true,
+            documentoUrl: true,
+            documentoNome: true,
+            createdAt: true,
+            updatedAt: true,
           }
         }),
         prisma.excursaoPedagogica.count({ where })
@@ -100,13 +121,13 @@ router.get('/',
         context: {
           totalNoBanco: total,
           quantidadeRetornada: excursoes.length,
-          primeiros3Ids: excursoes.slice(0, 3).map((e: { id: string; titulo: string; codigo: string }) => 
+          primeiros3Ids: excursoes.slice(0, 3).map((e: { id: string; titulo: string; codigo: string }) =>
             `${e.id.substring(0, 8)}... [${e.codigo}] (${e.titulo})`)
         }
       });
 
       // Serializa para JSON limpo (evita Decimal/Prisma na resposta)
-      const data = excursoes.map((e: { preco: unknown; [key: string]: unknown }) => ({
+      const data = excursoes.map((e: { preco: unknown;[key: string]: unknown }) => ({
         ...e,
         preco: e.preco != null ? Number(e.preco) : e.preco
       }));
@@ -214,7 +235,7 @@ router.post('/',
       if (data.codigo != null && String(data.codigo).trim().length > 0) {
         codigoFinal = String(data.codigo).trim();
       } else if (data.destino != null && data.dataDestino != null &&
-                 String(data.destino).trim().length > 0 && String(data.dataDestino).trim().length > 0) {
+        String(data.destino).trim().length > 0 && String(data.dataDestino).trim().length > 0) {
         const destino = String(data.destino).trim();
         const dataDestinoStr = String(data.dataDestino).trim();
         const existingCodigos = (await prisma.excursaoPedagogica.findMany({ select: { codigo: true } })).map(e => e.codigo);
@@ -306,9 +327,9 @@ router.post('/',
       });
 
       logger.info(`[AVSITE-API] ✅ Excursão Pedagógica - Criação CONCLUÍDA`, {
-        context: { 
-          userId, 
-          userEmail, 
+        context: {
+          userId,
+          userEmail,
           excursaoId: excursao.id,
           codigo: excursao.codigo,
           titulo: excursao.titulo,
@@ -331,7 +352,7 @@ router.post('/',
       });
     } catch (error) {
       logger.error(`[AVSITE-API] ❌ Excursão Pedagógica - Criação FALHOU`, {
-        context: { 
+        context: {
           userId: req.user?.id,
           userEmail: req.user?.email,
           erro: error instanceof Error ? error.message : 'Erro desconhecido',
@@ -357,9 +378,9 @@ router.put('/:id',
       const userEmail = req.user?.email;
 
       logger.info(`[AVSITE-API] 📚 Excursão Pedagógica - Atualização INICIADA`, {
-        context: { 
-          excursaoId: id, 
-          userId, 
+        context: {
+          excursaoId: id,
+          userId,
           userEmail,
           camposAtualizados: Object.keys(data),
           timestamp: new Date().toISOString()
@@ -397,13 +418,13 @@ router.put('/:id',
       if (data.titulo && data.titulo !== existing.titulo) {
         const baseSlug = slugify(data.titulo);
         const existingSlugs = (await prisma.excursaoPedagogica.findMany({
-          where: { 
+          where: {
             slug: { startsWith: baseSlug },
             id: { not: id }
           },
           select: { slug: true }
         })).map(e => e.slug);
-        
+
         slug = generateUniqueSlug(baseSlug, existingSlugs);
       }
 
@@ -475,14 +496,14 @@ router.put('/:id',
       });
 
       logger.info(`[AVSITE-API] ✅ Excursão Pedagógica - Atualização CONCLUÍDA`, {
-        context: { 
+        context: {
           excursaoId: id,
           codigo: excursaoAtualizada?.codigo,
           titulo: excursaoAtualizada?.titulo,
           slug: excursaoAtualizada?.slug,
           status: excursaoAtualizada?.status,
           galeriaImagens: excursaoAtualizada?.galeria?.length || 0,
-          userId, 
+          userId,
           userEmail,
           timestamp: new Date().toISOString()
         }
@@ -498,7 +519,7 @@ router.put('/:id',
       });
     } catch (error) {
       logger.error(`[AVSITE-API] ❌ Excursão Pedagógica - Atualização FALHOU`, {
-        context: { 
+        context: {
           excursaoId: req.params.id,
           userId: req.user?.id,
           userEmail: req.user?.email,
@@ -523,7 +544,7 @@ router.delete('/:id',
       const userEmail = req.user?.email;
 
       logger.info(`[AVSITE-API] 🗑️ Excursão Pedagógica - Exclusão INICIADA`, {
-        context: { 
+        context: {
           excursaoId: id,
           userId,
           userEmail,
@@ -585,7 +606,7 @@ router.delete('/:id',
       });
 
       logger.info(`[AVSITE-API] ✅ Excursão Pedagógica - Exclusão CONCLUÍDA`, {
-        context: { 
+        context: {
           excursaoId: id,
           codigo: existing.codigo,
           titulo: existing.titulo,
@@ -603,7 +624,7 @@ router.delete('/:id',
       });
     } catch (error) {
       logger.error(`[AVSITE-API] ❌ Excursão Pedagógica - Exclusão FALHOU`, {
-        context: { 
+        context: {
           excursaoId: req.params.id,
           userId: req.user?.id,
           userEmail: req.user?.email,

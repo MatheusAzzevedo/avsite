@@ -10,9 +10,9 @@ import { prisma } from '../config/database';
 import { ApiError } from '../utils/api-error';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody, validateQuery } from '../middleware/validate.middleware';
-import { 
-  createExcursaoSchema, 
-  updateExcursaoSchema, 
+import {
+  createExcursaoSchema,
+  updateExcursaoSchema,
   filterExcursaoSchema,
   FilterExcursaoInput
 } from '../schemas/excursao.schema';
@@ -37,14 +37,14 @@ router.get('/',
       const userEmail = req.user?.email;
 
       logger.info(`[AVSITE-API] 🏝️ Excursões - Listagem INICIADA`, {
-        context: { 
-          userId, 
-          userEmail, 
-          categoria: categoria || 'todas', 
-          status: status || 'todos', 
+        context: {
+          userId,
+          userEmail,
+          categoria: categoria || 'todas',
+          status: status || 'todos',
           busca: search || 'sem filtro',
-          page, 
-          limit 
+          page,
+          limit
         }
       });
 
@@ -80,10 +80,26 @@ router.get('/',
           orderBy: { createdAt: 'desc' },
           skip,
           take: limit,
-          include: {
-            galeria: {
-              orderBy: { ordem: 'asc' }
-            }
+          select: {
+            id: true,
+            titulo: true,
+            slug: true,
+            subtitulo: true,
+            preco: true,
+            duracao: true,
+            categoria: true,
+            status: true,
+            imagemCapa: true,
+            imagemPrincipal: true,
+            descricao: true,
+            inclusos: true,
+            recomendacoes: true,
+            local: true,
+            horario: true,
+            tags: true,
+            dataExcursao: true,
+            createdAt: true,
+            updatedAt: true,
           }
         }),
         prisma.excursao.count({ where })
@@ -98,7 +114,7 @@ router.get('/',
       });
 
       // Serializa para JSON limpo (evita Decimal/Prisma na resposta)
-      const data = excursoes.map((e: { preco: unknown; [key: string]: unknown }) => ({
+      const data = excursoes.map((e: { preco: unknown;[key: string]: unknown }) => ({
         ...e,
         preco: e.preco != null ? Number(e.preco) : e.preco
       }));
@@ -195,11 +211,11 @@ router.post('/',
       const userEmail = req.user?.email;
 
       logger.info(`[AVSITE-API] 🏝️ Excursão - Criação INICIADA`, {
-        context: { 
-          userId, 
-          userEmail, 
-          titulo: data.titulo, 
-          preco: data.preco, 
+        context: {
+          userId,
+          userEmail,
+          titulo: data.titulo,
+          preco: data.preco,
           categoria: data.categoria,
           status: data.status || 'ATIVO',
           duracao: data.duracao,
@@ -213,7 +229,7 @@ router.post('/',
         where: { slug: { startsWith: baseSlug } },
         select: { slug: true }
       })).map(e => e.slug);
-      
+
       const slug = generateUniqueSlug(baseSlug, existingSlugs);
 
       // Extrai galeria e trata dataExcursao
@@ -258,9 +274,9 @@ router.post('/',
       });
 
       logger.info(`[AVSITE-API] ✅ Excursão - Criação CONCLUÍDA`, {
-        context: { 
-          userId, 
-          userEmail, 
+        context: {
+          userId,
+          userEmail,
           excursaoId: excursao.id,
           titulo: excursao.titulo,
           slug: excursao.slug,
@@ -279,7 +295,7 @@ router.post('/',
       });
     } catch (error) {
       logger.error(`[AVSITE-API] ❌ Excursão - Criação FALHOU`, {
-        context: { 
+        context: {
           userId: req.user?.id,
           userEmail: req.user?.email,
           erro: error instanceof Error ? error.message : 'Erro desconhecido',
@@ -305,9 +321,9 @@ router.put('/:id',
       const userEmail = req.user?.email;
 
       logger.info(`[AVSITE-API] 🏝️ Excursão - Atualização INICIADA`, {
-        context: { 
-          excursaoId: id, 
-          userId, 
+        context: {
+          excursaoId: id,
+          userId,
           userEmail,
           camposAtualizados: Object.keys(data),
           timestamp: new Date().toISOString()
@@ -331,13 +347,13 @@ router.put('/:id',
       if (data.titulo && data.titulo !== existing.titulo) {
         const baseSlug = slugify(data.titulo);
         const existingSlugs = (await prisma.excursao.findMany({
-          where: { 
+          where: {
             slug: { startsWith: baseSlug },
             id: { not: id }
           },
           select: { slug: true }
         })).map(e => e.slug);
-        
+
         slug = generateUniqueSlug(baseSlug, existingSlugs);
       }
 
@@ -408,13 +424,13 @@ router.put('/:id',
       });
 
       logger.info(`[AVSITE-API] ✅ Excursão - Atualização CONCLUÍDA`, {
-        context: { 
+        context: {
           excursaoId: id,
           titulo: excursaoAtualizada?.titulo,
           slug: excursaoAtualizada?.slug,
           status: excursaoAtualizada?.status,
           galeriaImagens: excursaoAtualizada?.galeria?.length || 0,
-          userId, 
+          userId,
           userEmail,
           timestamp: new Date().toISOString()
         }
@@ -427,7 +443,7 @@ router.put('/:id',
       });
     } catch (error) {
       logger.error(`[AVSITE-API] ❌ Excursão - Atualização FALHOU`, {
-        context: { 
+        context: {
           excursaoId: req.params.id,
           userId: req.user?.id,
           userEmail: req.user?.email,
@@ -452,7 +468,7 @@ router.delete('/:id',
       const userEmail = req.user?.email;
 
       logger.info(`[AVSITE-API] 🗑️ Excursão - Exclusão INICIADA`, {
-        context: { 
+        context: {
           excursaoId: id,
           userId,
           userEmail,
@@ -491,7 +507,7 @@ router.delete('/:id',
       });
 
       logger.info(`[AVSITE-API] ✅ Excursão - Exclusão CONCLUÍDA`, {
-        context: { 
+        context: {
           excursaoId: id,
           titulo: existing.titulo,
           categoria: existing.categoria,
@@ -508,7 +524,7 @@ router.delete('/:id',
       });
     } catch (error) {
       logger.error(`[AVSITE-API] ❌ Excursão - Exclusão FALHOU`, {
-        context: { 
+        context: {
           excursaoId: req.params.id,
           userId: req.user?.id,
           userEmail: req.user?.email,

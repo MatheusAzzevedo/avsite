@@ -32,3 +32,5 @@ Thumbs.db
 prisma/migrations/**/migration.sql.bak
 .agent/
 backup_railway.sql
+dev.Dockerfile
+docker-compose.yml
