@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-03-25 - feat: indicador de carregamento no admin e melhorias de logging
+
+### Arquivos Modificados
+- `api/public/admin/js/excursoes.js` [Adicionado indicador de carregamento (spinner) durante a busca e filtragem]
+- `api/public/admin/js/excursoes-pedagogicas.js` [Adicionado indicador de carregamento (spinner) durante a busca e filtragem]
+- `api/src/routes/excursao.routes.ts` [Refatoração e limpeza de espaços nos objetos de log context]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Refatoração e limpeza de espaços nos objetos de log context]
+
+### Detalhes das Alterações
+- **Explicação do Arquivo `api/public/admin/js/excursoes.js`**: Implementado feedback visual (spinner) ao carregar a lista de excursões convencionais e ao aplicar filtros, melhorando a percepção de performance para o administrador.
+- **Explicação do Arquivo `api/public/admin/js/excursoes-pedagogicas.js`**: Implementado feedback visual (spinner) na listagem de excursões pedagógicas, garantindo consistência na interface administrativa durante chamadas de API.
+- **Explicação das Rotas da API**: Realizada limpeza técnica nos arquivos de rotas para remover espaços extras em objetos de contexto do logger, padronizando a saída dos logs do sistema.
+
+---
+
 ## 2026-03-23 - fix: melhorias na estabilidade (Prisma/Docker), logging e histórico de pedidos
 
 ### Arquivos Modificados

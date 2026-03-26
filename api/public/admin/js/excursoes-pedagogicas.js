@@ -22,6 +22,16 @@
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
   }
   async function loadExcursoesPedagogicas() {
+    var grid = document.getElementById('excursoesGrid');
+    var emptyState = document.getElementById('emptyState');
+    
+    if (grid) {
+      grid.innerHTML = '<div class="spinner"></div>';
+    }
+    if (emptyState) {
+      emptyState.style.display = 'none';
+    }
+
     try {
       var excursoes = typeof ExcursaoPedagogicaManager !== 'undefined'
         ? await ExcursaoPedagogicaManager.getAll(false)
