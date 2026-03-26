@@ -48,6 +48,16 @@
 
   async function loadExcursoes() {
     console.log('[Excursões Admin] 🚀 INICIANDO CARREGAMENTO...');
+    
+    var grid = document.getElementById('excursoesGrid');
+    var emptyState = document.getElementById('emptyState');
+    if (grid) {
+      grid.innerHTML = '<div class="spinner"></div>';
+    }
+    if (emptyState) {
+      emptyState.style.display = 'none';
+    }
+
     try {
       var excursoes = await ExcursaoManager.getAll(false);
       console.log('[Excursões Admin] 📦 EXCURSÕES RETORNADAS:', {
@@ -148,6 +158,15 @@
     var searchTerm = (document.getElementById('searchExcursoes') && document.getElementById('searchExcursoes').value || '').toLowerCase();
     var categoriaFilter = document.getElementById('filterCategoria') ? document.getElementById('filterCategoria').value : 'todos';
     var statusFilter = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : 'todos';
+
+    var grid = document.getElementById('excursoesGrid');
+    var emptyState = document.getElementById('emptyState');
+    if (grid) {
+      grid.innerHTML = '<div class="spinner"></div>';
+    }
+    if (emptyState) {
+      emptyState.style.display = 'none';
+    }
 
     var excursoes = await ExcursaoManager.getAll(false);
     if (searchTerm) {
