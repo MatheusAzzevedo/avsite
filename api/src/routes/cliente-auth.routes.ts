@@ -12,11 +12,14 @@
  * - PUT /api/cliente/auth/profile - Atualizar perfil
  * - PUT /api/cliente/auth/change-password - Alterar senha
  * - POST /api/cliente/auth/verify - Verificar se token é válido
+ * - POST /api/cliente/auth/forgot-password - Solicitar recuperação de senha
+ * - POST /api/cliente/auth/reset-password - Resetar senha com token
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { prisma } from '../config/database';
 import { ApiError } from '../utils/api-error';
 import { clienteAuthMiddleware } from '../middleware/cliente-auth.middleware';
@@ -27,7 +30,9 @@ import {
   clienteUpdateProfileSchema,
   clienteChangePasswordSchema,
   googleOAuthCallbackSchema,
-  linkGoogleAccountSchema
+  linkGoogleAccountSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema
 } from '../schemas/cliente-auth.schema';
 import { logger } from '../utils/logger';
 import { 
@@ -35,6 +40,11 @@ import {
   getGoogleUserInfo, 
   verifyGoogleOAuthConfig 
 } from '../config/google-oauth';
+import { enviarEmail } from '../utils/email-service';
+import { 
+  gerarTemplateRecuperacaoSenha, 
+  gerarTextoRecuperacaoSenha 
+} from '../templates/email-recuperacao-senha';
 
 const router = Router();
 
@@ -528,6 +538,164 @@ router.post('/verify',
         cliente: req.cliente
       }
     });
+  }
+);
+
+/**
+ * Explicação da API [POST /api/cliente/auth/forgot-password]
+ * 
+ * Solicita a recuperação de senha.
+ * Gera um token e envia por e-mail.
+ * 
+ * Body: { email }
+ */
+router.post('/forgot-password',
+  validateBody(forgotPasswordSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body;
+      const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+
+      logger.info('[Cliente Auth] Solicitação de recuperação de senha', {
+        context: { email, ip: clientIp }
+      });
+
+      // Busca cliente
+      const cliente = await prisma.cliente.findUnique({
+        where: { email: email.toLowerCase() }
+      });
+
+      // Por segurança, não informamos se o email existe ou não
+      if (!cliente) {
+        logger.warn('[Cliente Auth] Recuperação de senha: e-mail não encontrado', {
+          context: { email, ip: clientIp }
+        });
+        return res.json({
+          success: true,
+          message: 'Se este e-mail estiver cadastrado, você receberá instruções para redefinir sua senha.'
+        });
+      }
+
+      // Verifica se a conta é via Google (não pode resetar senha local)
+      if (cliente.authProvider === 'GOOGLE') {
+        logger.warn('[Cliente Auth] Recuperação de senha: conta Google', {
+          context: { email, ip: clientIp }
+        });
+        return res.json({
+          success: true,
+          message: 'Esta conta é vinculada ao Google. Faça login usando sua conta Google.'
+        });
+      }
+
+      // Gera token de reset
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenExpires = new Date(Date.now() + 3600000); // 1 hora
+
+      // Salva no banco
+      await prisma.cliente.update({
+        where: { id: cliente.id },
+        data: {
+          resetToken,
+          resetTokenExpires
+        }
+      });
+
+      // Envia e-mail
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      const linkReset = `${frontendUrl}/cliente/reset-senha.html?token=${resetToken}`;
+
+      logger.info('[Cliente Auth] Enviando e-mail de recuperação', {
+        context: { email, clienteId: cliente.id }
+      });
+
+      await enviarEmail({
+        para: cliente.email,
+        assunto: 'Recuperação de Senha - Avoar Turismo',
+        html: gerarTemplateRecuperacaoSenha({ nome: cliente.nome, linkReset }),
+        texto: gerarTextoRecuperacaoSenha({ nome: cliente.nome, linkReset })
+      });
+
+      res.json({
+        success: true,
+        message: 'Se este e-mail estiver cadastrado, você receberá instruções para redefinir sua senha.'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/cliente/auth/reset-password]
+ * 
+ * Reseta a senha usando o token recebido por e-mail.
+ * 
+ * Body: { token, password }
+ */
+router.post('/reset-password',
+  validateBody(resetPasswordSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token, password } = req.body;
+      const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+
+      logger.info('[Cliente Auth] Tentativa de reset de senha com token', {
+        context: { ip: clientIp }
+      });
+
+      // Busca cliente pelo token e verifica expiração
+      const cliente = await prisma.cliente.findFirst({
+        where: {
+          resetToken: token,
+          resetTokenExpires: {
+            gt: new Date()
+          }
+        }
+      });
+
+      if (!cliente) {
+        logger.warn('[Cliente Auth] Reset de senha falhou: token inválido ou expirado', {
+          context: { ip: clientIp }
+        });
+        throw ApiError.badRequest('Token de recuperação inválido ou expirado.');
+      }
+
+      // Hash da nova senha
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Atualiza senha e limpa token
+      await prisma.cliente.update({
+        where: { id: cliente.id },
+        data: {
+          password: hashedPassword,
+          resetToken: null,
+          resetTokenExpires: null
+        }
+      });
+
+      // Registra atividade
+      await prisma.activityLog.create({
+        data: {
+          action: 'update',
+          entity: 'cliente',
+          entityId: cliente.id,
+          description: 'Senha recuperada com sucesso',
+          userEmail: cliente.email,
+          ip: clientIp
+        }
+      });
+
+      logger.info('[Cliente Auth] Senha resetada com sucesso', {
+        context: { clienteId: cliente.id, email: cliente.email }
+      });
+
+      res.json({
+        success: true,
+        message: 'Senha alterada com sucesso! Você já pode fazer login.'
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
