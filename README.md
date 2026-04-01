@@ -9,14 +9,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 Resumo: Adicionados indicadores de carregamento (spinners) nas páginas de listagem de excursões (convencionais e pedagógicas) do painel administrativo para melhorar a experiência do usuário durante o carregamento de dados. Realizada limpeza técnica e padronização nos logs de contexto das rotas da API.
 
-### Última atualização (2026-03-23) - fix: estabilidade (Prisma/Docker), logging e histórico
-- **api/prisma/schema.prisma** [Suporte a binaryTargets para Alpine/Docker]
-- **api/docker-compose.yml** [Aumento de memória do Node.js via NODE_OPTIONS]
-- **api/src/routes/(excursoes)** [Logging detalhado, controle de cache e preservação de histórico em exclusões]
+### Última atualização (2026-04-01) - feat: melhoria na nomenclatura de responsáveis e ajustes de formatação
+- **api/public/cliente/js/checkout.js**, **cliente/js/checkout.js** [Nomenclatura: "Responsável Financeiro" → "Responsável do Aluno"]
+- **api/public/admin/js/listas.js**, **api/src/routes/lista-alunos.routes.ts** [Ajustes de formatação e linting]
 
-Resumo: Implementadas melhorias críticas de infraestrutura e estabilidade, incluindo suporte ao Prisma no Docker e aumento de memória do Node.js. Adicionado sistema de logging detalhado em todas as rotas de excursões e um mecanismo de snapshot para preservar o histórico de viagens dos clientes quando uma excursão pedagógica é excluída.
+Resumo: Atualizada a terminologia no processo de checkout de "Responsável Financeiro" para "Responsável do Aluno" para melhor clareza na experiência do usuário. Realizados também ajustes técnicos de formatação e padronização de código em arquivos do painel administrativo e rotas de API.
 
-### Versão anterior (2026-03-19) - feat: suporte global ao Google Tag (gtag.js) e ajuste de CSP
+### Versão anterior (2026-03-23) - fix: estabilidade (Prisma/Docker), logging e histórico
 - **api/src/server.ts** [Ajuste de diretivas de segurança (CSP) no Helmet]
 
 ### Versão anterior (2026-03-12) - feat: filtros e pendentes na Listagem Convencional
