@@ -3,6 +3,11 @@
 Sistema de site e administração para Avorar Turismo com backend em Node.js/Express, banco de dados PostgreSQL e frontend em HTML/CSS/JavaScript.
 
 ## Arquivos Modificados [Resumo das Atualizações]
+### Última atualização (2026-03-25) - feat: indicador de carregamento no admin e melhorias de logging
+- **api/public/admin/js/(excursoes)** [Feedback visual de carregamento (spinner) nas listagens]
+- **api/src/routes/(excursoes)** [Refatoração de logging e limpeza de código]
+
+Resumo: Adicionados indicadores de carregamento (spinners) nas páginas de listagem de excursões (convencionais e pedagógicas) do painel administrativo para melhorar a experiência do usuário durante o carregamento de dados. Realizada limpeza técnica e padronização nos logs de contexto das rotas da API.
 
 ### Última atualização (2026-04-01) - feat: melhoria na nomenclatura de responsáveis e ajustes de formatação
 - **api/public/cliente/js/checkout.js**, **cliente/js/checkout.js** [Nomenclatura: "Responsável Financeiro" → "Responsável do Aluno"]
