@@ -70,10 +70,10 @@ router.get('/excursoes',
       const data = excursoes.map(excursao => {
         // Conta total de alunos (itens de pedido)
         const totalAlunos = excursao.pedidos.reduce((sum, pedido) => sum + pedido.itens.length, 0);
-        
+
         // Conta total de pedidos
         const totalPedidos = excursao.pedidos.length;
-        
+
         // Agrupa pedidos por status
         const statusPedidos = excursao.pedidos.reduce((acc, pedido) => {
           acc[pedido.status] = (acc[pedido.status] || 0) + 1;
@@ -108,7 +108,7 @@ router.get('/excursoes',
       });
 
       logger.info('[Listas] Excursões listadas com sucesso', {
-        context: { 
+        context: {
           adminId: req.user!.id,
           total: data.length,
           totalAlunos: data.reduce((sum, e) => sum + e.totalAlunos, 0)
@@ -121,7 +121,7 @@ router.get('/excursoes',
       });
     } catch (error) {
       logger.error('[Listas] Erro ao listar excursões', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
           adminId: req.user?.id
         }
@@ -150,8 +150,8 @@ router.get('/excursao/:id/alunos',
       const { statusPedido } = req.query;
 
       logger.info('[Listas] Buscando alunos de excursão pedagógica', {
-        context: { 
-          adminId: req.user!.id, 
+        context: {
+          adminId: req.user!.id,
           excursaoId: id,
           statusPedido: statusPedido || 'todos'
         }
@@ -204,7 +204,7 @@ router.get('/excursao/:id/alunos',
       });
 
       // Mapeia alunos com informações do pedido
-      const alunos = pedidos.flatMap(pedido => 
+      const alunos = pedidos.flatMap(pedido =>
         pedido.itens.map(item => ({
           // Dados do aluno
           id: item.id,
@@ -225,7 +225,7 @@ router.get('/excursao/:id/alunos',
           planoSaude: item.planoSaude,
           medicamentosFebre: item.medicamentosFebre,
           medicamentosAlergia: item.medicamentosAlergia,
-          
+
           // Dados do pedido
           pedidoId: pedido.id,
           statusPedido: pedido.status,
@@ -233,14 +233,14 @@ router.get('/excursao/:id/alunos',
           dataPagamento: pedido.dataPagamento,
           dataConfirmacao: pedido.dataConfirmacao,
           valorUnitario: Number(pedido.valorUnitario),
-          
+
           // Dados do cliente
           cliente: pedido.cliente
         }))
       );
 
       logger.info('[Listas] Alunos listados com sucesso', {
-        context: { 
+        context: {
           adminId: req.user!.id,
           excursaoId: id,
           totalAlunos: alunos.length,
@@ -262,7 +262,7 @@ router.get('/excursao/:id/alunos',
       });
     } catch (error) {
       logger.error('[Listas] Erro ao buscar alunos', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
           excursaoId: req.params.id,
           adminId: req.user?.id
@@ -543,10 +543,10 @@ router.get('/excursao/:id/exportar-completa',
         { header: 'Cliente (Nome)', key: 'clienteNome', width: 22 },
         { header: 'Cliente (Email)', key: 'clienteEmail', width: 25 },
         { header: 'Cliente (Tel)', key: 'clienteTelefone', width: 18 },
-        { header: 'Resp. Fin. Nome', key: 'respNome', width: 22 },
-        { header: 'Resp. Fin. CPF', key: 'respCpf', width: 18 },
-        { header: 'Resp. Fin. Email', key: 'respEmail', width: 25 },
-        { header: 'Resp. Fin. Endereço', key: 'respEndereco', width: 30 }
+        // { header: 'Resp. Fin. Nome', key: 'respNome', width: 22 },
+        // { header: 'Resp. Fin. CPF', key: 'respCpf', width: 18 },
+        // { header: 'Resp. Fin. Email', key: 'respEmail', width: 25 },
+        // { header: 'Resp. Fin. Endereço', key: 'respEndereco', width: 30 }
       ];
 
       worksheet.getRow(1).font = { bold: true };
@@ -569,10 +569,10 @@ router.get('/excursao/:id/exportar-completa',
           unidadeColegio: item.unidadeColegio || '',
           cpfAluno: item.cpfAluno || '',
           rgAluno: item.rgAluno || '',
-          responsavel: item.responsavel || '',
-          telefoneResponsavel: item.telefoneResponsavel || '',
-          emailResponsavel: item.emailResponsavel || '',
-          observacoes: item.observacoes || '',
+          responsavel: dadosResp ? `${dadosResp.nome || ''} ${dadosResp.sobrenome || ''}`.trim() : '',
+          telefoneResponsavel: dadosResp?.telefone || '',
+          emailResponsavel: dadosResp?.email || '',
+          observacoes: pedido.observacoes || '',
           alergiasCuidados: item.alergiasCuidados || '',
           planoSaude: item.planoSaude || '',
           medicamentosFebre: item.medicamentosFebre || '',
@@ -584,14 +584,14 @@ router.get('/excursao/:id/exportar-completa',
           clienteNome: cliente?.nome || '',
           clienteEmail: cliente?.email || '',
           clienteTelefone: cliente?.telefone || '',
-          respNome: dadosResp ? `${dadosResp.nome || ''} ${dadosResp.sobrenome || ''}`.trim() : '',
-          respCpf: dadosResp?.cpf || '',
-          respEmail: dadosResp?.email || '',
-          respEndereco: dadosResp
-            ? [dadosResp.endereco, dadosResp.numero, dadosResp.complemento, dadosResp.bairro, dadosResp.cidade, dadosResp.estado, dadosResp.cep]
-              .filter(Boolean)
-              .join(', ')
-            : ''
+          // respNome: dadosResp ? `${dadosResp.nome || ''} ${dadosResp.sobrenome || ''}`.trim() : '',
+          // respCpf: dadosResp?.cpf || '',
+          // respEmail: dadosResp?.email || '',
+          // respEndereco: dadosResp
+          //  ? [dadosResp.endereco, dadosResp.numero, dadosResp.complemento, dadosResp.bairro, dadosResp.cidade, dadosResp.estado, dadosResp.cep]
+          //    .filter(Boolean)
+          //    .join(', ')
+          //  : ''
         });
       });
 
@@ -652,8 +652,8 @@ router.get('/excursao/:id/exportar',
       const { id } = req.params;
 
       logger.info('[Listas] Iniciando exportação de Excel (apenas pagamento confirmado)', {
-        context: { 
-          adminId: req.user!.id, 
+        context: {
+          adminId: req.user!.id,
           excursaoId: id
         }
       });
@@ -745,7 +745,7 @@ router.get('/excursao/:id/exportar',
       const nomeArquivo = `lista_${excursao.codigo}_${new Date().toISOString().split('T')[0]}.xlsx`;
 
       logger.info('[Listas] Excel gerado com sucesso', {
-        context: { 
+        context: {
           adminId: req.user!.id,
           excursaoId: id,
           excursaoCodigo: excursao.codigo,
@@ -776,7 +776,7 @@ router.get('/excursao/:id/exportar',
 
     } catch (error) {
       logger.error('[Listas] Erro ao exportar Excel', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
           excursaoId: req.params.id,
           adminId: req.user?.id

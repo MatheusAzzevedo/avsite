@@ -18,6 +18,8 @@ let currentExcursaoCodigo = '';
 let excursoesData = [];
 let alunosData = [];
 
+const apiUrl = (window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : window.location.origin + '/api');
+
 /**
  * Explicação da função [loadExcursoes]
  * Carrega lista de excursões pedagógicas com contagem de alunos
@@ -37,7 +39,7 @@ async function loadExcursoes() {
             return;
         }
 
-        const response = await fetch(`/api/admin/listas/excursoes?${params.toString()}`, {
+        const response = await fetch(`${apiUrl}/admin/listas/excursoes?${params.toString()}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -155,7 +157,7 @@ function renderExcursoes() {
 
     container.innerHTML = filtered.map(excursao => {
         const statusClass = excursao.status === 'ATIVO' ? 'badge-success' : 'badge-warning';
-        
+
         // Monta badges de status de pedidos
         const statusBadges = Object.entries(excursao.statusPedidos || {})
             .filter(([_, count]) => count > 0)
@@ -230,23 +232,23 @@ function renderExcursoes() {
  */
 async function abrirListaAlunos(excursaoId) {
     console.log('[Listas] Abrindo lista de alunos para excursão:', excursaoId);
-    
+
     currentExcursaoId = excursaoId;
-    
+
     // Verifica se os elementos existem
     const excursoesView = document.getElementById('excursoesView');
     const alunosView = document.getElementById('alunosView');
     const pageTitle = document.getElementById('pageTitle');
-    
+
     if (!excursoesView || !alunosView) {
         console.error('[Listas] Elementos de view não encontrados!');
         return;
     }
-    
+
     // Esconde view de excursões e mostra view de alunos
     excursoesView.style.display = 'none';
     alunosView.style.display = 'block';
-    
+
     if (pageTitle) {
         pageTitle.textContent = 'Lista de Alunos';
     }
@@ -308,7 +310,7 @@ async function loadAlunos() {
         // Atualiza cabeçalho e código para nome do arquivo de exportação
         currentExcursaoCodigo = result.data.excursao.codigo || 'lista';
         document.getElementById('excursaoTitulo').textContent = result.data.excursao.titulo;
-        document.getElementById('excursaoInfo').textContent = 
+        document.getElementById('excursaoInfo').textContent =
             `${result.data.totalAlunos} aluno(s) • ${result.data.totalPedidos} pedido(s) • Código: ${result.data.excursao.codigo}`;
 
         renderAlunos();
@@ -556,7 +558,7 @@ async function atualizarPagamentosTodas() {
  */
 function voltarParaExcursoes(event) {
     if (event) event.preventDefault();
-    
+
     currentExcursaoId = null;
     currentExcursaoCodigo = '';
     alunosData = [];
@@ -597,7 +599,7 @@ async function exportarExtracaoCompleta(opts = {}) {
             return;
         }
 
-        const response = await fetch(`/api/admin/listas/excursao/${excursaoId}/exportar-completa`, {
+        const response = await fetch(`${apiUrl}/admin/listas/excursao/${excursaoId}/exportar-completa`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -812,10 +814,10 @@ async function deletarExcursao(excursaoId, titulo) {
 
         console.log('[Listas] Excursão deletada com sucesso');
         showSuccess('Excursão deletada com sucesso!');
-        
+
         // Recarrega lista
         await loadExcursoes();
-        
+
     } catch (error) {
         console.error('[Listas] Erro ao deletar excursão:', error);
         showError('Erro ao deletar excursão. Tente novamente.');
@@ -829,10 +831,10 @@ async function deletarExcursao(excursaoId, titulo) {
 function attachEmailButtonListeners() {
     const btnsEnviar = document.querySelectorAll('.btn-enviar-email');
     btnsEnviar.forEach(btn => {
-        btn.addEventListener('click', async function() {
+        btn.addEventListener('click', async function () {
             const pedidoId = this.getAttribute('data-pedido-id');
             const alunoNome = this.getAttribute('data-aluno-nome');
-            
+
             if (!pedidoId) {
                 showError('ID do pedido não encontrado');
                 return;
@@ -1014,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('sidebarToggle').style.display = 'inline-block';
     }
 
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         if (window.innerWidth <= 768) {
             document.getElementById('sidebarToggle').style.display = 'inline-block';
         } else {

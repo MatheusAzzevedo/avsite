@@ -97,12 +97,12 @@
     function gerarResponsavelBlock() {
         var container = document.getElementById('responsavelContainer');
         if (!container) return;
-        var estados = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+        var estados = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
         var opts = estados.map(function (uf) { return '<option value="' + uf + '"' + (uf === 'MG' ? ' selected' : '') + '>' + uf + '</option>'; }).join('');
         container.innerHTML =
             '<section class="form-section">' +
-            '<h2 class="form-section-title"><i class="fas fa-user-tie"></i> Dados do Responsável Financeiro</h2>' +
-            '<p class="subtitle" style="margin-bottom: 1rem;">Preencha os dados de quem fará o pagamento (um por pedido).</p>' +
+            '<h2 class="form-section-title"><i class="fas fa-user-tie"></i> Dados do Responsável do Aluno</h2>' +
+            '<p class="subtitle" style="margin-bottom: 1rem;">Preencha os dados do responsável do aluno.</p>' +
             '<div class="form-grid">' +
             '<div class="form-group"><label for="respNome">Nome <span class="required">*</span></label><input type="text" id="respNome" name="respNome" required placeholder="Nome">' +
             '</div><div class="form-group"><label for="respSobrenome">Sobrenome <span class="required">*</span></label><input type="text" id="respSobrenome" name="respSobrenome" required placeholder="Sobrenome">' +
@@ -393,7 +393,7 @@
                     showToast('Pagamento confirmado! Redirecionando...', 'success');
                     window.location.href = 'pedidos.html';
                 }
-            }).catch(function () {});
+            }).catch(function () { });
         }
 
         // Verificação imediata
