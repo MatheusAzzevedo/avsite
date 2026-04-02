@@ -21,6 +21,17 @@
 
 ---
 
+## 2026-04-01 - feat: melhoria na nomenclatura de responsáveis e ajustes de formatação
+
+### Arquivos Modificados
+- `api/public/cliente/js/checkout.js` [Alteração de label: "Responsável Financeiro" para "Responsável do Aluno"]
+- `cliente/js/checkout.js` [Paridade na alteração de label: "Responsável Financeiro" para "Responsável do Aluno"]
+- `api/public/admin/js/listas.js` [Ajustes de formatação e limpeza de código]
+- `api/src/routes/lista-alunos.routes.ts` [Ajustes de formatação no contexto de logging]
+
+### Alterações
+- **Nomenclatura**: Atualizado o termo "Responsável Financeiro" para "Responsável do Aluno" no fluxo de checkout. Esta mudança visa tornar a interface mais clara e intuitiva para os pais e responsáveis que realizam a inscrição, focando na relação com o aluno.
+- **Formatação**: Realizada limpeza e padronização de formatação em arquivos do admin e rotas da API, removendo espaços desnecessários e padronizando a sintaxe de funções assíncronas.
 ## 2026-03-25 - feat: indicador de carregamento no admin e melhorias de logging
 
 ### Arquivos Modificados
