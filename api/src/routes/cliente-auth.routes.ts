@@ -24,8 +24,8 @@ import { prisma } from '../config/database';
 import { ApiError } from '../utils/api-error';
 import { clienteAuthMiddleware } from '../middleware/cliente-auth.middleware';
 import { validateBody } from '../middleware/validate.middleware';
-import { 
-  clienteRegisterSchema, 
+import {
+  clienteRegisterSchema,
   clienteLoginSchema,
   clienteUpdateProfileSchema,
   clienteChangePasswordSchema,
@@ -35,15 +35,15 @@ import {
   resetPasswordSchema
 } from '../schemas/cliente-auth.schema';
 import { logger } from '../utils/logger';
-import { 
-  getGoogleAuthUrl, 
-  getGoogleUserInfo, 
-  verifyGoogleOAuthConfig 
+import {
+  getGoogleAuthUrl,
+  getGoogleUserInfo,
+  verifyGoogleOAuthConfig
 } from '../config/google-oauth';
 import { enviarEmail } from '../utils/email-service';
-import { 
-  gerarTemplateRecuperacaoSenha, 
-  gerarTextoRecuperacaoSenha 
+import {
+  gerarTemplateRecuperacaoSenha,
+  gerarTextoRecuperacaoSenha
 } from '../templates/email-recuperacao-senha';
 
 const router = Router();
@@ -64,7 +64,7 @@ const router = Router();
  * Body: { nome, email, password, telefone?, cpf? }
  * Response: { success, message, data: { id, email, nome, ... } }
  */
-router.post('/register', 
+router.post('/register',
   validateBody(clienteRegisterSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -128,11 +128,11 @@ router.post('/register',
       });
 
       logger.info('[Cliente Auth] Cliente registrado com sucesso', {
-        context: { 
-          clienteId: cliente.id, 
+        context: {
+          clienteId: cliente.id,
           email: cliente.email,
           nome: cliente.nome,
-          ip: clientIp 
+          ip: clientIp
         }
       });
 
@@ -143,9 +143,9 @@ router.post('/register',
       });
     } catch (error) {
       logger.error('[Cliente Auth] Erro ao registrar cliente', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
-          email: req.body?.email 
+          email: req.body?.email
         }
       });
       next(error);
@@ -170,7 +170,7 @@ router.post('/register',
  * Body: { email, password }
  * Response: { success, message, data: { token, cliente: {...} } }
  */
-router.post('/login', 
+router.post('/login',
   validateBody(clienteLoginSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -284,9 +284,9 @@ router.post('/login',
       });
     } catch (error) {
       logger.error('[Cliente Auth] Erro ao fazer login', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
-          email: req.body?.email 
+          email: req.body?.email
         }
       });
       next(error);
@@ -334,9 +334,9 @@ router.get('/me',
       });
     } catch (error) {
       logger.error('[Cliente Auth] Erro ao buscar dados do cliente', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
-          clienteId: req.cliente?.id 
+          clienteId: req.cliente?.id
         }
       });
       next(error);
@@ -420,9 +420,9 @@ router.put('/profile',
       });
     } catch (error) {
       logger.error('[Cliente Auth] Erro ao atualizar perfil', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
-          clienteId: req.cliente?.id 
+          clienteId: req.cliente?.id
         }
       });
       next(error);
@@ -508,9 +508,9 @@ router.put('/change-password',
       });
     } catch (error) {
       logger.error('[Cliente Auth] Erro ao alterar senha', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
-          clienteId: req.cliente?.id 
+          clienteId: req.cliente?.id
         }
       });
       next(error);
@@ -602,7 +602,7 @@ router.post('/forgot-password',
 
       // Envia e-mail
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      const linkReset = `${frontendUrl}/cliente/reset-senha.html?token=${resetToken}`;
+      const linkReset = `${frontendUrl}/cliente/reset-senha?resetToken=${resetToken}`;
 
       logger.info('[Cliente Auth] Enviando e-mail de recuperação', {
         context: { email, clienteId: cliente.id }
@@ -724,8 +724,8 @@ router.get('/google',
       // Verifica se OAuth está configurado
       if (!verifyGoogleOAuthConfig()) {
         logger.error('[Cliente Auth Google] OAuth não configurado', {
-          context: { 
-            message: 'Variáveis GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET ou GOOGLE_REDIRECT_URI não configuradas' 
+          context: {
+            message: 'Variáveis GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET ou GOOGLE_REDIRECT_URI não configuradas'
           }
         });
         throw ApiError.internal('Google OAuth não configurado no servidor');
@@ -779,11 +779,11 @@ router.get('/google/callback',
       const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
 
       logger.info('[Cliente Auth Google] Callback recebido', {
-        context: { 
-          hasCode: !!req.query.code, 
+        context: {
+          hasCode: !!req.query.code,
           hasError: !!req.query.error,
           state: req.query.state,
-          ip: clientIp 
+          ip: clientIp
         }
       });
 
@@ -792,7 +792,7 @@ router.get('/google/callback',
         logger.warn('[Cliente Auth Google] Usuário negou autorização', {
           context: { error: req.query.error }
         });
-        
+
         // Redireciona para frontend com erro
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
         return res.redirect(`${frontendUrl}/login?error=google_auth_denied`);
@@ -812,11 +812,11 @@ router.get('/google/callback',
       const googleUser = await getGoogleUserInfo(code);
 
       logger.info('[Cliente Auth Google] Dados do Google obtidos', {
-        context: { 
+        context: {
           googleId: googleUser.id,
           email: googleUser.email,
           name: googleUser.name,
-          verified: googleUser.verified_email 
+          verified: googleUser.verified_email
         }
       });
 
@@ -833,10 +833,10 @@ router.get('/google/callback',
       if (cliente) {
         // Cliente existe - atualiza dados do Google se necessário
         logger.info('[Cliente Auth Google] Cliente existente encontrado', {
-          context: { 
+          context: {
             clienteId: cliente.id,
             authProvider: cliente.authProvider,
-            hadGoogleId: !!cliente.googleId 
+            hadGoogleId: !!cliente.googleId
           }
         });
 
@@ -845,7 +845,7 @@ router.get('/google/callback',
           logger.info('[Cliente Auth Google] Vinculando conta Google a cliente existente', {
             context: { clienteId: cliente.id, googleId: googleUser.id }
           });
-          
+
           cliente = await prisma.cliente.update({
             where: { id: cliente.id },
             data: {
@@ -935,11 +935,11 @@ router.get('/google/callback',
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       const state = req.query.state as string | undefined;
       const redirectUrl = state || '/cliente/login.html';
-      
+
       res.redirect(`${frontendUrl}${redirectUrl}?token=${token}`);
     } catch (error) {
       logger.error('[Cliente Auth Google] Erro no callback OAuth', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
           stack: error instanceof Error ? error.stack : undefined
         }
@@ -977,15 +977,15 @@ router.post('/google/link',
       // TODO: Implementar verificação de token do Google
       // Por ora, retorna erro informativo
       logger.warn('[Cliente Auth Google] Funcionalidade de link não implementada ainda');
-      
+
       throw ApiError.notImplemented(
         'Funcionalidade de vinculação de conta Google será implementada em breve'
       );
     } catch (error) {
       logger.error('[Cliente Auth Google] Erro ao vincular conta Google', {
-        context: { 
+        context: {
           error: error instanceof Error ? error.message : 'Unknown error',
-          clienteId: req.cliente?.id 
+          clienteId: req.cliente?.id
         }
       });
       next(error);
