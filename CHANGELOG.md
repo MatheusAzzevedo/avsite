@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-04-02 - feat: recuperação de senha para clientes
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Adicionados campos `resetToken` e `resetTokenExpires` ao modelo `Cliente`]
+- `api/src/routes/cliente-auth.routes.ts` [Novas rotas `POST /forgot-password` e `POST /reset-password`]
+- `api/src/schemas/cliente-auth.schema.ts` [Schemas de validação para recuperação de senha]
+- `api/src/templates/email-recuperacao-senha.ts` [Novo template de e-mail para recuperação de senha]
+- `api/public/cliente/esqueci-senha.html` [Nova página para solicitação de reset de senha]
+- `api/public/cliente/reset-senha.html` [Nova página para redefinir senha com token]
+- `api/public/cliente/js/esqueci-senha.js` [Lógica da página de esqueci senha]
+- `api/public/cliente/js/reset-senha.js` [Lógica da página de reset de senha]
+- `api/public/cliente/login.html` [Link "Esqueci minha senha" adicionado]
+
+### Detalhes das Alterações
+- **Recuperação de Senha**: Implementado fluxo completo de "Esqueci minha senha" para o portal do cliente. O usuário pode solicitar um link de recuperação por e-mail, que gera um token seguro (crypto) com validade de 1 hora.
+- **Banco de Dados**: Adicionadas colunas de token de reset na tabela de clientes para persistência e validação da solicitação.
+- **E-mail**: Integrado novo template de e-mail personalizado para a Avoar Turismo, enviado via serviço de e-mail existente.
+- **Frontend**: Criadas páginas minimalistas e responsivas para o fluxo de recuperação, seguindo o padrão visual do sistema.
+
+---
+
 ## 2026-04-01 - feat: melhoria na nomenclatura de responsáveis e ajustes de formatação
 
 ### Arquivos Modificados

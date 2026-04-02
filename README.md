@@ -3,6 +3,13 @@
 Sistema de site e administração para Avorar Turismo com backend em Node.js/Express, banco de dados PostgreSQL e frontend em HTML/CSS/JavaScript.
 
 ## Arquivos Modificados [Resumo das Atualizações]
+### Última atualização (2026-04-02) - feat: recuperação de senha para clientes
+- **api/prisma/schema.prisma** [Novos campos `resetToken` e `resetTokenExpires` no Cliente]
+- **api/src/routes/cliente-auth.routes.ts** [Novas rotas `/forgot-password` e `/reset-password`]
+- **api/public/cliente/** [Novas páginas `esqueci-senha.html` e `reset-senha.html`]
+
+Resumo: Implementada funcionalidade de "Esqueci minha senha" para clientes. O fluxo inclui solicitação via e-mail com token temporário (1h), validação de segurança e redefinição de senha com feedback visual. Colunas adicionadas automaticamente ao banco de dados no deploy via `prisma db push`.
+
 ### Última atualização (2026-03-25) - feat: indicador de carregamento no admin e melhorias de logging
 - **api/public/admin/js/(excursoes)** [Feedback visual de carregamento (spinner) nas listagens]
 - **api/src/routes/(excursoes)** [Refatoração de logging e limpeza de código]

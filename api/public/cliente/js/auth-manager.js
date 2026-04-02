@@ -7,7 +7,7 @@ class ClienteAuthManager {
     constructor() {
         this.TOKEN_KEY = 'cliente_auth_token';
         this.CLIENTE_KEY = 'cliente_data';
-        this.API_BASE_URL = window.location.hostname === 'localhost' 
+        this.API_BASE_URL = window.location.hostname === 'localhost'
             ? 'http://localhost:3001/api'
             : (window.location.origin + '/api');
     }
@@ -111,8 +111,8 @@ class ClienteAuthManager {
             return { success: true, data: data.data };
         } catch (error) {
             console.error('[Auth] Erro no login:', error);
-            return { 
-                success: false, 
+            return {
+                success: false,
                 error: error.message || 'Erro ao fazer login'
             };
         }
@@ -140,8 +140,8 @@ class ClienteAuthManager {
             return { success: true, data: data.data };
         } catch (error) {
             console.error('[Auth] Erro no registro:', error);
-            return { 
-                success: false, 
+            return {
+                success: false,
                 error: error.message || 'Erro ao criar conta'
             };
         }
@@ -165,8 +165,8 @@ class ClienteAuthManager {
 
         if (error) {
             console.error('[Auth] Erro no OAuth:', error);
-            return { 
-                success: false, 
+            return {
+                success: false,
                 error: this.getOAuthErrorMessage(error)
             };
         }
@@ -193,8 +193,8 @@ class ClienteAuthManager {
                 return { success: true, data: data.data };
             } catch (error) {
                 console.error('[Auth] Erro ao processar OAuth:', error);
-                return { 
-                    success: false, 
+                return {
+                    success: false,
                     error: 'Erro ao processar autenticação'
                 };
             }
@@ -264,6 +264,66 @@ class ClienteAuthManager {
         }
 
         return response;
+    }
+
+    /**
+     * Solicita recuperação de senha
+     */
+    async forgotPassword(email) {
+        try {
+            const response = await fetch(`${this.API_BASE_URL}/cliente/auth/forgot-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                const errorMessage = data.error || data.message || 'Erro ao solicitar recuperação de senha';
+                throw new Error(errorMessage);
+            }
+
+            return { success: true, message: data.message };
+        } catch (error) {
+            console.error('[Auth] Erro ao solicitar recuperação:', error);
+            return {
+                success: false,
+                error: error.message || 'Erro ao solicitar recuperação de senha'
+            };
+        }
+    }
+
+    /**
+     * Reseta a senha usando o token
+     */
+    async resetPassword(token, password) {
+        try {
+            const response = await fetch(`${this.API_BASE_URL}/cliente/auth/reset-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token, password })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                const errorMessage = data.error || data.message || 'Erro ao redefinir senha';
+                throw new Error(errorMessage);
+            }
+
+            return { success: true, message: data.message };
+        } catch (error) {
+            console.error('[Auth] Erro ao redefinir senha:', error);
+            return {
+                success: false,
+                error: error.message || 'Erro ao redefinir senha'
+            };
+        }
     }
 }
 
