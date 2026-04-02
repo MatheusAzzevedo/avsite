@@ -163,35 +163,6 @@ export const linkGoogleAccountSchema = z.object({
     .min(1, 'Token do Google é obrigatório')
 });
 
-/**
- * Schema para solicitação de recuperação de senha
- * Apenas o e-mail é necessário
- */
-export const forgotPasswordSchema = z.object({
-  email: z
-    .string({ required_error: 'Email é obrigatório' })
-    .email('Email inválido')
-    .toLowerCase()
-    .trim()
-});
-
-/**
- * Schema para reset de senha com token
- */
-export const resetPasswordSchema = z.object({
-  token: z
-    .string({ required_error: 'Token é obrigatório' })
-    .min(1, 'Token é obrigatório'),
-  password: z
-    .string({ required_error: 'Nova senha é obrigatória' })
-    .min(8, 'Nova senha deve ter no mínimo 8 caracteres')
-    .max(100, 'Nova senha deve ter no máximo 100 caracteres')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Nova senha deve conter pelo menos uma letra maiúscula, uma minúscula e um número'
-    )
-});
-
 // Tipos inferidos dos schemas para uso no TypeScript
 export type ClienteRegisterInput = z.infer<typeof clienteRegisterSchema>;
 export type ClienteLoginInput = z.infer<typeof clienteLoginSchema>;
@@ -200,5 +171,3 @@ export type ClienteChangePasswordInput = z.infer<typeof clienteChangePasswordSch
 export type ClienteVerifyEmailInput = z.infer<typeof clienteVerifyEmailSchema>;
 export type GoogleOAuthCallbackInput = z.infer<typeof googleOAuthCallbackSchema>;
 export type LinkGoogleAccountInput = z.infer<typeof linkGoogleAccountSchema>;
-export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
-export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;

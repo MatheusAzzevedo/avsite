@@ -280,8 +280,6 @@ model Cliente {
   avatarUrl     String? // URL da foto do perfil
   active        Boolean      @default(true)
   emailVerified Boolean      @default(false)
-  resetToken    String?      @unique // Token para recuperação de senha
-  resetTokenExpires DateTime? // Expiração do token
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
