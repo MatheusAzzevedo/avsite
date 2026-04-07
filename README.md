@@ -3,6 +3,12 @@
 Sistema de site e administração para Avorar Turismo com backend em Node.js/Express, banco de dados PostgreSQL e frontend em HTML/CSS/JavaScript.
 
 ## Arquivos Modificados [Resumo das Atualizações]
+### Última atualização (2026-04-07) - feat: otimização de performance nas rotas de excursão e lista de alunos
+- **api/src/routes/excursao.routes.ts**, **excursao-pedagogica.routes.ts** [Otimização de payload via Prisma `select`]
+- **api/src/routes/lista-alunos.routes.ts** [Otimização de performance na listagem de alunos]
+
+Resumo: Implementada otimização de performance nas principais rotas de listagem de excursões e alunos. As consultas ao banco de dados agora utilizam `select` para retornar apenas os campos estritamente necessários, reduzindo o tamanho do payload JSON e melhorando a velocidade de carregamento das tabelas no painel administrativo.
+
 ### Última atualização (2026-04-02) - feat: recuperação de senha para clientes
 - **api/prisma/schema.prisma** [Novos campos `resetToken` e `resetTokenExpires` no Cliente]
 - **api/src/routes/cliente-auth.routes.ts** [Novas rotas `/forgot-password` e `/reset-password`]
