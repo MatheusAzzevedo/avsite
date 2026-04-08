@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-04-07 - feat: otimização de performance nas rotas de excursão e lista de alunos
+
+### Arquivos Modificados
+- `api/src/routes/excursao.routes.ts` [Otimização: substituição de `include` por `select` para reduzir payload na listagem]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Otimização: seleção de campos essenciais para reduzir payload na listagem]
+- `api/src/routes/lista-alunos.routes.ts` [Otimização: uso de `select` na consulta de excursões e pedidos]
+
+### Detalhes das Alterações
+- **Otimização de Payload**: As consultas ao banco de dados Prisma nas rotas de listagem foram refatoradas para utilizar `select` em vez de `include`. Isso garante que apenas os campos necessários para a exibição em tabelas sejam retornados, reduzindo significativamente o tamanho da resposta JSON e melhorando o tempo de carregamento no frontend.
+- **Remoção de Campos Pesados**: Campos como `imagemCapa` e descrições detalhadas foram removidos das listagens gerais, sendo carregados agora apenas nas rotas de detalhes específicos.
+
+---
+
 ## 2026-04-02 - feat: recuperação de senha para clientes
 
 ### Arquivos Modificados
@@ -32,6 +45,9 @@
 ### Alterações
 - **Nomenclatura**: Atualizado o termo "Responsável Financeiro" para "Responsável do Aluno" no fluxo de checkout. Esta mudança visa tornar a interface mais clara e intuitiva para os pais e responsáveis que realizam a inscrição, focando na relação com o aluno.
 - **Formatação**: Realizada limpeza e padronização de formatação em arquivos do admin e rotas da API, removendo espaços desnecessários e padronizando a sintaxe de funções assíncronas.
+
+---
+
 ## 2026-03-25 - feat: indicador de carregamento no admin e melhorias de logging
 
 ### Arquivos Modificados
@@ -64,39 +80,6 @@
 - **Explicação do Arquivo `api/src/routes/excursao-pedagogica.routes.ts`**: Adicionado logging avançado em todas as rotas. Na exclusão (DELETE), o sistema agora salva um snapshot dos dados da excursão nos pedidos vinculados antes de desvincular a referência, garantindo que o cliente mantenha o histórico completo na sua página de pedidos.
 - **Explicação dos Arquivos `.gitignore`**: Padronizado para ignorar o `dev.Dockerfile` e o `docker-compose.yml` local, que agora são mantidos no repositório mas não devem ser modificados acidentalmente em ambientes de produção.
 
----
-
-## 2026-03-19 - feat: suporte global ao Google Tag (gtag.js) e ajuste de CSP
-
-### Arquivos Modificados
-- `api/src/server.ts` [Ajuste de CSP (helmet) para permitir scripts e conexões do Google Analytics e Tag Manager]
-- `api/public/js/gtag-init.js` [Criação do script centralizado de inicialização da tag]
-- `api/public/*.html` e `api/public/cliente/*.html` [Inclusão do script externalizado no <head>]
-
-### Detalhes das Alterações
-- **Explicação do Arquivo `api/src/server.ts`**: Atualizadas as diretivas da Content Security Policy (via `helmet`) para permitir o carregamento de scripts (`script-src`), conexões de dados (`connect-src`) e imagens (`img-src`) dos domínios `googletagmanager.com` e `google-analytics.com`. Adicionada a diretiva `'unsafe-inline'` para compatibilidade necessária do script de inicialização.
-- **Explicação do Arquivo `api/public/js/gtag-init.js`**: Novo arquivo que contém o código de inicialização do Google Tag (ID G-V8B6Q1ZBRY). Externalizar este código permite que os navegadores o executem mesmo sob políticas restritas de CSP que bloqueiam scripts inline por padrão.
-- **Explicação dos Arquivos HTML**: Todos os 20+ arquivos das pastas `api/public/` e `api/public/cliente/` foram atualizados para carregar o `gtag-init.js` de forma externa, garantindo a coleta de analytics em todo o site.
-
----
-
-## 2026-03-16 - feat: detalhes completos do aluno na lista administrativa
-
-### Arquivos Modificados
-- `api/public/admin/listas.html` [Modal de detalhes do aluno adicionado na view de Lista de Alunos]
-- `api/public/admin/js/listas.js` [Botão "Detalhes" ao lado de "Enviar E-mail" com popup exibindo todos os dados do aluno, responsável, informações médicas, pedido e cliente]
-
-### Alterações
-- Na página administrativa de Listas de Alunos, cada linha de aluno agora possui um botão "Detalhes" ao lado de "Enviar E-mail". Ao clicar, abre-se um modal reutilizando o sistema de modais do admin, mostrando todas as informações cadastradas daquele aluno (dados pessoais, responsável, informações médicas, status e datas do pedido, valor e dados do cliente comprador), sem novas chamadas de API.
-
----
-
-## 2026-03-12 - feat: filtros e pedidos pendentes na Listagem Convencional
-
-### Arquivos Modificados
-- `api/src/routes/listagem-convencional.routes.ts` [excursao.status e excursaoAtivo no retorno para filtro]
-- `api/public/admin/listagem-convencional.html` [Barra de filtros: Data De/Até, Excursão (Todos/Ativa/Inativa), Pagamento (Todos/Pendente/Concluído), Limpar]
-- `api/public/admin/js/listagem-convencional.js` [getFilteredPedidos, limparFiltros, deletePedido com confirm e doDelete; filtros aplicados ao renderizar]
 
 ### Alterações
 - Listagem exibe pedidos pendentes (PENDENTE, AGUARDANDO_PAGAMENTO) com status "Pendente" e "Aguardando Pagamento". Filtros: Data De/Até, Excursão (Ativa/Inativa), Pagamento (Pendente/Concluído). Botão Limpar reseta filtros. Corrigido deletePedido que não executava a exclusão.

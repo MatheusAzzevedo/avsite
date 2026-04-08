@@ -57,10 +57,25 @@ router.get('/excursoes',
       const excursoes = await prisma.excursaoPedagogica.findMany({
         where,
         orderBy: { createdAt: 'desc' },
-        include: {
+        select: {
+          id: true,
+          codigo: true,
+          titulo: true,
+          subtitulo: true,
+          status: true,
+          preco: true,
+          local: true,
+          horario: true,
+          duracao: true,
+          dataDestino: true,
+          createdAt: true,
           pedidos: {
-            include: {
-              itens: true
+            select: {
+              id: true,
+              status: true,
+              itens: {
+                select: { id: true }
+              }
             }
           }
         }
@@ -93,7 +108,6 @@ router.get('/excursoes',
           titulo: excursao.titulo,
           subtitulo: excursao.subtitulo,
           status: excursao.status,
-          imagemCapa: excursao.imagemCapa,
           preco: Number(excursao.preco),
           local: excursao.local,
           horario: excursao.horario,
