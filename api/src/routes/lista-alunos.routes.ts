@@ -801,4 +801,167 @@ router.get('/excursao/:id/exportar',
   }
 );
 
+/**
+ * Explicação da API [GET /api/admin/listas/excursao/:id/exportar-cancelados]
+ * 
+ * Exporta apenas pedidos CANCELADOS em formato Excel (.xlsx).
+ * Útil para controle administrativo de desistências e estornos.
+ * 
+ * Params: { id: string } - ID da excursão pedagógica
+ * 
+ * Response: arquivo Excel (.xlsx)
+ */
+router.get('/excursao/:id/exportar-cancelados',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      logger.info('[Listas] Iniciando exportação de pedidos CANCELADOS', {
+        context: {
+          adminId: req.user!.id,
+          excursaoId: id
+        }
+      });
+
+      // Busca excursão
+      const excursao = await prisma.excursaoPedagogica.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          codigo: true,
+          titulo: true
+        }
+      });
+
+      if (!excursao) {
+        logger.warn('[Listas] Excursão pedagógica não encontrada para exportação de cancelados', {
+          context: { excursaoId: id }
+        });
+        throw ApiError.notFound('Excursão pedagógica não encontrada');
+      }
+
+      // Apenas pedidos com status CANCELADO
+      const wherePedido = {
+        excursaoPedagogicaId: id,
+        status: 'CANCELADO' as PedidoStatus
+      };
+
+      // Busca pedidos com itens e dados do cliente
+      const pedidos = await prisma.pedido.findMany({
+        where: wherePedido,
+        orderBy: { updatedAt: 'desc' },
+        include: {
+          itens: {
+            orderBy: { nomeAluno: 'asc' }
+          },
+          cliente: {
+            select: { nome: true, email: true, telefone: true }
+          }
+        }
+      });
+
+      // Extrai alunos/itens
+      const alunos = pedidos.flatMap(pedido =>
+        pedido.itens.map(item => ({
+          item,
+          pedido,
+          cliente: pedido.cliente
+        }))
+      );
+
+      if (alunos.length === 0) {
+        logger.warn('[Listas] Nenhum pedido cancelado encontrado para exportação', {
+          context: { excursaoId: id }
+        });
+        throw ApiError.badRequest('Nenhum pedido cancelado encontrado para exportar');
+      }
+
+      // Cria workbook e worksheet
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Pedidos Cancelados');
+
+      // Define colunas
+      worksheet.columns = [
+        { header: 'Nome do Aluno', key: 'nomeAluno', width: 30 },
+        { header: 'Turma', key: 'turma', width: 15 },
+        { header: 'Série', key: 'serie', width: 15 },
+        { header: 'Responsável (Aluno)', key: 'responsavel', width: 25 },
+        { header: 'Tel. Responsável', key: 'telResponsavel', width: 20 },
+        { header: 'Comprador (Cliente)', key: 'clienteNome', width: 25 },
+        { header: 'Email Comprador', key: 'clienteEmail', width: 25 },
+        { header: 'Data Pedido', key: 'dataPedido', width: 15 },
+        { header: 'Data Cancelamento', key: 'dataCancelamento', width: 15 },
+        { header: 'Valor Pedido', key: 'valor', width: 15 }
+      ];
+
+      // Estiliza cabeçalho
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFFFCCCC' } // Fundo avermelhado para indicar cancelados
+      };
+
+      const formatDate = (d: Date | null | undefined) =>
+        d ? new Date(d).toLocaleDateString('pt-BR') : '';
+
+      // Adiciona dados
+      alunos.forEach(({ item, pedido, cliente }) => {
+        worksheet.addRow({
+          nomeAluno: item.nomeAluno,
+          turma: item.turma || '',
+          serie: item.serieAluno || '',
+          responsavel: item.responsavel || '',
+          telResponsavel: item.telefoneResponsavel || '',
+          clienteNome: cliente?.nome || '',
+          clienteEmail: cliente?.email || '',
+          dataPedido: formatDate(pedido.createdAt),
+          dataCancelamento: formatDate(pedido.updatedAt),
+          valor: Number(pedido.valorTotal).toFixed(2)
+        });
+      });
+
+      // Nome do arquivo
+      const nomeArquivo = `cancelados_${excursao.codigo}_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+      logger.info('[Listas] Excel de cancelados gerado com sucesso', {
+        context: {
+          adminId: req.user!.id,
+          excursaoId: id,
+          total: alunos.length,
+          nomeArquivo
+        }
+      });
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${nomeArquivo}"`);
+
+      await workbook.xlsx.write(res);
+      res.end();
+
+      // Log de atividade
+      await prisma.activityLog.create({
+        data: {
+          action: 'export',
+          entity: 'lista_alunos',
+          entityId: excursao.id,
+          description: `Lista de cancelados exportada: ${excursao.titulo} (${alunos.length} registros)`,
+          userId: req.user!.id,
+          userEmail: req.user!.email
+        }
+      });
+
+    } catch (error) {
+      logger.error('[Listas] Erro ao exportar Excel de cancelados', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          excursaoId: req.params.id,
+          adminId: req.user?.id
+        }
+      });
+      next(error);
+    }
+  }
+);
+
 export default router;
