@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-04-22 - feat: exportação de pedidos cancelados na lista de alunos
+
+### Arquivos Modificados
+- `api/src/routes/lista-alunos.routes.ts` [Nova rota `GET /excursao/:id/exportar-cancelados` para exportar pedidos filtrados por status CANCELADO]
+- `api/public/admin/listas.html` [Botão "Exportar Cancelados" adicionado na visualização de alunos]
+- `api/public/admin/js/listas.js` [Função `exportarCancelados` e event listeners para botões no card e na visualização detalhada]
+- `api/docker-compose.yml` [Correção de mapeamento de volume da API para coincidir com o WORKDIR (/app)]
+
+### Detalhes das Alterações
+- **Exportação de Cancelados**: Implementada nova funcionalidade para exportar exclusivamente pedidos com status "CANCELADO" em formato Excel (.xlsx). O arquivo gerado inclui dados do aluno, comprador e detalhes do pedido, com cabeçalho destacado em vermelho para identificação.
+- **Ajustes de Interface**: Adicionado botão de exportação na tela de alunos e também botões de acesso rápido nos cards da listagem geral de excursões pedagógicas.
+- **Correção de Infraestrutura**: Corrigido o mapeamento de volume no `docker-compose.yml` que impedia o container da API de reconhecer alterações nos arquivos TypeScript em tempo real devido a um mismatch de diretório (`/usr/src/app` vs `/app`).
+
+---
+
 ## 2026-04-07 - feat: otimização de performance nas rotas de excursão e lista de alunos
 
 ### Arquivos Modificados

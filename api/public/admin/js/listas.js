@@ -217,6 +217,9 @@ function renderExcursoes() {
                     <button type="button" class="btn btn-primary btn-sm btn-extracao-completa-card" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-codigo="${escapeHtml(excursao.codigo)}" title="Extração completa (apenas pagamento confirmado)">
                         <i class="fas fa-file-medical-alt"></i> Extração Completa
                     </button>
+                    <button type="button" class="btn btn-danger btn-sm btn-exportar-cancelados-card" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-codigo="${escapeHtml(excursao.codigo)}" title="Exportar pedidos cancelados">
+                        <i class="fas fa-file-excel"></i> Cancelados
+                    </button>
                     <button type="button" class="btn btn-danger btn-sm btn-deletar-excursao" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-titulo="${escapeHtml(excursao.titulo)}">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -719,6 +722,80 @@ async function exportarExcel(opts = {}) {
 }
 
 /**
+ * Explicação da função [exportarCancelados]
+ * Exporta apenas pedidos com status CANCELADO para Excel.
+ * Aceita excursaoId/codigo opcionais para uso nos cards da página inicial.
+ */
+async function exportarCancelados(opts = {}) {
+    const excursaoId = opts.excursaoId ?? currentExcursaoId;
+    const codigo = opts.codigo ?? currentExcursaoCodigo;
+    const btn = opts.button ?? document.getElementById('btnExportarCancelados');
+
+    if (!excursaoId) {
+        console.error('[Listas] Nenhuma excursão selecionada');
+        return;
+    }
+
+    try {
+        console.log('[Listas] Exportando Excel de pedidos cancelados:', excursaoId);
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        }
+
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            console.error('[Listas] Token não encontrado');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const response = await fetch(`${apiUrl}/admin/listas/excursao/${excursaoId}/exportar-cancelados`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                console.error('[Listas] Não autorizado');
+                window.location.href = 'login.html';
+                return;
+            }
+            const errorResult = await response.json().catch(() => ({}));
+            throw new Error(errorResult.message || `Erro ao exportar Excel: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        const hoje = new Date().toISOString().split('T')[0];
+        const filename = `cancelados_${codigo}_${hoje}.xlsx`;
+
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        console.log('[Listas] Excel de cancelados exportado com sucesso');
+        showSuccess('Excel de cancelados exportado com sucesso!');
+
+    } catch (error) {
+        console.error('[Listas] Erro ao exportar cancelados:', error);
+        showError(error.message || 'Erro ao exportar cancelados. Tente novamente.');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-file-excel"></i> Exportar Cancelados';
+        }
+    }
+}
+
+/**
  * Explicação da função [getStatusBadgeClass]
  * Retorna classe CSS do badge de acordo com o status
  */
@@ -935,6 +1012,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const id = btnExtracao.getAttribute('data-excursao-id');
                 const codigo = btnExtracao.getAttribute('data-excursao-codigo') || '';
                 if (id) exportarExtracaoCompleta({ excursaoId: id, codigo, button: btnExtracao });
+            } else if (e.target.closest('.btn-exportar-cancelados-card')) {
+                const btnCancelados = e.target.closest('.btn-exportar-cancelados-card');
+                e.preventDefault();
+                const id = btnCancelados.getAttribute('data-excursao-id');
+                const codigo = btnCancelados.getAttribute('data-excursao-codigo') || '';
+                if (id) exportarCancelados({ excursaoId: id, codigo, button: btnCancelados });
             }
         });
     }
@@ -965,6 +1048,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnExtracaoCompleta = document.getElementById('btnExtracaoCompleta');
     if (btnExtracaoCompleta) btnExtracaoCompleta.addEventListener('click', exportarExtracaoCompleta);
+
+    const btnExportarCancelados = document.getElementById('btnExportarCancelados');
+    if (btnExportarCancelados) btnExportarCancelados.addEventListener('click', () => exportarCancelados());
 
     const btnAtualizarPagamentosTodas = document.getElementById('btnAtualizarPagamentosTodas');
     if (btnAtualizarPagamentosTodas) btnAtualizarPagamentosTodas.addEventListener('click', atualizarPagamentosTodas);
