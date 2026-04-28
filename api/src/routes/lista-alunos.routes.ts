@@ -218,8 +218,10 @@ router.get('/excursao/:id/alunos',
       });
 
       // Mapeia alunos com informações do pedido
-      const alunos = pedidos.flatMap(pedido =>
-        pedido.itens.map(item => ({
+      const alunos = pedidos.flatMap(pedido => {
+        const dadosResp = pedido.dadosResponsavelFinanceiro as Record<string, string> | null;
+
+        return pedido.itens.map(item => ({
           // Dados do aluno
           id: item.id,
           nomeAluno: item.nomeAluno,
@@ -231,10 +233,10 @@ router.get('/excursao/:id/alunos',
           unidadeColegio: item.unidadeColegio,
           cpfAluno: item.cpfAluno,
           rgAluno: item.rgAluno,
-          responsavel: item.responsavel,
-          telefoneResponsavel: item.telefoneResponsavel,
-          emailResponsavel: item.emailResponsavel,
-          observacoes: item.observacoes,
+          responsavel: item.responsavel || (dadosResp ? `${dadosResp.nome || ''} ${dadosResp.sobrenome || ''}`.trim() : null),
+          telefoneResponsavel: item.telefoneResponsavel || dadosResp?.telefone || null,
+          emailResponsavel: item.emailResponsavel || dadosResp?.email || null,
+          observacoes: item.observacoes || pedido.observacoes || null,
           alergiasCuidados: item.alergiasCuidados,
           planoSaude: item.planoSaude,
           medicamentosFebre: item.medicamentosFebre,
@@ -250,8 +252,8 @@ router.get('/excursao/:id/alunos',
 
           // Dados do cliente
           cliente: pedido.cliente
-        }))
-      );
+        }));
+      });
 
       logger.info('[Listas] Alunos listados com sucesso', {
         context: {
@@ -543,8 +545,10 @@ router.get('/excursao/:id/exportar-completa',
         { header: 'CPF Aluno', key: 'cpfAluno', width: 18 },
         { header: 'RG Aluno', key: 'rgAluno', width: 15 },
         { header: 'Responsável', key: 'responsavel', width: 22 },
+        { header: 'CPF Responsável', key: 'cpfResponsavel', width: 18 },
         { header: 'Tel. Responsável', key: 'telefoneResponsavel', width: 18 },
         { header: 'Email Responsável', key: 'emailResponsavel', width: 25 },
+        { header: 'Endereço Responsável', key: 'enderecoResponsavel', width: 40 },
         { header: 'Observações', key: 'observacoes', width: 25 },
         { header: 'Alergias/Cuidados', key: 'alergiasCuidados', width: 30 },
         { header: 'Plano de Saúde', key: 'planoSaude', width: 20 },
@@ -584,8 +588,14 @@ router.get('/excursao/:id/exportar-completa',
           cpfAluno: item.cpfAluno || '',
           rgAluno: item.rgAluno || '',
           responsavel: dadosResp ? `${dadosResp.nome || ''} ${dadosResp.sobrenome || ''}`.trim() : '',
+          cpfResponsavel: dadosResp?.cpf || '',
           telefoneResponsavel: dadosResp?.telefone || '',
           emailResponsavel: dadosResp?.email || '',
+          enderecoResponsavel: dadosResp
+            ? [dadosResp.endereco, dadosResp.numero, dadosResp.complemento, dadosResp.bairro, dadosResp.cidade, dadosResp.estado, dadosResp.cep]
+              .filter(Boolean)
+              .join(', ')
+            : '',
           observacoes: pedido.observacoes || '',
           alergiasCuidados: item.alergiasCuidados || '',
           planoSaude: item.planoSaude || '',

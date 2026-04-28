@@ -290,7 +290,7 @@ async function loadAlunos() {
             return;
         }
 
-        const response = await fetch(`/api/admin/listas/excursao/${currentExcursaoId}/alunos?${params.toString()}`, {
+        const response = await fetch(`${apiUrl}/admin/listas/excursao/${currentExcursaoId}/alunos?${params.toString()}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

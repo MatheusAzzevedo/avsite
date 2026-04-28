@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-04-27 - feat: adicionar CPF e endereço do responsável na extração completa
+
+### Arquivos Modificados
+- `api/src/routes/lista-alunos.routes.ts` [Inclusão das colunas de CPF e Endereço do Responsável na rota `GET /excursao/:id/exportar-completa`]
+
+### Detalhes das Alterações
+- **Extração Completa**: A planilha Excel gerada pela extração completa de alunos agora inclui as colunas "CPF Responsável" e "Endereço Responsável". O endereço é formatado automaticamente concatenando logradouro, número, complemento, bairro, cidade, estado e CEP. Códigos comentados não utilizados foram removidos da configuração das colunas.
+
+---
+
 ## 2026-04-22 - feat: exportação de pedidos cancelados na lista de alunos
 
 ### Arquivos Modificados

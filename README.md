@@ -3,7 +3,12 @@
 Sistema de site e administração para Avorar Turismo com backend em Node.js/Express, banco de dados PostgreSQL e frontend em HTML/CSS/JavaScript.
 
 ## Arquivos Modificados [Resumo das Atualizações]
-### Última atualização (2026-04-22) - feat: exportação de pedidos cancelados na lista de alunos
+### Última atualização (2026-04-27) - feat: adicionar CPF e endereço do responsável na extração completa
+- **api/src/routes/lista-alunos.routes.ts** [Adição de CPF e Endereço do responsável na exportação Excel]
+
+Resumo: A rota de extração completa na lista de alunos foi atualizada para incluir as colunas "CPF Responsável" e "Endereço Responsável" no relatório Excel gerado, ampliando os dados detalhados da excursão.
+
+### Versão anterior (2026-04-22) - feat: exportação de pedidos cancelados na lista de alunos
 - **api/src/routes/lista-alunos.routes.ts** [Nova rota para exportação de cancelados]
 - **api/public/admin/listas.html**, **api/public/admin/js/listas.js** [Interface e lógica de exportação]
 - **api/docker-compose.yml** [Correção de volume mapping]
