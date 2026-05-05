@@ -3,7 +3,14 @@
 Sistema de site e administração para Avorar Turismo com backend em Node.js/Express, banco de dados PostgreSQL e frontend em HTML/CSS/JavaScript.
 
 ## Arquivos Modificados [Resumo das Atualizações]
-### Última atualização (2026-04-27) - feat: adicionar CPF e endereço do responsável na extração completa
+### Última atualização (2026-05-04) - feat: paginação e filtragem no servidor para excursões pedagógicas
+- **api/src/routes/excursao-pedagogica.routes.ts**, **excursao-pedagogica.schema.ts** [Implementação de lógica de paginação e filtros avançados no servidor]
+- **api/public/admin/js/excursoes-pedagogicas.js** [Refatoração para consumo de API paginada e debouncing de busca]
+- **api/public/admin/css/admin-style.css** [Novos estilos para controles de paginação]
+
+Resumo: Implementada paginação server-side e filtragem dinâmica para a listagem de excursões pedagógicas. A API agora suporta filtros por localidade, data, horário e faixa de valor, processando tudo diretamente via Prisma/PostgreSQL para máxima performance em grandes volumes de dados. No frontend, foram adicionados controles de página e otimização de busca com debouncing.
+
+### Versão anterior (2026-04-27) - feat: adicionar CPF e endereço do responsável na extração completa
 - **api/src/routes/lista-alunos.routes.ts** [Adição de CPF e Endereço do responsável na exportação Excel]
 
 Resumo: A rota de extração completa na lista de alunos foi atualizada para incluir as colunas "CPF Responsável" e "Endereço Responsável" no relatório Excel gerado, ampliando os dados detalhados da excursão.

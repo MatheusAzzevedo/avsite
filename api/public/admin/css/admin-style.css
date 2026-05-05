@@ -634,6 +634,58 @@ a[href="config-pagamento.html"] {
 }
 
 /* ============================================
+   PAGINAÇÃO
+   ============================================ */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    padding: 1rem 0;
+}
+
+.pagination-btn {
+    padding: 0.5rem 0.875rem;
+    border: 1px solid var(--light-border);
+    background-color: var(--light-surface);
+    color: var(--text-dark);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: var(--light-bg);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.pagination-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--light-bg);
+}
+
+.pagination-info {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin: 0 1rem;
+}
+
+/* ============================================
    MODAL
    ============================================ */
 
