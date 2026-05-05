@@ -428,11 +428,21 @@ const ExcursaoManager = {
 // GERENCIADOR DE EXCURSÕES PEDAGÓGICAS
 // ===========================================
 const ExcursaoPedagogicaManager = {
-  async getAll(onlyActive = false) {
+  async getAll(params = {}) {
+    const onlyActive = params.onlyActive || false;
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(params).forEach(([key, value]) => {
+      if (key !== 'onlyActive' && value !== undefined && value !== null && value !== '') {
+        queryParams.append(key, value);
+      }
+    });
+
     const endpoint = onlyActive ? '/public/excursoes-pedagogicas' : '/excursoes-pedagogicas';
-    const response = await apiRequest(endpoint);
-    const list = Array.isArray(response?.data) ? response.data : (Array.isArray(response) ? response : []);
-    return list;
+    const finalEndpoint = queryParams.toString() ? `${endpoint}?${queryParams.toString()}` : endpoint;
+    
+    const response = await apiRequest(finalEndpoint);
+    return response;
   },
   async getById(id) {
     try {

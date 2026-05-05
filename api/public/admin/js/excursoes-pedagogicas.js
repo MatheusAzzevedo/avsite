@@ -3,6 +3,8 @@
  */
 (function() {
   var excursoesData = [];
+  var currentPage = 1;
+  var debounceTimer;
 
   function initSidebarToggle() {
     var toggle = document.getElementById('sidebarToggle');
@@ -21,9 +23,12 @@
   function capitalizeFirst(str) {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
   }
-  async function loadExcursoesPedagogicas() {
+  async function loadExcursoesPedagogicas(page) {
+    if (page) currentPage = page;
+    
     var grid = document.getElementById('excursoesGrid');
     var emptyState = document.getElementById('emptyState');
+    var paginationContainer = document.getElementById('paginationContainer');
     
     if (grid) {
       grid.innerHTML = '<div class="spinner"></div>';
@@ -31,17 +36,38 @@
     if (emptyState) {
       emptyState.style.display = 'none';
     }
+    if (paginationContainer) {
+      paginationContainer.innerHTML = '';
+    }
+
+    // Coleta filtros
+    var filterCategoria = document.getElementById('filterCategoria') ? document.getElementById('filterCategoria').value : 'todos';
+    var filterStatus = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : 'todos';
+
+    var params = {
+      page: currentPage,
+      limit: 10,
+      search: (document.getElementById('searchExcursoesPedagogicas') && document.getElementById('searchExcursoesPedagogicas').value || '').trim(),
+      codigo: (document.getElementById('filterCodigo') && document.getElementById('filterCodigo').value || '').trim(),
+      categoria: filterCategoria === 'todos' ? '' : filterCategoria,
+      status: filterStatus === 'todos' ? '' : filterStatus,
+      localidade: (document.getElementById('filterLocalidade') && document.getElementById('filterLocalidade').value || '').trim(),
+      data: document.getElementById('filterData') ? document.getElementById('filterData').value : '',
+      horario: (document.getElementById('filterHorario') && document.getElementById('filterHorario').value || '').trim(),
+      valorMin: document.getElementById('filterValorMin') ? document.getElementById('filterValorMin').value : '',
+      valorMax: document.getElementById('filterValorMax') ? document.getElementById('filterValorMax').value : ''
+    };
 
     try {
-      var excursoes = typeof ExcursaoPedagogicaManager !== 'undefined'
-        ? await ExcursaoPedagogicaManager.getAll(false)
-        : [];
-      excursoesData = Array.isArray(excursoes) ? excursoes : [];
-      applyFiltersAndRender();
+      var response = typeof ExcursaoPedagogicaManager !== 'undefined'
+        ? await ExcursaoPedagogicaManager.getAll(params)
+        : { data: [], pagination: { total: 0, totalPages: 1, page: 1 } };
+      
+      excursoesData = Array.isArray(response.data) ? response.data : [];
+      renderExcursoesPedagogicas(excursoesData, response.pagination);
+      renderPagination(response.pagination);
     } catch (error) {
       console.error('[Excursões Pedagógicas] Erro:', error);
-      var grid = document.getElementById('excursoesGrid');
-      var emptyState = document.getElementById('emptyState');
       if (grid) grid.innerHTML = '';
       if (emptyState) {
         emptyState.innerHTML = '<p style="color: var(--danger-color);">Erro ao carregar. Verifique se está logado e se a API está disponível.</p>';
@@ -49,50 +75,20 @@
       }
     }
   }
-  function getFilteredExcursoes() {
-    var searchNome = (document.getElementById('searchExcursoesPedagogicas') && document.getElementById('searchExcursoesPedagogicas').value || '').trim().toLowerCase();
-    var filterCodigo = (document.getElementById('filterCodigo') && document.getElementById('filterCodigo').value || '').trim().toLowerCase();
-    var filterCategoria = document.getElementById('filterCategoria') ? document.getElementById('filterCategoria').value : 'todos';
-    var filterStatus = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : 'todos';
-    var filterLocalidade = (document.getElementById('filterLocalidade') && document.getElementById('filterLocalidade').value || '').trim().toLowerCase();
-    var filterData = document.getElementById('filterData') ? document.getElementById('filterData').value : '';
-    var filterHorario = (document.getElementById('filterHorario') && document.getElementById('filterHorario').value || '').trim().toLowerCase();
-    var filterValorMin = document.getElementById('filterValorMin') ? parseFloat(document.getElementById('filterValorMin').value) : NaN;
-    var filterValorMax = document.getElementById('filterValorMax') ? parseFloat(document.getElementById('filterValorMax').value) : NaN;
 
-    return excursoesData.filter(function(e) {
-      if (searchNome) {
-        var titulo = (e.titulo || '').toLowerCase();
-        var subtitulo = (e.subtitulo || '').toLowerCase();
-        if (titulo.indexOf(searchNome) === -1 && subtitulo.indexOf(searchNome) === -1) return false;
-      }
-      if (filterCodigo && !(e.codigo || '').toLowerCase().includes(filterCodigo)) return false;
-      if (filterCategoria !== 'todos' && e.categoria !== filterCategoria) return false;
-      if (filterStatus !== 'todos' && e.status !== filterStatus) return false;
-      if (filterLocalidade && !(e.local || '').toLowerCase().includes(filterLocalidade)) return false;
-      if (filterData && e.dataDestino) {
-        var dataStr = e.dataDestino instanceof Date ? e.dataDestino.toISOString().split('T')[0] : String(e.dataDestino).split('T')[0];
-        if (dataStr !== filterData) return false;
-      } else if (filterData && !e.dataDestino) return false;
-      if (filterHorario && e.horario && !String(e.horario).toLowerCase().includes(filterHorario)) return false;
-      else if (filterHorario && !e.horario) return false;
-      var preco = e.preco != null ? Number(e.preco) : 0;
-      if (!isNaN(filterValorMin) && preco < filterValorMin) return false;
-      if (!isNaN(filterValorMax) && preco > filterValorMax) return false;
-      return true;
-    });
+  function handleFilterInput() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function() {
+      loadExcursoesPedagogicas(1);
+    }, 500);
   }
-
-  function applyFiltersAndRender() {
-    renderExcursoesPedagogicas(getFilteredExcursoes());
-  }
-
-  function renderExcursoesPedagogicas(excursoes) {
+  function renderExcursoesPedagogicas(excursoes, pagination) {
     var grid = document.getElementById('excursoesGrid');
     var emptyState = document.getElementById('emptyState');
     var excursaoCount = document.getElementById('excursaoCount');
     if (!grid || !emptyState) return;
-    if (excursaoCount) excursaoCount.textContent = excursoes.length;
+    
+    if (excursaoCount) excursaoCount.textContent = pagination ? pagination.total : excursoes.length;
     if (excursoes.length === 0) {
       grid.innerHTML = '';
       emptyState.style.display = 'block';
@@ -156,6 +152,44 @@
     });
   }
 
+  function renderPagination(pagination) {
+    var container = document.getElementById('paginationContainer');
+    if (!container || !pagination || pagination.totalPages <= 1) {
+      if (container) container.innerHTML = '';
+      return;
+    }
+
+    var html = '';
+    
+    // Botão Anterior
+    html += '<button class="pagination-btn" ' + (pagination.page <= 1 ? 'disabled' : '') + ' data-page="' + (pagination.page - 1) + '"><i class="fas fa-chevron-left"></i> Anterior</button>';
+    
+    // Páginas
+    var startPage = Math.max(1, pagination.page - 2);
+    var endPage = Math.min(pagination.totalPages, startPage + 4);
+    if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+    
+    for (var i = startPage; i <= endPage; i++) {
+      html += '<button class="pagination-btn ' + (i === pagination.page ? 'active' : '') + '" data-page="' + i + '">' + i + '</button>';
+    }
+    
+    // Botão Próximo
+    html += '<button class="pagination-btn" ' + (pagination.page >= pagination.totalPages ? 'disabled' : '') + ' data-page="' + (pagination.page + 1) + '">Próximo <i class="fas fa-chevron-right"></i></button>';
+    
+    container.innerHTML = html;
+    
+    // Event listeners para os botões
+    container.querySelectorAll('.pagination-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var page = parseInt(this.getAttribute('data-page'));
+        if (!isNaN(page)) {
+          loadExcursoesPedagogicas(page);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    });
+  }
+
   /**
    * Explicação da função [deleteExcursaoPedagogica]
    * Exclui permanentemente uma excursão pedagógica após confirmação do usuário.
@@ -197,9 +231,9 @@
     filterIds.forEach(function(id) {
       var el = document.getElementById(id);
       if (el) {
-        el.addEventListener('input', applyFiltersAndRender);
-        el.addEventListener('change', applyFiltersAndRender);
-        el.addEventListener('keyup', function(e) { if (e.key === 'Enter') applyFiltersAndRender(); });
+        el.addEventListener('input', handleFilterInput);
+        el.addEventListener('change', handleFilterInput);
+        el.addEventListener('keyup', function(e) { if (e.key === 'Enter') loadExcursoesPedagogicas(1); });
       }
     });
 

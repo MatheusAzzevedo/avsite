@@ -33,7 +33,7 @@ router.get('/',
   validateQuery(filterExcursaoPedagogicaSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { codigo, categoria, status, search, page, limit } = req.query as unknown as FilterExcursaoPedagogicaInput;
+      const { codigo, categoria, status, search, localidade, data: dateFilter, horario, valorMin, valorMax, page, limit } = req.query as unknown as FilterExcursaoPedagogicaInput;
       const userId = req.user?.id;
       const userEmail = req.user?.email;
 
@@ -45,6 +45,11 @@ router.get('/',
           categoria: categoria || 'todas',
           status: status || 'todos',
           busca: search || 'sem filtro',
+          localidade: localidade || 'sem filtro',
+          data: dateFilter || 'sem filtro',
+          horario: horario || 'sem filtro',
+          valorMin,
+          valorMax,
           page,
           limit
         }
@@ -53,7 +58,7 @@ router.get('/',
       const skip = (page - 1) * limit;
 
       // Monta filtros
-      const where: Record<string, unknown> = {};
+      const where: Record<string, any> = {};
 
       if (codigo && codigo.trim()) {
         where.codigo = { contains: codigo, mode: 'insensitive' };
@@ -63,8 +68,32 @@ router.get('/',
         where.categoria = categoria;
       }
 
-      if (status) {
+      if (status && status !== 'todos') {
         where.status = status;
+      }
+
+      if (localidade && localidade.trim()) {
+        where.local = { contains: localidade, mode: 'insensitive' };
+      }
+
+      if (dateFilter && dateFilter.trim()) {
+        // Filtra pelo dia exato
+        const startOfDay = new Date(dateFilter + 'T00:00:00.000Z');
+        const endOfDay = new Date(dateFilter + 'T23:59:59.999Z');
+        where.dataDestino = {
+          gte: startOfDay,
+          lte: endOfDay
+        };
+      }
+
+      if (horario && horario.trim()) {
+        where.horario = { contains: horario, mode: 'insensitive' };
+      }
+
+      if (valorMin !== undefined || valorMax !== undefined) {
+        where.preco = {};
+        if (valorMin !== undefined) where.preco.gte = valorMin;
+        if (valorMax !== undefined) where.preco.lte = valorMax;
       }
 
       if (search && search.trim()) {

@@ -114,8 +114,13 @@ export const filterExcursaoPedagogicaSchema = z.object({
   categoria: z.string().optional(),
   status: z.enum(['ATIVO', 'INATIVO']).optional(),
   search: z.string().optional(),
+  localidade: z.string().optional(),
+  data: z.string().optional(),
+  horario: z.string().optional(),
+  valorMin: z.coerce.number().optional(),
+  valorMax: z.coerce.number().optional(),
   page: z.coerce.number().positive().optional().default(1),
-  limit: z.coerce.number().positive().max(100).optional().default(20)
+  limit: z.coerce.number().positive().max(100).optional().default(10)
 });
 
 // Tipos inferidos dos schemas

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-05-04 - feat: paginação e filtragem no servidor para excursões pedagógicas
+
+### Arquivos Modificados
+- `api/src/schemas/excursao-pedagogica.schema.ts` [Adicionados filtros de localidade, data, horário e preço; limite padrão alterado para 10]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Implementada lógica de filtragem completa com Prisma; paginação (skip/take) no backend; correção de shadowing da variável `data`]
+- `api/public/js/api-client.js` [Refatorado `ExcursaoPedagogicaManager.getAll` para suportar parâmetros de query string]
+- `api/public/admin/js/excursoes-pedagogicas.js` [Refatoração para paginação e filtragem no servidor com debouncing; renderização dinâmica de botões de página]
+- `api/public/admin/excursoes-pedagogicas.html` [Adicionado container para controles de paginação]
+- `api/public/admin/css/admin-style.css` [Estilos modernos para botões de paginação]
+
+### Detalhes das Alterações
+- **Paginação no Servidor**: A listagem de excursões pedagógicas no admin agora carrega apenas 10 itens por página, melhorando drasticamente a performance e usabilidade.
+- **Filtragem Robusta**: Os filtros de busca por nome, código, localidade, categoria, status, data, horário e valor agora são processados diretamente pelo banco de dados, garantindo resultados precisos em todo o acervo.
+- **Interface de Usuário**: Adicionada barra de paginação dinâmica. Implementado debouncing (atraso de 500ms) nos campos de filtro para otimizar o uso da rede.
+
+---
+
 ## 2026-04-27 - feat: adicionar CPF e endereço do responsável na extração completa
 
 ### Arquivos Modificados
