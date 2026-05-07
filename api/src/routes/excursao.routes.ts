@@ -93,6 +93,7 @@ router.get('/',
             local: true,
             tags: true,
             dataExcursao: true,
+            vagas: true
           }
         }),
         prisma.excursao.count({ where })

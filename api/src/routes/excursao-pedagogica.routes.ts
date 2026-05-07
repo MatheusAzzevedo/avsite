@@ -132,7 +132,8 @@ router.get('/',
             tags: true,
             maxInstallments: true,
             destino: true,
-            dataDestino: true
+            dataDestino: true,
+            vagas: true
           }
         }),
         prisma.excursaoPedagogica.count({ where })

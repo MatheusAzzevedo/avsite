@@ -61,6 +61,7 @@ async function loadExcursaoPedagogica(excursaoId) {
     document.getElementById('excursaoTags').value =
       Array.isArray(excursao.tags) ? excursao.tags.join(', ') : '';
     document.getElementById('excursaoMaxInstallments').value = excursao.maxInstallments || '1';
+    document.getElementById('excursaoVagas').value = excursao.vagas || '';
 
     var dataDestinoEl = document.getElementById('excursaoDataExcursao');
     if (dataDestinoEl && excursao.dataDestino) {
@@ -252,6 +253,10 @@ function getExcursaoPedagogicaData() {
     horario: document.getElementById('excursaoHorario').value.trim(),
     tags: tags,
     maxInstallments: parseInt(document.getElementById('excursaoMaxInstallments').value, 10) || 1,
+    vagas: (function () {
+      var val = document.getElementById('excursaoVagas').value;
+      return val ? parseInt(val, 10) : null;
+    })(),
     dataDestino: (function () {
       var el = document.getElementById('excursaoDataExcursao');
       return el && el.value ? el.value.trim() : null;

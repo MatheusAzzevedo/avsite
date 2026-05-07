@@ -45,7 +45,8 @@ const excursaoBaseSchema = {
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'dataExcursao deve estar no formato YYYY-MM-DD')
     .optional()
-    .nullable()
+    .nullable(),
+  vagas: z.preprocess((val) => (val === "" || val === null ? undefined : val), z.coerce.number().int().positive().optional().nullable())
 };
 
 /**
