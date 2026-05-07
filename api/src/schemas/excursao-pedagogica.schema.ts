@@ -70,7 +70,8 @@ const excursaoPedagogicaBaseSchema = {
     .nullable(),
   dataFimInscricoes: dataFimInscricoesSchema,
   documentoUrl: z.string().max(500).optional().nullable(),
-  documentoNome: z.string().max(200).optional().nullable()
+  documentoNome: z.string().max(200).optional().nullable(),
+  vagas: z.preprocess((val) => (val === "" || val === null ? undefined : val), z.coerce.number().int().positive().optional().nullable())
 };
 
 /**

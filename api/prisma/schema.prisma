@@ -110,6 +110,7 @@ model Excursao {
   horario         String?
   tags            String[]
   dataExcursao    DateTime?      // Data da excursão
+  vagas           Int?           // Limite de vagas (null = ilimitado)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
@@ -192,6 +193,7 @@ model ExcursaoPedagogica {
   dataFimInscricoes DateTime?    // Data final de inscrições (campo oculto no admin)
   documentoUrl     String?       // URL do documento (PDF, DOCX, XLS, XLSX) para download
   documentoNome    String?       // Nome amigável do documento para exibição
+  vagas            Int?          // Limite de vagas (null = ilimitado)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 

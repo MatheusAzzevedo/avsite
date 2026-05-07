@@ -65,9 +65,9 @@ router.get('/excursoes',
             categoria: true,
             imagemCapa: true,
             imagemPrincipal: true,
-            local: true,
             horario: true,
             tags: true,
+            vagas: true,
             createdAt: true,
             galeria: {
               select: { url: true, ordem: true },
@@ -78,8 +78,25 @@ router.get('/excursoes',
         prisma.excursao.count({ where })
       ]);
 
+      // Filtrar excursões lotadas
+      const excursoesComVagas = [];
+      for (const e of excursoes) {
+        if (e.vagas !== null) {
+          const ocupadas = await prisma.pedido.aggregate({
+            where: {
+              excursaoId: e.id,
+              status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
+            },
+            _sum: { quantidade: true }
+          });
+          const totalOcupadas = ocupadas._sum.quantidade || 0;
+          if (totalOcupadas >= e.vagas) continue; // Pula se estiver lotada
+        }
+        excursoesComVagas.push(e);
+      }
+
       // Formata dados para resposta
-      const data = excursoes.map(e => ({
+      const data = excursoesComVagas.map(e => ({
         ...e,
         preco: Number(e.preco),
         galeria: e.galeria.map(g => g.url)
@@ -431,6 +448,7 @@ router.get('/excursoes-pedagogicas',
             local: true,
             horario: true,
             tags: true,
+            vagas: true,
             createdAt: true,
             galeria: {
               select: { url: true, ordem: true },
@@ -441,8 +459,25 @@ router.get('/excursoes-pedagogicas',
         prisma.excursaoPedagogica.count({ where })
       ]);
 
+      // Filtrar excursões lotadas
+      const excursoesComVagas = [];
+      for (const e of excursoes) {
+        if (e.vagas !== null) {
+          const ocupadas = await prisma.pedido.aggregate({
+            where: {
+              excursaoPedagogicaId: e.id,
+              status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
+            },
+            _sum: { quantidade: true }
+          });
+          const totalOcupadas = ocupadas._sum.quantidade || 0;
+          if (totalOcupadas >= e.vagas) continue; // Pula se estiver lotada
+        }
+        excursoesComVagas.push(e);
+      }
+
       // Formata dados para resposta
-      const data = excursoes.map((e: { galeria: { url: string }[]; preco: { toNumber?: () => number } | number }) => ({
+      const data = excursoesComVagas.map((e: any) => ({
         ...e,
         preco: Number(e.preco),
         galeria: e.galeria.map((g: { url: string }) => g.url)

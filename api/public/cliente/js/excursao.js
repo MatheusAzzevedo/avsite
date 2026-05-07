@@ -92,11 +92,57 @@
         if (btnAumentar) {
             btnAumentar.addEventListener('click', () => {
                 const qtdAtual = parseInt(quantidade.value, 10) || 1;
-                if (qtdAtual < 50) {
+                const maxPermitido = (exc.vagasDisponiveis !== null) ? Math.min(50, exc.vagasDisponiveis) : 50;
+                if (qtdAtual < maxPermitido) {
                     quantidade.value = qtdAtual + 1;
                     calcularTotal();
                 }
             });
+        }
+
+        // Verificar disponibilidade de vagas
+        const btnCheckout = document.getElementById('btnCheckout');
+        const soldOutMessage = document.getElementById('soldOutMessage'); // Opcional no HTML, vou criar se não houver
+        
+        if (exc.vagasDisponiveis !== null && exc.vagasDisponiveis <= 0) {
+            if (btnCheckout) {
+                btnCheckout.disabled = true;
+                btnCheckout.innerHTML = '<i class="fas fa-ban"></i> Esgotado';
+                btnCheckout.style.backgroundColor = 'var(--text-light)';
+                btnCheckout.style.cursor = 'not-allowed';
+            }
+            if (quantidade) {
+                quantidade.disabled = true;
+                quantidade.value = 0;
+            }
+            // Exibir mensagem de esgotado se houver espaço
+            const priceContainer = document.querySelector('.price-container');
+            if (priceContainer) {
+                const badge = document.createElement('div');
+                badge.className = 'sold-out-badge';
+                badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Inscrições encerradas por limite de vagas';
+                badge.style.color = 'var(--danger-color)';
+                badge.style.fontWeight = '600';
+                badge.style.marginTop = '1rem';
+                badge.style.fontSize = '0.9rem';
+                priceContainer.appendChild(badge);
+            }
+        } else if (exc.vagasDisponiveis !== null && exc.vagasDisponiveis > 0) {
+            // Mostrar vagas restantes
+            const priceContainer = document.querySelector('.price-container');
+            if (priceContainer) {
+                const badge = document.createElement('div');
+                badge.className = 'slots-left-badge';
+                badge.innerHTML = `<i class="fas fa-users"></i> Restam apenas ${exc.vagasDisponiveis} vagas!`;
+                badge.style.color = '#e67e22'; // Laranja para urgência
+                badge.style.fontWeight = '600';
+                badge.style.marginTop = '1rem';
+                badge.style.fontSize = '0.9rem';
+                priceContainer.appendChild(badge);
+            }
+            if (quantidade) {
+                quantidade.max = Math.min(50, exc.vagasDisponiveis);
+            }
         }
         
         // Configurar tabs

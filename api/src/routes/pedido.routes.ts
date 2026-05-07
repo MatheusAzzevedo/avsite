@@ -87,15 +87,30 @@ router.get('/excursao/:codigo',
         throw ApiError.notFound('Excursão não encontrada ou inativa');
       }
 
+      // Conta vagas ocupadas
+      let vagasDisponiveis = null;
+      if (excursao.vagas !== null) {
+        const ocupadas = await prisma.pedido.aggregate({
+          where: {
+            excursaoPedagogicaId: excursao.id,
+            status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
+          },
+          _sum: { quantidade: true }
+        });
+        const totalOcupadas = ocupadas._sum.quantidade || 0;
+        vagasDisponiveis = Math.max(0, excursao.vagas - totalOcupadas);
+      }
+
       // Formata dados
       const data = {
         ...excursao,
         preco: Number(excursao.preco),
-        galeria: excursao.galeria.map(g => g.url)
+        galeria: excursao.galeria.map(g => g.url),
+        vagasDisponiveis
       };
 
       logger.info('[Pedidos] Excursão encontrada', {
-        context: { codigo, excursaoId: excursao.id, titulo: excursao.titulo }
+        context: { codigo, excursaoId: excursao.id, titulo: excursao.titulo, vagasDisponiveis }
       });
 
       res.json({
@@ -170,9 +185,34 @@ router.post('/',
         context: { 
           excursaoId: excursao.id, 
           titulo: excursao.titulo,
-          preco: Number(excursao.preco)
+          preco: Number(excursao.preco),
+          vagas: excursao.vagas
         }
       });
+
+      // Validação de Vagas
+      if (excursao.vagas !== null) {
+        const ocupadas = await prisma.pedido.aggregate({
+          where: {
+            excursaoPedagogicaId: excursao.id,
+            status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
+          },
+          _sum: { quantidade: true }
+        });
+
+        const totalOcupadas = ocupadas._sum.quantidade || 0;
+        if (totalOcupadas + quantidade > excursao.vagas) {
+          logger.warn('[Pedidos] Limite de vagas atingido', {
+            context: { 
+              excursaoId: excursao.id, 
+              vagas: excursao.vagas, 
+              ocupadas: totalOcupadas, 
+              tentativa: quantidade 
+            }
+          });
+          throw ApiError.badRequest(`Desculpe, restam apenas ${excursao.vagas - totalOcupadas} vagas para esta excursão.`);
+        }
+      }
 
       // Calcula valor total
       const valorUnitario = excursao.preco;
@@ -766,6 +806,30 @@ router.post('/convencional',
           context: { excursaoSlug }
         });
         throw ApiError.notFound('Viagem não encontrada ou inativa');
+      }
+
+      // Validação de Vagas
+      if (excursao.vagas !== null) {
+        const ocupadas = await prisma.pedido.aggregate({
+          where: {
+            excursaoId: excursao.id,
+            status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
+          },
+          _sum: { quantidade: true }
+        });
+
+        const totalOcupadas = ocupadas._sum.quantidade || 0;
+        if (totalOcupadas + quantidade > excursao.vagas) {
+          logger.warn('[Pedidos] Limite de vagas atingido (convencional)', {
+            context: { 
+              excursaoId: excursao.id, 
+              vagas: excursao.vagas, 
+              ocupadas: totalOcupadas, 
+              tentativa: quantidade 
+            }
+          });
+          throw ApiError.badRequest(`Desculpe, restam apenas ${excursao.vagas - totalOcupadas} vagas para esta viagem.`);
+        }
       }
 
       const valorUnitario = Number(excursao.preco);
