@@ -3,7 +3,14 @@
 Sistema de site e administração para Avorar Turismo com backend em Node.js/Express, banco de dados PostgreSQL e frontend em HTML/CSS/JavaScript.
 
 ## Arquivos Modificados [Resumo das Atualizações]
-### Última atualização (2026-05-04) - feat: paginação e filtragem no servidor para excursões pedagógicas
+### Última atualização (2026-05-07) - feat: sistema de limite de vagas (capacidade) em excursões
+- **api/prisma/schema.prisma** [Novos campos `vagas` nos modelos de Excursão]
+- **api/src/routes/pedido.routes.ts**, **public.routes.ts** [Validação de disponibilidade e filtragem de esgotados]
+- **api/public/admin/js/excursao-editor.js** [Interface administrativa para controle de capacidade]
+
+Resumo: Implementado sistema robusto de gestão de capacidade. Agora é possível definir um limite máximo de vagas para cada excursão. O sistema realiza o cálculo automático de disponibilidade em tempo real, bloqueia novos pedidos se o limite for atingido e oculta viagens lotadas da listagem pública, garantindo que não ocorra overbooking.
+
+### Versão anterior (2026-05-04) - feat: paginação e filtragem no servidor para excursões pedagógicas
 - **api/src/routes/excursao-pedagogica.routes.ts**, **excursao-pedagogica.schema.ts** [Implementação de lógica de paginação e filtros avançados no servidor]
 - **api/public/admin/js/excursoes-pedagogicas.js** [Refatoração para consumo de API paginada e debouncing de busca]
 - **api/public/admin/css/admin-style.css** [Novos estilos para controles de paginação]

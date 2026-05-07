@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-05-07 - feat: sistema de limite de vagas (capacidade) em excursões
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Adicionado campo `vagas` opcional nos modelos `Excursao` e `ExcursaoPedagogica`]
+- `api/src/schemas/excursao.schema.ts` e `excursao-pedagogica.schema.ts` [Atualizada validação Zod para incluir o campo `vagas`]
+- `api/src/routes/pedido.routes.ts` [Implementada lógica de validação de capacidade na criação de pedidos (bloqueia overbooking)]
+- `api/src/routes/public.routes.ts` [Implementado filtro de disponibilidade para ocultar excursões lotadas na listagem pública]
+- `api/public/admin/excursao-editor.html` e `excursao-pedagogica-editor.html` [Adicionado campo "Limite de Vagas" na interface administrativa]
+- `api/public/admin/js/excursao-editor.js` e `excursao-pedagogica-editor.js` [Lógica de carregamento e salvamento do limite de vagas]
+- `api/public/cliente/js/excursao.js` [Feedback visual de "Esgotado" ou "Restam X vagas" na área do cliente e trava no botão de compra]
+
+### Detalhes das Alterações
+- **Controle de Capacidade**: O administrador agora pode definir um limite de vagas para cada viagem. Se deixado em branco, a capacidade é ilimitada.
+- **Validação de Estoque**: O backend agora verifica a disponibilidade real antes de confirmar qualquer reserva, somando pedidos pagos e pendentes para garantir que o limite não seja ultrapassado.
+- **Interface Inteligente**: 
+  - Excursões lotadas desaparecem automaticamente da lista "Nossos Roteiros".
+  - Na página de detalhes, o cliente recebe avisos de disponibilidade ("Restam apenas X vagas!").
+  - O botão de compra é desativado automaticamente quando não há mais vagas.
+
+---
+
 ## 2026-05-04 - feat: paginação e filtragem no servidor para excursões pedagógicas
 
 ### Arquivos Modificados
