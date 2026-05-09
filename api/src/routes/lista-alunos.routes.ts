@@ -149,7 +149,7 @@ router.get('/excursoes',
         context: {
           adminId: req.user!.id,
           total: data.length,
-          totalAlunos: data.reduce((sum, e) => sum + e.totalAlunos, 0)
+          totalAlunos: data.reduce((sum, e) => sum + e.totalAlunosAtivos, 0)
         }
       });
 
