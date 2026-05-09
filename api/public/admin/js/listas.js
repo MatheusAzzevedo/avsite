@@ -368,11 +368,14 @@ function renderAlunos() {
                 <td>${dataPedido}</td>
                 <td>
                     <div class="table-actions">
-                        <button type="button" class="btn btn-sm btn-primary btn-enviar-email" data-pedido-id="${aluno.pedidoId}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Enviar e-mail de confirmação">
-                            <i class="fas fa-envelope"></i> Enviar E-mail
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-enviar-email" data-pedido-id="${aluno.pedidoId}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Enviar e-mail de confirmação">
+                            <i class="fas fa-envelope"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-secondary btn-detalhes-aluno" data-aluno-index="${index}" title="Ver detalhes completos do aluno">
-                            <i class="fas fa-user"></i> Detalhes
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger btn-deletar-aluno" data-aluno-id="${aluno.id}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Excluir aluno da lista">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
                 </td>
@@ -380,9 +383,10 @@ function renderAlunos() {
         `;
     }).join('');
 
-    // Anexar event listeners aos botões de envio
+    // Anexar event listeners aos botões
     attachEmailButtonListeners();
     attachDetalhesButtonListeners();
+    attachDeletarButtonListeners();
 }
 
 /**
@@ -404,6 +408,66 @@ function attachDetalhesButtonListeners() {
             abrirDetalhesAluno(index);
         });
     });
+}
+
+/**
+ * Explicação da função [attachDeletarButtonListeners]
+ * Conecta os botões de exclusão de aluno.
+ */
+function attachDeletarButtonListeners() {
+    const btnsDeletar = document.querySelectorAll('.btn-deletar-aluno');
+    btnsDeletar.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const alunoId = this.getAttribute('data-aluno-id');
+            const nomeAluno = this.getAttribute('data-aluno-nome');
+            if (alunoId) {
+                deletarAluno(alunoId, nomeAluno);
+            }
+        });
+    });
+}
+
+/**
+ * Explicação da função [deletarAluno]
+ * Realiza a exclusão de um aluno da lista após confirmação.
+ */
+async function deletarAluno(alunoId, nomeAluno) {
+    if (!confirm(`Tem certeza que deseja remover o aluno "${nomeAluno}" desta lista?\n\nEsta ação não pode ser desfeita!`)) {
+        return;
+    }
+
+    try {
+        console.log('[Listas] Deletando aluno:', alunoId);
+
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const response = await fetch(`${apiUrl}/admin/listas/aluno/${alunoId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const result = await response.json().catch(() => ({}));
+            throw new Error(result.message || `Erro ao deletar aluno: ${response.status}`);
+        }
+
+        console.log('[Listas] Aluno deletado com sucesso');
+        showSuccess('Aluno removido com sucesso!');
+
+        // Recarrega a lista de alunos e a lista de excursões (para atualizar contagem)
+        await loadAlunos();
+        await loadExcursoes();
+
+    } catch (error) {
+        console.error('[Listas] Erro ao deletar aluno:', error);
+        showError(error.message || 'Erro ao deletar aluno. Tente novamente.');
+    }
 }
 
 /**
