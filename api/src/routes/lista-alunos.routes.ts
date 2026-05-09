@@ -13,6 +13,8 @@
  * - POST /api/admin/listas/excursao/:id/atualizar-pagamentos - Atualizar status de pagamento de uma excursão
  */
 
+import path from 'path';
+import fs from 'fs';
 import { Router, Request, Response, NextFunction } from 'express';
 import { PedidoStatus } from '@prisma/client';
 import { prisma } from '../config/database';
@@ -1052,6 +1054,24 @@ router.get('/excursao/:id/exportar-escola',
 
       const formatDate = (d: Date | null | undefined) =>
         d ? new Date(d).toLocaleDateString('pt-BR') : '';
+
+      // Tentar adicionar o logo do cabeçalho
+      try {
+        const logoPath = path.join(process.cwd(), "api/public/images/header_logo.png");
+        if (fs.existsSync(logoPath)) {
+          const logoId = workbook.addImage({
+            buffer: fs.readFileSync(logoPath),
+            extension: "png",
+          });
+
+          worksheet.addImage(logoId, {
+            tl: { col: 0.1, row: 0.1 },
+            ext: { width: 280, height: 96 }
+          });
+        }
+      } catch (err) {
+        logger.warn("[Listas] Erro ao carregar logo para Excel", { error: err });
+      }
 
       // Título do Trabalho de Campo (Linha 1)
       const row1 = worksheet.getRow(1);
