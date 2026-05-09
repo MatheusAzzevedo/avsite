@@ -184,20 +184,24 @@ function renderExcursoes() {
 
                 <div class="excursao-stats">
                     <div class="stat-item">
-                        <div class="stat-value">${excursao.totalAlunos}</div>
-                        <div class="stat-label">Total de Alunos</div>
+                        <div class="stat-value">${excursao.alunosInscritos || 0}</div>
+                        <div class="stat-label">Alunos Inscritos (PIX + Cartão de Crédito)</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">${excursao.totalPedidos}</div>
+                        <div class="stat-value">${excursao.totalPedidosAtivos || 0}</div>
                         <div class="stat-label">Total de Pedidos</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">${excursao.alunosPorStatus?.PAGO || 0}</div>
-                        <div class="stat-label">Alunos (Pago)</div>
+                        <div class="stat-value">${excursao.alunosPix || 0}</div>
+                        <div class="stat-label">Pagamentos PIX</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">${excursao.alunosPorStatus?.CONFIRMADO || 0}</div>
-                        <div class="stat-label">Alunos (Confirmado)</div>
+                        <div class="stat-value">${excursao.alunosCartao || 0}</div>
+                        <div class="stat-label">Pagamentos Cartão de Crédito</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${excursao.vagas ? `${excursao.totalAlunosAtivos || 0}/${excursao.vagas}` : 'Ilimitado'}</div>
+                        <div class="stat-label">Vagas (Capacidade)</div>
                     </div>
                 </div>
 

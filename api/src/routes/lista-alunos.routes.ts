@@ -67,12 +67,14 @@ router.get('/excursoes',
           local: true,
           horario: true,
           duracao: true,
+          vagas: true,
           dataDestino: true,
           createdAt: true,
           pedidos: {
             select: {
               id: true,
               status: true,
+              metodoPagamento: true,
               itens: {
                 select: { id: true }
               }
@@ -83,11 +85,29 @@ router.get('/excursoes',
 
       // Processa dados para incluir estatísticas
       const data = excursoes.map(excursao => {
-        // Conta total de alunos (itens de pedido)
-        const totalAlunos = excursao.pedidos.reduce((sum, pedido) => sum + pedido.itens.length, 0);
+        // Conta alunos inscritos (PAGO ou CONFIRMADO)
+        const alunosInscritos = excursao.pedidos
+          .filter(p => p.status === 'PAGO' || p.status === 'CONFIRMADO')
+          .reduce((sum, p) => sum + p.itens.length, 0);
 
-        // Conta total de pedidos
-        const totalPedidos = excursao.pedidos.length;
+        // Conta alunos por método de pagamento (apenas inscritos)
+        const alunosPix = excursao.pedidos
+          .filter(p => (p.status === 'PAGO' || p.status === 'CONFIRMADO') && p.metodoPagamento === 'pix')
+          .reduce((sum, p) => sum + p.itens.length, 0);
+
+        const alunosCartao = excursao.pedidos
+          .filter(p => (p.status === 'PAGO' || p.status === 'CONFIRMADO') && p.metodoPagamento === 'cartao')
+          .reduce((sum, p) => sum + p.itens.length, 0);
+
+        // Conta total de alunos ativos (incluindo pendentes, exceto cancelados/expirados)
+        const totalAlunosAtivos = excursao.pedidos
+          .filter(p => p.status !== 'CANCELADO' && p.status !== 'EXPIRADO')
+          .reduce((sum, p) => sum + p.itens.length, 0);
+
+        // Conta total de pedidos ativos
+        const totalPedidosAtivos = excursao.pedidos
+          .filter(p => p.status !== 'CANCELADO' && p.status !== 'EXPIRADO')
+          .length;
 
         // Agrupa pedidos por status
         const statusPedidos = excursao.pedidos.reduce((acc, pedido) => {
@@ -114,8 +134,12 @@ router.get('/excursoes',
           duracao: excursao.duracao,
           dataDestino: excursao.dataDestino,
           createdAt: excursao.createdAt,
-          totalAlunos,
-          totalPedidos,
+          vagas: excursao.vagas,
+          alunosInscritos,
+          alunosPix,
+          alunosCartao,
+          totalAlunosAtivos,
+          totalPedidosAtivos,
           statusPedidos,
           alunosPorStatus
         };
@@ -183,7 +207,8 @@ router.get('/excursao/:id/alunos',
           preco: true,
           local: true,
           horario: true,
-          duracao: true
+          duracao: true,
+          vagas: true
         }
       });
 
