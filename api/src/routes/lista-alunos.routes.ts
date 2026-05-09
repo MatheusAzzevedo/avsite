@@ -1184,4 +1184,89 @@ router.get('/excursao/:id/exportar-escola',
   }
 );
 
+/**
+ * Explicação da API [DELETE /api/admin/listas/aluno/:id]
+ * Remove um aluno (ItemPedido) da listagem.
+ * Se for o único aluno do pedido, remove o pedido inteiro.
+ * Caso contrário, atualiza quantidade e valor total do pedido.
+ */
+router.delete('/aluno/:id', adminMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    // Busca o item para saber qual o pedido associado
+    const item = await prisma.itemPedido.findUnique({
+      where: { id },
+      include: { pedido: true }
+    });
+
+    if (!item) {
+      throw ApiError.notFound('Aluno não encontrado');
+    }
+
+    const pedidoId = item.pedidoId;
+
+    // Verifica quantos itens o pedido tem
+    const totalItens = await prisma.itemPedido.count({
+      where: { pedidoId }
+    });
+
+    if (totalItens <= 1) {
+      // Deleta o pedido inteiro (cascade deletará o item)
+      await prisma.pedido.delete({
+        where: { id: pedidoId }
+      });
+      
+      logger.info('[Listas] Pedido removido por ser o último aluno', {
+        context: { pedidoId, alunoId: id, adminId: req.user!.id }
+      });
+    } else {
+      // Deleta apenas o item
+      await prisma.itemPedido.delete({
+        where: { id }
+      });
+
+      // Atualiza o pedido (quantidade e valor total)
+      const novaQuantidade = totalItens - 1;
+      const novoValorTotal = Number(item.pedido.valorUnitario) * novaQuantidade;
+
+      await prisma.pedido.update({
+        where: { id: pedidoId },
+        data: {
+          quantidade: novaQuantidade,
+          valorTotal: novoValorTotal
+        }
+      });
+
+      logger.info('[Listas] Aluno removido do pedido', {
+        context: { pedidoId, alunoId: id, adminId: req.user!.id, novaQuantidade }
+      });
+    }
+
+    // Log de atividade
+    await prisma.activityLog.create({
+      data: {
+        action: 'delete',
+        entity: 'aluno_lista',
+        entityId: id,
+        description: `Aluno ${item.nomeAluno} removido da lista pelo admin`,
+        userId: req.user!.id,
+        userEmail: req.user!.email
+      }
+    });
+
+    res.json({ success: true, message: 'Aluno removido com sucesso' });
+
+  } catch (error) {
+    logger.error('[Listas] Erro ao deletar aluno', {
+      context: {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        alunoId: req.params.id,
+        adminId: req.user?.id
+      }
+    });
+    next(error);
+  }
+});
+
 export default router;
