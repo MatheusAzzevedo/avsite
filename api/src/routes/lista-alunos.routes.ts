@@ -1060,7 +1060,7 @@ router.get('/excursao/:id/exportar-escola',
         const logoPath = path.join(process.cwd(), "api/public/images/header_logo.png");
         if (fs.existsSync(logoPath)) {
           const logoId = workbook.addImage({
-            buffer: fs.readFileSync(logoPath),
+            buffer: fs.readFileSync(logoPath) as any,
             extension: "png",
           });
 
