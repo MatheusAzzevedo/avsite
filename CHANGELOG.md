@@ -1,21 +1,21 @@
 # Changelog
 
-## 2026-05-09 - feat: melhorias nos cards de listagem de alunos e controle de vagas
+## 2026-05-09 - feat: dashboard de alunos, exportação escolar e CI/CD
 
 ### Arquivos Modificados
-- `api/src/routes/lista-alunos.routes.ts` [Estatísticas de pagamento (PIX/Cartão) e capacidade]
-- `api/public/admin/js/listas.js` [Interface com novas labels e exibição de ocupação]
-- `.github/workflows/api-lint.yml` [Workflow de linter automático para API]
+- `api/src/routes/lista-alunos.routes.ts` [Estatísticas de pagamento e nova rota de exportação para escola]
+- `api/public/admin/js/listas.js` [Novas labels, exibição de vagas e integração do botão "Lista para Escola"]
+- `api/public/admin/listas.html` [Botões de exportação escolar adicionados]
+- `.github/workflows/api-lint.yml` [Workflow de linter automático para API (Node 20)]
 - `api/eslint.config.mjs` [Configuração do ESLint v10 (Flat Config) para a API]
 
-Resumo: Atualização visual e lógica dos cards de listagem de alunos e implementação de Pipeline de CI para Linting da API. Introduzidas novas labels e estatísticas de pagamento nos cards administrativos. A nova GitHub Action garante que o código da API siga os padrões de linting (ESLint v10) em cada atualização.
+Resumo: Atualização visual e lógica dos cards de listagem de alunos, implementação de exportação personalizada para escolas e Pipeline de CI para Linting. Introduzidas novas labels ("Limite de Vagas"), estatísticas de pagamento e exportação automática em formato escolar.
 
 ### Detalhes das Alterações
-- **CI/CD**: Implementada GitHub Action que roda `eslint` em cada push/pull request na pasta da API.
-- **Novas Labels**: Cards renomeados para "Alunos Inscritos (PIX + Cartão de Crédito)", "Total de Pedidos", "Pagamentos PIX" e "Pagamentos Cartão de Crédito" para melhor clareza.
-- **Divisão por Pagamento**: Implementada lógica no backend para separar inscritos por método de pagamento, facilitando a conciliação financeira rápida.
-- **Exibição de Vagas**: Adicionado 5º item de estatística nos cards mostrando o preenchimento da excursão (ocupadas/capacidade) ou "Ilimitado".
-- **Consistência de Dados**: O total de pedidos e alunos agora ignora automaticamente registros cancelados ou expirados em todo o painel de listas.
+- **Extração Escolar**: Implementada nova funcionalidade de exportação em Excel ("Lista para Escola") seguindo o modelo oficial com cabeçalhos dinâmicos (Colégio, Destino, Datas).
+- **Dashboard de Alunos**: Atualização das labels estatísticas ("Alunos Inscritos", "Total de Pedidos", "Limite de Vagas") e lógica de cálculo de ocupação.
+- **CI/CD**: Implementada GitHub Action que roda `eslint` em cada push/pull request na pasta da API, garantindo padrões de código.
+- **Consistência**: O total de pedidos e alunos agora ignora automaticamente registros cancelados ou expirados em todo o painel.
 
 ---
 

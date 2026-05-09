@@ -200,8 +200,8 @@ function renderExcursoes() {
                         <div class="stat-label">Pagamentos Cartão de Crédito</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">${excursao.vagas ? `${excursao.totalAlunosAtivos || 0}/${excursao.vagas}` : 'Ilimitado'}</div>
-                        <div class="stat-label">Vagas (Capacidade)</div>
+                        <div class="stat-value">${excursao.vagas ? `${excursao.totalAlunosAtivos || 0}/${excursao.vagas}` : 'Não'}</div>
+                        <div class="stat-label">Limite de Vagas</div>
                     </div>
                 </div>
 
@@ -223,6 +223,9 @@ function renderExcursoes() {
                     </button>
                     <button type="button" class="btn btn-danger btn-sm btn-exportar-cancelados-card" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-codigo="${escapeHtml(excursao.codigo)}" title="Exportar pedidos cancelados">
                         <i class="fas fa-file-excel"></i> Cancelados
+                    </button>
+                    <button type="button" class="btn btn-info btn-sm btn-exportar-escola-card" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-titulo="${escapeHtml(excursao.titulo)}" title="Lista para Escola" style="background-color: #6f42c1; border-color: #6f42c1; color: white;">
+                        <i class="fas fa-school"></i> Escola
                     </button>
                     <button type="button" class="btn btn-danger btn-sm btn-deletar-excursao" data-excursao-id="${escapeHtml(excursao.id)}" data-excursao-titulo="${escapeHtml(excursao.titulo)}">
                         <i class="fas fa-trash"></i>
@@ -803,6 +806,69 @@ async function exportarCancelados(opts = {}) {
  * Explicação da função [getStatusBadgeClass]
  * Retorna classe CSS do badge de acordo com o status
  */
+
+/**
+ * Explicação da função [exportarEscola]
+ * Exporta Excel no formato específico para a escola
+ */
+async function exportarEscola(opts = {}) {
+    const excursaoId = opts.excursaoId || currentExcursaoId;
+    const btn = opts.button || (opts.excursaoId ? null : document.getElementById('btnExportarEscola'));
+
+    if (!excursaoId) {
+        showError('ID da excursão não encontrado para exportar');
+        return;
+    }
+
+    const originalHTML = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+    }
+
+    try {
+        console.log('[Listas] Exportando Excel para Escola da excursão:', excursaoId);
+
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const response = await fetch(`${apiUrl}/admin/listas/excursao/${excursaoId}/exportar-escola`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.message || 'Erro ao exportar Excel');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const titulo = opts.titulo || 'Escola';
+        a.download = `Lista_Escola_${titulo.replace(/\s+/g, '_')}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        console.log('[Listas] Excel exportado com sucesso');
+
+    } catch (error) {
+        console.error('[Listas] Erro ao exportar Excel:', error);
+        showError(error.message || 'Erro ao exportar Excel. Tente novamente.');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHTML;
+        }
+    }
+}
 function getStatusBadgeClass(status) {
     const classes = {
         'PAGO': 'badge-success',
@@ -1022,6 +1088,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const id = btnCancelados.getAttribute('data-excursao-id');
                 const codigo = btnCancelados.getAttribute('data-excursao-codigo') || '';
                 if (id) exportarCancelados({ excursaoId: id, codigo, button: btnCancelados });
+            } else if (e.target.closest('.btn-exportar-escola-card')) {
+                const btnEscola = e.target.closest('.btn-exportar-escola-card');
+                e.preventDefault();
+                const id = btnEscola.getAttribute('data-excursao-id');
+                const titulo = btnEscola.getAttribute('data-excursao-titulo') || '';
+                if (id) exportarEscola({ excursaoId: id, titulo, button: btnEscola });
             }
         });
     }
@@ -1055,6 +1127,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnExportarCancelados = document.getElementById('btnExportarCancelados');
     if (btnExportarCancelados) btnExportarCancelados.addEventListener('click', () => exportarCancelados());
+
+    const btnExportarEscola = document.getElementById('btnExportarEscola');
+    if (btnExportarEscola) btnExportarEscola.addEventListener('click', () => exportarEscola());
 
     const btnAtualizarPagamentosTodas = document.getElementById('btnAtualizarPagamentosTodas');
     if (btnAtualizarPagamentosTodas) btnAtualizarPagamentosTodas.addEventListener('click', atualizarPagamentosTodas);
