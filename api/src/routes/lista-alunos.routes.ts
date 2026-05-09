@@ -999,4 +999,169 @@ router.get('/excursao/:id/exportar-cancelados',
   }
 );
 
+/**
+ * Explicação da API [GET /api/admin/listas/excursao/:id/exportar-escola]
+ * Gera Excel no formato específico para a escola (Modelo ListaParaEscola)
+ */
+router.get('/excursao/:id/exportar-escola',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      logger.info('[Listas] Iniciando exportação para Escola', {
+        context: {
+          adminId: req.user!.id,
+          excursaoId: id
+        }
+      });
+
+      const excursao = await prisma.excursaoPedagogica.findUnique({
+        where: { id },
+        select: { 
+          id: true, 
+          titulo: true, 
+          destino: true, 
+          local: true, 
+          dataDestino: true, 
+          dataFimInscricoes: true 
+        }
+      });
+
+      if (!excursao) {
+        throw ApiError.notFound('Excursão pedagógica não encontrada');
+      }
+
+      const pedidos = await prisma.pedido.findMany({
+        where: {
+          excursaoPedagogicaId: id,
+          status: { in: ['PAGO', 'CONFIRMADO'] as PedidoStatus[] }
+        },
+        include: {
+          itens: { orderBy: { nomeAluno: 'asc' } }
+        }
+      });
+
+      const itens = pedidos.flatMap(p => p.itens);
+
+      if (itens.length === 0) {
+        throw ApiError.badRequest('Nenhum aluno encontrado para exportar');
+      }
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Lista para Escola');
+
+      const formatDate = (d: Date | null | undefined) =>
+        d ? new Date(d).toLocaleDateString('pt-BR') : '';
+
+      // Título do Trabalho de Campo (Linha 1)
+      const row1 = worksheet.getRow(1);
+      row1.getCell(2).value = `TRABALHO DE CAMPO ${excursao.titulo.toUpperCase()}`;
+      row1.font = { bold: true, size: 14 };
+      worksheet.mergeCells('B1:H1');
+      row1.getCell(2).alignment = { horizontal: 'center' };
+
+      // Metadados (Linha 2)
+      const escola = itens[0]?.escolaAluno || '';
+      const destino = excursao.destino || excursao.local || '';
+      const dataViagem = formatDate(excursao.dataDestino);
+      const dataFim = formatDate(excursao.dataFimInscricoes);
+
+      const row2 = worksheet.getRow(2);
+      row2.getCell(2).value = `Colégio: ${escola}  - Destino: ${destino}   - Data: ${dataViagem}  - Inscrições até:  ${dataFim}`;
+      row2.font = { size: 10 };
+      worksheet.mergeCells('B2:H2');
+      row2.getCell(2).alignment = { horizontal: 'center' };
+
+      // Cabeçalho da Tabela (Linha 3)
+      worksheet.getRow(3).values = [
+        '', // Coluna A vazia como no modelo
+        'Nº',
+        'Nome do aluno',
+        'Série',
+        'Turma',
+        'Unidade',
+        'RG',
+        'Data de Nascimento'
+      ];
+      
+      const headerRow = worksheet.getRow(3);
+      headerRow.font = { bold: true };
+      headerRow.eachCell((cell, colNumber) => {
+        if (colNumber > 1) {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          };
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFE0E0E0' }
+          };
+        }
+      });
+
+      // Dados dos Alunos
+      itens.forEach((item, index) => {
+        const rowIndex = index + 4;
+        const row = worksheet.getRow(rowIndex);
+        row.values = [
+          '',
+          index + 1,
+          item.nomeAluno,
+          item.serieAluno,
+          item.turma,
+          item.unidadeColegio,
+          item.rgAluno,
+          formatDate(item.dataNascimento)
+        ];
+
+        row.eachCell((cell, colNumber) => {
+          if (colNumber > 1) {
+            cell.border = {
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              bottom: { style: 'thin' },
+              right: { style: 'thin' }
+            };
+          }
+        });
+      });
+
+      // Larguras das colunas
+      worksheet.getColumn(1).width = 2;
+      worksheet.getColumn(2).width = 5; // Nº
+      worksheet.getColumn(3).width = 35; // Nome
+      worksheet.getColumn(4).width = 15; // Série
+      worksheet.getColumn(5).width = 10; // Turma
+      worksheet.getColumn(6).width = 15; // Unidade
+      worksheet.getColumn(7).width = 15; // RG
+      worksheet.getColumn(8).width = 18; // Data Nasc
+
+      res.setHeader(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      );
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=Lista_Escola_${excursao.titulo.replace(/\s+/g, '_')}.xlsx`
+      );
+
+      await workbook.xlsx.write(res);
+      res.end();
+
+    } catch (error) {
+      logger.error('[Listas] Erro ao exportar Lista para Escola', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          excursaoId: req.params.id,
+          adminId: req.user?.id
+        }
+      });
+      next(error);
+    }
+  }
+);
+
 export default router;
