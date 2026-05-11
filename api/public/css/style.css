@@ -6252,7 +6252,7 @@ form label.error{
 /* Cursor*/ 
 
 .cursor{
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 140px;
@@ -6264,7 +6264,7 @@ form label.error{
   -ms-animation: cursorAnim 1s infinite alternate;
   animation: cursorAnim 1s infinite alternate;
   pointer-events: none;
-  z-index: 99999;
+  z-index: 1000001;
 }
 
 .cursor:after{
