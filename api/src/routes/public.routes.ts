@@ -59,61 +59,56 @@ router.get('/excursoes',
             id: true,
             titulo: true,
             slug: true,
-            subtitulo: true,
             preco: true,
-            duracao: true,
             categoria: true,
             imagemCapa: true,
-            imagemPrincipal: true,
-            horario: true,
-            tags: true,
-            vagas: true,
-            createdAt: true,
-            galeria: {
-              select: { url: true, ordem: true },
-              orderBy: { ordem: 'asc' }
-            }
+            vagas: true
           }
         }),
         prisma.excursao.count({ where })
       ]);
 
-      // Filtrar excursões lotadas
-      const excursoesComVagas = [];
-      for (const e of excursoes) {
-        if (e.vagas !== null) {
-          const ocupadas = await prisma.pedido.aggregate({
-            where: {
-              excursaoId: e.id,
-              status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
-            },
-            _sum: { quantidade: true }
-          });
-          const totalOcupadas = ocupadas._sum.quantidade || 0;
-          if (totalOcupadas >= e.vagas) continue; // Pula se estiver lotada
-        }
-        excursoesComVagas.push(e);
-      }
+      // Otimização: Busca ocupação de todas as excursões em uma única consulta (evita N+1)
+      const excursionIds = excursoes.map(e => e.id);
+      const occupancyData = await prisma.pedido.groupBy({
+        by: ['excursaoId'],
+        where: {
+          excursaoId: { in: excursionIds },
+          status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
+        },
+        _sum: { quantidade: true }
+      });
 
-      // Formata dados para resposta
-      const data = excursoesComVagas.map(e => ({
-        ...e,
-        preco: Number(e.preco),
-        galeria: e.galeria.map(g => g.url)
-      }));
+      const occupancyMap = new Map(
+        occupancyData
+          .filter(o => o.excursaoId !== null)
+          .map(o => [o.excursaoId as string, o._sum.quantidade || 0])
+      );
+
+      // Filtra e formata dados para resposta
+      const data = excursoes
+        .filter(e => {
+          if (e.vagas === null) return true;
+          const occupied = occupancyMap.get(e.id) || 0;
+          return occupied < e.vagas;
+        })
+        .map(e => ({
+          ...e,
+          preco: Number(e.preco)
+        }));
 
       logger.info(`[Public API] 🏝️ Excursões Públicas - RETORNANDO`, {
         context: {
           encontradas: data.length,
           total,
-          ids: excursoes.map(e => e.id),
+          ids: data.map(e => e.id),
           categoria: categoria || 'todas',
           page: parseInt(page as string),
           limit: take
         }
       });
 
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Cache-Control', 'public, max-age=60'); // Cache de 1 minuto para performance
       res.json({
         success: true,
         data,
@@ -439,63 +434,57 @@ router.get('/excursoes-pedagogicas',
             codigo: true,
             titulo: true,
             slug: true,
-            subtitulo: true,
             preco: true,
-            duracao: true,
             categoria: true,
             imagemCapa: true,
-            imagemPrincipal: true,
-            local: true,
-            horario: true,
-            tags: true,
-            vagas: true,
-            createdAt: true,
-            galeria: {
-              select: { url: true, ordem: true },
-              orderBy: { ordem: 'asc' }
-            }
+            vagas: true
           }
         }),
         prisma.excursaoPedagogica.count({ where })
       ]);
 
-      // Filtrar excursões lotadas
-      const excursoesComVagas = [];
-      for (const e of excursoes) {
-        if (e.vagas !== null) {
-          const ocupadas = await prisma.pedido.aggregate({
-            where: {
-              excursaoPedagogicaId: e.id,
-              status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
-            },
-            _sum: { quantidade: true }
-          });
-          const totalOcupadas = ocupadas._sum.quantidade || 0;
-          if (totalOcupadas >= e.vagas) continue; // Pula se estiver lotada
-        }
-        excursoesComVagas.push(e);
-      }
+      // Otimização: Busca ocupação de todas as excursões em uma única consulta (evita N+1)
+      const excursionIds = excursoes.map(e => e.id);
+      const occupancyData = await prisma.pedido.groupBy({
+        by: ['excursaoPedagogicaId'],
+        where: {
+          excursaoPedagogicaId: { in: excursionIds },
+          status: { in: ['PAGO', 'CONFIRMADO', 'PENDENTE', 'AGUARDANDO_PAGAMENTO'] }
+        },
+        _sum: { quantidade: true }
+      });
 
-      // Formata dados para resposta
-      const data = excursoesComVagas.map((e: any) => ({
-        ...e,
-        preco: Number(e.preco),
-        galeria: e.galeria.map((g: { url: string }) => g.url)
-      }));
+      const occupancyMap = new Map(
+        occupancyData
+          .filter(o => o.excursaoPedagogicaId !== null)
+          .map(o => [o.excursaoPedagogicaId as string, o._sum.quantidade || 0])
+      );
+
+      // Filtra e formata dados para resposta
+      const data = excursoes
+        .filter(e => {
+          if (e.vagas === null) return true;
+          const occupied = occupancyMap.get(e.id) || 0;
+          return occupied < e.vagas;
+        })
+        .map(e => ({
+          ...e,
+          preco: Number(e.preco)
+        }));
 
       logger.info(`[Public API] 📚 Excursões Pedagógicas Públicas - RETORNANDO`, {
         context: {
           encontradas: data.length,
           total,
-          ids: excursoes.map(e => e.id),
-          codigos: excursoes.map(e => e.codigo),
+          ids: data.map(e => e.id),
+          codigos: data.map(e => (e as any).codigo),
           categoria: categoria || 'todas',
           page: parseInt(page as string),
           limit: take
         }
       });
 
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Cache-Control', 'public, max-age=60'); // Cache de 1 minuto para performance
       res.json({
         success: true,
         data,

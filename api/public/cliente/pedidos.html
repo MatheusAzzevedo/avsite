@@ -264,106 +264,167 @@
             background: #ffffff;
             border-radius: 14px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             transition: all 0.3s ease;
             border-left: 4px solid #ff5c00;
+            overflow: hidden;
             animation: slideUp 0.6s ease-out;
         }
 
-        .pedido-card:hover {
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            transform: translateY(-2px);
-        }
-
-        .pedido-header {
+        .pedido-header-accordion {
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            gap: 1rem;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .pedido-header-accordion:hover {
+            background: #fafafa;
+        }
+
+        .pedido-header-main {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex: 1;
+        }
+
+        .pedido-header-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
         .pedido-titulo {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             color: #101010;
             font-weight: 700;
-            flex: 1;
+            margin: 0;
+        }
+
+        .pedido-meta {
+            font-size: 0.85rem;
+            color: #666;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .pedido-header-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .pedido-accordion-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f3f4f6;
+            color: #ff5c00;
+            transition: transform 0.3s ease;
+        }
+
+        .pedido-card.open .pedido-accordion-icon {
+            transform: rotate(180deg);
+            background: #ff5c00;
+            color: #fff;
+        }
+
+        .pedido-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #fff;
+            border-top: 1px solid transparent;
+        }
+
+        .pedido-card.open .pedido-details {
+            max-height: 1000px;
+            border-top: 1px solid #eee;
+        }
+
+        .pedido-content-inner {
+            padding: 2rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-item h4 {
+            font-size: 0.85rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-item p {
+            font-size: 1rem;
+            color: #333;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .participants-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .participant-tag {
+            background: #fff7ed;
+            color: #ff5c00;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid #ffedd5;
+        }
+
+        .pedido-actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+            margin-top: 1rem;
         }
 
         .pedido-status {
             padding: 0.6rem 1.2rem;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             white-space: nowrap;
         }
 
-        .status-PENDENTE {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fcd34d;
-        }
+        .status-PENDENTE { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .status-PAGO { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .status-CONFIRMADO { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .status-AGUARDANDO_PAGAMENTO { background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
+        .status-EXPIRADO { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
+        .status-CANCELADO { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
 
-        .status-PAGO {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #6ee7b7;
-        }
-
-        .status-CONFIRMADO {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #93c5fd;
-        }
-
-        .pedido-info {
-            color: #666666;
-            font-size: 0.95rem;
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .pedido-info div {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-        }
-
-        .pedido-info i {
-            color: #ff5c00;
-            font-size: 1rem;
-        }
-
-        .pedido-tipo {
-            font-size: 0.8rem;
-            color: #6b7280;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 0.25rem;
-        }
-
-        .pedido-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .pedido-valor {
-            font-size: 1.8rem;
+        .pedido-valor-lg {
+            font-size: 1.5rem;
             color: #ff5c00;
             font-weight: 700;
         }
 
-        .btn-pagar {
+        .btn-pagar, .btn-download-doc {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -376,71 +437,18 @@
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
         }
 
-        .btn-pagar:hover {
+        .btn-pagar:hover, .btn-download-doc:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
-            color: white;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+            color: #fff;
         }
 
-        .btn-download-doc {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(180deg, #FB923C 0%, #EA580C 50%, #C2410C 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn-download-doc:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
-            color: white;
-        }
-
-        .status-AGUARDANDO_PAGAMENTO {
-            background: #fff7ed;
-            color: #9a3412;
-            border: 1px solid #fdba74;
-        }
-
-        .status-EXPIRADO {
-            background: #f3f4f6;
-            color: #6b7280;
-            border: 1px solid #d1d5db;
-        }
-
-        .status-CANCELADO {
-            background: #fee2e2;
-            color: #dc2626;
-            border: 1px solid #fca5a5;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: #666666;
-        }
-
-        .loading i {
-            font-size: 2.5rem;
-            color: #ff5c00;
-            margin-bottom: 1rem;
-        }
-
-        .loading p {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
+        .loading { text-align: center; padding: 3rem; color: #666; }
+        .loading i { font-size: 2.5rem; color: #ff5c00; margin-bottom: 1rem; }
+        .loading p { font-size: 1.1rem; font-weight: 600; }
 
         .empty-state {
             text-align: center;
@@ -450,69 +458,25 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        .empty-state i {
-            font-size: 3.5rem;
-            color: #ff5c00;
-            margin-bottom: 1rem;
-            opacity: 0.7;
-        }
-
-        .empty-state p {
-            color: #666666;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
+        .empty-state i { font-size: 3.5rem; color: #ff5c00; margin-bottom: 1rem; opacity: 0.7; }
+        .empty-state p { color: #666; font-size: 1.1rem; font-weight: 600; }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 768px) {
-            .navbar-menu {
-                display: none;
-            }
-
-            .btn-hamburger {
-                display: flex;
-            }
-
-            .navbar {
-                padding: 1rem 1.5rem;
-            }
-
-            .container {
-                margin: 2rem auto;
-                padding: 0 1rem;
-            }
-
-            h1 {
-                font-size: 1.6rem;
-            }
-
-            .pedido-card {
-                padding: 1.5rem;
-            }
-
-            .pedido-header {
-                flex-direction: column;
-            }
-
-            .pedido-info {
-                flex-direction: column;
-                gap: 0.8rem;
-            }
-
-            .pedido-footer {
-                flex-direction: column;
-            }
+            .navbar-menu { display: none; }
+            .btn-hamburger { display: flex; }
+            .navbar { padding: 1rem 1.5rem; }
+            .container { margin: 2rem auto; padding: 0 1rem; }
+            h1 { font-size: 1.6rem; }
+            .pedido-header-accordion { padding: 1.25rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .pedido-header-right { width: 100%; justify-content: space-between; }
+            .details-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+            .pedido-actions-row { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+            .pedido-header-main { gap: 1rem; }
         }
     </style>
 </head>

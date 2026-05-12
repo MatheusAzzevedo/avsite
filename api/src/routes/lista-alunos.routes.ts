@@ -55,7 +55,7 @@ router.get('/excursoes',
         where.status = status;
       }
 
-      // Busca excursões com pedidos e itens
+      // Busca excursões (seleção mínima para listagem)
       const excursoes = await prisma.excursaoPedagogica.findMany({
         where,
         orderBy: { createdAt: 'desc' },
@@ -71,83 +71,68 @@ router.get('/excursoes',
           duracao: true,
           vagas: true,
           dataDestino: true,
-          createdAt: true,
-          pedidos: {
-            select: {
-              id: true,
-              status: true,
-              metodoPagamento: true,
-              itens: {
-                select: { id: true }
-              }
-            }
+          createdAt: true
+        }
+      });
+
+      // Otimização: Busca estatísticas de todos os pedidos em uma única consulta agregada (evita N+1 e memória cheia)
+      const excursionIds = excursoes.map(e => e.id);
+      
+      const ordersData = await prisma.pedido.findMany({
+        where: {
+          excursaoPedagogicaId: { in: excursionIds },
+          status: { notIn: ['CANCELADO', 'EXPIRADO'] }
+        },
+        select: {
+          excursaoPedagogicaId: true,
+          status: true,
+          metodoPagamento: true,
+          _count: {
+            select: { itens: true }
           }
         }
       });
 
-      // Processa dados para incluir estatísticas
-      const data = excursoes.map(excursao => {
-        // Conta alunos inscritos (PAGO ou CONFIRMADO)
-        const alunosInscritos = excursao.pedidos
-          .filter(p => p.status === 'PAGO' || p.status === 'CONFIRMADO')
-          .reduce((sum, p) => sum + p.itens.length, 0);
-
-        // Conta alunos por método de pagamento (apenas inscritos)
-        const alunosPix = excursao.pedidos
-          .filter(p => (p.status === 'PAGO' || p.status === 'CONFIRMADO') && p.metodoPagamento === 'pix')
-          .reduce((sum, p) => sum + p.itens.length, 0);
-
-        const alunosCartao = excursao.pedidos
-          .filter(p => (p.status === 'PAGO' || p.status === 'CONFIRMADO') && p.metodoPagamento === 'cartao')
-          .reduce((sum, p) => sum + p.itens.length, 0);
-
-        // Conta total de alunos ativos (incluindo pendentes, exceto cancelados/expirados)
-        const totalAlunosAtivos = excursao.pedidos
-          .filter(p => p.status !== 'CANCELADO' && p.status !== 'EXPIRADO')
-          .reduce((sum, p) => sum + p.itens.length, 0);
-
-        // Conta total de pedidos ativos
-        const totalPedidosAtivos = excursao.pedidos
-          .filter(p => p.status !== 'CANCELADO' && p.status !== 'EXPIRADO')
-          .length;
-
-        // Agrupa pedidos por status
-        const statusPedidos = excursao.pedidos.reduce((acc, pedido) => {
-          acc[pedido.status] = (acc[pedido.status] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>);
-
-        // Conta alunos por status de pedido
-        const alunosPorStatus = excursao.pedidos.reduce((acc, pedido) => {
-          const count = pedido.itens.length;
-          acc[pedido.status] = (acc[pedido.status] || 0) + count;
-          return acc;
-        }, {} as Record<string, number>);
-
-        return {
-          id: excursao.id,
-          codigo: excursao.codigo,
-          titulo: excursao.titulo,
-          subtitulo: excursao.subtitulo,
-          status: excursao.status,
-          preco: Number(excursao.preco),
-          local: excursao.local,
-          horario: excursao.horario,
-          duracao: excursao.duracao,
-          dataDestino: excursao.dataDestino,
-          createdAt: excursao.createdAt,
-          vagas: excursao.vagas,
-          alunosInscritos,
-          alunosPix,
-          alunosCartao,
-          totalAlunosAtivos,
-          totalPedidosAtivos,
-          statusPedidos,
-          alunosPorStatus
-        };
+      // Agrupa os dados em memória de forma eficiente
+      const statsMap = new Map();
+      excursionIds.forEach(id => {
+        statsMap.set(id, {
+          alunosInscritos: 0,
+          alunosPix: 0,
+          alunosCartao: 0,
+          totalAlunosAtivos: 0,
+          totalPedidosAtivos: 0,
+          statusPedidos: {},
+          alunosPorStatus: {}
+        });
       });
 
-      logger.info('[Listas] Excursões listadas com sucesso', {
+      ordersData.forEach(p => {
+        const id = p.excursaoPedagogicaId;
+        if (!id || !statsMap.has(id)) return;
+        
+        const stats = statsMap.get(id);
+        const numAlunos = p._count.itens;
+
+        stats.totalPedidosAtivos++;
+        stats.totalAlunosAtivos += numAlunos;
+        stats.statusPedidos[p.status] = (stats.statusPedidos[p.status] || 0) + 1;
+        stats.alunosPorStatus[p.status] = (stats.alunosPorStatus[p.status] || 0) + numAlunos;
+
+        if (p.status === 'PAGO' || p.status === 'CONFIRMADO') {
+          stats.alunosInscritos += numAlunos;
+          if (p.metodoPagamento === 'pix') stats.alunosPix += numAlunos;
+          if (p.metodoPagamento === 'cartao') stats.alunosCartao += numAlunos;
+        }
+      });
+
+      const data = excursoes.map(e => ({
+        ...e,
+        preco: Number(e.preco),
+        ...statsMap.get(e.id)
+      }));
+
+      logger.info('[Listas] Excursões listadas com sucesso (Otimizado)', {
         context: {
           adminId: req.user!.id,
           total: data.length,
