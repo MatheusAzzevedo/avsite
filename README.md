@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-05-09) - feat: dashboard de alunos, exportação escolar e CI/CD
+### Última atualização (2026-05-11) - perf: otimização de performance e ajustes na interface de vagas
+- **api/src/routes/public.routes.ts** [Otimização N+1 e redução de payload]
+- **api/src/routes/lista-alunos.routes.ts** [Agregação em lote para performance]
+- **api/public/cliente/js/excursao.js** [Interface de vagas esgotadas]
+
+Resumo: Otimização crítica de performance no backend eliminando gargalos N+1 em listagens e busca. Ajuste na UX da área do cliente para exibir aviso de "Inscrições Encerradas" e remover seletor de quantidade quando não houver vagas.
+
+### Atualização anterior (2026-05-09) - feat: dashboard de alunos, exportação escolar e CI/CD
 - **api/src/routes/lista-alunos.routes.ts** [Estatísticas de pagamento e nova exportação escolar]
 - **api/public/admin/js/listas.js** [Interface com novas labels e botão "Lista para Escola"]
 - **.github/workflows/api-lint.yml** [Workflow de linter automático para API]

@@ -67,16 +67,33 @@ router.get('/excursao/:codigo',
         context: { codigo, ip: req.ip }
       });
 
-      // Busca excursão ativa por código
+      // Busca excursão ativa por código (seleção mínima para busca/detalhes)
       const excursao = await prisma.excursaoPedagogica.findFirst({
         where: {
           codigo,
           status: ExcursaoStatus.ATIVO
         },
-        include: {
-          galeria: {
-            orderBy: { ordem: 'asc' }
-          }
+        select: {
+          id: true,
+          codigo: true,
+          titulo: true,
+          subtitulo: true,
+          preco: true,
+          duracao: true,
+          categoria: true,
+          status: true,
+          imagemCapa: true,
+          local: true,
+          horario: true,
+          descricao: true,
+          inclusos: true,
+          recomendacoes: true,
+          vagas: true,
+          maxInstallments: true,
+          documentoUrl: true,
+          documentoNome: true,
+          slug: true,
+          dataDestino: true
         }
       });
 
@@ -105,7 +122,7 @@ router.get('/excursao/:codigo',
       const data = {
         ...excursao,
         preco: Number(excursao.preco),
-        galeria: excursao.galeria.map(g => g.url),
+        galeria: [excursao.imagemCapa].filter(Boolean), // Mock para compatibilidade, sem carregar tabela galeria
         vagasDisponiveis
       };
 
@@ -415,9 +432,7 @@ router.get('/',
             itens: {
               select: {
                 id: true,
-                nomeAluno: true,
-                idadeAluno: true,
-                escolaAluno: true
+                nomeAluno: true
               }
             }
           }

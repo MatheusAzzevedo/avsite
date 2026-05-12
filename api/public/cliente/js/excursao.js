@@ -102,43 +102,55 @@
 
         // Verificar disponibilidade de vagas
         const btnCheckout = document.getElementById('btnCheckout');
-        const soldOutMessage = document.getElementById('soldOutMessage'); // Opcional no HTML, vou criar se não houver
+        const quantitySection = document.querySelector('.quantity-section');
+        const purchaseCard = document.querySelector('.purchase-card');
         
         if (exc.vagasDisponiveis !== null && exc.vagasDisponiveis <= 0) {
+            // Esconde o seletor de quantidade conforme solicitado
+            if (quantitySection) {
+                quantitySection.style.display = 'none';
+            }
+
+            // Desativa/ajusta o botão de checkout
             if (btnCheckout) {
                 btnCheckout.disabled = true;
-                btnCheckout.innerHTML = '<i class="fas fa-ban"></i> Esgotado';
-                btnCheckout.style.backgroundColor = 'var(--text-light)';
+                btnCheckout.innerHTML = '<i class="fas fa-ban"></i> Inscrições Encerradas';
+                btnCheckout.style.background = 'linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%)';
                 btnCheckout.style.cursor = 'not-allowed';
+                btnCheckout.style.boxShadow = 'none';
+                btnCheckout.style.transform = 'none';
             }
+
+            // Adiciona aviso de Inscrições Encerradas no lugar do seletor
+            if (purchaseCard) {
+                const soldOutNotice = document.createElement('div');
+                soldOutNotice.className = 'sold-out-notice';
+                soldOutNotice.innerHTML = `
+                    <div style="background: #fff3f3; color: #d63031; padding: 1rem; border-radius: 8px; border: 1px solid #ff000030; margin-bottom: 1.5rem; text-align: center; font-weight: 700;">
+                        <i class="fas fa-exclamation-triangle"></i> Inscrições Encerradas por limite de vagas
+                    </div>
+                `;
+                // Insere antes do botão de checkout
+                purchaseCard.insertBefore(soldOutNotice, btnCheckout);
+            }
+
             if (quantidade) {
-                quantidade.disabled = true;
                 quantidade.value = 0;
             }
-            // Exibir mensagem de esgotado se houver espaço
-            const priceContainer = document.querySelector('.price-container');
-            if (priceContainer) {
-                const badge = document.createElement('div');
-                badge.className = 'sold-out-badge';
-                badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Inscrições encerradas por limite de vagas';
-                badge.style.color = 'var(--danger-color)';
-                badge.style.fontWeight = '600';
-                badge.style.marginTop = '1rem';
-                badge.style.fontSize = '0.9rem';
-                priceContainer.appendChild(badge);
-            }
         } else if (exc.vagasDisponiveis !== null && exc.vagasDisponiveis > 0) {
-            // Mostrar vagas restantes
-            const priceContainer = document.querySelector('.price-container');
-            if (priceContainer) {
-                const badge = document.createElement('div');
-                badge.className = 'slots-left-badge';
-                badge.innerHTML = `<i class="fas fa-users"></i> Restam apenas ${exc.vagasDisponiveis} vagas!`;
-                badge.style.color = '#e67e22'; // Laranja para urgência
-                badge.style.fontWeight = '600';
-                badge.style.marginTop = '1rem';
-                badge.style.fontSize = '0.9rem';
-                priceContainer.appendChild(badge);
+            // Mostrar vagas restantes se estiverem acabando (menos de 10)
+            if (exc.vagasDisponiveis <= 10) {
+                const priceContainer = document.querySelector('.price-container') || document.querySelector('.price-section');
+                if (priceContainer) {
+                    const badge = document.createElement('div');
+                    badge.className = 'slots-left-badge';
+                    badge.innerHTML = `<i class="fas fa-users"></i> Restam apenas ${exc.vagasDisponiveis} vagas!`;
+                    badge.style.color = '#e67e22';
+                    badge.style.fontWeight = '600';
+                    badge.style.marginTop = '0.5rem';
+                    badge.style.fontSize = '0.9rem';
+                    priceContainer.appendChild(badge);
+                }
             }
             if (quantidade) {
                 quantidade.max = Math.min(50, exc.vagasDisponiveis);

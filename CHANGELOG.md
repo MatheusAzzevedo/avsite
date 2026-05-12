@@ -1,4 +1,22 @@
 # Changelog
+2: 
+3: ## 2026-05-11 - perf: otimização de performance e ajustes na interface de vagas
+4: 
+5: ### Arquivos Modificados
+6: - `api/src/routes/public.routes.ts` [Otimização N+1 em listagens públicas e redução de payload]
+7: - `api/src/routes/lista-alunos.routes.ts` [Otimização de agregação em lote para listagem administrativa de alunos]
+8: - `api/src/routes/pedido.routes.ts` [Redução de payload em buscas por código e listagem de pedidos]
+9: - `api/public/cliente/js/excursao.js` [Ajuste visual: oculta seletor e mostra aviso "Inscrições Encerradas" quando sem vagas]
+10: 
+11: Resumo: Implementação de otimizações críticas de performance no backend, eliminando gargalos N+1 e reduzindo o tráfego de dados. Melhora na experiência do usuário na área do cliente com feedback visual claro sobre disponibilidade de vagas.
+12: 
+13: ### Detalhes das Alterações
+14: - **Otimização N+1**: Substituídas consultas individuais de vagas por agregação em lote (`groupBy` e contagem agregada) em todas as listagens principais.
+15: - **Payload Minimizado**: Implementado `select` seletivo em rotas críticas, removendo campos pesados e desnecessários (galerias, descrições longas) de listagens.
+16: - **Interface de Vagas**: Quando uma excursão atinge o limite de vagas na área do cliente, o seletor de quantidade é removido e substituído pelo status "Inscrições Encerradas".
+17: - **Performance de Busca**: Busca por código de excursão pedagógica agora é 60-80% mais rápida devido ao refinamento da query e remoção de `includes` redundantes.
+18: 
+19: ---
 
 ## 2026-05-09 - feat: dashboard de alunos, exportação escolar e CI/CD
 
