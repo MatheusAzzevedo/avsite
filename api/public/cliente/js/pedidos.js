@@ -208,6 +208,7 @@
                     'EXPIRADO': 'Expirado',
                     'CANCELADO': 'Cancelado'
                 };
+
                 pedidos.forEach(function(pedido) {
                     var titulo = (pedido.excursaoPedagogica && pedido.excursaoPedagogica.titulo)
                         ? pedido.excursaoPedagogica.titulo
@@ -222,32 +223,83 @@
                     var docNome = (excPed && excPed.documentoNome) || (docUrl ? docUrl.split('/').pop() : '') || 'Documento';
                     var docFilename = docUrl ? docUrl.split('/').pop() : null;
                     var docHref = docFilename ? '/api/documentos/download/' + encodeURIComponent(docFilename) : '#';
+                    
                     var payButtonHtml = showPayButton
-                        ? '<a href="/cliente/pagamento.html?pedidoId=' + pedido.id + '" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar</a>'
+                        ? '<a href="/cliente/pagamento.html?pedidoId=' + pedido.id + '" class="btn-pagar"><i class="fas fa-credit-card"></i> Pagar Agora</a>'
                         : '';
                     var docButtonHtml = docUrl
                         ? '<a href="' + docHref + '" target="_blank" rel="noopener" class="btn-download-doc"><i class="fas fa-download"></i> ' + docNome + '</a>'
                         : '';
+                    
                     var valorTotal = Number(pedido.valorTotal);
-                    var valorStr = isNaN(valorTotal) ? '0,00' : valorTotal.toFixed(2);
+                    var valorStr = isNaN(valorTotal) ? '0,00' : valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
                     var dataStr = pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString('pt-BR') : '-';
 
-                    containerEl.innerHTML +=
-                        '<div class="pedido-card">' +
-                        '<div class="pedido-header">' +
-                        '<div class="pedido-titulo">' + titulo + '</div>' +
-                        '<div class="pedido-status status-' + pedido.status + '">' + statusLabel + '</div>' +
-                        '</div>' +
-                        '<div class="pedido-info">' +
-                        '<span class="pedido-tipo">' + tipoLabel + '</span>' +
-                        '<div><i class="fas fa-calendar-alt"></i> ' + dataStr + '</div>' +
-                        '<div><i class="fas fa-users"></i> ' + (pedido.quantidade || 0) + ' pessoa(s)</div>' +
-                        '</div>' +
-                        '<div class="pedido-footer">' +
-                        '<div class="pedido-valor">R$ <span>' + valorStr + '</span></div>' +
-                        '<div style="display: flex; gap: 0.75rem; align-items: center;">' + docButtonHtml + payButtonHtml + '</div>' +
-                        '</div>' +
+                    // Participantes (Primeiro nome)
+                    var participantesHtml = '';
+                    if (pedido.itens && pedido.itens.length > 0) {
+                        participantesHtml = '<div class="participants-list">';
+                        pedido.itens.forEach(function(item) {
+                            var primeiroNome = (item.nomeAluno || 'Participante').split(' ')[0];
+                            participantesHtml += '<span class="participant-tag"><i class="fas fa-user-circle"></i> ' + primeiroNome + '</span>';
+                        });
+                        participantesHtml += '</div>';
+                    } else {
+                        participantesHtml = '<p class="text-secondary" style="font-size: 0.9rem;">Nenhum participante registrado</p>';
+                    }
+
+                    var cardHtml = 
+                        '<div class="pedido-card" id="pedido-' + pedido.id + '">' +
+                            '<div class="pedido-header-accordion" onclick="this.parentElement.classList.toggle(\'open\')">' +
+                                '<div class="pedido-header-main">' +
+                                    '<div class="pedido-accordion-icon"><i class="fas fa-chevron-down"></i></div>' +
+                                    '<div class="pedido-header-info">' +
+                                        '<h3 class="pedido-titulo">' + titulo + '</h3>' +
+                                        '<div class="pedido-meta">' +
+                                            '<span><i class="fas fa-calendar-alt"></i> ' + dataStr + '</span>' +
+                                            '<span><i class="fas fa-users"></i> ' + (pedido.quantidade || 0) + ' pessoa(s)</span>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="pedido-header-right">' +
+                                    '<div class="pedido-valor-lg">R$ ' + valorStr + '</div>' +
+                                    '<div class="pedido-status status-' + pedido.status + '">' + statusLabel + '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="pedido-details">' +
+                                '<div class="pedido-content-inner">' +
+                                    '<div class="details-grid">' +
+                                        '<div class="detail-item">' +
+                                            '<h4>Tipo de Viagem</h4>' +
+                                            '<p>' + tipoLabel + '</p>' +
+                                        '</div>' +
+                                        '<div class="detail-item">' +
+                                            '<h4>ID do Pedido</h4>' +
+                                            '<p>#' + pedido.id.substring(0, 8).toUpperCase() + '</p>' +
+                                        '</div>' +
+                                        '<div class="detail-item">' +
+                                            '<h4>Método de Pagamento</h4>' +
+                                            '<p>' + (pedido.metodoPagamento ? pedido.metodoPagamento.toUpperCase() : '-') + '</p>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="detail-item" style="margin-bottom: 2rem;">' +
+                                        '<h4>Participantes</h4>' +
+                                        participantesHtml +
+                                    '</div>' +
+                                    '<div class="pedido-actions-row">' +
+                                        '<div class="pedido-valor-detail">' +
+                                            '<span style="color: #999; font-size: 0.9rem;">Total do Pedido</span><br>' +
+                                            '<strong style="font-size: 1.4rem; color: #101010;">R$ ' + valorStr + '</strong>' +
+                                        '</div>' +
+                                        '<div style="display: flex; gap: 0.75rem; align-items: center;">' + 
+                                            docButtonHtml + payButtonHtml + 
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
                         '</div>';
+
+                    containerEl.innerHTML += cardHtml;
                 });
 
                 // Vincula handlers de download após renderizar todos os cards
