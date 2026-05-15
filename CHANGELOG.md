@@ -1,4 +1,26 @@
 # Changelog
+
+## 2026-05-14 - feat: comprovante de pagamento PDF, ajustes de segurança (CSP) e exibição de data da viagem
+
+### Arquivos Modificados
+- `api/src/server.ts` [Atualização da Content Security Policy para permitir GTM, FontAwesome e eventos inline]
+- `api/src/middleware/cliente-auth.middleware.ts` [Suporte a autenticação via token na query string (?token=...)]
+- `api/src/routes/pedido.routes.ts` [Nova rota GET para geração de comprovante de pagamento em PDF]
+- `api/public/cliente/js/pedidos.js` [Botão de download de comprovante anexando token dinâmico]
+- `api/public/portfolio-single.html` [Campo de 'Data da Viagem' no hero e grade de informações]
+- `api/public/js/portfolio-single.js` [Renderização da data formatada nos detalhes da excursão]
+- `api/public/js/portfolio-excursoes.js` [Novos 'pills' informativos (Data, Duração, Local) nos cards de listagem pública]
+- `api/public/cliente/js/pacotes-viagens.js` [Atualização dos cards na área do cliente com informações de data e local]
+- `api/public/cliente/excursao.html` [Inclusão de campos de data no detalhe interno da excursão]
+- `api/public/cliente/js/excursao.js` [Lógica de exibição de data na área logada]
+
+### Detalhes das Alterações
+- **Comprovante PDF**: Implementada a funcionalidade de download de comprovante para pedidos com status PAGO. O PDF é gerado no backend e enviado como anexo.
+- **Segurança Adaptativa**: Ajuste nas diretivas de CSP do Helmet para resolver bloqueios de scripts do Google Tag Manager e falhas em acordeons UI que dependiam de eventos `onclick` inline.
+- **Transparência de Datas**: Excursões convencionais agora exibem a data da viagem de forma clara e formatada em todas as interfaces, facilitando a decisão de compra do cliente.
+- **Cards Enriquecidos**: A listagem de pacotes recebeu um upgrade visual, exibindo ícones e informações rápidas (data, duração e destino) diretamente nos cards.
+
+---
 2: 
 3: ## 2026-05-11 - perf: otimização de performance e ajustes na interface de vagas
 4: 

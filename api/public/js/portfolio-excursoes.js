@@ -103,6 +103,16 @@ function renderExcursoes(excursoes) {
         var preco = ExcursaoManager.formatPrice(excursao.preco);
         var slug = encodeURIComponent(excursao.slug || '');
         var detailUrl = detailBase + '?slug=' + slug;
+        
+        // Formatação da data
+        var dataStr = 'A combinar';
+        if (excursao.dataExcursao) {
+            var d = new Date(excursao.dataExcursao);
+            if (!isNaN(d.getTime())) {
+                dataStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+            }
+        }
+
         return (
             '<div class="portfolio-block mix all ' + categoria + ' col-xl-4 col-lg-4 col-md-6 col-sm-12" data-categoria="' + categoria + '">' +
             '<a href="' + detailUrl + '" class="inner-box excursao-card-link" style="text-decoration: none; color: inherit;">' +
@@ -112,9 +122,17 @@ function renderExcursoes(excursoes) {
             '<div class="overlay">' +
             '<div class="more-link"><span class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></span></div>' +
             '<div class="inner">' +
-            '<div class="cat"><span>Viagens</span></div>' +
-            '<h5><span>' + escapeHtml(excursao.titulo) + '</span></h5>' +
-            '<div class="price" style="color: #ff5c00; font-weight: bold; margin-top: 0.5rem;">' + preco + '</div>' +
+            '<div class="cat"><span>' + escapeHtml(capitalizeFirst(categoria)) + '</span></div>' +
+            '<h5 style="margin-bottom: 10px;"><span>' + escapeHtml(excursao.titulo) + '</span></h5>' +
+            
+            // Informações extras solicitadas
+            '<div class="excursao-info-pills" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; font-size: 12px; color: #fff;">' +
+                '<span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;"><i class="fas fa-calendar-alt" style="margin-right: 5px; color: #ff5c00;"></i>' + dataStr + '</span>' +
+                '<span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;"><i class="fas fa-clock" style="margin-right: 5px; color: #ff5c00;"></i>' + (excursao.duracao || '-') + '</span>' +
+                '<span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;"><i class="fas fa-map-marker-alt" style="margin-right: 5px; color: #ff5c00;"></i>' + (excursao.local || '-') + '</span>' +
+            '</div>' +
+
+            '<div class="price" style="color: #ff5c00; font-weight: bold; font-size: 1.2rem;">' + preco + '</div>' +
             '</div></div></a></div>'
         );
     }).join('');

@@ -4,7 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-05-11) - perf: otimização de performance e ajustes na interface de vagas
+### Última atualização (2026-05-14) - feat: comprovante de pagamento PDF, segurança (CSP) e interface de datas
+- **api/src/routes/pedido.routes.ts** [Download de comprovante PDF para clientes]
+- **api/src/server.ts** [Ajustes de CSP para scripts externos e eventos inline]
+- **api/public/js/portfolio-excursoes.js** [Cards enriquecidos com Data, Duração e Local]
+- **api/public/cliente/js/pacotes-viagens.js** [Exibição de data e destino na área do cliente]
+
+Resumo: Implementada funcionalidade de download de comprovante em PDF para clientes logados. Ajustadas políticas de segurança (CSP) para habilitar o Google Tag Manager e corrigir falhas de UI em acordeons. Melhoria visual significativa em todas as listagens e detalhes de excursões, exibindo agora a data da viagem e localidade de forma clara.
+
+### Atualização anterior (2026-05-11) - perf: otimização de performance e ajustes na interface de vagas
 - **api/src/routes/public.routes.ts** [Otimização N+1 e redução de payload]
 - **api/src/routes/lista-alunos.routes.ts** [Agregação em lote para performance]
 - **api/public/cliente/js/excursao.js** [Interface de vagas esgotadas]

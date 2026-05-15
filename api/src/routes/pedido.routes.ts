@@ -28,6 +28,7 @@ import {
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 import { logger } from '../utils/logger';
 import { ExcursaoStatus, PedidoStatus } from '@prisma/client';
+import { gerarTemplateComprovante } from '../templates/comprovante-template';
 
 const router = Router();
 
@@ -582,6 +583,109 @@ router.get('/:id',
       });
     } catch (error) {
       logger.error('[Pedidos] Erro ao buscar detalhes do pedido', {
+        context: { 
+          error: error instanceof Error ? error.message : 'Unknown error',
+          pedidoId: req.params.id,
+          clienteId: req.cliente?.id
+        }
+      });
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [GET /api/cliente/pedidos/:id/comprovante]
+ * 
+ * Retorna o comprovante de inscrição em HTML (preparado para download PDF).
+ * Requer autenticação de cliente.
+ * Apenas pedidos com status PAGO podem gerar comprovante.
+ */
+router.get('/:id/comprovante',
+  clienteAuthMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const clienteId = req.cliente!.id;
+
+      logger.info('[Pedidos] Gerando comprovante para pedido', {
+        context: { pedidoId: id, clienteId }
+      });
+
+      const pedido = await prisma.pedido.findFirst({
+        where: {
+          id,
+          clienteId,
+          status: 'PAGO' // Somente status PAGO, conforme solicitado
+        },
+        include: {
+          excursaoPedagogica: true,
+          excursao: true,
+          itens: true,
+          cliente: true
+        }
+      });
+
+      if (!pedido) {
+        logger.warn('[Pedidos] Pedido não encontrado ou não está PAGO', {
+          context: { pedidoId: id, clienteId }
+        });
+        throw ApiError.notFound('Comprovante indisponível. O pedido precisa estar com pagamento confirmado.');
+      }
+
+      // Prepara dados para o template
+      const dadosResp = pedido.dadosResponsavelFinanceiro as any;
+      const html = gerarTemplateComprovante({
+        numeroPedido: pedido.id,
+        dataPedido: pedido.createdAt,
+        dataPagamento: pedido.dataPagamento,
+        nomeCliente: pedido.cliente.nome,
+        nomeProduto: pedido.excursaoPedagogica?.titulo || pedido.excursao?.titulo || 'Viagem',
+        codigoExcursao: pedido.excursaoPedagogica?.codigo || pedido.excursao?.slug || '-',
+        quantidade: pedido.quantidade,
+        valorUnitario: Number(pedido.valorUnitario),
+        valorTotal: Number(pedido.valorTotal),
+        metodoPagamento: pedido.metodoPagamento || '-',
+        observacoes: pedido.observacoes || undefined,
+        estudantes: pedido.itens.map(item => ({
+          nomeAluno: item.nomeAluno,
+          idadeAluno: item.idadeAluno,
+          dataNascimento: item.dataNascimento,
+          escolaAluno: item.escolaAluno,
+          serieAluno: item.serieAluno,
+          turma: item.turma,
+          unidadeColegio: item.unidadeColegio,
+          cpfAluno: item.cpfAluno,
+          rgAluno: item.rgAluno,
+          responsavel: item.responsavel,
+          telefoneResponsavel: item.telefoneResponsavel,
+          emailResponsavel: item.emailResponsavel,
+          alergiasCuidados: item.alergiasCuidados,
+          planoSaude: item.planoSaude,
+          medicamentosFebre: item.medicamentosFebre,
+          medicamentosAlergia: item.medicamentosAlergia,
+          observacoes: item.observacoes
+        })),
+        responsavelFinanceiro: dadosResp ? {
+          nome: dadosResp.nome || dadosResp.nomeCompleto || pedido.cliente.nome,
+          sobrenome: dadosResp.sobrenome || '',
+          cpf: dadosResp.cpf || '',
+          telefone: dadosResp.telefone || pedido.cliente.telefone || '',
+          email: dadosResp.email || pedido.cliente.email,
+          endereco: dadosResp.endereco || '',
+          numero: dadosResp.numero || '',
+          complemento: dadosResp.complemento || '',
+          bairro: dadosResp.bairro || '',
+          cidade: dadosResp.cidade || '',
+          estado: dadosResp.estado || '',
+          cep: dadosResp.cep || ''
+        } : undefined
+      });
+
+      res.setHeader('Content-Type', 'text/html');
+      res.send(html);
+    } catch (error) {
+      logger.error('[Pedidos] Erro ao gerar comprovante', {
         context: { 
           error: error instanceof Error ? error.message : 'Unknown error',
           pedidoId: req.params.id,

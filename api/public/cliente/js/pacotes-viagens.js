@@ -67,6 +67,16 @@
             const preco = ExcursaoManager.formatPrice(excursao.preco);
             const slug = encodeURIComponent(excursao.slug || '');
             const detailUrl = DETAIL_BASE + '?slug=' + slug;
+
+            // Formatação da data
+            let dataStr = 'A combinar';
+            if (excursao.dataExcursao) {
+                const d = new Date(excursao.dataExcursao);
+                if (!isNaN(d.getTime())) {
+                    dataStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+                }
+            }
+
             return (
                 '<div class="portfolio-block mix all ' + categoria + '" data-categoria="' + categoria + '">' +
                 '<a href="' + detailUrl + '" class="inner-box excursao-card-link" style="text-decoration: none; color: inherit;">' +
@@ -74,8 +84,16 @@
                 '<img src="' + image + '" alt="' + escapeHtml(excursao.titulo) + '" onerror="this.src=\'../images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg\'">' +
                 '</div>' +
                 '<div class="overlay">' +
-                '<div class="cat"><span>Viagens</span></div>' +
-                '<h5><span>' + escapeHtml(excursao.titulo) + '</span></h5>' +
+                '<div class="cat"><span>' + escapeHtml(categoria.charAt(0).toUpperCase() + categoria.slice(1)) + '</span></div>' +
+                '<h5 style="margin-bottom: 10px;"><span>' + escapeHtml(excursao.titulo) + '</span></h5>' +
+                
+                // Informações extras solicitadas
+                '<div class="excursao-info-pills" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; font-size: 11px; color: #fff;">' +
+                    '<span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;"><i class="fas fa-calendar-alt" style="margin-right: 4px; color: #ff5c00;"></i>' + dataStr + '</span>' +
+                    '<span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;"><i class="fas fa-clock" style="margin-right: 4px; color: #ff5c00;"></i>' + (excursao.duracao || '-') + '</span>' +
+                    '<span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;"><i class="fas fa-map-marker-alt" style="margin-right: 4px; color: #ff5c00;"></i>' + (excursao.local || '-') + '</span>' +
+                '</div>' +
+
                 '<div class="price">' + preco + '</div>' +
                 '</div></a></div>'
             );

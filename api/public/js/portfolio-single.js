@@ -95,6 +95,19 @@ function renderExcursao(excursao) {
     var local = document.getElementById('excursaoLocal');
     if (local) local.textContent = excursao.local || 'Angra dos Reis';
 
+    // Formata e exibe a data da excursão
+    var dataStr = 'A combinar';
+    if (excursao.dataExcursao) {
+        var d = new Date(excursao.dataExcursao);
+        if (!isNaN(d.getTime())) {
+            dataStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+    }
+    var dataEl = document.getElementById('excursaoData');
+    if (dataEl) dataEl.textContent = dataStr;
+    var infoDataEl = document.getElementById('infoData');
+    if (infoDataEl) infoDataEl.textContent = dataStr;
+
     var mainImage = document.getElementById('mainImage');
     if (mainImage) {
         if (excursao.imagemPrincipal) {
