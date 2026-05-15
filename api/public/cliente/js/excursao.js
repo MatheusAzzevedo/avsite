@@ -41,6 +41,20 @@
         if (subtitulo) subtitulo.textContent = exc.subtitulo || '';
         if (duracao) duracao.textContent = exc.duracao || 'Não informado';
         if (local) local.textContent = exc.local || 'Não informado';
+        
+        // Formata e exibe a data da excursão
+        let dataStr = 'A combinar';
+        if (exc.dataExcursao) {
+            const d = new Date(exc.dataExcursao);
+            if (!isNaN(d.getTime())) {
+                dataStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            }
+        }
+        const dataEl = document.getElementById('excursaoData');
+        if (dataEl) dataEl.textContent = dataStr;
+        const infoDataEl = document.getElementById('infoData');
+        if (infoDataEl) infoDataEl.textContent = dataStr;
+
         if (horario) horario.textContent = exc.horario || 'Não informado';
         if (preco) preco.textContent = 'R$ ' + exc.preco.toFixed(2).replace('.', ',');
         

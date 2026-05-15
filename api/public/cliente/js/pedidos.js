@@ -231,6 +231,13 @@
                         ? '<a href="' + docHref + '" target="_blank" rel="noopener" class="btn-download-doc"><i class="fas fa-download"></i> ' + docNome + '</a>'
                         : '';
                     
+                    var showComprovanteButton = pedido.status === 'PAGO';
+                    var comprovanteButtonHtml = '';
+                    if (showComprovanteButton) {
+                        var token = window.clienteAuth ? window.clienteAuth.getToken() : '';
+                        comprovanteButtonHtml = '<a href="/api/cliente/pedidos/' + pedido.id + '/comprovante?token=' + token + '" target="_blank" class="btn-comprovante"><i class="fas fa-file-pdf"></i> Comprovante</a>';
+                    }
+                    
                     var valorTotal = Number(pedido.valorTotal);
                     var valorStr = isNaN(valorTotal) ? '0,00' : valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
                     var dataStr = pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString('pt-BR') : '-';
@@ -291,8 +298,8 @@
                                             '<span style="color: #999; font-size: 0.9rem;">Total do Pedido</span><br>' +
                                             '<strong style="font-size: 1.4rem; color: #101010;">R$ ' + valorStr + '</strong>' +
                                         '</div>' +
-                                        '<div style="display: flex; gap: 0.75rem; align-items: center;">' + 
-                                            docButtonHtml + payButtonHtml + 
+                                        '<div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">' + 
+                                            docButtonHtml + payButtonHtml + comprovanteButtonHtml + 
                                         '</div>' +
                                     '</div>' +
                                 '</div>' +

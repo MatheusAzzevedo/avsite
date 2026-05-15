@@ -51,29 +51,33 @@ export async function clienteAuthMiddleware(
 ): Promise<void> {
   try {
     const authHeader = req.headers.authorization;
+    const queryToken = req.query.token as string;
 
     logger.info('[Cliente Auth] Verificando autenticação de cliente', {
       context: { 
         path: req.path, 
         method: req.method,
-        hasAuthHeader: !!authHeader 
+        hasAuthHeader: !!authHeader,
+        hasQueryToken: !!queryToken
       }
     });
 
-    if (!authHeader) {
+    let token: string | undefined;
+
+    if (authHeader) {
+      const [type, t] = authHeader.split(' ');
+      if (type === 'Bearer' && t) {
+        token = t;
+      }
+    } else if (queryToken) {
+      token = queryToken;
+    }
+
+    if (!token) {
       logger.warn('[Cliente Auth] Token não fornecido', {
         context: { path: req.path, ip: req.ip }
       });
       throw ApiError.unauthorized('Token não fornecido');
-    }
-
-    const [type, token] = authHeader.split(' ');
-
-    if (type !== 'Bearer' || !token) {
-      logger.warn('[Cliente Auth] Formato de token inválido', {
-        context: { path: req.path, type, hasToken: !!token }
-      });
-      throw ApiError.unauthorized('Formato de token inválido');
     }
 
     const jwtSecret = process.env.JWT_SECRET;
