@@ -61,6 +61,12 @@ router.get('/excursoes',
             slug: true,
             preco: true,
             categoria: true,
+            categorias: {
+              select: {
+                nome: true,
+                slug: true
+              }
+            },
             imagemCapa: true,
             vagas: true
           }
@@ -140,6 +146,7 @@ router.get('/excursoes/:slug',
           status: ExcursaoStatus.ATIVO
         },
         include: {
+          categorias: true,
           galeria: {
             orderBy: { ordem: 'asc' }
           }
@@ -181,7 +188,11 @@ router.get('/excursoes/categoria/:categoria',
 
       const excursoes = await prisma.excursao.findMany({
         where: {
-          categoria,
+          categorias: {
+            some: {
+              slug: categoria
+            }
+          },
           status: ExcursaoStatus.ATIVO
         },
         orderBy: { createdAt: 'desc' },
@@ -193,6 +204,12 @@ router.get('/excursoes/categoria/:categoria',
           preco: true,
           duracao: true,
           categoria: true,
+          categorias: {
+            select: {
+              nome: true,
+              slug: true
+            }
+          },
           imagemCapa: true,
           tags: true
         }
@@ -436,6 +453,12 @@ router.get('/excursoes-pedagogicas',
             slug: true,
             preco: true,
             categoria: true,
+            categorias: {
+              select: {
+                nome: true,
+                slug: true
+              }
+            },
             imagemCapa: true,
             vagas: true
           }
@@ -516,6 +539,7 @@ router.get('/excursoes-pedagogicas/:slug',
           status: ExcursaoStatus.ATIVO
         },
         include: {
+          categorias: true,
           galeria: {
             orderBy: { ordem: 'asc' }
           }
@@ -565,6 +589,7 @@ router.get('/excursoes-pedagogicas/codigo/:codigo',
           status: ExcursaoStatus.ATIVO
         },
         include: {
+          categorias: true,
           galeria: {
             orderBy: { ordem: 'asc' }
           }

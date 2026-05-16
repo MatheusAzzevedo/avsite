@@ -25,22 +25,34 @@ let currentExcursaoId = null;
 let galeriaImages = [];
 
 /**
- * Carrega categorias da API e preenche o select (nomes controlados pelo admin).
+ * Carrega categorias da API e renderiza checkboxes (nomes controlados pelo admin).
  */
 async function loadCategoriasSelect() {
-  const select = document.getElementById('excursaoCategoria');
-  if (!select) return;
+  const container = document.getElementById('categoriasContainer');
+  if (!container) return;
   try {
     const res = await apiRequest('/admin/categorias-excursao');
     const list = Array.isArray(res?.data) ? res.data : [];
-    select.innerHTML = list.length
-      ? list.map(function (c) { return '<option value="' + escapeAttr(c.slug) + '">' + escapeHtml(c.nome) + '</option>'; }).join('')
-      : '<option value="">Nenhuma categoria</option>';
+    
+    if (list.length === 0) {
+      container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem;">Nenhuma categoria encontrada.</p>';
+      return;
+    }
+
+    container.innerHTML = list.map(function(c) {
+      return `
+        <label class="checkbox-item">
+          <input type="checkbox" name="categorias" value="${escapeAttr(c.id)}" data-slug="${escapeAttr(c.slug)}">
+          <span>${escapeHtml(c.nome)}</span>
+        </label>
+      `;
+    }).join('');
   } catch (e) {
     console.error('[Excursão Editor] Erro ao carregar categorias:', e);
-    select.innerHTML = '<option value="">Erro ao carregar</option>';
+    container.innerHTML = '<p style="color: var(--danger-color); font-size: 0.875rem;">Erro ao carregar categorias.</p>';
   }
 }
+
 function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t == null ? '' : t; return d.innerHTML; }
 function escapeAttr(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
@@ -83,7 +95,17 @@ async function loadExcursao(excursaoId) {
     document.getElementById('excursaoSubtitulo').value = excursao.subtitulo || '';
     document.getElementById('excursaoPreco').value = excursao.preco || '';
     document.getElementById('excursaoDuracao').value = excursao.duracao || '';
-    document.getElementById('excursaoCategoria').value = excursao.categoria || '';
+    
+    // Categorias (checkboxes)
+    if (Array.isArray(excursao.categorias)) {
+      const selectedIds = excursao.categorias.map(c => c.id);
+      document.querySelectorAll('#categoriasContainer input[type="checkbox"]').forEach(checkbox => {
+        if (selectedIds.includes(checkbox.value)) {
+          checkbox.checked = true;
+        }
+      });
+    }
+
     document.getElementById('excursaoStatus').value = (excursao.status || 'ATIVO').toLowerCase();
     var dataExcursaoEl = document.getElementById('excursaoDataExcursao');
     if (dataExcursaoEl && excursao.dataExcursao) {
@@ -243,12 +265,14 @@ function getExcursaoData() {
         .filter((tag) => tag)
     : [];
 
+  const categoriaIds = Array.from(document.querySelectorAll('#categoriasContainer input[type="checkbox"]:checked')).map(cb => cb.value);
+
   return {
     titulo: document.getElementById('excursaoTitulo').value.trim(),
     subtitulo: document.getElementById('excursaoSubtitulo').value.trim(),
     preco: parseFloat(document.getElementById('excursaoPreco').value) || 0,
     duracao: document.getElementById('excursaoDuracao').value.trim(),
-    categoria: document.getElementById('excursaoCategoria').value,
+    categoriaIds: categoriaIds,
     status: document.getElementById('excursaoStatus').value,
     imagemCapa: document.getElementById('imagemCapaData').value,
     imagemPrincipal: document.getElementById('imagemPrincipalData').value,
@@ -292,9 +316,8 @@ function validateExcursao(excursaoData) {
     return false;
   }
 
-  if (!excursaoData.categoria) {
-    showNotification('A categoria é obrigatória.', 'error');
-    document.getElementById('excursaoCategoria').focus();
+  if (!excursaoData.categoriaIds || excursaoData.categoriaIds.length === 0) {
+    showNotification('Selecione pelo menos uma categoria.', 'error');
     return false;
   }
 
@@ -475,14 +498,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Mobile sidebar toggle
   if (window.innerWidth <= 768) {
-    document.getElementById('sidebarToggle').style.display = 'inline-block';
+    const toggle = document.getElementById('sidebarToggle');
+    if (toggle) toggle.style.display = 'inline-block';
   }
 
   window.addEventListener('resize', function () {
-    if (window.innerWidth <= 768) {
-      document.getElementById('sidebarToggle').style.display = 'inline-block';
-    } else {
-      document.getElementById('sidebarToggle').style.display = 'none';
+    const toggle = document.getElementById('sidebarToggle');
+    if (toggle) {
+      if (window.innerWidth <= 768) {
+        toggle.style.display = 'inline-block';
+      } else {
+        toggle.style.display = 'none';
+      }
     }
   });
 });
