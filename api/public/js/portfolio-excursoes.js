@@ -99,7 +99,23 @@ function renderExcursoes(excursoes) {
     var detailBase = 'portfolio-single.html';
     grid.innerHTML = excursoes.map(function(excursao) {
         var image = excursao.imagemCapa || 'images/background/Queda de agua.webp';
-        var categoria = excursao.categoria || 'natureza';
+        
+        // Suporte a múltiplas categorias
+        var categorias = Array.isArray(excursao.categorias) ? excursao.categorias : [];
+        var categoriasHtml = categorias.map(function(c, index) {
+            var separator = index > 0 ? '<span style="margin: 0 5px; opacity: 0.5;">|</span>' : '';
+            return separator + '<span>' + escapeHtml(capitalizeFirst(c.nome)) + '</span>';
+        }).join('');
+        
+        // Fallback para legado
+        if (categoriasHtml === '' && excursao.categoria) {
+            categoriasHtml = '<span>' + escapeHtml(capitalizeFirst(excursao.categoria)) + '</span>';
+        } else if (categoriasHtml === '') {
+            categoriasHtml = '<span>Geral</span>';
+        }
+
+        var categoriasClasses = categorias.map(function(c) { return c.slug; }).join(' ') || excursao.categoria || '';
+        
         var preco = ExcursaoManager.formatPrice(excursao.preco);
         var slug = encodeURIComponent(excursao.slug || '');
         var detailUrl = detailBase + '?slug=' + slug;
@@ -114,7 +130,7 @@ function renderExcursoes(excursoes) {
         }
 
         return (
-            '<div class="portfolio-block mix all ' + categoria + ' col-xl-4 col-lg-4 col-md-6 col-sm-12" data-categoria="' + categoria + '">' +
+            '<div class="portfolio-block mix all ' + categoriasClasses + ' col-xl-4 col-lg-4 col-md-6 col-sm-12" data-categorias=\'' + JSON.stringify(categorias.map(c => c.slug)) + '\'>' +
             '<a href="' + detailUrl + '" class="inner-box excursao-card-link" style="text-decoration: none; color: inherit;">' +
             '<div class="image excursao-image-4-5">' +
             '<img src="' + image + '" alt="' + escapeHtml(excursao.titulo) + '" onerror="this.src=\'images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg\'">' +
@@ -122,7 +138,7 @@ function renderExcursoes(excursoes) {
             '<div class="overlay">' +
             '<div class="more-link"><span class="theme-btn"><i class="fa-solid fa-bars-staggered"></i></span></div>' +
             '<div class="inner">' +
-            '<div class="cat"><span>' + escapeHtml(capitalizeFirst(categoria)) + '</span></div>' +
+            '<div class="cat">' + categoriasHtml + '</div>' +
             '<h5 style="margin-bottom: 10px;"><span>' + escapeHtml(excursao.titulo) + '</span></h5>' +
             
             // Informações extras solicitadas
@@ -131,7 +147,7 @@ function renderExcursoes(excursoes) {
                 '<span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;"><i class="fas fa-clock" style="margin-right: 5px; color: #ff5c00;"></i>' + (excursao.duracao || '-') + '</span>' +
                 '<span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;"><i class="fas fa-map-marker-alt" style="margin-right: 5px; color: #ff5c00;"></i>' + (excursao.local || '-') + '</span>' +
             '</div>' +
-
+            
             '<div class="price" style="color: #ff5c00; font-weight: bold; font-size: 1.2rem;">' + preco + '</div>' +
             '</div></div></a></div>'
         );
@@ -157,8 +173,15 @@ function filterExcursoes(categoria) {
 
     var items = document.querySelectorAll('.portfolio-block');
     items.forEach(function(item) {
-        var itemCategoria = item.dataset.categoria;
-        if (categoria === 'all' || itemCategoria === categoria) {
+        var itemCategorias = [];
+        try {
+            itemCategorias = JSON.parse(item.dataset.categorias || '[]');
+        } catch(e) {
+            // Fallback para quando o dataset ainda é o formato antigo
+            if (item.dataset.categoria) itemCategorias = [item.dataset.categoria];
+        }
+
+        if (categoria === 'all' || itemCategorias.includes(categoria)) {
             item.style.display = 'block';
             item.style.opacity = '1';
         } else {
@@ -170,8 +193,13 @@ function filterExcursoes(categoria) {
     });
 
     var visibleItems = Array.from(items).filter(function(item) {
-        var itemCategoria = item.dataset.categoria;
-        return categoria === 'all' || itemCategoria === categoria;
+        var itemCategorias = [];
+        try {
+            itemCategorias = JSON.parse(item.dataset.categorias || '[]');
+        } catch(e) {
+            if (item.dataset.categoria) itemCategorias = [item.dataset.categoria];
+        }
+        return categoria === 'all' || itemCategorias.includes(categoria);
     });
 
     var emptyState = document.getElementById('emptyState');

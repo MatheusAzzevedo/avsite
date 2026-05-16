@@ -4,7 +4,16 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-05-14) - feat: comprovante de pagamento PDF, segurança (CSP) e interface de datas
+### Última atualização (2026-05-16) - feat: sistema de múltiplas categorias (muito-para-muitos)
+- **api/prisma/schema.prisma** [Transição para relacionamento many-to-many em categorias]
+- **api/src/routes/admin.routes.ts** [Logica de persistência de múltiplas categorias]
+- **api/public/admin/js/excursao-editor.js** [Interface de checkboxes para seleção múltipla]
+- **api/public/js/portfolio-excursoes.js** [Renderização de múltiplas tags nos cards do site]
+- **api/public/cliente/js/pacotes-viagens.js** [Suporte a categorias múltiplas no portal do cliente]
+
+Resumo: Migração completa do sistema de categorias de um campo de texto fixo para um relacionamento relacional flexível. Agora uma excursão pode pertencer a múltiplas categorias simultaneamente. A interface administrativa foi atualizada para seleção via checkboxes e o frontend agora exibe todas as etiquetas associadas de forma dinâmica e elegante.
+
+### Atualização anterior (2026-05-14) - feat: comprovante de pagamento PDF, segurança (CSP) e interface de datas
 - **api/src/routes/pedido.routes.ts** [Download de comprovante PDF para clientes]
 - **api/src/server.ts** [Ajustes de CSP para scripts externos e eventos inline]
 - **api/public/js/portfolio-excursoes.js** [Cards enriquecidos com Data, Duração e Local]
@@ -37,8 +46,3 @@ Resumo: Implementado sistema de gestão de capacidade. É possível definir limi
 - **api/public/admin/js/excursoes-pedagogicas.js** [Consumo de API paginada e debouncing]
 
 Resumo: Implementada paginação server-side e filtragem dinâmica para excursões pedagógicas, processando filtros de localidade, data e valor via Prisma para máxima performance.
-
-### Versão anterior (2026-04-27) - feat: adicionar CPF e endereço do responsável na extração completa
-- **api/src/routes/lista-alunos.routes.ts** [Inclusão de campos de responsável no Excel]
-
-Resumo: Atualização do relatório de extração completa para incluir dados detalhados do responsável financeiro, facilitando a logística e segurança.

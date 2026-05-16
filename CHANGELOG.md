@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-05-16 - feat: sistema de múltiplas categorias (relacionamento many-to-many)
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Novo modelo `CategoriaExcursao` e relações many-to-many com Excursao e ExcursaoPedagogica]
+- `api/src/routes/admin.routes.ts` [Atualização das rotas de salvar/editar para suportar `categoriaIds`]
+- `api/src/routes/public.routes.ts` [Inclusão de `categorias` nos retornos de listagem e detalhe]
+- `api/public/admin/js/excursao-editor.js` [Refatoração da UI para seleção múltipla de categorias (checkboxes)]
+- `api/public/js/portfolio-excursoes.js` [Renderização de múltiplas etiquetas de categoria nos cards públicos]
+- `api/public/js/portfolio-single.js` [Exibição de todas as categorias na página de detalhes]
+- `api/public/cliente/js/pacotes-viagens.js` [Suporte a múltiplas categorias nos cards da área do cliente]
+- `api/public/cliente/js/excursao.js` [Exibição dinâmica de categorias no detalhe da excursão do cliente]
+- `api/src/scripts/migrate-categories.ts` [Script de migração de dados legados para o novo formato relacional]
+
+### Detalhes das Alterações
+- **Migração Relacional**: Transição do campo de categoria de uma string simples para um relacionamento many-to-many, permitindo que uma excursão pertença a várias categorias simultaneamente (ex: Natureza + Internacional).
+- **Interface Administrativa**: Substituído o seletor único por uma lista de checkboxes dinâmica, carregada do banco de dados, facilitando a gestão de tags.
+- **Renderização Dinâmica**: Implementada lógica de separadores nos cards do site e portal do cliente para exibição elegante de múltiplas categorias.
+- **Resiliência de Dados**: Mantida compatibilidade com o campo `categoria` antigo (marcado como @deprecated) para garantir que o site continue funcionando durante a transição.
+- **Infraestrutura**: Aplicadas migrações e baselining no banco de dados de produção (Railway) via Prisma.
+
+---
+
 ## 2026-05-14 - feat: comprovante de pagamento PDF, ajustes de segurança (CSP) e exibição de data da viagem
 
 ### Arquivos Modificados
@@ -21,24 +43,24 @@
 - **Cards Enriquecidos**: A listagem de pacotes recebeu um upgrade visual, exibindo ícones e informações rápidas (data, duração e destino) diretamente nos cards.
 
 ---
-2: 
-3: ## 2026-05-11 - perf: otimização de performance e ajustes na interface de vagas
-4: 
-5: ### Arquivos Modificados
-6: - `api/src/routes/public.routes.ts` [Otimização N+1 em listagens públicas e redução de payload]
-7: - `api/src/routes/lista-alunos.routes.ts` [Otimização de agregação em lote para listagem administrativa de alunos]
-8: - `api/src/routes/pedido.routes.ts` [Redução de payload em buscas por código e listagem de pedidos]
-9: - `api/public/cliente/js/excursao.js` [Ajuste visual: oculta seletor e mostra aviso "Inscrições Encerradas" quando sem vagas]
-10: 
-11: Resumo: Implementação de otimizações críticas de performance no backend, eliminando gargalos N+1 e reduzindo o tráfego de dados. Melhora na experiência do usuário na área do cliente com feedback visual claro sobre disponibilidade de vagas.
-12: 
-13: ### Detalhes das Alterações
-14: - **Otimização N+1**: Substituídas consultas individuais de vagas por agregação em lote (`groupBy` e contagem agregada) em todas as listagens principais.
-15: - **Payload Minimizado**: Implementado `select` seletivo em rotas críticas, removendo campos pesados e desnecessários (galerias, descrições longas) de listagens.
-16: - **Interface de Vagas**: Quando uma excursão atinge o limite de vagas na área do cliente, o seletor de quantidade é removido e substituído pelo status "Inscrições Encerradas".
-17: - **Performance de Busca**: Busca por código de excursão pedagógica agora é 60-80% mais rápida devido ao refinamento da query e remoção de `includes` redundantes.
-18: 
-19: ---
+
+## 2026-05-11 - perf: otimização de performance e ajustes na interface de vagas
+
+### Arquivos Modificados
+- `api/src/routes/public.routes.ts` [Otimização N+1 em listagens públicas e redução de payload]
+- `api/src/routes/lista-alunos.routes.ts` [Otimização de agregação em lote para listagem administrativa de alunos]
+- `api/src/routes/pedido.routes.ts` [Redução de payload em buscas por código e listagem de pedidos]
+- `api/public/cliente/js/excursao.js` [Ajuste visual: oculta seletor e mostra aviso "Inscrições Encerradas" quando sem vagas]
+
+Resumo: Implementação de otimizações críticas de performance no backend, eliminando gargalos N+1 e reduzindo o tráfego de dados. Melhora na experiência do usuário na área do cliente com feedback visual claro sobre disponibilidade de vagas.
+
+### Detalhes das Alterações
+- **Otimização N+1**: Substituídas consultas individuais de vagas por agregação em lote (`groupBy` e contagem agregada) em todas as listagens principais.
+- **Payload Minimizado**: Implementado `select` seletivo em rotas críticas, removendo campos pesados e desnecessários (galerias, descrições longas) de listagens.
+- **Interface de Vagas**: Quando uma excursão atinge o limite de vagas na área do cliente, o seletor de quantidade é removido e substituído pelo status "Inscrições Encerradas".
+- **Performance de Busca**: Busca por código de excursão pedagógica agora é 60-80% mais rápida devido ao refinamento da query e remoção de `includes` redundantes.
+
+---
 
 ## 2026-05-09 - feat: dashboard de alunos, exportação escolar e CI/CD
 

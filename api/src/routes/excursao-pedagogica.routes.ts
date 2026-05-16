@@ -125,6 +125,13 @@ router.get('/',
             preco: true,
             duracao: true,
             categoria: true,
+            categorias: {
+              select: {
+                id: true,
+                nome: true,
+                slug: true
+              }
+            },
             status: true,
             imagemCapa: true,
             local: true,
@@ -214,6 +221,7 @@ router.get('/:id',
       const excursao = await prisma.excursaoPedagogica.findUnique({
         where: { id },
         include: {
+          categorias: true,
           galeria: {
             orderBy: { ordem: 'asc' }
           }
@@ -303,7 +311,7 @@ router.post('/',
 
       const slug = generateUniqueSlug(baseSlug, existingSlugs);
 
-      const { galeria, codigo, destino, dataDestino, dataFimInscricoes, ...excursaoData } = data;
+      const { galeria, categoriaIds, codigo, destino, dataDestino, dataFimInscricoes, ...excursaoData } = data;
 
       const parseDateStr = (s: unknown): Date | undefined => {
         if (s == null || String(s).trim() === '') return undefined;
@@ -322,6 +330,9 @@ router.post('/',
           dataFimInscricoes: dataFimInscricoesValue,
           slug,
           authorId: req.user!.id,
+          categorias: categoriaIds?.length ? {
+            connect: categoriaIds.map((id: string) => ({ id }))
+          } : undefined,
           galeria: galeria?.length ? {
             create: galeria.map((url: string, index: number) => ({
               url,
@@ -450,7 +461,7 @@ router.put('/:id',
         slug = generateUniqueSlug(baseSlug, existingSlugs);
       }
 
-      const { galeria, dataDestino, dataFimInscricoes, ...excursaoData } = data;
+      const { galeria, categoriaIds, dataDestino, dataFimInscricoes, ...excursaoData } = data;
       const updateData: Record<string, unknown> = { ...excursaoData, slug };
       if (dataDestino != null && String(dataDestino).trim() !== '') {
         const str = String(dataDestino).trim();
@@ -464,6 +475,11 @@ router.put('/:id',
         } else if (/^\d{4}-\d{2}-\d{2}$/.test(String(dataFimInscricoes).trim())) {
           updateData.dataFimInscricoes = new Date(String(dataFimInscricoes).trim() + 'T12:00:00.000Z');
         }
+      }
+      if (categoriaIds !== undefined) {
+        updateData.categorias = {
+          set: categoriaIds.map((id: string) => ({ id }))
+        };
       }
 
       const excursao = await prisma.excursaoPedagogica.update({

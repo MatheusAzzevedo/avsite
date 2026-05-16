@@ -6,6 +6,11 @@
 (function () {
     let excursao = null;
 
+    function capitalizeFirst(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     function exibirExcursao(exc) {
         // Elementos gerais
         const mainImage = document.getElementById('mainImage');
@@ -33,6 +38,17 @@
         const btnAumentar = document.getElementById('btnAumentar');
         const loadingState = document.getElementById('loadingState');
         const contentDiv = document.getElementById('excursaoContent');
+
+        // Categorias
+        var categorias = Array.isArray(exc.categorias) ? exc.categorias : [];
+        var categoriasTexto = categorias.map(function(c) { return capitalizeFirst(c.nome); }).join(', ');
+        
+        // Fallback para legado
+        if (categoriasTexto === '' && exc.categoria) {
+            categoriasTexto = capitalizeFirst(exc.categoria);
+        } else if (categoriasTexto === '') {
+            categoriasTexto = 'Pedagógica';
+        }
 
         // Preencher dados
         if (mainImage) mainImage.src = exc.imagemCapa || '/images/default.jpg';
@@ -65,6 +81,9 @@
         if (infoLocal) infoLocal.textContent = exc.local || 'Não informado';
         if (infoHorario) infoHorario.textContent = exc.horario || 'Não informado';
         if (infoDuracao) infoDuracao.textContent = exc.duracao || 'Não informado';
+
+        const infoCat = document.getElementById('infoCategoria');
+        if (infoCat) infoCat.textContent = categoriasTexto;
 
         // Documento para download
         const docContainer = document.getElementById('documentoDownloadContainer');

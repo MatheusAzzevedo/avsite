@@ -90,8 +90,20 @@ function renderExcursao(excursao) {
     if (subtitulo) subtitulo.textContent = excursao.subtitulo || '';
     var duracao = document.getElementById('excursaoDuracao');
     if (duracao) duracao.textContent = excursao.duracao || 'Consulte';
+    
+    // Categorias
+    var categorias = Array.isArray(excursao.categorias) ? excursao.categorias : [];
+    var categoriasTexto = categorias.map(function(c) { return capitalizeFirst(c.nome); }).join(', ');
+    
+    // Fallback para legado
+    if (categoriasTexto === '' && excursao.categoria) {
+        categoriasTexto = capitalizeFirst(excursao.categoria);
+    } else if (categoriasTexto === '') {
+        categoriasTexto = 'Geral';
+    }
+    
     var cat = document.getElementById('excursaoCategoria');
-    if (cat) cat.textContent = capitalizeFirst(excursao.categoria);
+    if (cat) cat.textContent = categoriasTexto;
     var local = document.getElementById('excursaoLocal');
     if (local) local.textContent = excursao.local || 'Angra dos Reis';
 
@@ -160,7 +172,7 @@ function renderExcursao(excursao) {
     var infoDuracao = document.getElementById('infoDuracao');
     if (infoDuracao) infoDuracao.textContent = excursao.duracao || 'Consulte';
     var infoCat = document.getElementById('infoCategoria');
-    if (infoCat) infoCat.textContent = capitalizeFirst(excursao.categoria);
+    if (infoCat) infoCat.textContent = categoriasTexto;
 
     var tagsContainer = document.getElementById('excursaoTags');
     if (tagsContainer) {
@@ -169,7 +181,7 @@ function renderExcursao(excursao) {
                 return '<span class="tag">' + escapeHtml(tag) + '</span>';
             }).join('');
         } else {
-            tagsContainer.innerHTML = '<span class="tag">' + capitalizeFirst(excursao.categoria) + '</span>';
+            tagsContainer.innerHTML = '<span class="tag">' + categoriasTexto + '</span>';
         }
     }
 

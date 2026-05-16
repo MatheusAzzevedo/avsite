@@ -11,6 +11,11 @@
     let allExcursoes = [];
     const DETAIL_BASE = '../portfolio-single.html';
 
+    function capitalizeFirst(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     function escapeHtml(text) {
         if (!text) return '';
         const div = document.createElement('div');
@@ -63,7 +68,23 @@
         grid.innerHTML = excursoes.map(function (excursao) {
             let image = excursao.imagemCapa || 'images/background/Queda de agua.webp';
             if (image.startsWith('images/')) image = '../' + image;
-            const categoria = excursao.categoria || 'natureza';
+            
+            // Suporte a múltiplas categorias
+            var categorias = Array.isArray(excursao.categorias) ? excursao.categorias : [];
+            var categoriasHtml = categorias.map(function(c, index) {
+                var separator = index > 0 ? '<span style="margin: 0 5px; opacity: 0.5;">|</span>' : '';
+                return separator + '<span>' + escapeHtml(capitalizeFirst(c.nome)) + '</span>';
+            }).join('');
+            
+            // Fallback para legado
+            if (categoriasHtml === '' && excursao.categoria) {
+                categoriasHtml = '<span>' + escapeHtml(capitalizeFirst(excursao.categoria)) + '</span>';
+            } else if (categoriasHtml === '') {
+                categoriasHtml = '<span>Geral</span>';
+            }
+
+            var categoriasClasses = categorias.map(function(c) { return c.slug; }).join(' ') || excursao.categoria || '';
+
             const preco = ExcursaoManager.formatPrice(excursao.preco);
             const slug = encodeURIComponent(excursao.slug || '');
             const detailUrl = DETAIL_BASE + '?slug=' + slug;
@@ -78,13 +99,13 @@
             }
 
             return (
-                '<div class="portfolio-block mix all ' + categoria + '" data-categoria="' + categoria + '">' +
+                '<div class="portfolio-block mix all ' + categoriasClasses + '" data-categorias=\'' + JSON.stringify(categorias.map(c => c.slug)) + '\'>' +
                 '<a href="' + detailUrl + '" class="inner-box excursao-card-link" style="text-decoration: none; color: inherit;">' +
                 '<div class="image excursao-image-4-5">' +
                 '<img src="' + image + '" alt="' + escapeHtml(excursao.titulo) + '" onerror="this.src=\'../images/Imagens%20para%20o%20site/IMG-20251022-WA0002.jpg\'">' +
                 '</div>' +
                 '<div class="overlay">' +
-                '<div class="cat"><span>' + escapeHtml(categoria.charAt(0).toUpperCase() + categoria.slice(1)) + '</span></div>' +
+                '<div class="cat">' + categoriasHtml + '</div>' +
                 '<h5 style="margin-bottom: 10px;"><span>' + escapeHtml(excursao.titulo) + '</span></h5>' +
                 
                 // Informações extras solicitadas
@@ -93,7 +114,7 @@
                     '<span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;"><i class="fas fa-clock" style="margin-right: 4px; color: #ff5c00;"></i>' + (excursao.duracao || '-') + '</span>' +
                     '<span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;"><i class="fas fa-map-marker-alt" style="margin-right: 4px; color: #ff5c00;"></i>' + (excursao.local || '-') + '</span>' +
                 '</div>' +
-
+                
                 '<div class="price">' + preco + '</div>' +
                 '</div></a></div>'
             );
@@ -112,8 +133,14 @@
 
         const items = document.querySelectorAll('.portfolio-block');
         items.forEach(function (item) {
-            const itemCategoria = item.dataset.categoria;
-            if (categoria === 'all' || itemCategoria === categoria) {
+            let itemCategorias = [];
+            try {
+                itemCategorias = JSON.parse(item.dataset.categorias || '[]');
+            } catch(e) {
+                if (item.dataset.categoria) itemCategorias = [item.dataset.categoria];
+            }
+
+            if (categoria === 'all' || itemCategorias.includes(categoria)) {
                 item.style.display = 'block';
                 item.style.opacity = '1';
             } else {
@@ -125,8 +152,13 @@
         });
 
         const visibleItems = Array.from(items).filter(function (item) {
-            const itemCategoria = item.dataset.categoria;
-            return categoria === 'all' || itemCategoria === categoria;
+            let itemCategorias = [];
+            try {
+                itemCategorias = JSON.parse(item.dataset.categorias || '[]');
+            } catch(e) {
+                if (item.dataset.categoria) itemCategorias = [item.dataset.categoria];
+            }
+            return categoria === 'all' || itemCategorias.includes(categoria);
         });
 
         const emptyState = document.getElementById('emptyState');

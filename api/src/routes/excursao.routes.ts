@@ -88,6 +88,13 @@ router.get('/',
             preco: true,
             duracao: true,
             categoria: true,
+            categorias: {
+              select: {
+                id: true,
+                nome: true,
+                slug: true
+              }
+            },
             status: true,
             imagemCapa: true,
             local: true,
@@ -172,6 +179,7 @@ router.get('/:id',
       const excursao = await prisma.excursao.findUnique({
         where: { id },
         include: {
+          categorias: true,
           galeria: {
             orderBy: { ordem: 'asc' }
           }
@@ -226,8 +234,8 @@ router.post('/',
 
       const slug = generateUniqueSlug(baseSlug, existingSlugs);
 
-      // Extrai galeria e trata dataExcursao
-      const { galeria, dataExcursao, ...excursaoData } = data;
+      // Extrai galeria, categoriaIds e trata dataExcursao
+      const { galeria, categoriaIds, dataExcursao, ...excursaoData } = data;
       const parseDateStr = (s: unknown): Date | undefined => {
         if (s == null || String(s).trim() === '') return undefined;
         const str = String(s).trim();
@@ -241,6 +249,9 @@ router.post('/',
           dataExcursao: parseDateStr(dataExcursao),
           slug,
           authorId: req.user!.id,
+          categorias: categoriaIds?.length ? {
+            connect: categoriaIds.map((id: string) => ({ id }))
+          } : undefined,
           galeria: galeria?.length ? {
             create: galeria.map((url: string, index: number) => ({
               url,
@@ -351,8 +362,8 @@ router.put('/:id',
         slug = generateUniqueSlug(baseSlug, existingSlugs);
       }
 
-      // Extrai galeria e trata dataExcursao
-      const { galeria, dataExcursao, ...excursaoData } = data;
+      // Extrai galeria, categoriaIds e trata dataExcursao
+      const { galeria, categoriaIds, dataExcursao, ...excursaoData } = data;
       const parseDateStr = (s: unknown): Date | null | undefined => {
         if (s == null) return undefined;
         if (String(s).trim() === '') return null;
@@ -363,6 +374,11 @@ router.put('/:id',
       const updatePayload: Record<string, unknown> = { ...excursaoData, slug };
       if (dataExcursao !== undefined) {
         updatePayload.dataExcursao = parseDateStr(dataExcursao);
+      }
+      if (categoriaIds !== undefined) {
+        updatePayload.categorias = {
+          set: categoriaIds.map((id: string) => ({ id }))
+        };
       }
 
       // Atualiza excursão

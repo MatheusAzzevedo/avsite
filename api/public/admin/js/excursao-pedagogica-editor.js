@@ -18,7 +18,41 @@ let isEditingPedagogica = false;
 let currentExcursaoPedagogicaId = null;
 let galeriaImagesPedagogica = [];
 
+/**
+ * Carrega categorias da API e renderiza checkboxes.
+ */
+async function loadCategoriasSelectPedagogica() {
+  const container = document.getElementById('categoriasContainer');
+  if (!container) return;
+  try {
+    const res = await apiRequest('/admin/categorias-excursao');
+    const list = Array.isArray(res?.data) ? res.data : [];
+    
+    if (list.length === 0) {
+      container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem;">Nenhuma categoria encontrada.</p>';
+      return;
+    }
+
+    container.innerHTML = list.map(function(c) {
+      return `
+        <label class="checkbox-item">
+          <input type="checkbox" name="categorias" value="${escapeAttr(c.id)}" data-slug="${escapeAttr(c.slug)}">
+          <span>${escapeHtml(c.nome)}</span>
+        </label>
+      `;
+    }).join('');
+  } catch (e) {
+    console.error('[Excursão Pedagógica Editor] Erro ao carregar categorias:', e);
+    container.innerHTML = '<p style="color: var(--danger-color); font-size: 0.875rem;">Erro ao carregar categorias.</p>';
+  }
+}
+
+function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t == null ? '' : t; return d.innerHTML; }
+function escapeAttr(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
 async function initEditorPedagogica() {
+  await loadCategoriasSelectPedagogica();
+
   const params = new URLSearchParams(window.location.search);
   const excursaoId = params.get('id');
 
@@ -51,7 +85,17 @@ async function loadExcursaoPedagogica(excursaoId) {
     document.getElementById('excursaoSubtitulo').value = excursao.subtitulo || '';
     document.getElementById('excursaoPreco').value = excursao.preco || '';
     document.getElementById('excursaoDuracao').value = excursao.duracao || '';
-    document.getElementById('excursaoCategoria').value = excursao.categoria || '';
+    
+    // Categorias (checkboxes)
+    if (Array.isArray(excursao.categorias)) {
+      const selectedIds = excursao.categorias.map(c => c.id);
+      document.querySelectorAll('#categoriasContainer input[type="checkbox"]').forEach(checkbox => {
+        if (selectedIds.includes(checkbox.value)) {
+          checkbox.checked = true;
+        }
+      });
+    }
+
     document.getElementById('excursaoStatus').value = (excursao.status || 'ATIVO').toLowerCase();
     document.getElementById('excursaoDescricao').innerHTML = excursao.descricao || '';
     document.getElementById('excursaoInclusos').value = excursao.inclusos || '';
@@ -235,13 +279,15 @@ function getExcursaoPedagogicaData() {
         })
     : [];
 
+  const categoriaIds = Array.from(document.querySelectorAll('#categoriasContainer input[type="checkbox"]:checked')).map(cb => cb.value);
+
   return {
     codigo: document.getElementById('excursaoCodigo').value.trim(),
     titulo: document.getElementById('excursaoTitulo').value.trim(),
     subtitulo: document.getElementById('excursaoSubtitulo').value.trim(),
     preco: parseFloat(document.getElementById('excursaoPreco').value) || 0,
     duracao: document.getElementById('excursaoDuracao').value.trim(),
-    categoria: document.getElementById('excursaoCategoria').value,
+    categoriaIds: categoriaIds,
     status: document.getElementById('excursaoStatus').value,
     imagemCapa: document.getElementById('imagemCapaData').value,
     imagemPrincipal: document.getElementById('imagemPrincipalData').value,
@@ -299,9 +345,8 @@ function validateExcursaoPedagogica(data) {
     document.getElementById('excursaoPreco').focus();
     return false;
   }
-  if (!data.categoria) {
-    showNotificationPedagogica('A categoria é obrigatória.', 'error');
-    document.getElementById('excursaoCategoria').focus();
+  if (!data.categoriaIds || data.categoriaIds.length === 0) {
+    showNotificationPedagogica('Selecione pelo menos uma categoria.', 'error');
     return false;
   }
   return true;
