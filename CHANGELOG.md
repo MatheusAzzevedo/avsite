@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-05-19 - feat: sistema de equipe (CRUD no Admin e exibição na página Sobre Nós)
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Adicionado modelo `Equipe`]
+- `api/src/routes/equipe.routes.ts` [Rotas CRUD administrativas para equipe]
+- `api/src/routes/public.routes.ts` [Rota pública para listar membros ativos]
+- `api/src/server.ts` [Registro das novas rotas]
+- `api/public/admin/equipe.html` [Tela de gerenciamento da equipe]
+- `api/public/admin/js/equipe.js` [Lógica de listagem e formulário de equipe]
+- `api/public/about.html` [Seção de equipe e script de carregamento no site público]
+- `about.html` [Replicação da seção de equipe no arquivo da raiz]
+- `api/public/admin/*.html` [Adicionado link de Equipe no menu lateral de 13 arquivos]
+
+### Detalhes das Alterações
+- **Banco de Dados**: Criação do modelo `Equipe` para persistir dados dos membros (Nome, Data de Nascimento, Função, Ativo, Foto).
+- **Interface Admin**: Nova tela para gerenciamento completo (CRUD) dos membros, com modal de cadastro e upload de imagem.
+- **Integração Pública**: Exibição dos membros ativos na página Sobre Nós, com layout em grid e carregamento assíncrono.
+- **Consistência do Menu**: Atualização de todas as telas do admin para incluir o acesso à nova funcionalidade.
+
+---
+
 ## 2026-05-16 - feat: sistema de múltiplas categorias (relacionamento many-to-many)
 
 ### Arquivos Modificados

@@ -654,4 +654,36 @@ router.get('/categorias',
   }
 );
 
+// ===========================================
+// EQUIPE PÚBLICA
+// ===========================================
+
+/**
+ * GET /api/public/equipe
+ * Lista membros da equipe ativos
+ */
+router.get('/equipe',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const equipe = await prisma.equipe.findMany({
+        where: { ativo: true },
+        orderBy: { nome: 'asc' },
+        select: {
+          id: true,
+          nome: true,
+          funcao: true,
+          fotoPerfil: true
+        }
+      });
+
+      res.json({
+        success: true,
+        data: equipe
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default router;

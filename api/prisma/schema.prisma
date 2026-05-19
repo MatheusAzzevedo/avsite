@@ -403,3 +403,20 @@ model ItemPedido {
   @@index([pedidoId])
   @@map("itens_pedido")
 }
+
+// ===========================================
+// MODELO DE EQUIPE
+// ===========================================
+
+model Equipe {
+  id              String   @id @default(uuid())
+  nome            String
+  dataNascimento  DateTime
+  funcao          String
+  ativo           Boolean  @default(true)
+  fotoPerfil      String   // URL ou caminho da imagem (obrigatório)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("equipe")
+}
