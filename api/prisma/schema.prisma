@@ -88,7 +88,6 @@ model CategoriaExcursao {
 
   // Relacionamentos
   excursoes           Excursao[]
-  excursoesPedagogicas ExcursaoPedagogica[]
 
   @@map("categoria_excursao")
 }
@@ -183,7 +182,7 @@ model ExcursaoPedagogica {
   subtitulo       String?
   preco           Decimal        @db.Decimal(10, 2)
   duracao         String?
-  categoria       String         // @deprecated: usar o relacionamento 'categorias'
+  categoria       String
   status          ExcursaoStatus @default(ATIVO)
   imagemCapa      String?
   imagemPrincipal String?
@@ -206,7 +205,6 @@ model ExcursaoPedagogica {
   // Relacionamentos
   authorId String?
   author   User?                      @relation(fields: [authorId], references: [id])
-  categorias CategoriaExcursao[]
   galeria  ExcursaoPedagogicaImagem[]
   pedidos  Pedido[]
 

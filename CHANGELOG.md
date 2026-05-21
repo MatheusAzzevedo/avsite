@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-05-20 - fix: reverter múltiplas categorias em excursões pedagógicas
+
+### Arquivos Modificados
+- `api/docker-compose.yml` [Renomeado container de banco de dados para `avoar_postgres_db`]
+- `api/prisma/schema.prisma` [Removido relacionamento many-to-many em excursões pedagógicas, mantendo campo categoria como string simples]
+- `api/src/schemas/excursao-pedagogica.schema.ts` [Removido campo `categoriaIds` e tornado `categoria` obrigatório]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Removida manipulação de `categorias` nas rotas do CRUD do admin]
+- `api/src/routes/public.routes.ts` [Removido select/include de `categorias` nas rotas públicas]
+- `api/src/scripts/migrate-categories.ts` [Removida etapa de migração de categorias para pedagógicas]
+- `api/public/admin/excursao-pedagogica-editor.html` [Restaurado dropdown select de categoria única]
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Ajustada a lógica para categoria única e adicionada documentação padrão]
+
+### Detalhes das Alterações
+- **Remoção de Vínculos**: O relacionamento de múltiplas categorias foi restringido exclusivamente às excursões convencionais. As excursões pedagógicas voltaram ao modelo original de categoria única através de uma coluna simples no banco de dados.
+- **Validação de Entrada**: O schema do Zod foi adaptado para validar a categoria como uma string simples e obrigatória na criação/atualização de pedagógicas.
+- **Interface e Backend**: O painel administrativo do editor de excursão pedagógica foi revertido para exibir e submeter o campo select de categoria única, removendo os checkboxes do seletor múltiplo.
+- **Docker**: Container do banco de dados PostgreSQL renomeado para `avoar_postgres_db` para melhor identificação.
+- **Documentação de Código**: Implementada documentação padrão para todas as funções modificadas no JavaScript do editor.
+
+---
+
 ## 2026-05-19 - feat: sistema de equipe (CRUD no Admin e exibição na página Sobre Nós)
 
 ### Arquivos Modificados

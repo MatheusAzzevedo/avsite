@@ -453,12 +453,6 @@ router.get('/excursoes-pedagogicas',
             slug: true,
             preco: true,
             categoria: true,
-            categorias: {
-              select: {
-                nome: true,
-                slug: true
-              }
-            },
             imagemCapa: true,
             vagas: true
           }
@@ -539,7 +533,6 @@ router.get('/excursoes-pedagogicas/:slug',
           status: ExcursaoStatus.ATIVO
         },
         include: {
-          categorias: true,
           galeria: {
             orderBy: { ordem: 'asc' }
           }
@@ -589,7 +582,6 @@ router.get('/excursoes-pedagogicas/codigo/:codigo',
           status: ExcursaoStatus.ATIVO
         },
         include: {
-          categorias: true,
           galeria: {
             orderBy: { ordem: 'asc' }
           }

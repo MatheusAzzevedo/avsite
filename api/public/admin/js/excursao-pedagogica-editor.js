@@ -18,41 +18,13 @@ let isEditingPedagogica = false;
 let currentExcursaoPedagogicaId = null;
 let galeriaImagesPedagogica = [];
 
+
+
 /**
- * Carrega categorias da API e renderiza checkboxes.
+ * Explicação da função [initEditorPedagogica]
+ * Inicializa o editor de excursões pedagógicas, verificando os parâmetros de URL para determinar se é criação ou edição.
  */
-async function loadCategoriasSelectPedagogica() {
-  const container = document.getElementById('categoriasContainer');
-  if (!container) return;
-  try {
-    const res = await apiRequest('/admin/categorias-excursao');
-    const list = Array.isArray(res?.data) ? res.data : [];
-    
-    if (list.length === 0) {
-      container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem;">Nenhuma categoria encontrada.</p>';
-      return;
-    }
-
-    container.innerHTML = list.map(function(c) {
-      return `
-        <label class="checkbox-item">
-          <input type="checkbox" name="categorias" value="${escapeAttr(c.id)}" data-slug="${escapeAttr(c.slug)}">
-          <span>${escapeHtml(c.nome)}</span>
-        </label>
-      `;
-    }).join('');
-  } catch (e) {
-    console.error('[Excursão Pedagógica Editor] Erro ao carregar categorias:', e);
-    container.innerHTML = '<p style="color: var(--danger-color); font-size: 0.875rem;">Erro ao carregar categorias.</p>';
-  }
-}
-
-function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t == null ? '' : t; return d.innerHTML; }
-function escapeAttr(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
 async function initEditorPedagogica() {
-  await loadCategoriasSelectPedagogica();
-
   const params = new URLSearchParams(window.location.search);
   const excursaoId = params.get('id');
 
@@ -66,6 +38,10 @@ async function initEditorPedagogica() {
   }
 }
 
+/**
+ * Explicação da função [loadExcursaoPedagogica]
+ * Carrega os dados de uma excursão pedagógica específica da API e popula o formulário HTML do editor.
+ */
 async function loadExcursaoPedagogica(excursaoId) {
   try {
     console.log('[Excursão Pedagógica Editor] Carregando:', excursaoId);
@@ -86,15 +62,7 @@ async function loadExcursaoPedagogica(excursaoId) {
     document.getElementById('excursaoPreco').value = excursao.preco || '';
     document.getElementById('excursaoDuracao').value = excursao.duracao || '';
     
-    // Categorias (checkboxes)
-    if (Array.isArray(excursao.categorias)) {
-      const selectedIds = excursao.categorias.map(c => c.id);
-      document.querySelectorAll('#categoriasContainer input[type="checkbox"]').forEach(checkbox => {
-        if (selectedIds.includes(checkbox.value)) {
-          checkbox.checked = true;
-        }
-      });
-    }
+    document.getElementById('excursaoCategoria').value = excursao.categoria || '';
 
     document.getElementById('excursaoStatus').value = (excursao.status || 'ATIVO').toLowerCase();
     document.getElementById('excursaoDescricao').innerHTML = excursao.descricao || '';
@@ -266,6 +234,10 @@ function formatHeadingPedagogica(tag) {
   document.getElementById('excursaoDescricao').focus();
 }
 
+/**
+ * Explicação da função [getExcursaoPedagogicaData]
+ * Coleta todos os campos preenchidos no formulário do editor e retorna um objeto estruturado.
+ */
 function getExcursaoPedagogicaData() {
   var tagsString = document.getElementById('excursaoTags').value;
   var tags = tagsString
@@ -279,15 +251,13 @@ function getExcursaoPedagogicaData() {
         })
     : [];
 
-  const categoriaIds = Array.from(document.querySelectorAll('#categoriasContainer input[type="checkbox"]:checked')).map(cb => cb.value);
-
   return {
     codigo: document.getElementById('excursaoCodigo').value.trim(),
     titulo: document.getElementById('excursaoTitulo').value.trim(),
     subtitulo: document.getElementById('excursaoSubtitulo').value.trim(),
     preco: parseFloat(document.getElementById('excursaoPreco').value) || 0,
     duracao: document.getElementById('excursaoDuracao').value.trim(),
-    categoriaIds: categoriaIds,
+    categoria: document.getElementById('excursaoCategoria').value,
     status: document.getElementById('excursaoStatus').value,
     imagemCapa: document.getElementById('imagemCapaData').value,
     imagemPrincipal: document.getElementById('imagemPrincipalData').value,
@@ -324,6 +294,10 @@ function getExcursaoPedagogicaData() {
 
 var codigoRegex = /^[A-Za-z0-9_-]+$/;
 
+/**
+ * Explicação da função [validateExcursaoPedagogica]
+ * Valida os dados de entrada coletados do formulário, exibindo notificações em caso de campos ausentes ou inválidos.
+ */
 function validateExcursaoPedagogica(data) {
   if (!data.codigo) {
     showNotificationPedagogica('O código único é obrigatório.', 'error');
@@ -345,8 +319,9 @@ function validateExcursaoPedagogica(data) {
     document.getElementById('excursaoPreco').focus();
     return false;
   }
-  if (!data.categoriaIds || data.categoriaIds.length === 0) {
-    showNotificationPedagogica('Selecione pelo menos uma categoria.', 'error');
+  if (!data.categoria) {
+    showNotificationPedagogica('A categoria é obrigatória.', 'error');
+    document.getElementById('excursaoCategoria').focus();
     return false;
   }
   return true;

@@ -72,11 +72,16 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group" style="grid-column: span 2;">
-                                    <label>Categorias</label>
-                                    <div id="categoriasContainer" class="checkbox-group-container">
-                                        <p style="color: var(--text-light); font-size: 0.875rem;">Carregando categorias...</p>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="excursaoCategoria">Categoria *</label>
+                                    <select id="excursaoCategoria" class="form-control" required>
+                                        <option value="">Selecione uma categoria</option>
+                                        <option value="natureza">Natureza</option>
+                                        <option value="cultura">Cultura</option>
+                                        <option value="aventura">Aventura</option>
+                                        <option value="marítimo">Marítimo</option>
+                                        <option value="pedagogico">Pedagógico</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="excursaoStatus">Status</label>

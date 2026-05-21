@@ -49,13 +49,8 @@ const excursaoPedagogicaBaseSchema = {
     .optional()
     .nullable(),
   categoria: z
-    .string()
-    .optional()
-    .nullable(), // @deprecated: usar categoriaIds
-  categoriaIds: z
-    .array(z.string())
-    .optional()
-    .default([]),
+    .string({ required_error: 'Categoria é obrigatória' })
+    .min(1, 'Categoria é obrigatória'),
   status: z.enum(['ATIVO', 'INATIVO']).optional().default('ATIVO'),
   imagemCapa: z.string().optional().nullable(),
   imagemPrincipal: z.string().optional().nullable(),

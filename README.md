@@ -4,7 +4,18 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-05-19) - feat: sistema de equipe (CRUD no Admin e exibição na página Sobre Nós)
+### Última atualização (2026-05-20) - fix: reverter múltiplas categorias em excursões pedagógicas
+- **api/docker-compose.yml** [Renomeado container de banco de dados para `avoar_postgres_db`]
+- **api/prisma/schema.prisma** [Removido relacionamento many-to-many em excursões pedagógicas, mantendo categoria única]
+- **api/src/schemas/excursao-pedagogica.schema.ts** [Removido campo `categoriaIds` e tornado `categoria` obrigatório]
+- **api/src/routes/excursao-pedagogica.routes.ts** [Removida manipulação de `categorias` nas rotas do CRUD do admin]
+- **api/src/routes/public.routes.ts** [Removido select/include de `categorias` nas rotas públicas]
+- **api/public/admin/excursao-pedagogica-editor.html** [Restaurado dropdown select de categoria única]
+- **api/public/admin/js/excursao-pedagogica-editor.js** [Ajustada a lógica e validações para categoria única e adicionada documentação]
+
+Resumo: Remoção completa do sistema de múltiplas categorias das excursões pedagógicas para mantê-lo exclusivamente nas excursões convencionais. Revertido banco de dados, APIs, validações e interface administrativa de edição para o uso de categoria única (string simples), além de renomear o container Docker do banco de dados para `avoar_postgres_db` e documentar as funções do editor no admin.
+
+### Atualização anterior (2026-05-19) - feat: sistema de equipe (CRUD no Admin e exibição na página Sobre Nós)
 - **api/prisma/schema.prisma** [Adicionado modelo `Equipe`]
 - **api/src/routes/equipe.routes.ts** [Rotas CRUD equipe]
 - **api/public/admin/equipe.html** [Tela de gerenciamento da equipe]

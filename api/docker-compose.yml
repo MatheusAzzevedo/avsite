@@ -27,7 +27,7 @@ services:
 
   database:
     image: postgres:15
-    container_name: postgres_db
+    container_name: avoar_postgres_db
     ports:
       - "5432:5432"
     environment:
