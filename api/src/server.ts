@@ -39,6 +39,7 @@ import uploadRoutes from './routes/upload.routes';
 import paymentConfigRoutes from './routes/payment-config.routes';
 import adminPaymentRoutes from './routes/admin-payment.routes';
 import publicRoutes from './routes/public.routes';
+import equipeRoutes from './routes/equipe.routes';
 import listaAlunosRoutes from './routes/lista-alunos.routes';
 import listagemConvencionalRoutes from './routes/listagem-convencional.routes';
 import categoriasExcursaoRoutes from './routes/categorias-excursao.routes';
@@ -214,6 +215,7 @@ app.use('/api/admin/listagem-convencional', listagemConvencionalRoutes);
 app.use('/api/admin/categorias-excursao', categoriasExcursaoRoutes);
 app.use('/api/admin/dashboard', dashboardRoutes);
 app.use('/api/admin/email', adminEmailRoutes);
+app.use('/api/admin/equipe', equipeRoutes);
 
 // ===========================================
 // TRATAMENTO DE ERROS

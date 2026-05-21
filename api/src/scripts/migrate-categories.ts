@@ -37,35 +37,7 @@ async function main() {
     }
   }
 
-  // 2. Migrar Excursoes Pedagogicas
-  const pedagogicas = await prisma.excursaoPedagogica.findMany({
-    where: {
-      categoria: { not: '' }
-    }
-  });
 
-  console.log(`Encontradas ${pedagogicas.length} excursões pedagógicas para migrar.`);
-
-  for (const ep of pedagogicas) {
-    const slug = ep.categoria;
-    const cat = await prisma.categoriaExcursao.findUnique({
-      where: { slug }
-    });
-
-    if (cat) {
-      await prisma.excursaoPedagogica.update({
-        where: { id: ep.id },
-        data: {
-          categorias: {
-            connect: { id: cat.id }
-          }
-        }
-      });
-      console.log(`✅ Pedagógica "${ep.titulo}" vinculada à categoria "${cat.nome}"`);
-    } else {
-      console.warn(`⚠️ Categoria com slug "${slug}" não encontrada para a pedagógica "${ep.titulo}".`);
-    }
-  }
 
   console.log('✨ Migração concluída!');
 }

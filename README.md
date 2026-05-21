@@ -4,7 +4,26 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-05-16) - feat: sistema de múltiplas categorias (muito-para-muitos)
+### Última atualização (2026-05-20) - fix: reverter múltiplas categorias em excursões pedagógicas
+- **api/docker-compose.yml** [Renomeado container de banco de dados para `avoar_postgres_db`]
+- **api/prisma/schema.prisma** [Removido relacionamento many-to-many em excursões pedagógicas, mantendo categoria única]
+- **api/src/schemas/excursao-pedagogica.schema.ts** [Removido campo `categoriaIds` e tornado `categoria` obrigatório]
+- **api/src/routes/excursao-pedagogica.routes.ts** [Removida manipulação de `categorias` nas rotas do CRUD do admin]
+- **api/src/routes/public.routes.ts** [Removido select/include de `categorias` nas rotas públicas]
+- **api/public/admin/excursao-pedagogica-editor.html** [Restaurado dropdown select de categoria única]
+- **api/public/admin/js/excursao-pedagogica-editor.js** [Ajustada a lógica e validações para categoria única e adicionada documentação]
+
+Resumo: Remoção completa do sistema de múltiplas categorias das excursões pedagógicas para mantê-lo exclusivamente nas excursões convencionais. Revertido banco de dados, APIs, validações e interface administrativa de edição para o uso de categoria única (string simples), além de renomear o container Docker do banco de dados para `avoar_postgres_db` e documentar as funções do editor no admin.
+
+### Atualização anterior (2026-05-19) - feat: sistema de equipe (CRUD no Admin e exibição na página Sobre Nós)
+- **api/prisma/schema.prisma** [Adicionado modelo `Equipe`]
+- **api/src/routes/equipe.routes.ts** [Rotas CRUD equipe]
+- **api/public/admin/equipe.html** [Tela de gerenciamento da equipe]
+- **api/public/about.html** [Exibição da equipe no site público]
+
+Resumo: Implementação completa da funcionalidade de Equipe. Criado modelo no banco de dados, rotas de API (admin e pública) e interface no painel administrativo para cadastrar, editar e excluir membros da equipe. A página "Sobre Nós" foi atualizada para exibir os membros ativos em um grid dinâmico. O link para a tela de Equipe foi adicionado ao menu lateral de todas as páginas administrativas para consistência.
+
+### Atualização anterior (2026-05-16) - feat: sistema de múltiplas categorias (muito-para-muitos)
 - **api/prisma/schema.prisma** [Transição para relacionamento many-to-many em categorias]
 - **api/src/routes/admin.routes.ts** [Logica de persistência de múltiplas categorias]
 - **api/public/admin/js/excursao-editor.js** [Interface de checkboxes para seleção múltipla]
@@ -41,8 +60,4 @@ Resumo: Atualização visual e lógica dos cards de listagem de alunos, implemen
 
 Resumo: Implementado sistema de gestão de capacidade. É possível definir limite de vagas, com cálculo automático de disponibilidade em tempo real e bloqueio de novos pedidos se o limite for atingido.
 
-### Versão anterior (2026-05-04) - feat: paginação e filtragem no servidor para excursões pedagógicas
-- **api/src/routes/excursao-pedagogica.routes.ts** [Paginação e filtros avançados no servidor]
-- **api/public/admin/js/excursoes-pedagogicas.js** [Consumo de API paginada e debouncing]
 
-Resumo: Implementada paginação server-side e filtragem dinâmica para excursões pedagógicas, processando filtros de localidade, data e valor via Prisma para máxima performance.

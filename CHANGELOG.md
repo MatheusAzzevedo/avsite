@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-05-20 - fix: reverter múltiplas categorias em excursões pedagógicas
+
+### Arquivos Modificados
+- `api/docker-compose.yml` [Renomeado container de banco de dados para `avoar_postgres_db`]
+- `api/prisma/schema.prisma` [Removido relacionamento many-to-many em excursões pedagógicas, mantendo campo categoria como string simples]
+- `api/src/schemas/excursao-pedagogica.schema.ts` [Removido campo `categoriaIds` e tornado `categoria` obrigatório]
+- `api/src/routes/excursao-pedagogica.routes.ts` [Removida manipulação de `categorias` nas rotas do CRUD do admin]
+- `api/src/routes/public.routes.ts` [Removido select/include de `categorias` nas rotas públicas]
+- `api/src/scripts/migrate-categories.ts` [Removida etapa de migração de categorias para pedagógicas]
+- `api/public/admin/excursao-pedagogica-editor.html` [Restaurado dropdown select de categoria única]
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Ajustada a lógica para categoria única e adicionada documentação padrão]
+
+### Detalhes das Alterações
+- **Remoção de Vínculos**: O relacionamento de múltiplas categorias foi restringido exclusivamente às excursões convencionais. As excursões pedagógicas voltaram ao modelo original de categoria única através de uma coluna simples no banco de dados.
+- **Validação de Entrada**: O schema do Zod foi adaptado para validar a categoria como uma string simples e obrigatória na criação/atualização de pedagógicas.
+- **Interface e Backend**: O painel administrativo do editor de excursão pedagógica foi revertido para exibir e submeter o campo select de categoria única, removendo os checkboxes do seletor múltiplo.
+- **Docker**: Container do banco de dados PostgreSQL renomeado para `avoar_postgres_db` para melhor identificação.
+- **Documentação de Código**: Implementada documentação padrão para todas as funções modificadas no JavaScript do editor.
+
+---
+
+## 2026-05-19 - feat: sistema de equipe (CRUD no Admin e exibição na página Sobre Nós)
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Adicionado modelo `Equipe`]
+- `api/src/routes/equipe.routes.ts` [Rotas CRUD administrativas para equipe]
+- `api/src/routes/public.routes.ts` [Rota pública para listar membros ativos]
+- `api/src/server.ts` [Registro das novas rotas]
+- `api/public/admin/equipe.html` [Tela de gerenciamento da equipe]
+- `api/public/admin/js/equipe.js` [Lógica de listagem e formulário de equipe]
+- `api/public/about.html` [Seção de equipe e script de carregamento no site público]
+- `about.html` [Replicação da seção de equipe no arquivo da raiz]
+- `api/public/admin/*.html` [Adicionado link de Equipe no menu lateral de 13 arquivos]
+
+### Detalhes das Alterações
+- **Banco de Dados**: Criação do modelo `Equipe` para persistir dados dos membros (Nome, Data de Nascimento, Função, Ativo, Foto).
+- **Interface Admin**: Nova tela para gerenciamento completo (CRUD) dos membros, com modal de cadastro e upload de imagem.
+- **Integração Pública**: Exibição dos membros ativos na página Sobre Nós, com layout em grid e carregamento assíncrono.
+- **Consistência do Menu**: Atualização de todas as telas do admin para incluir o acesso à nova funcionalidade.
+
+---
+
 ## 2026-05-16 - feat: sistema de múltiplas categorias (relacionamento many-to-many)
 
 ### Arquivos Modificados
