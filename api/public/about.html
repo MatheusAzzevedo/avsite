@@ -590,11 +590,16 @@
                 <section class="equipe-section" style="padding: 5rem 0; background-color: #f9f9f9;">
                     <div class="auto-container">
                         <div class="section-heading-centered" style="text-align: center; margin-bottom: 3rem;">
-                            <span class="eyebrow" style="color: #666; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;">Quem faz acontecer</span>
-                            <h2 style="font-size: 2.5rem; margin-top: 0.5rem; margin-bottom: 1rem;">Equipe Avoar</h2>
-                            <p style="color: #666; max-width: 600px; margin: 0 auto;">Conheça os profissionais dedicados a transformar sua viagem em uma experiência inesquecível.</p>
+                            <span class="eyebrow"
+                                style="color: #666; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;">Quem
+                                faz acontecer</span>
+                            <h2 style="font-size: 2.5rem; margin-top: 0.5rem; margin-bottom: 1rem; color: #ff5c00;">
+                                Equipe Avoar</h2>
+                            <p style="color: #666; max-width: 600px; margin: 0 auto;">Conheça os profissionais dedicados
+                                a transformar sua viagem em uma experiência inesquecível.</p>
                         </div>
-                        <div class="row" id="equipeContainer" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
+                        <div class="row" id="equipeContainer"
+                            style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
                             <!-- Membros serão carregados aqui -->
                             <div class="text-center" style="width: 100%; color: #999;">Carregando equipe...</div>
                         </div>
@@ -795,13 +800,13 @@
             if (!equipeContainer) return;
 
             try {
-                const baseUrl = window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3001/api' 
+                const baseUrl = window.location.hostname === 'localhost'
+                    ? 'http://localhost:3001/api'
                     : (window.location.origin + '/api');
-                
+
                 const response = await fetch(`${baseUrl}/public/equipe`);
                 const result = await response.json();
-                
+
                 if (result.success && result.data && result.data.length > 0) {
                     equipeContainer.innerHTML = '';
                     result.data.forEach(membro => {
@@ -813,7 +818,7 @@
                         memberDiv.style.backgroundColor = '#fff';
                         memberDiv.style.borderRadius = '8px';
                         memberDiv.style.boxShadow = '0 4px 6px rgba(0,0,0,0.05)';
-                        
+
                         memberDiv.innerHTML = `
                             <div class="member-image" style="margin-bottom: 1.5rem;">
                                 <img src="${membro.fotoPerfil || 'images/default-avatar.png'}" alt="${membro.nome}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #eee;">
