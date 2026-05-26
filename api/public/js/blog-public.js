@@ -64,7 +64,8 @@
             var resumo = post.resumo ? escapeHtml(post.resumo.substring(0, 120)) + '...' : '';
             var imageSrc = (post.imagemCapa || 'images/resource/news-1.jpg').replace(/"/g, '&quot;');
             var slugEncoded = encodeURIComponent(post.slug || '');
-
+            
+            const authorName = escapeHtml(post.author.name);
             const avatarInitials = post.author.name.split(' ').map((n) => n[0]).join('');
 
             // Substitua o retorno do posts.map por esta estrutura:
@@ -88,6 +89,7 @@
                     '</div>' +
                     // 3. RESUMO E BOTÃO DE CONTINUAR LENDO NO FINAL
                     '<div class="lower" style="padding-top: 40px;">' +
+                        '<h5 style="font-weight: bold;margin-top: 25px;">' + authorName + '</h5>' +
                         (resumo ? '<p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-bottom: 10px;">' + resumo + '</p>' : '') +
                         '<div class="link-box">' +
                             '<a href="blog-single.html?slug=' + slugEncoded + '" class="theme-btn">continuar lendo <i class="far fa-long-arrow-alt-right"></i></a>' +
