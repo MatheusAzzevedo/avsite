@@ -72,10 +72,10 @@
                 '<div class="inner-box">' +
                     // 1. TÍTULO E CATEGORIA NO TOPO AGORA
                     '<div class="upper-info" style="padding-bottom: 15px;">' +
-                        // '<div class="info" style="margin-bottom: 8px;">' +
-                        //    '<div class="cat i-block"><i class=\"far fa-folder\"></i> ' + cat + '</div>' +
-                        // '</div>' +
-                        '<h5 style="margin-bottom: 0px;"><a href="blog-single.html?slug=' + slugEncoded + '">' + titulo + '</a></h5>' +
+                        '<h5><a href="blog-single.html?slug=' + slugEncoded + '">' + titulo + '</a></h5>' +
+                        '<div class="info">' +
+                           '<div class="cat i-block"><i class=\"far fa-folder\"></i> ' + cat + '</div>' +
+                        '</div>' +
                     '</div>' +
                     // 2. IMAGEM LOGO ABAIXO DO TÍTULO
                     '<div class="upper">' +
