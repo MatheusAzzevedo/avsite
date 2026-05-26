@@ -3182,16 +3182,55 @@ form label.error{
 }
 
 .news-block .image-box img{
-  position: relative;
   display: block;
   width: 100%;
   -ms-transition: all 500ms ease;
   transition: all 500ms ease;
   border-radius: 15px 15px 0 0;
+  z-index: -10;
 }
+
 
 .news-block:hover .image-box img{
   opacity: 0.90;
+}
+
+.news-block .post-img {
+  border-radius: 15px 15px 0 0;
+}
+
+.news-block .upper-info {
+    font-family: 'Montserrat', sans-serif;
+    color: #ffffff;
+    background-color: #35383b;
+    position: absolute;
+    align-self: center;
+    justify-self: center;
+    width: 80%;
+    padding: 12px;
+    border-radius: 20px;
+}
+
+.news-block h5 a:hover {
+  -ms-transition: all 500ms ease;
+  transition: all 500ms ease;
+  color: #ff5c00;
+}
+
+.news-block .avatar-area{
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 10px solid #35383b;
+  background-color: #ff5c00;
+  display: flex;
+  z-index: 15;
+  justify-content: center;
+  align-items: center;
 }
 
 .news-block .lower{
