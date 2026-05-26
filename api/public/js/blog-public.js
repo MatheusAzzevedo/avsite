@@ -75,7 +75,7 @@
                         // '<div class="info" style="margin-bottom: 8px;">' +
                         //    '<div class="cat i-block"><i class=\"far fa-folder\"></i> ' + cat + '</div>' +
                         // '</div>' +
-                        '<h5 style="margin-bottom: 0px;"><a href="blog-single.html?slug=' + slugEncoded + '">' + 'Conheça Santo onofrio do Cajueiro' + '</a></h5>' +
+                        '<h5 style="margin-bottom: 0px;"><a href="blog-single.html?slug=' + slugEncoded + '">' + titulo + '</a></h5>' +
                     '</div>' +
                     // 2. IMAGEM LOGO ABAIXO DO TÍTULO
                     '<div class="upper">' +
