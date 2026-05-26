@@ -65,19 +65,30 @@
             var imageSrc = (post.imagemCapa || 'images/resource/news-1.jpg').replace(/"/g, '&quot;');
             var slugEncoded = encodeURIComponent(post.slug || '');
 
-            return '<div class="news-block col-xl-4 col-lg-6 col-md-6 col-sm-12">' +
+            const avatarInitials = post.author.name.split(' ').map((n) => n[0]).join('');
+
+            // Substitua o retorno do posts.map por esta estrutura:
+            return '<div class="news-block col-lg-4 col-md-6 col-sm-12">' +
                 '<div class="inner-box">' +
-                    '<div class="image-box">' +
+                    // 1. TÍTULO E CATEGORIA NO TOPO AGORA
+                    '<div class="upper-info" style="padding-bottom: 15px;">' +
+                        // '<div class="info" style="margin-bottom: 8px;">' +
+                        //    '<div class="cat i-block"><i class=\"far fa-folder\"></i> ' + cat + '</div>' +
+                        // '</div>' +
+                        '<h5 style="margin-bottom: 0px;"><a href="blog-single.html?slug=' + slugEncoded + '">' + 'Conheça Santo onofrio do Cajueiro' + '</a></h5>' +
+                    '</div>' +
+                    // 2. IMAGEM LOGO ABAIXO DO TÍTULO
+                    '<div class="upper">' +
                         '<a href="blog-single.html?slug=' + slugEncoded + '">' +
                             '<img src="' + imageSrc + '" alt="' + titulo + '" class="post-img">' +
                         '</a>' +
                     '</div>' +
-                    '<div class="lower">' +
-                        '<h4><a href="blog-single.html?slug=' + slugEncoded + '">' + titulo + '</a></h4>' +
+                    '<div class="avatar-area">' +
+                        '<h3>' + avatarInitials + '</h3>' +
+                    '</div>' +
+                    // 3. RESUMO E BOTÃO DE CONTINUAR LENDO NO FINAL
+                    '<div class="lower" style="padding-top: 40px;">' +
                         (resumo ? '<p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-bottom: 10px;">' + resumo + '</p>' : '') +
-                        '<div class="info">' +
-                            '<div class="cat i-block"><i class="far fa-folder"></i> ' + cat + '</div>' +
-                        '</div>' +
                         '<div class="link-box">' +
                             '<a href="blog-single.html?slug=' + slugEncoded + '" class="theme-btn">continuar lendo <i class="far fa-long-arrow-alt-right"></i></a>' +
                         '</div>' +

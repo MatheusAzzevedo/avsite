@@ -269,7 +269,12 @@ router.get('/posts',
             imagemCapa: true,
             resumo: true,
             tags: true,
-            createdAt: true
+            createdAt: true,
+            author: {
+              select: {
+                name: true
+              }
+            }
           }
         }),
         prisma.post.count({ where })
@@ -303,7 +308,7 @@ router.get('/posts/:slug',
       const { slug } = req.params;
 
       const post = await prisma.post.findFirst({
-        where: { 
+        where: {
           slug,
           status: 'PUBLICADO'
         }
