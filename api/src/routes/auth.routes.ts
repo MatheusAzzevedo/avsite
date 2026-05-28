@@ -207,6 +207,7 @@ router.get('/me',
           email: true,
           name: true,
           role: true,
+          avatarUrl: true,
           createdAt: true,
           updatedAt: true
         }
@@ -218,6 +219,54 @@ router.get('/me',
 
       res.json({
         success: true,
+        data: user
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * PUT /api/auth/me
+ * Atualiza dados do usuário autenticado
+ */
+router.put('/me',
+  authMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, avatarUrl } = req.body;
+      
+      const user = await prisma.user.update({
+        where: { id: req.user!.id },
+        data: {
+          ...(name && { name }),
+          ...(avatarUrl !== undefined && { avatarUrl })
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          role: true,
+          avatarUrl: true
+        }
+      });
+
+      // Registra atividade
+      await prisma.activityLog.create({
+        data: {
+          action: 'update',
+          entity: 'user',
+          entityId: user.id,
+          description: `Perfil atualizado: ${user.email}`,
+          userId: user.id,
+          userEmail: user.email
+        }
+      });
+
+      res.json({
+        success: true,
+        message: 'Perfil atualizado com sucesso',
         data: user
       });
     } catch (error) {
