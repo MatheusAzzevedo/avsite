@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avoar Turismo</title>
+    <title>Avoar Turismo - Meu Perfil</title>
     <link rel="shortcut icon" href="../images/favicon-avoar.png" type="image/png">
     <link rel="icon" href="../images/favicon-avoar.png" type="image/png">
     <link rel="stylesheet" href="css/admin-style.css">
@@ -31,7 +31,7 @@
                     </a>
                 </div>
                 <div class="nav-item">
-                    <a href="excursoes.html" class="nav-link active">
+                    <a href="excursoes.html" class="nav-link">
                         <i class="fas fa-map-marked-alt"></i>
                         Convencional
                     </a>
@@ -66,32 +66,20 @@
                         Listagem Convencional
                     </a>
                 </div>
-                <div class="nav-item" style="display: none;">
-                    <a href="checkout.html" class="nav-link">
-                        <i class="fas fa-shopping-cart"></i>
-                        Checkout
-                    </a>
-                </div>
-                <div class="nav-item" style="display: none;">
-                    <a href="config-pagamento.html" class="nav-link">
-                        <i class="fas fa-credit-card"></i>
-                        Config. Pagamento
-                    </a>
-                </div>
                 <div class="nav-item">
                     <a href="previews.html" class="nav-link">
                         <i class="fas fa-eye"></i>
                         S.Previews
                     </a>
                 </div>
-                <div class="nav-item" style="margin-top: 2rem;">
-                    <a href="perfil.html" class="nav-link">
+                <div class="nav-item active" style="margin-top: 2rem;">
+                    <a href="perfil.html" class="nav-link active">
                         <i class="fas fa-user"></i>
                         Meu Perfil
                     </a>
                 </div>
-                <div class="nav-item" style="margin-top: 2rem;">
-                    <a href="#" class="nav-link" id="navLogout">
+                <div class="nav-item">
+                    <a href="#" id="navLogout" class="nav-link">
                         <i class="fas fa-sign-out-alt"></i>
                         Sair
                     </a>
@@ -106,64 +94,76 @@
                     <button id="sidebarToggle" class="btn btn-secondary btn-sm" style="margin-right: 1rem; display: none;">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h1>Gerenciar Excursões</h1>
+                    <h1>Meu Perfil</h1>
                 </div>
                 <div class="user-menu">
-                    <span id="userName">Administrador</span>
-                    <div class="user-avatar">AD</div>
+                    <span id="userName">Carregando...</span>
+                    <div class="user-avatar" id="topAvatar"></div>
                 </div>
             </div>
 
-            <!-- Filtros e Ações -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="filters-bar">
-                        <div class="search-box">
-                            <input 
-                                type="text" 
-                                id="searchExcursoes" 
-                                placeholder="Buscar excursões..."
-                            >
-                        </div>
-                        <select id="filterCategoria" class="filter-select">
-                            <option value="todos">Todas as Categorias</option>
-                        </select>
-                        <select id="filterStatus" class="filter-select">
-                            <option value="todos">Todos os Status</option>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                        <a href="excursao-editor.html" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Nova Excursão
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Grid de Excursões -->
-            <div class="card">
+            <div class="card" style="max-width: 600px; margin: 0 auto; margin-top: 2rem;">
                 <div class="card-header">
-                    <h2>Excursões Cadastradas (<span id="excursaoCount">0</span>)</h2>
+                    <h2>Atualizar Dados</h2>
                 </div>
                 <div class="card-body">
-                    <div id="excursoesGrid" class="excursoes-convencionais-grid">
-                        <!-- Excursões serão carregadas dinamicamente -->
-                    </div>
+                    <form id="perfilForm">
+                        <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+                            <img id="avatarPreview" src="" alt="Avatar Preview" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; display: none; margin: 0 auto 10px;">
+                            <div id="avatarInitials" style="width: 120px; height: 120px; border-radius: 50%; background: #ccc; line-height: 120px; font-size: 40px; margin: 0 auto 10px; display: none; color: #fff;"></div>
+                        </div>
 
-                    <!-- Mensagem quando não há excursões -->
-                    <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
-                        <i class="fas fa-map-marked-alt" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
-                        <h3 style="color: var(--text-light);">Nenhuma excursão encontrada</h3>
-                        <p style="color: var(--text-light);">Crie sua primeira excursão clicando no botão acima.</p>
-                    </div>
+                        <div class="form-group">
+                            <label class="form-label" for="avatarUrl">URL da Foto do Perfil</label>
+                            <input type="url" id="avatarUrl" name="avatarUrl" class="form-control" placeholder="https://exemplo.com/sua-foto.jpg">
+                            <small style="color: #666;">Você pode colar um link de uma imagem ou usar o uploader abaixo.</small>
+                            <br>
+                            <input type="file" id="avatarUpload" class="form-control" accept="image/*" style="margin-top: 10px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="name">Nome Completo</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">E-mail (Login)</label>
+                            <input type="email" id="email" class="form-control" disabled>
+                            <small style="color: #666;">O e-mail não pode ser alterado por aqui.</small>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary" id="btnSalvar">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card" style="max-width: 600px; margin: 2rem auto 0;">
+                <div class="card-header">
+                    <h2>Alterar Senha</h2>
+                </div>
+                <div class="card-body">
+                    <form id="senhaForm">
+                        <div class="form-group">
+                            <label class="form-label" for="currentPassword">Senha Atual</label>
+                            <input type="password" id="currentPassword" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="newPassword">Nova Senha</label>
+                            <input type="password" id="newPassword" class="form-control" required minlength="6">
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                            <button type="submit" class="btn btn-secondary" id="btnSenha">Atualizar Senha</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Script do cliente da API -->
     <script src="../js/api-client.js"></script>
     <script src="js/admin-main.js"></script>
-    <script src="js/excursoes.js"></script>
+    <script src="js/perfil.js"></script>
 </body>
 </html>

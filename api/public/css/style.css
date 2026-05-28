@@ -3168,7 +3168,6 @@ form label.error{
 
 .news-block .inner-box{
   position: relative;
-  display: block;
   text-align: center;
   min-height: 100%;
 }
@@ -3208,7 +3207,8 @@ form label.error{
     justify-self: center;
     width: 80%;
     padding: 12px;
-    border-radius: 20px;
+    border-radius: 0px 0px 20px 20px;
+    margin-bottom: -50%;
 }
 
 .news-block h5 a:hover {
@@ -6633,4 +6633,119 @@ form label.error{
   .whatsapp-float .fab {
     font-size: 26px;
   }
+}
+
+/* ==========================================================================
+   Custom Blog Card Design (Based on mockup)
+   ========================================================================== */
+
+.blog-custom-card {
+    background-color: #35383b !important;
+    border-radius: 25px !important;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+
+.blog-custom-card .upper-info h5 {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.blog-custom-card .upper-info h5 a {
+    color: #ffffff;
+}
+
+.blog-custom-card .post-resumo {
+    color: #cccccc;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.blog-custom-card .info .cat {
+    display: inline-block;
+    border: 1px solid #ffffff;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.blog-custom-card .upper {
+    width: 100%;
+    margin-bottom: 0 !important;
+}
+
+.blog-custom-card .upper img.post-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.blog-custom-card .avatar-area-custom {
+    margin-top: -60px;
+    position: relative;
+    z-index: 2;
+}
+
+.blog-custom-card .avatar-area-custom img.author-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.blog-custom-card .avatar-area-custom h3 {
+    width: 120px;
+    height: 120px;
+    line-height: 120px;
+    background-color: #555;
+    border-radius: 50%;
+    margin: 0 auto;
+    font-size: 40px;
+}
+
+.blog-custom-card .lower {
+    padding: 10px 20px 0px !important;
+    width: 100%;
+}
+
+.blog-custom-card .author-name {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 0;
+    color: #ffffff;
+}
+
+.blog-custom-card .author-role {
+    font-size: 14px;
+    color: #cccccc;
+    margin-bottom: 20px;
+}
+
+.blog-custom-card .btn-continuar {
+    background-color: #222222;
+    color: #ff5c00;
+    width: 100%;
+    border-radius: 20px;
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: none;
+    display: block;
+    border: none;
+}
+
+.blog-custom-card .btn-continuar:hover {
+    background-color: #1a1a1a;
+    color: #ff5c00;
+}
+
+.blog-custom-card .btn-continuar i {
+    margin-left: 10px;
 }

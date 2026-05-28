@@ -67,32 +67,33 @@
             
             const authorName = escapeHtml(post.author.name);
             const avatarInitials = post.author.name.split(' ').map((n) => n[0]).join('');
+            const avatarUrl = post.author.avatarUrl;
+            const avatarHtml = avatarUrl 
+                ? '<img src="' + escapeHtml(avatarUrl) + '" alt="' + authorName + '" class="author-avatar">' 
+                : '<h3>' + avatarInitials + '</h3>';
 
-            // Substitua o retorno do posts.map por esta estrutura:
             return '<div class="news-block col-lg-4 col-md-6 col-sm-12">' +
-                '<div class="inner-box">' +
-                    // 1. TÍTULO E CATEGORIA NO TOPO AGORA
-                    '<div class="upper-info" style="padding-bottom: 15px;">' +
+                '<div class="inner-box blog-custom-card">' +
+                    '<div class="upper-info">' +
                         '<h5><a href="blog-single.html?slug=' + slugEncoded + '">' + titulo + '</a></h5>' +
+                        (resumo ? '<p class="post-resumo">' + resumo + '</p>' : '') +
                         '<div class="info">' +
-                           '<div class="cat i-block"><i class=\"far fa-folder\"></i> ' + cat + '</div>' +
+                           '<div class="cat i-block"><i class="far fa-folder"></i> ' + cat + '</div>' +
                         '</div>' +
                     '</div>' +
-                    // 2. IMAGEM LOGO ABAIXO DO TÍTULO
                     '<div class="upper">' +
                         '<a href="blog-single.html?slug=' + slugEncoded + '">' +
                             '<img src="' + imageSrc + '" alt="' + titulo + '" class="post-img">' +
                         '</a>' +
                     '</div>' +
-                    '<div class="avatar-area">' +
-                        '<h3>' + avatarInitials + '</h3>' +
+                    '<div class="avatar-area-custom">' +
+                        avatarHtml +
                     '</div>' +
-                    // 3. RESUMO E BOTÃO DE CONTINUAR LENDO NO FINAL
-                    '<div class="lower" style="padding-top: 40px;">' +
-                        '<h5 style="font-weight: bold;margin-top: 25px;">' + authorName + '</h5>' +
-                        (resumo ? '<p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-bottom: 10px;">' + resumo + '</p>' : '') +
+                    '<div class="lower">' +
+                        '<h5 class="author-name">' + authorName + '</h5>' +
+                        '<p class="author-role">Autor</p>' +
                         '<div class="link-box">' +
-                            '<a href="blog-single.html?slug=' + slugEncoded + '" class="theme-btn">continuar lendo <i class="far fa-long-arrow-alt-right"></i></a>' +
+                            '<a href="blog-single.html?slug=' + slugEncoded + '" class="theme-btn btn-continuar">Continuar lendo <i class="fas fa-arrow-right"></i></a>' +
                         '</div>' +
                     '</div>' +
                 '</div>' +

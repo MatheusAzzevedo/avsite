@@ -4,7 +4,19 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-05-20) - fix: reverter múltiplas categorias em excursões pedagógicas
+### Última atualização (2026-05-28) - feat: cards de blog responsivos e página de perfil
+- **api/prisma/schema.prisma** [Adicionada propriedade `avatarUrl` ao modelo `User`]
+- **api/src/routes/public.routes.ts** [Incluído `avatarUrl` na consulta pública de posts]
+- **api/public/js/blog-public.js** [Lógica dinâmica para renderizar avatar ou iniciais no card do post]
+- **api/public/css/style.css** [Novos estilos customizados para os cards de blog e arredondamento de elementos]
+- **api/public/admin/perfil.html** [Criada nova tela para edição de perfil do usuário (avatar, nome, senha)]
+- **api/public/admin/js/perfil.js** [Integração de formulários de perfil com a API e upload de foto]
+- **api/src/routes/auth.routes.ts** [Incluído update de `avatarUrl` na rota PUT `/auth/me`]
+- **api/public/admin/*.html** [Adicionado link para Meu Perfil em todos os menus laterais]
+
+Resumo: Implementação de um design moderno para a listagem pública de posts do blog, com inclusão das fotos de perfil dos autores. Para sustentar essa alteração, foi modificada a modelagem do banco (Prisma), as rotas da API pública, e desenvolvida uma interface "Meu Perfil" no painel administrativo para os usuários realizarem o upload de seu próprio avatar.
+
+### Atualização anterior (2026-05-20) - fix: reverter múltiplas categorias em excursões pedagógicas
 - **api/docker-compose.yml** [Renomeado container de banco de dados para `avoar_postgres_db`]
 - **api/prisma/schema.prisma** [Removido relacionamento many-to-many em excursões pedagógicas, mantendo categoria única]
 - **api/src/schemas/excursao-pedagogica.schema.ts** [Removido campo `categoriaIds` e tornado `categoria` obrigatório]
