@@ -4,6 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
+### Última atualização (2026-05-29) - fix: refatoração de uploads e remoção de perfil
+- **api/public/admin/js/equipe.js** [Substituído upload físico por conversão para Base64 local]
+- **api/public/admin/autores.html** e **autores.js** [Criado CRUD mock para gestão de Autores]
+- **api/public/admin/perfil.html** e **perfil.js** [Funcionalidade "Meu Perfil" apagada]
+- **api/prisma/schema.prisma** [Remoção do campo `avatarUrl`]
+
+Resumo: Correção estrutural na rotina de upload de imagens da Equipe, substituindo o envio de arquivos físicos (efêmeros no Docker) por salvamento direto no banco de dados PostgreSQL via string Base64. Adicionalmente, a área "Meu Perfil" foi completamente removida do painel e APIs a pedido do cliente, e uma nova interface de demonstração (mock) para gestão de Autores foi criada.
+
 ### Última atualização (2026-05-28) - feat: cards de blog responsivos e página de perfil
 - **api/prisma/schema.prisma** [Adicionada propriedade `avatarUrl` ao modelo `User`]
 - **api/src/routes/public.routes.ts** [Incluído `avatarUrl` na consulta pública de posts]
