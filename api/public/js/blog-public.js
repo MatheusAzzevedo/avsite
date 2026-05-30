@@ -67,10 +67,7 @@
             
             const authorName = escapeHtml(post.author.name);
             const avatarInitials = post.author.name.split(' ').map((n) => n[0]).join('');
-            const avatarUrl = post.author.avatarUrl;
-            const avatarHtml = avatarUrl 
-                ? '<img src="' + escapeHtml(avatarUrl) + '" alt="' + authorName + '" class="author-avatar">' 
-                : '<h3>' + avatarInitials + '</h3>';
+            const avatarHtml = '<h3>' + avatarInitials + '</h3>';
 
             return '<div class="news-block col-lg-4 col-md-6 col-sm-12">' +
                 '<div class="inner-box blog-custom-card">' +

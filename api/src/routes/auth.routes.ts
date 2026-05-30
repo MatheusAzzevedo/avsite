@@ -207,7 +207,6 @@ router.get('/me',
           email: true,
           name: true,
           role: true,
-          avatarUrl: true,
           createdAt: true,
           updatedAt: true
         }
@@ -235,20 +234,18 @@ router.put('/me',
   authMiddleware,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, avatarUrl } = req.body;
+      const { name } = req.body;
       
       const user = await prisma.user.update({
         where: { id: req.user!.id },
         data: {
-          ...(name && { name }),
-          ...(avatarUrl !== undefined && { avatarUrl })
+          ...(name && { name })
         },
         select: {
           id: true,
           email: true,
           name: true,
-          role: true,
-          avatarUrl: true
+          role: true
         }
       });
 

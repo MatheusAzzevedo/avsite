@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-05-29 - fix: refatoracao de uploads e remocao de perfil
+
+### Arquivos Modificados
+- `api/public/admin/js/equipe.js` [Upload de imagem em Base64 usando FileReader]
+- `api/public/admin/autores.html` e `autores.js` [Criacao de CRUD mock para Autores]
+- `api/public/admin/*.html` [Removido link "Meu Perfil" da barra lateral]
+- `api/public/admin/perfil.html` e `perfil.js` [Arquivos excluidos]
+- `api/src/routes/auth.routes.ts` [Removida logica de update de foto]
+- `api/prisma/schema.prisma` [Removida coluna `avatarUrl` do modelo `User`]
+- `api/public/js/blog-public.js` [Ajustado para sempre exibir as iniciais no avatar]
+
+### Detalhes das Alteracoes
+- **Refatoracao de Uploads**: Corrigido bug de imagens quebradas (404) na pagina de Equipe. O sistema passou a salvar as imagens como strings Base64 diretamente no banco de dados, em vez de depender do armazenamento efemero do Docker.
+- **Remocao do Perfil**: A pedido do cliente, a funcionalidade recem-adicionada de "Meu Perfil" foi completamente removida do banco de dados, frontend e rotas da API.
+- **Autores Mock**: Inicio do desenvolvimento de uma area de gestao de Autores na interface administrativa com funcionamento simulado (mock) no localStorage para aprovacao.
+
+---
 ## 2026-05-28 - feat: cards de blog responsivos e pagina de perfil
 
 ### Arquivos Modificados

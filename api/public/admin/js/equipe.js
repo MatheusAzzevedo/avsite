@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Upload de foto
-    fileFotoInput.addEventListener('change', async (e) => {
+    fileFotoInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -66,21 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        try {
-            if (typeof UploadManager !== 'undefined') {
-                const data = await UploadManager.upload(file);
-                if (data && data.url) {
-                    fotoPerfilUrlInput.value = data.url;
-                    imgPreview.src = data.url;
-                    imgPreview.style.display = 'block';
-                }
-            } else {
-                alert('Gerenciador de upload não encontrado.');
-            }
-        } catch (error) {
-            console.error('Erro no upload:', error);
-            alert('Falha ao enviar a imagem.');
-        }
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            fotoPerfilUrlInput.value = evt.target.result;
+            imgPreview.src = evt.target.result;
+            imgPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
     });
 
     // Logout
