@@ -272,8 +272,7 @@ router.get('/posts',
             createdAt: true,
             author: {
               select: {
-                name: true,
-                avatarUrl: true
+                name: true
               }
             }
           }
