@@ -11,8 +11,10 @@ let currentPostId = null;
  * Inicializa o editor, verificando se é edição ou criação.
  * Carrega dados do post se for edição (via API).
  */
-function initEditor() {
+async function initEditor() {
     document.getElementById('postDate').valueAsDate = new Date();
+
+    await loadAutores();
 
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
@@ -91,6 +93,25 @@ function initEditor() {
     }
 }
 
+async function loadAutores() {
+    try {
+        const response = await apiRequest('/admin/autores');
+        const autores = response.data || [];
+        const select = document.getElementById('postAuthor');
+        select.innerHTML = '<option value="">Selecione um autor...</option>';
+        autores.forEach(a => {
+            const opt = document.createElement('option');
+            opt.value = a.id;
+            opt.textContent = a.nome;
+            select.appendChild(opt);
+        });
+    } catch(err) {
+        console.error('Erro ao carregar autores', err);
+        const select = document.getElementById('postAuthor');
+        if (select) select.innerHTML = '<option value="">Erro ao carregar autores</option>';
+    }
+}
+
 /**
  * Explicação da função [loadPostForEdit]
  * Carrega os dados de um post existente para edição via API (assíncrono).
@@ -114,7 +135,7 @@ async function loadPostForEdit(postId) {
 
         document.getElementById('postId').value = post.id;
         document.getElementById('postTitle').value = post.titulo || '';
-        document.getElementById('postAuthor').value = post.autor || '';
+        document.getElementById('postAuthor').value = post.autorId || '';
         const dataVal = post.data ? (typeof post.data === 'string' ? post.data : post.data.toISOString ? post.data.toISOString() : post.data).substring(0, 10) : '';
         document.getElementById('postDate').value = dataVal;
         document.getElementById('postCategory').value = post.categoria || 'turismo';
@@ -230,7 +251,7 @@ function getPostData() {
     const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
 
     const titulo = document.getElementById('postTitle').value.trim();
-    const autor = document.getElementById('postAuthor').value.trim();
+    const autorId = document.getElementById('postAuthor').value.trim();
     const data = document.getElementById('postDate').value;
     const categoria = document.getElementById('postCategory').value;
     const status = document.getElementById('postStatus').value;
@@ -242,7 +263,7 @@ function getPostData() {
 
     return {
         titulo: titulo,
-        autor: autor,
+        autorId: autorId,
         data: data,
         categoria: categoria,
         status: status,
@@ -266,7 +287,7 @@ function validatePost(postData) {
         return false;
     }
 
-    if (!postData.autor) {
+    if (!postData.autorId) {
         showToast('O autor é obrigatório.', 'error');
         document.getElementById('postAuthor').focus();
         return false;

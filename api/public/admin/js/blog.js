@@ -50,7 +50,7 @@
         tbody.innerHTML = posts.map(function(post) {
             var titulo = escapeHtml(post.titulo);
             var resumo = post.resumo ? escapeHtml(post.resumo.substring(0, 60) + '...') : 'Sem resumo';
-            var autor = escapeHtml(post.autor);
+            var autor = escapeHtml(post.autor ? post.autor.nome : 'Sem autor');
             var dataStr = formatDateBR(post.data);
             var cat = capitalizeFirst(post.categoria);
             var statusNorm = (post.status || '').toUpperCase();
@@ -179,7 +179,7 @@
             posts = posts.filter(function(p) {
                 var tit = (p.titulo || '').toLowerCase();
                 var res = (p.resumo || '').toLowerCase();
-                var aut = (p.autor || '').toLowerCase();
+                var aut = (p.autor && p.autor.nome ? p.autor.nome : '').toLowerCase();
                 return tit.includes(searchTerm) || res.includes(searchTerm) || aut.includes(searchTerm);
             });
         }

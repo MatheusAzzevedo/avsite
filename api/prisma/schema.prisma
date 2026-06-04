@@ -50,7 +50,6 @@ model Post {
   id         String     @id @default(uuid())
   titulo     String
   slug       String     @unique
-  autor      String
   data       DateTime   @default(now())
   categoria  String
   status     PostStatus @default(RASCUNHO)
@@ -64,6 +63,9 @@ model Post {
   // Relacionamentos
   authorId String?
   author   User?   @relation(fields: [authorId], references: [id])
+  
+  autorId  String?
+  autor    Autor?  @relation(fields: [autorId], references: [id])
 
   @@index([slug])
   @@index([status])
@@ -417,4 +419,23 @@ model Equipe {
   updatedAt       DateTime @updatedAt
 
   @@map("equipe")
+}
+
+// ===========================================
+// MODELO DE AUTOR
+// ===========================================
+
+model Autor {
+  id        String   @id @default(uuid())
+  nome      String
+  profissao String?
+  descricao String?  @db.Text
+  foto      String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  posts     Post[]
+
+  @@map("autores")
 }

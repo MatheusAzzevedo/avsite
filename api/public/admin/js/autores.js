@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Verifica autenticação
+    if (typeof AuthManager !== 'undefined') {
+        AuthManager.checkAuth();
+        const user = AuthManager.getUser();
+        if (user && document.getElementById('userName')) {
+            document.getElementById('userName').textContent = user.name || 'Administrador';
+        }
+    }
+
     // Referências DOM
     const autoresBody = document.getElementById('autoresBody');
     const emptyAutores = document.getElementById('emptyAutores');
@@ -20,91 +29,132 @@ document.addEventListener('DOMContentLoaded', () => {
     const fotoUrlInput = document.getElementById('fotoUrl');
     const imgPreview = document.getElementById('imgPreview');
 
-    // Estado Local
-    const STORAGE_KEY = 'avsite_mock_autores';
-    let autores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    // Carrega a lista de autores inicial
+    loadAutores();
+
+    // Eventos
+    btnNovoAutor.addEventListener('click', () => openModal(null));
+    modalClose.addEventListener('click', closeModal);
+    modalCancel.addEventListener('click', closeModal);
+    modalSave.addEventListener('click', saveAutor);
+
+    // Fechar modal ao clicar fora
+    modalAutor.addEventListener('click', (e) => {
+        if (e.target === modalAutor) closeModal();
+    });
+
+    // Leitura da Imagem
+    fileFoto.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            // Validar tamanho (5MB)
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('A imagem deve ter no máximo 5MB.');
+                fileFoto.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imgPreview.src = e.target.result;
+                imgPreview.style.display = 'block';
+                fotoUrlInput.value = e.target.result; // Salva o base64
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Logout
+    const navLogout = document.getElementById('navLogout');
+    if (navLogout) {
+        navLogout.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (typeof AuthManager !== 'undefined') {
+                AuthManager.logout();
+            }
+        });
+    }
 
     // Funções Auxiliares
-    function saveAutores() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(autores));
-    }
 
-    function generateId() {
-        return Math.random().toString(36).substring(2, 9);
-    }
+    async function loadAutores() {
+        try {
+            const response = await apiRequest('/admin/autores');
+            const data = response.data || [];
+            
+            autoresBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                autoresTable.style.display = 'none';
+                emptyAutores.style.display = 'block';
+                return;
+            }
 
-    function renderTable() {
-        autoresBody.innerHTML = '';
-        
-        if (autores.length === 0) {
-            autoresTable.style.display = 'none';
-            emptyAutores.style.display = 'block';
-            return;
+            autoresTable.style.display = 'table';
+            emptyAutores.style.display = 'none';
+
+            data.forEach(autor => {
+                const tr = document.createElement('tr');
+                
+                const avatarSrc = autor.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(autor.nome) + '&background=random';
+                
+                tr.innerHTML = `
+                    <td><img src="${avatarSrc}" alt="Avatar" class="avatar-table"></td>
+                    <td><strong>${autor.nome}</strong></td>
+                    <td>${autor.profissao || '-'}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-sm btn-primary btn-edit" data-id="${autor.id}" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger btn-delete" data-id="${autor.id}" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                autoresBody.appendChild(tr);
+            });
+
+            // Adiciona eventos aos botões recém-criados
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    editAutor(id);
+                });
+            });
+            
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    deleteAutor(id);
+                });
+            });
+
+        } catch (error) {
+            console.error('Erro ao carregar autores:', error);
+            alert('Erro ao carregar a lista de autores.');
         }
-
-        autoresTable.style.display = 'table';
-        emptyAutores.style.display = 'none';
-
-        autores.forEach(autor => {
-            const tr = document.createElement('tr');
-            
-            const avatarSrc = autor.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(autor.nome) + '&background=random';
-            
-            tr.innerHTML = `
-                <td><img src="${avatarSrc}" alt="Avatar" class="avatar-table"></td>
-                <td><strong>${autor.nome}</strong></td>
-                <td>${autor.profissao || '-'}</td>
-                <td>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-sm btn-primary btn-edit" data-id="${autor.id}" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="${autor.id}" title="Excluir">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            `;
-            autoresBody.appendChild(tr);
-        });
-
-        // Adiciona eventos aos botões recém-criados
-        document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.currentTarget.getAttribute('data-id');
-                openModal(id);
-            });
-        });
-        
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.currentTarget.getAttribute('data-id');
-                deleteAutor(id);
-            });
-        });
     }
 
-    // Modal
-    function openModal(id = null) {
+    function openModal(autor = null) {
         formAutor.reset();
         imgPreview.style.display = 'none';
         imgPreview.src = '';
         fotoUrlInput.value = '';
 
-        if (id) {
+        if (autor) {
             modalTitle.textContent = 'Editar Autor';
-            const autor = autores.find(a => a.id === id);
-            if (autor) {
-                autorIdInput.value = autor.id;
-                nomeInput.value = autor.nome;
-                profissaoInput.value = autor.profissao || '';
-                descricaoInput.value = autor.descricao || '';
-                
-                if (autor.foto) {
-                    fotoUrlInput.value = autor.foto;
-                    imgPreview.src = autor.foto;
-                    imgPreview.style.display = 'block';
-                }
+            autorIdInput.value = autor.id;
+            nomeInput.value = autor.nome;
+            profissaoInput.value = autor.profissao || '';
+            descricaoInput.value = autor.descricao || '';
+            
+            if (autor.foto) {
+                fotoUrlInput.value = autor.foto;
+                imgPreview.src = autor.foto;
+                imgPreview.style.display = 'block';
             }
         } else {
             modalTitle.textContent = 'Novo Autor';
@@ -118,66 +168,72 @@ document.addEventListener('DOMContentLoaded', () => {
         modalAutor.classList.add('hidden');
     }
 
-    // Leitura da Imagem
-    fileFoto.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imgPreview.src = e.target.result;
-                imgPreview.style.display = 'block';
-                fotoUrlInput.value = e.target.result; // Salva o base64 para o mock
+    async function editAutor(id) {
+        try {
+            const response = await apiRequest('/admin/autores');
+            const data = response.data || [];
+            const autor = data.find(a => a.id === id);
+            if (autor) {
+                openModal(autor);
             }
-            reader.readAsDataURL(file);
+        } catch (error) {
+            console.error('Erro ao buscar autor para edição:', error);
         }
-    });
+    }
 
-    // Salvar
-    modalSave.addEventListener('click', () => {
+    async function saveAutor() {
         if (!formAutor.checkValidity()) {
             formAutor.reportValidity();
             return;
         }
 
         const id = autorIdInput.value;
-        const autorData = {
+        const payload = {
             nome: nomeInput.value,
             profissao: profissaoInput.value,
             descricao: descricaoInput.value,
             foto: fotoUrlInput.value
         };
 
-        if (id) {
-            // Update
-            const index = autores.findIndex(a => a.id === id);
-            if (index > -1) {
-                autores[index] = { ...autores[index], ...autorData, id };
+        try {
+            const method = id ? 'PUT' : 'POST';
+            const endpoint = id ? `/admin/autores/${id}` : '/admin/autores';
+            
+            const response = await apiRequest(endpoint, {
+                method,
+                body: JSON.stringify(payload)
+            });
+
+            if (response.success) {
+                closeModal();
+                loadAutores();
+                if (typeof showToast !== 'undefined') {
+                    showToast(`Autor ${id ? 'atualizado' : 'cadastrado'} com sucesso!`);
+                }
             }
-        } else {
-            // Create
-            autorData.id = generateId();
-            autores.push(autorData);
-        }
-
-        saveAutores();
-        renderTable();
-        closeModal();
-    });
-
-    // Deletar
-    function deleteAutor(id) {
-        if (confirm('Tem certeza que deseja excluir este autor?')) {
-            autores = autores.filter(a => a.id !== id);
-            saveAutores();
-            renderTable();
+        } catch (error) {
+            console.error('Erro ao salvar autor:', error);
+            alert('Erro ao salvar os dados do autor.');
         }
     }
 
-    // Eventos
-    btnNovoAutor.addEventListener('click', () => openModal(null));
-    modalClose.addEventListener('click', closeModal);
-    modalCancel.addEventListener('click', closeModal);
+    async function deleteAutor(id) {
+        if (confirm('Tem certeza que deseja excluir este autor?')) {
+            try {
+                const response = await apiRequest(`/admin/autores/${id}`, {
+                    method: 'DELETE'
+                });
 
-    // Initial render
-    renderTable();
+                if (response.success) {
+                    loadAutores();
+                    if (typeof showToast !== 'undefined') {
+                        showToast('Autor excluído com sucesso!');
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao excluir autor:', error);
+                alert('Erro ao excluir o autor.');
+            }
+        }
+    }
 });

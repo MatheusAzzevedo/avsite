@@ -59,6 +59,7 @@ router.get('/',
       const [posts, total] = await Promise.all([
         prisma.post.findMany({
           where,
+          include: { autor: true },
           orderBy: { data: 'desc' },
           skip,
           take: limit
@@ -109,7 +110,8 @@ router.get('/:id',
       const { id } = req.params;
 
       const post = await prisma.post.findUnique({
-        where: { id }
+        where: { id },
+        include: { autor: true }
       });
 
       if (!post) {
@@ -145,7 +147,7 @@ router.post('/',
           titulo: data.titulo,
           categoria: data.categoria,
           status: data.status,
-          autor: data.autor
+          autorId: data.autorId
         }
       });
 

@@ -72,7 +72,7 @@
         document.getElementById('postTitle').textContent = post.titulo;
         document.getElementById('postCategory').textContent = capitalizeFirst(post.categoria);
         document.getElementById('postDate').textContent = formatDate(post.data);
-        document.getElementById('postAuthor').textContent = post.autor;
+        document.getElementById('postAuthor').textContent = post.autor ? post.autor.nome : 'Sem autor';
         document.getElementById('postBody').innerHTML = post.conteudo || '';
 
         if (post.imagemCapa) {
