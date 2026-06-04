@@ -15,11 +15,10 @@ const postBaseSchema = {
     .string({ required_error: 'Título é obrigatório' })
     .min(3, 'Título deve ter no mínimo 3 caracteres')
     .max(200, 'Título deve ter no máximo 200 caracteres'),
-  autor: z
+  autorId: z
     .string()
-    .max(100, 'Autor deve ter no máximo 100 caracteres')
-    .optional()
-    .default('Admin'),
+    .uuid('ID de autor inválido')
+    .optional(),
   data: z
     .string()
     .or(z.date())
@@ -45,7 +44,7 @@ export const createPostSchema = z.object(postBaseSchema);
  */
 export const updatePostSchema = z.object({
   titulo: postBaseSchema.titulo.optional(),
-  autor: z.string().max(100).optional(),
+  autorId: z.string().uuid().optional(),
   data: z.string().or(z.date()).optional().transform(val => val ? new Date(val) : undefined),
   categoria: z.string().optional(),
   status: z.enum(['PUBLICADO', 'RASCUNHO']).optional(),

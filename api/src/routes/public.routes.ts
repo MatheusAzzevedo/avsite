@@ -263,7 +263,12 @@ router.get('/posts',
             id: true,
             titulo: true,
             slug: true,
-            autor: true,
+            autor: {
+              select: {
+                nome: true,
+                foto: true
+              }
+            },
             data: true,
             categoria: true,
             imagemCapa: true,
@@ -311,7 +316,8 @@ router.get('/posts/:slug',
         where: {
           slug,
           status: 'PUBLICADO'
-        }
+        },
+        include: { autor: true }
       });
 
       if (!post) {
@@ -348,7 +354,12 @@ router.get('/posts/recent/:limit',
           id: true,
           titulo: true,
           slug: true,
-          autor: true,
+          autor: {
+            select: {
+              nome: true,
+              foto: true
+            }
+          },
           data: true,
           categoria: true,
           imagemCapa: true,

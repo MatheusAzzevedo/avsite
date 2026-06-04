@@ -4,6 +4,15 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
+### Última atualização (2026-06-03) - feat: integração de posts do blog com CRUD de Autores e ajuste visual nos cards
+- **api/prisma/schema.prisma** [Substituído campo de autor por relacionamento `autorId`]
+- **api/public/admin/blog-editor.html** e **blog-editor.js** [Substituído input por select populado pela API]
+- **api/public/js/blog-public.js** [Refatorado para ler foto e nome do autor na renderização dos cards]
+- **api/public/css/style.css** [Ajustes visuais no avatar e imagem de capa]
+
+Resumo: O campo de Autor nos posts do Blog foi refatorado para utilizar um relacionamento real de banco de dados com o recém-criado CRUD de Autores. Com essa integração, a área pública do blog passou a exibir dinamicamente a foto de perfil do autor associado ao post no centro do card. Adicionalmente, melhorias visuais foram feitas no tamanho das imagens de capa e na borda do avatar.
+
+
 ### Última atualização (2026-05-29) - fix: refatoração de uploads e remoção de perfil
 - **api/public/admin/js/equipe.js** [Substituído upload físico por conversão para Base64 local]
 - **api/public/admin/autores.html** e **autores.js** [Criado CRUD mock para gestão de Autores]

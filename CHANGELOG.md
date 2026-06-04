@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-03 - feat: integração de posts do blog com CRUD de Autores e ajuste visual nos cards
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Substituído campo de texto de autor por relacionamento com o modelo `Autor`]
+- `api/src/schemas/post.schema.ts` [Atualizada validação do autor para UUID]
+- `api/src/routes/post.routes.ts` [Atualizadas rotas administrativas de post para salvar `autorId`]
+- `api/src/routes/public.routes.ts` [Inclusão de dados completos do autor nas consultas públicas de posts]
+- `api/public/admin/blog-editor.html` e `js/blog-editor.js` [Modificado campo de autor para um select dinâmico consumindo a API de Autores]
+- `api/public/js/blog-public.js` e `api/public/js/blog-single-public.js` [Refatoração para puxar e exibir foto e nome baseados no relacionamento do banco]
+- `api/public/css/style.css` [Ajustado tamanho da capa e customizada borda do avatar do autor no card do blog]
+
+### Detalhes das Alterações
+- **Banco de Dados**: Migração do campo estático de autor para um relacionamento oficial (`autorId`) com o CRUD de Autores recém-criado. 
+- **Painel Administrativo**: O editor de posts agora lista todos os autores cadastrados em um `<select>`, tornando a seleção obrigatória e baseada em dados reais e dinâmicos da API.
+- **Frontend Público**: O grid de publicações busca a imagem de perfil e o nome oficial de cada Autor diretamente da API. Caso o autor não tenha foto, ocorre um fallback exibindo as letras iniciais do nome.
+- **Melhorias Visuais**: Inclusão de uma borda customizada ao redor do avatar do autor e aumento da altura da imagem de capa dos cards de 200px para 280px para dar mais destaque visual.
+
+---
+
 ## 2026-05-29 - fix: refatoracao de uploads e remocao de perfil
 
 ### Arquivos Modificados

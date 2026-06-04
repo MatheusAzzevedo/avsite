@@ -65,9 +65,15 @@
             var imageSrc = (post.imagemCapa || 'images/resource/news-1.jpg').replace(/"/g, '&quot;');
             var slugEncoded = encodeURIComponent(post.slug || '');
             
-            const authorName = escapeHtml(post.author.name);
-            const avatarInitials = post.author.name.split(' ').map((n) => n[0]).join('');
-            const avatarHtml = '<h3>' + avatarInitials + '</h3>';
+            const authorName = escapeHtml(post.autor && post.autor.nome ? post.autor.nome : (post.author && post.author.name ? post.author.name : 'Sem Autor'));
+            
+            let avatarHtml = '';
+            if (post.autor && post.autor.foto) {
+                avatarHtml = '<img src="' + post.autor.foto + '" alt="' + authorName + '" class="author-avatar">';
+            } else {
+                const avatarInitials = authorName.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarHtml = '<h3>' + avatarInitials + '</h3>';
+            }
 
             return '<div class="news-block col-lg-4 col-md-6 col-sm-12">' +
                 '<div class="inner-box blog-custom-card">' +
