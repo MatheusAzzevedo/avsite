@@ -208,7 +208,6 @@ async function main() {
     {
       titulo: 'Explorando Angra dos Reis',
       slug: 'explorando-angra-dos-reis',
-      autor: 'Administrador',
       data: new Date('2026-01-25'),
       categoria: 'turismo',
       status: 'PUBLICADO' as const,
@@ -221,7 +220,6 @@ async function main() {
     {
       titulo: 'Biologia Marinha em Angra',
       slug: 'biologia-marinha-em-angra',
-      autor: 'Administrador',
       data: new Date('2026-01-22'),
       categoria: 'natureza',
       status: 'PUBLICADO' as const,
@@ -234,7 +232,6 @@ async function main() {
     {
       titulo: 'Cristo Redentor: História e Beleza',
       slug: 'cristo-redentor-historia-e-beleza',
-      autor: 'Administrador',
       data: new Date('2026-01-20'),
       categoria: 'cultura',
       status: 'PUBLICADO' as const,
