@@ -61,9 +61,12 @@
         grid.innerHTML = posts.map(function(post) {
             var titulo = escapeHtml(post.titulo);
             var cat = escapeHtml(post.categoria);
-            var resumo = post.resumo ? escapeHtml(post.resumo.substring(0, 120)) + '...' : '';
             var imageSrc = (post.imagemCapa || 'images/resource/news-1.jpg').replace(/"/g, '&quot;');
             var slugEncoded = encodeURIComponent(post.slug || '');
+            
+            var rawText = post.conteudo || post.resumo || '';
+            var plainText = rawText.replace(/<[^>]+>/g, '').trim();
+            var excerpt = plainText.length > 100 ? escapeHtml(plainText.substring(0, 100)) + '...' : escapeHtml(plainText);
             
             const authorName = escapeHtml(post.autor && post.autor.nome ? post.autor.nome : (post.author && post.author.name ? post.author.name : 'Sem Autor'));
             
@@ -79,7 +82,6 @@
                 '<div class="inner-box blog-custom-card">' +
                     '<div class="upper-info">' +
                         '<h5><a href="blog-single.html?slug=' + slugEncoded + '">' + titulo + '</a></h5>' +
-                        (resumo ? '<p class="post-resumo">' + resumo + '</p>' : '') +
                         '<div class="info">' +
                            '<div class="cat i-block"><i class="far fa-folder"></i> ' + cat + '</div>' +
                         '</div>' +
@@ -95,6 +97,7 @@
                     '<div class="lower">' +
                         '<h5 class="author-name">' + authorName + '</h5>' +
                         '<p class="author-role">Autor</p>' +
+                        (excerpt ? '<p class="post-excerpt-bottom" style="margin-top:12px; margin-bottom:15px; font-size:14px; line-height:1.5em; color:#a0a0a0; font-weight:400; text-align:center;">' + excerpt + '</p>' : '') +
                         '<div class="link-box">' +
                             '<a href="blog-single.html?slug=' + slugEncoded + '" class="theme-btn btn-continuar">Continuar lendo <i class="fas fa-arrow-right"></i></a>' +
                         '</div>' +
