@@ -91,8 +91,14 @@
             document.getElementById('authorName').textContent = post.autor.nome;
             document.getElementById('author-designation').textContent = post.autor.profissao;
             document.getElementById('author-description').textContent = post.autor.descricao;
-            document.getElementById('author-image').src = post.autor.foto;
-            document.getElementById('author-image').alt = post.autor.nome;
+
+            if (post.autor.foto) {
+                document.getElementById('author-image').src = post.autor.foto;
+                document.getElementById('author-image').alt = post.autor.nome;
+            } else {
+                document.getElementById('author-image').src = 'images/favicon avoar.png';
+                document.getElementById('author-image').alt = post.autor.nome;
+            }
         }
 
         if (loadingState) loadingState.style.display = 'none';
