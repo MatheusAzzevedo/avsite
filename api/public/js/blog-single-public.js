@@ -96,7 +96,7 @@
                 document.getElementById('author-image').src = post.autor.foto;
                 document.getElementById('author-image').alt = post.autor.nome;
             } else {
-                document.getElementById('author-image').src = 'images/favicon avoar.png';
+                document.getElementById('author-image').src = 'images/favicon-avoar.png';
                 document.getElementById('author-image').alt = post.autor.nome;
             }
         }
