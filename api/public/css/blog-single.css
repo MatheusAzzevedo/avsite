@@ -1,0 +1,29 @@
+.blog-author-box {
+  display: flex;
+  gap: 1rem;
+  color: #b8b7b7;
+}
+
+.blog-author-box .author-image {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.blog-author-box #author-image {
+  display: inline-block;
+  height: 100px !important;
+  min-width: 100px !important;
+  border-radius: 100%;
+}
+
+.blog-author-box .author-content h4 {
+  margin-bottom: 6px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.blog-author-box .author-content .designation {
+  margin-bottom: 6px;
+  font-weight: bold;
+}
