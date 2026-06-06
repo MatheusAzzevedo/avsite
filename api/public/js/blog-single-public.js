@@ -87,6 +87,14 @@
                 .join(', &ensp; ');
         }
 
+        if (post.autor) {
+            document.getElementById('authorName').textContent = post.autor.nome;
+            document.getElementById('author-designation').textContent = post.autor.profissao;
+            document.getElementById('author-description').textContent = post.autor.descricao;
+            document.getElementById('author-image').src = post.autor.foto;
+            document.getElementById('author-image').alt = post.autor.nome;
+        }
+
         if (loadingState) loadingState.style.display = 'none';
         if (postContent) postContent.style.display = 'block';
 
