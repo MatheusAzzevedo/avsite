@@ -193,6 +193,24 @@
                             <input type="hidden" id="postImageData" value="">
                         </div>
 
+                        <!-- Galeria de Imagens (até 4) -->
+                        <div class="form-group">
+                            <label>Galeria de Imagens (até 4 imagens)</label>
+                            <div class="file-upload" data-upload-target="postGaleria" style="cursor: pointer;">
+                                <i class="fas fa-images" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                                <p style="margin-bottom: 0.5rem; font-weight: 600;">Clique para adicionar imagens à galeria</p>
+                                <p style="color: var(--text-light); font-size: 0.875rem;">PNG, JPG ou WEBP — máximo de 4 imagens</p>
+                            </div>
+                            <input
+                                type="file"
+                                id="postGaleria"
+                                accept="image/png,image/jpeg,image/webp"
+                                multiple
+                                style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;"
+                            >
+                            <div id="galeriaPreview" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.75rem; margin-top: 1rem;"></div>
+                        </div>
+
                         <!-- Resumo -->
                         <div class="form-group">
                             <label for="postExcerpt">Resumo (aparece na listagem)</label>

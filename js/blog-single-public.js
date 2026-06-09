@@ -90,7 +90,41 @@
         if (loadingState) loadingState.style.display = 'none';
         if (postContent) postContent.style.display = 'block';
 
+        loadGaleria(post.galeria);
         loadRecentPosts(post.id);
+    }
+
+    /**
+     * Explicação da função [loadGaleria]
+     * Renderiza a galeria do post (até 4 imagens) na sidebar como miniaturas.
+     * Cada miniatura abre o Fancybox (lightbox/carrossel com setas e swipe) ao clicar,
+     * no desktop e no mobile. Oculta o widget se não houver imagens.
+     * @param {Array} galeria - Lista de imagens (string de URL/base64 ou objeto { url }).
+     */
+    function loadGaleria(galeria) {
+        var widget = document.getElementById('galleryWidget');
+        var container = document.getElementById('postGaleria');
+        if (!widget || !container) return;
+
+        var images = (Array.isArray(galeria) ? galeria : [])
+            .map(function(item) { return typeof item === 'string' ? item : (item && item.url ? item.url : null); })
+            .filter(Boolean)
+            .slice(0, 4);
+
+        if (images.length === 0) {
+            widget.style.display = 'none';
+            return;
+        }
+
+        container.innerHTML = images.map(function(img, index) {
+            return '<a href="' + img + '" data-fancybox="post-galeria" ' +
+                'style="display: block; border-radius: 6px; overflow: hidden;">' +
+                '<img src="' + img + '" alt="Imagem ' + (index + 1) + ' da galeria" ' +
+                'style="width: 100%; height: 110px; object-fit: cover; cursor: pointer; display: block;">' +
+                '</a>';
+        }).join('');
+
+        widget.style.display = 'block';
     }
 
     /**
