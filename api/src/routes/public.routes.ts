@@ -317,7 +317,10 @@ router.get('/posts/:slug',
           slug,
           status: 'PUBLICADO'
         },
-        include: { autor: true }
+        include: {
+          autor: true,
+          galeria: { orderBy: { ordem: 'asc' } }
+        }
       });
 
       if (!post) {

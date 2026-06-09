@@ -6,6 +6,10 @@
 let isEditing = false;
 let currentPostId = null;
 
+// Imagens da galeria do post (base64 ou URL), máximo de 4
+const MAX_GALERIA = 4;
+let galeriaImages = [];
+
 /**
  * Explicação da função [initEditor]
  * Inicializa o editor, verificando se é edição ou criação.
@@ -29,6 +33,21 @@ async function initEditor() {
     if (postImageInput) {
         postImageInput.addEventListener('change', function() {
             handleImageUpload(this);
+        });
+    }
+
+    // Galeria de imagens
+    const postGaleriaInput = document.getElementById('postGaleria');
+    if (postGaleriaInput) {
+        postGaleriaInput.addEventListener('change', function() {
+            handleGalleryUpload(this);
+            this.value = ''; // permite reselecionar o mesmo arquivo
+        });
+    }
+    const galeriaUploadArea = document.querySelector('[data-upload-target="postGaleria"]');
+    if (galeriaUploadArea) {
+        galeriaUploadArea.addEventListener('click', function() {
+            document.getElementById('postGaleria').click();
         });
     }
 
@@ -150,6 +169,15 @@ async function loadPostForEdit(postId) {
             document.getElementById('imagePreviewContainer').style.display = 'block';
         }
 
+        // Galeria existente
+        if (Array.isArray(post.galeria) && post.galeria.length > 0) {
+            galeriaImages = post.galeria
+                .map(function(img) { return typeof img === 'string' ? img : (img && img.url ? img.url : null); })
+                .filter(Boolean)
+                .slice(0, MAX_GALERIA);
+            renderGalleryPreview();
+        }
+
         updateExcerptCount();
         console.log('[Blog Editor] Post carregado com sucesso');
     } catch (err) {
@@ -193,6 +221,67 @@ function removeImage() {
     document.getElementById('postImageData').value = '';
     document.getElementById('postImage').value = '';
     document.getElementById('imagePreviewContainer').style.display = 'none';
+}
+
+/**
+ * Explicação da função [handleGalleryUpload]
+ * Processa o upload de múltiplas imagens da galeria (base64), respeitando o limite de 4.
+ * @param {HTMLInputElement} input - Input de arquivo (multiple)
+ */
+function handleGalleryUpload(input) {
+    if (!input.files || input.files.length === 0) return;
+
+    Array.from(input.files).forEach(function(file) {
+        if (galeriaImages.length >= MAX_GALERIA) {
+            showToast('A galeria aceita no máximo ' + MAX_GALERIA + ' imagens.', 'error');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('A imagem ' + file.name + ' deve ter no máximo 5MB.', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            if (galeriaImages.length >= MAX_GALERIA) return;
+            galeriaImages.push(e.target.result);
+            renderGalleryPreview();
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+/**
+ * Explicação da função [renderGalleryPreview]
+ * Renderiza a prévia das imagens da galeria com botão de remover.
+ */
+function renderGalleryPreview() {
+    const container = document.getElementById('galeriaPreview');
+    if (!container) return;
+
+    container.innerHTML = galeriaImages.map(function(img, index) {
+        return '<div style="position: relative; border-radius: var(--radius-md); overflow: hidden;">' +
+            '<img src="' + img + '" style="width: 100%; height: 100px; object-fit: cover;">' +
+            '<button type="button" data-gallery-index="' + index + '" class="remove-gallery-image" style="position: absolute; top: 0.25rem; right: 0.25rem; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 0.7rem;">' +
+            '<i class="fas fa-times"></i></button>' +
+            '</div>';
+    }).join('');
+
+    container.querySelectorAll('.remove-gallery-image').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            removeGalleryImage(parseInt(this.dataset.galleryIndex, 10));
+        });
+    });
+}
+
+/**
+ * Explicação da função [removeGalleryImage]
+ * Remove uma imagem da galeria pelo índice.
+ * @param {number} index - Posição da imagem
+ */
+function removeGalleryImage(index) {
+    galeriaImages.splice(index, 1);
+    renderGalleryPreview();
 }
 
 /**
@@ -270,7 +359,8 @@ function getPostData() {
         imagemCapa: imagemCapa,
         resumo: resumo,
         conteudo: document.getElementById('postContent').innerHTML,
-        tags: tags
+        tags: tags,
+        galeria: galeriaImages.slice(0, MAX_GALERIA)
     };
 }
 

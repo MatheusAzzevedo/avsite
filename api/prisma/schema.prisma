@@ -67,6 +67,8 @@ model Post {
   autorId  String?
   autor    Autor?  @relation(fields: [autorId], references: [id])
 
+  galeria  PostImagem[]
+
   @@index([slug])
   @@index([status])
   @@index([categoria])
@@ -76,6 +78,23 @@ model Post {
 enum PostStatus {
   PUBLICADO
   RASCUNHO
+}
+
+// ===========================================
+// MODELO DE IMAGENS DA GALERIA DO POST (blog)
+// ===========================================
+
+model PostImagem {
+  id        String   @id @default(uuid())
+  url       String
+  ordem     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  // Relacionamentos
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("post_imagens")
 }
 
 // ===========================================

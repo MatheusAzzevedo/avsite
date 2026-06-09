@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-08 - feat: galeria de imagens nas postagens do blog
+
+### Arquivos Modificados
+- `api/prisma/schema.prisma` [Novo modelo `PostImagem` (url, ordem, FK cascade) e relação `galeria` no modelo `Post`]
+- `api/prisma/migrations/20260608000000_add_post_galeria/` [Migration que cria a tabela `post_imagens`]
+- `api/src/schemas/post.schema.ts` [Campo `galeria` (array de até 4 imagens) na validação de criação e atualização]
+- `api/src/routes/post.routes.ts` [Criação/atualização da galeria aninhada e inclusão da galeria no GET por id]
+- `api/src/routes/public.routes.ts` [Inclusão da galeria ordenada na consulta pública de post por slug]
+- `api/public/admin/blog-editor.html` e `js/blog-editor.js` [Seção "Galeria de Imagens (até 4)" com upload múltiplo, preview, remoção e carregamento na edição]
+- `blog-single.html` e `js/blog-single-public.js` [Widget "Galeria" na sidebar abaixo de "Posts Recentes", com lightbox/carrossel via Fancybox]
+
+### Detalhes das Alterações
+- **Banco de Dados**: Galeria armazenada em tabela própria (`post_imagens`) com `ordem` para sequência e exclusão em cascata ao remover o post, seguindo o padrão já usado nas Excursões.
+- **Painel Administrativo**: O editor de posts ganhou uma seção de Galeria que aceita no máximo 4 imagens, com prévia em grade e botão de remover, reaproveitando o mesmo padrão de upload das demais áreas do sistema.
+- **Frontend Público**: As imagens da galeria aparecem na sidebar do post; ao clicar, abrem ampliadas em um carrossel (setas e swipe) via Fancybox, funcionando tanto no desktop quanto no mobile.
+
+---
+
 ## 2026-06-03 - feat: integração de posts do blog com CRUD de Autores e ajuste visual nos cards
 
 ### Arquivos Modificados
