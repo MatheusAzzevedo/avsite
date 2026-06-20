@@ -4,13 +4,11 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-06-03) - feat: integração de posts do blog com CRUD de Autores e ajuste visual nos cards
-- **api/prisma/schema.prisma** [Substituído campo de autor por relacionamento `autorId`]
-- **api/public/admin/blog-editor.html** e **blog-editor.js** [Substituído input por select populado pela API]
-- **api/public/js/blog-public.js** [Refatorado para ler foto e nome do autor na renderização dos cards]
-- **api/public/css/style.css** [Ajustes visuais no avatar e imagem de capa]
+### Última atualização (2026-06-20) - feat: adição manual de alunos via painel administrativo
+- **api/public/admin/listas.html** [Adicionado botão "Adicionar Aluno" e modal de formulário completo]
+- **api/public/admin/js/listas.js** [Implementada lógica de abertura/fechamento do modal, submissão do formulário e recarregamento da tabela]
 
-Resumo: O campo de Autor nos posts do Blog foi refatorado para utilizar um relacionamento real de banco de dados com o recém-criado CRUD de Autores. Com essa integração, a área pública do blog passou a exibir dinamicamente a foto de perfil do autor associado ao post no centro do card. Adicionalmente, melhorias visuais foram feitas no tamanho das imagens de capa e na borda do avatar.
+Resumo: Adicionado o botão "Adicionar Aluno" e um modal de formulário no painel de administração de listas. O formulário envia informações detalhadas do aluno e do responsável financeiro para o backend para criar automaticamente o registro de cliente e pedido associados à excursão.
 
 
 ### Última atualização (2026-05-29) - fix: refatoração de uploads e remoção de perfil

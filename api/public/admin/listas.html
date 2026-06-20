@@ -402,6 +402,9 @@
                             <p id="excursaoInfo" style="color: var(--text-light); margin: 0.5rem 0 0 0;"></p>
                         </div>
                         <div class="action-buttons">
+                            <button type="button" id="btnAdicionarAluno" class="btn btn-primary" style="background-color: var(--primary-color); border-color: var(--primary-color);">
+                                <i class="fas fa-plus"></i> Adicionar Aluno
+                            </button>
                             <button type="button" id="btnExportar" class="btn btn-success">
                                 <i class="fas fa-file-excel"></i> Exportar Excel
                             </button>
@@ -479,6 +482,195 @@
                     Fechar
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal: Adicionar Aluno -->
+    <div id="modalAdicionarAluno" class="modal-overlay hidden" role="dialog" aria-labelledby="modalAdicionarAlunoTitulo" aria-modal="true">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="modalAdicionarAlunoTitulo"><i class="fas fa-user-plus"></i> Adicionar Aluno</h3>
+                <button type="button" class="modal-close" id="btnFecharModalAdicionarAluno" aria-label="Fechar modal de adicionar aluno">
+                    &times;
+                </button>
+            </div>
+            <form id="formAdicionarAluno">
+                <div class="modal-body" style="padding-top: 1rem; max-height: 70vh; overflow-y: auto;">
+                    <!-- Seção 1: Dados do Aluno -->
+                    <h4 style="margin: 0 0 1rem 0; border-bottom: 2px solid var(--light-border); padding-bottom: 0.3rem; color: var(--primary-color);">
+                        <i class="fas fa-user-graduate"></i> Dados do Aluno
+                    </h4>
+                    <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="alunoNome">Nome Completo <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="alunoNome" class="form-control" placeholder="Nome completo do aluno" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="alunoDataNascimento">Data de Nascimento</label>
+                            <input type="date" id="alunoDataNascimento" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="alunoEscola">Escola</label>
+                            <input type="text" id="alunoEscola" class="form-control" placeholder="Nome da escola">
+                        </div>
+                        <div class="form-group">
+                            <label for="alunoSerie">Série</label>
+                            <input type="text" id="alunoSerie" class="form-control" placeholder="Ex: 5º Ano">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="alunoTurma">Turma</label>
+                            <input type="text" id="alunoTurma" class="form-control" placeholder="Ex: A">
+                        </div>
+                        <div class="form-group">
+                            <label for="alunoUnidade">Unidade Colégio</label>
+                            <input type="text" id="alunoUnidade" class="form-control" placeholder="Ex: Unidade Centro">
+                        </div>
+                        <div class="form-group">
+                            <label for="alunoIdade">Idade</label>
+                            <input type="number" id="alunoIdade" class="form-control" min="1" max="120" placeholder="Ex: 10">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label for="alunoCpf">CPF do Aluno</label>
+                            <input type="text" id="alunoCpf" class="form-control" placeholder="000.000.000-00">
+                        </div>
+                        <div class="form-group">
+                            <label for="alunoRg">RG do Aluno</label>
+                            <input type="text" id="alunoRg" class="form-control" placeholder="RG do aluno">
+                        </div>
+                    </div>
+
+                    <!-- Seção 2: Dados do Responsável / Responsável Financeiro -->
+                    <h4 style="margin: 1.5rem 0 1rem 0; border-bottom: 2px solid var(--light-border); padding-bottom: 0.3rem; color: var(--primary-color);">
+                        <i class="fas fa-user-friends"></i> Dados do Responsável / Responsável Financeiro
+                    </h4>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="respNome">Nome <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="respNome" class="form-control" placeholder="Nome do responsável" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="respSobrenome">Sobrenome</label>
+                            <input type="text" id="respSobrenome" class="form-control" placeholder="Sobrenome do responsável">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="respEmail">E-mail <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="email" id="respEmail" class="form-control" placeholder="exemplo@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="respTelefone">Telefone / WhatsApp <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="respTelefone" class="form-control" placeholder="(00) 00000-0000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="respCpf">CPF do Responsável <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="respCpf" class="form-control" placeholder="000.000.000-00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="respCep">CEP <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="respCep" class="form-control" placeholder="00000-000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="respEndereco">Endereço <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="respEndereco" class="form-control" placeholder="Rua, Avenida, etc." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="respNumero">Número <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="respNumero" class="form-control" placeholder="Nº" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label for="respBairro">Bairro</label>
+                            <input type="text" id="respBairro" class="form-control" placeholder="Bairro">
+                        </div>
+                        <div class="form-group">
+                            <label for="respCidade">Cidade <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="respCidade" class="form-control" placeholder="Cidade" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="respEstado">Estado (UF) <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="respEstado" class="form-control" placeholder="Ex: SP" maxlength="2" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="respComplemento">Complemento</label>
+                        <input type="text" id="respComplemento" class="form-control" placeholder="Apto, bloco, etc.">
+                    </div>
+
+                    <!-- Seção 3: Informações Médicas (Opcionais) -->
+                    <h4 style="margin: 1.5rem 0 1rem 0; border-bottom: 2px solid var(--light-border); padding-bottom: 0.3rem; color: var(--primary-color);">
+                        <i class="fas fa-first-aid"></i> Informações Médicas (Opcionais)
+                    </h4>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="alunoPlanoSaude">Plano de Saúde</label>
+                            <input type="text" id="alunoPlanoSaude" class="form-control" placeholder="Nome do plano">
+                        </div>
+                        <div class="form-group">
+                            <label for="alunoAlergias">Alergias / Cuidados Especiais</label>
+                            <input type="text" id="alunoAlergias" class="form-control" placeholder="Ex: Alergia a glúten">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label for="alunoMedicamentosFebre">Medicamentos para Febre</label>
+                            <input type="text" id="alunoMedicamentosFebre" class="form-control" placeholder="Ex: Paracetamol">
+                        </div>
+                        <div class="form-group">
+                            <label for="alunoMedicamentosAlergia">Medicamentos para Alergia</label>
+                            <input type="text" id="alunoMedicamentosAlergia" class="form-control" placeholder="Ex: Loratadina">
+                        </div>
+                    </div>
+
+                    <!-- Seção 4: Configurações do Pedido -->
+                    <h4 style="margin: 1.5rem 0 1rem 0; border-bottom: 2px solid var(--light-border); padding-bottom: 0.3rem; color: var(--primary-color);">
+                        <i class="fas fa-shopping-basket"></i> Configurações do Pedido
+                    </h4>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="pedidoStatus">Status do Pedido <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <select id="pedidoStatus" class="form-control" required>
+                                <option value="CONFIRMADO" selected>Confirmado</option>
+                                <option value="PAGO">Pago</option>
+                                <option value="PENDENTE">Pendente</option>
+                                <option value="AGUARDANDO_PAGAMENTO">Aguardando Pagamento</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="alunoObservacoes">Observações (Interno)</label>
+                            <input type="text" id="alunoObservacoes" class="form-control" placeholder="Observações gerais">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnCancelarAdicionarAluno">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" id="btnConfirmarAdicionarAluno">
+                        <i class="fas fa-save"></i> Salvar Aluno
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

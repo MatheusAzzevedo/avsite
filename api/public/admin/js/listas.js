@@ -1115,6 +1115,163 @@ function showSuccess(message) {
     }
 }
 
+/**
+ * Explicação da função [abrirModalAdicionarAluno]
+ * Limpa o formulário de cadastro, define o status inicial do pedido e exibe o modal de inclusão de aluno.
+ */
+function abrirModalAdicionarAluno() {
+    console.log('[Listas] Abrindo modal Adicionar Aluno');
+    const form = document.getElementById('formAdicionarAluno');
+    if (form) form.reset();
+
+    // Reset status do pedido para o padrão CONFIRMADO
+    const selectStatus = document.getElementById('pedidoStatus');
+    if (selectStatus) selectStatus.value = 'CONFIRMADO';
+
+    if (typeof openModal === 'function') {
+        openModal('modalAdicionarAluno');
+    } else {
+        const overlay = document.getElementById('modalAdicionarAluno');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+}
+
+/**
+ * Explicação da função [fecharModalAdicionarAluno]
+ * Oculta o modal de inclusão de aluno e restaura o overflow da página.
+ */
+function fecharModalAdicionarAluno() {
+    console.log('[Listas] Fechando modal Adicionar Aluno');
+    if (typeof closeModal === 'function') {
+        closeModal('modalAdicionarAluno');
+    } else {
+        const overlay = document.getElementById('modalAdicionarAluno');
+        if (overlay) {
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+/**
+ * Explicação da função [salvarNovoAluno]
+ * Captura os dados do formulário de cadastro, estrutura o payload contendo informações do aluno, responsável financeiro e configurações de pedido, realiza a requisição POST para o backend e atualiza as tabelas em caso de sucesso.
+ */
+async function salvarNovoAluno(event) {
+    if (event) event.preventDefault();
+
+    if (!currentExcursaoId) {
+        showError('Nenhuma excursão selecionada para adicionar o aluno.');
+        return;
+    }
+
+    const btnSalvar = document.getElementById('btnConfirmarAdicionarAluno');
+    const originalText = btnSalvar ? btnSalvar.innerHTML : 'Salvar Aluno';
+
+    if (btnSalvar) {
+        btnSalvar.disabled = true;
+        btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+    }
+
+    try {
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Helper to get val
+        const val = (id) => {
+            const el = document.getElementById(id);
+            return el ? el.value.trim() : '';
+        };
+
+        const valOrUndefined = (id) => {
+            const v = val(id);
+            return v || undefined;
+        };
+
+        const valNumOrUndefined = (id) => {
+            const v = val(id);
+            if (!v) return undefined;
+            const n = parseInt(v, 10);
+            return isNaN(n) ? undefined : n;
+        };
+
+        const payload = {
+            aluno: {
+                nomeAluno: val('alunoNome'),
+                idadeAluno: valNumOrUndefined('alunoIdade'),
+                dataNascimento: valOrUndefined('alunoDataNascimento'),
+                escolaAluno: valOrUndefined('alunoEscola'),
+                serieAluno: valOrUndefined('alunoSerie'),
+                turma: valOrUndefined('alunoTurma'),
+                unidadeColegio: valOrUndefined('alunoUnidade'),
+                cpfAluno: valOrUndefined('alunoCpf'),
+                rgAluno: valOrUndefined('alunoRg'),
+                alergiasCuidados: valOrUndefined('alunoAlergias'),
+                planoSaude: valOrUndefined('alunoPlanoSaude'),
+                medicamentosFebre: valOrUndefined('alunoMedicamentosFebre'),
+                medicamentosAlergia: valOrUndefined('alunoMedicamentosAlergia'),
+                observacoes: valOrUndefined('alunoObservacoes')
+            },
+            responsavel: {
+                nome: val('respNome'),
+                sobrenome: valOrUndefined('respSobrenome'),
+                email: val('respEmail'),
+                telefone: val('respTelefone'),
+                cpf: val('respCpf'),
+                cep: val('respCep'),
+                endereco: val('respEndereco'),
+                numero: val('respNumero'),
+                cidade: val('respCidade'),
+                estado: val('respEstado'),
+                complemento: valOrUndefined('respComplemento'),
+                bairro: valOrUndefined('respBairro')
+            },
+            statusPedido: val('pedidoStatus')
+        };
+
+        console.log('[Listas] Enviando dados para salvar aluno manually:', payload);
+
+        const response = await fetch(`${apiUrl}/admin/listas/excursao/${currentExcursaoId}/aluno`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.error || 'Erro ao adicionar aluno');
+        }
+
+        console.log('[Listas] Aluno adicionado com sucesso:', result);
+        showSuccess('Aluno adicionado com sucesso!');
+        
+        fecharModalAdicionarAluno();
+        
+        // Recarregar os dados
+        await loadAlunos();
+        await loadExcursoes();
+
+    } catch (error) {
+        console.error('[Listas] Erro ao adicionar aluno:', error);
+        showError(error.message || 'Erro ao adicionar aluno. Verifique os dados e tente novamente.');
+    } finally {
+        if (btnSalvar) {
+            btnSalvar.disabled = false;
+            btnSalvar.innerHTML = originalText;
+        }
+    }
+}
+
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[Listas] Inicializando página de listas...');
@@ -1229,6 +1386,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+    }
+
+    // Modal Adicionar Aluno Listeners
+    const btnAdicionarAluno = document.getElementById('btnAdicionarAluno');
+    if (btnAdicionarAluno) {
+        btnAdicionarAluno.addEventListener('click', abrirModalAdicionarAluno);
+    }
+
+    const btnFecharModalAdicionarAluno = document.getElementById('btnFecharModalAdicionarAluno');
+    if (btnFecharModalAdicionarAluno) {
+        btnFecharModalAdicionarAluno.addEventListener('click', fecharModalAdicionarAluno);
+    }
+
+    const btnCancelarAdicionarAluno = document.getElementById('btnCancelarAdicionarAluno');
+    if (btnCancelarAdicionarAluno) {
+        btnCancelarAdicionarAluno.addEventListener('click', fecharModalAdicionarAluno);
+    }
+
+    const formAdicionarAluno = document.getElementById('formAdicionarAluno');
+    if (formAdicionarAluno) {
+        formAdicionarAluno.addEventListener('submit', salvarNovoAluno);
     }
 
     loadExcursoes().then(() => {
