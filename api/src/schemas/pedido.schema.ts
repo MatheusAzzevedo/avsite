@@ -320,3 +320,41 @@ export type CreatePedidoConvencionalInput = z.infer<typeof createPedidoConvencio
 export type UpdatePedidoStatusInput = z.infer<typeof updatePedidoStatusSchema>;
 export type FilterPedidosInput = z.infer<typeof filterPedidosSchema>;
 export type BuscarPorCodigoInput = z.infer<typeof buscarPorCodigoSchema>;
+
+/**
+ * Schema para o administrador adicionar aluno manualmente na lista
+ */
+export const adminAddAlunoSchema = z.object({
+  aluno: dadosAlunoSchema,
+  responsavel: z.object({
+    nome: z.string().min(2, 'Nome do responsável deve ter no mínimo 2 caracteres').max(100).trim(),
+    sobrenome: z.string().min(2, 'Sobrenome do responsável deve ter no mínimo 2 caracteres').max(100).trim().optional(),
+    email: z.string().email('Email do responsável inválido').toLowerCase().trim(),
+    telefone: z.string().refine(
+      (val) => /^\(\d{2}\)\s?\d{4,5}-?\d{4}$/.test(val) || /^\d{10,11}$/.test(val),
+      'Telefone inválido. Formatos aceitos: (11) 98888-8888 ou apenas números.'
+    ),
+    cpf: z.string().refine(
+      (val) => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val) || /^\d{11}$/.test(val),
+      'CPF inválido. Use formato: 000.000.000-00 ou apenas números.'
+    ),
+    cep: z.string().trim().regex(/^\d{5}-?\d{3}$/, 'CEP inválido. Use formato: 00000-000'),
+    endereco: z.string().min(3, 'Endereço obrigatório').max(200).trim(),
+    numero: z.string().min(1, 'Número obrigatório').max(20).trim(),
+    cidade: z.string().min(2, 'Cidade obrigatória').max(100).trim(),
+    estado: z.string().length(2, 'Estado deve ser sigla (ex: SP)').trim(),
+    complemento: z.string().max(100).trim().optional(),
+    bairro: z.string().max(100).trim().optional()
+  }),
+  statusPedido: z.enum([
+    'PENDENTE',
+    'AGUARDANDO_PAGAMENTO',
+    'PAGO',
+    'CONFIRMADO'
+  ], {
+    required_error: 'Status do pedido é obrigatório'
+  })
+});
+
+export type AdminAddAlunoInput = z.infer<typeof adminAddAlunoSchema>;
+

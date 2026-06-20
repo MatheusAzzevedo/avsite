@@ -23,6 +23,8 @@ import { authMiddleware, adminMiddleware } from '../middleware/auth.middleware';
 import { logger } from '../utils/logger';
 import ExcelJS from 'exceljs';
 import { consultarPagamentoAsaas, verificarConfigAsaas } from '../config/asaas';
+import { validateBody } from '../middleware/validate.middleware';
+import { adminAddAlunoSchema } from '../schemas/pedido.schema';
 
 const router = Router();
 
@@ -1253,5 +1255,176 @@ router.delete('/aluno/:id', adminMiddleware, async (req: Request, res: Response,
     next(error);
   }
 });
+
+/**
+ * Explicação da API [POST /api/admin/listas/excursao/:id/aluno]
+ *
+ * Adiciona um aluno manualmente a uma excursão pedagógica.
+ * Se o Cliente/Responsável Financeiro não existir (por e-mail), cria-o automaticamente.
+ * Cria um Pedido com status especificado (CONFIRMADO, PAGO, etc.) e quantidade = 1.
+ * Depois cria o ItemPedido com os dados do aluno.
+ *
+ * Params: { id: string } - ID da excursão pedagógica
+ * Body: { aluno: DadosAlunoInput, responsavel: DadosResponsavelInput, statusPedido: PedidoStatus }
+ * Response: { success, message, data: { aluno } }
+ */
+router.post('/excursao/:id/aluno',
+  validateBody(adminAddAlunoSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { aluno, responsavel, statusPedido } = req.body;
+      const adminId = req.user!.id;
+      const adminEmail = req.user!.email;
+
+      logger.info('[Listas] Admin adicionando aluno manualmente', {
+        context: {
+          adminId,
+          excursaoId: id,
+          alunoNome: aluno.nomeAluno,
+          responsavelEmail: responsavel.email,
+          statusPedido
+        }
+      });
+
+      // 1. Verifica se excursão existe
+      const excursao = await prisma.excursaoPedagogica.findUnique({
+        where: { id }
+      });
+
+      if (!excursao) {
+        throw ApiError.notFound('Excursão pedagógica não encontrada');
+      }
+
+      // 2. Busca ou cria Cliente
+      let cliente = await prisma.cliente.findUnique({
+        where: { email: responsavel.email }
+      });
+
+      if (!cliente) {
+        logger.info('[Listas] Criando novo cliente para venda manual', {
+          context: { email: responsavel.email }
+        });
+        
+        // Criar nome completo a partir de nome e sobrenome
+        const nomeCompleto = responsavel.sobrenome 
+          ? `${responsavel.nome} ${responsavel.sobrenome}`.trim()
+          : responsavel.nome;
+
+        cliente = await prisma.cliente.create({
+          data: {
+            email: responsavel.email,
+            nome: nomeCompleto,
+            telefone: responsavel.telefone,
+            cpf: responsavel.cpf || null,
+            active: true
+          }
+        });
+      }
+
+      // 3. Montar dados do responsável financeiro para o Pedido
+      const dadosResponsavelFinanceiro = {
+        nome: responsavel.nome,
+        sobrenome: responsavel.sobrenome || '',
+        email: responsavel.email,
+        telefone: responsavel.telefone,
+        cpf: responsavel.cpf || '',
+        cep: responsavel.cep || '',
+        endereco: responsavel.endereco || '',
+        numero: responsavel.numero || '',
+        complemento: responsavel.complemento || '',
+        bairro: responsavel.bairro || '',
+        cidade: responsavel.cidade || '',
+        estado: responsavel.estado || '',
+        pais: 'Brasil'
+      };
+
+      const valorUnitario = excursao.preco;
+      const valorTotal = valorUnitario;
+
+      // 4. Executa transação para criar pedido e item
+      const novoItem = await prisma.$transaction(async (tx) => {
+        // Criar o pedido
+        const pedido = await tx.pedido.create({
+          data: {
+            clienteId: cliente!.id,
+            excursaoPedagogicaId: excursao.id,
+            quantidade: 1,
+            valorUnitario,
+            valorTotal,
+            status: statusPedido as PedidoStatus,
+            tipo: 'PEDAGOGICA',
+            dadosResponsavelFinanceiro,
+            observacoes: 'Matrícula inserida manualmente pelo administrador.'
+          }
+        });
+
+        // Criar o item do pedido (aluno)
+        const item = await tx.itemPedido.create({
+          data: {
+            pedidoId: pedido.id,
+            nomeAluno: aluno.nomeAluno,
+            idadeAluno: aluno.idadeAluno ?? null,
+            dataNascimento: aluno.dataNascimento
+              ? new Date(aluno.dataNascimento as string)
+              : null,
+            escolaAluno: aluno.escolaAluno || null,
+            serieAluno: aluno.serieAluno || null,
+            turma: aluno.turma || null,
+            unidadeColegio: aluno.unidadeColegio || null,
+            cpfAluno: aluno.cpfAluno || null,
+            rgAluno: aluno.rgAluno || null,
+            responsavel: `${responsavel.nome} ${responsavel.sobrenome || ''}`.trim(),
+            telefoneResponsavel: responsavel.telefone || null,
+            emailResponsavel: responsavel.email || null,
+            alergiasCuidados: aluno.alergiasCuidados || null,
+            planoSaude: aluno.planoSaude || null,
+            medicamentosFebre: aluno.medicamentosFebre || null,
+            medicamentosAlergia: aluno.medicamentosAlergia || null,
+            observacoes: aluno.observacoes || null
+          }
+        });
+
+        return item;
+      });
+
+      // 5. Registra log de atividade
+      await prisma.activityLog.create({
+        data: {
+          action: 'create',
+          entity: 'aluno_lista',
+          entityId: novoItem.id,
+          description: `Aluno ${aluno.nomeAluno} adicionado manualmente na excursão ${excursao.titulo}`,
+          userId: adminId,
+          userEmail: adminEmail
+        }
+      });
+
+      logger.info('[Listas] Aluno adicionado com sucesso', {
+        context: {
+          adminId,
+          alunoId: novoItem.id,
+          pedidoId: novoItem.pedidoId
+        }
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'Aluno adicionado com sucesso',
+        data: novoItem
+      });
+
+    } catch (error) {
+      logger.error('[Listas] Erro ao adicionar aluno manualmente', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          adminId: req.user?.id,
+          excursaoId: req.params.id
+        }
+      });
+      next(error);
+    }
+  }
+);
 
 export default router;
