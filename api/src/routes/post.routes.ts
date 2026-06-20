@@ -111,7 +111,10 @@ router.get('/:id',
 
       const post = await prisma.post.findUnique({
         where: { id },
-        include: { autor: true }
+        include: {
+          autor: true,
+          galeria: { orderBy: { ordem: 'asc' } }
+        }
       });
 
       if (!post) {
@@ -160,12 +163,26 @@ router.post('/',
       
       const slug = generateUniqueSlug(baseSlug, existingSlugs);
 
+      // Extrai galeria do payload (criada via relacionamento aninhado)
+      const { galeria, ...postData } = data;
+
       // Cria post
       const post = await prisma.post.create({
         data: {
-          ...data,
+          ...postData,
           slug,
-          authorId: req.user!.id
+          authorId: req.user!.id,
+          galeria: galeria?.length ? {
+            create: galeria.map((url: string, index: number) => ({
+              url,
+              ordem: index
+            }))
+          } : undefined
+        },
+        include: {
+          galeria: {
+            orderBy: { ordem: 'asc' }
+          }
         }
       });
 
@@ -259,14 +276,34 @@ router.put('/:id',
         slug = generateUniqueSlug(baseSlug, existingSlugs);
       }
 
+      // Extrai galeria do payload (atualizada separadamente)
+      const { galeria, ...postData } = data;
+
       // Atualiza post
       const post = await prisma.post.update({
         where: { id },
         data: {
-          ...data,
+          ...postData,
           slug
         }
       });
+
+      // Se galeria foi enviada, substitui a galeria atual
+      if (galeria !== undefined) {
+        await prisma.postImagem.deleteMany({
+          where: { postId: id }
+        });
+
+        if (galeria.length > 0) {
+          await prisma.postImagem.createMany({
+            data: galeria.map((url: string, index: number) => ({
+              postId: id,
+              url,
+              ordem: index
+            }))
+          });
+        }
+      }
 
       // Registra atividade
       await prisma.activityLog.create({

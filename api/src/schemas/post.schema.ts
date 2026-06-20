@@ -31,7 +31,12 @@ const postBaseSchema = {
   imagemCapa: z.string().optional().nullable(),
   resumo: z.string().max(500, 'Resumo deve ter no máximo 500 caracteres').optional().nullable(),
   conteudo: z.string().optional().nullable(),
-  tags: z.array(z.string()).optional().default([])
+  tags: z.array(z.string()).optional().default([]),
+  galeria: z
+    .array(z.string())
+    .max(4, 'A galeria deve ter no máximo 4 imagens')
+    .optional()
+    .default([])
 };
 
 /**
@@ -51,7 +56,8 @@ export const updatePostSchema = z.object({
   imagemCapa: z.string().optional().nullable(),
   resumo: z.string().max(500).optional().nullable(),
   conteudo: z.string().optional().nullable(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
+  galeria: z.array(z.string()).max(4, 'A galeria deve ter no máximo 4 imagens').optional()
 });
 
 /**
