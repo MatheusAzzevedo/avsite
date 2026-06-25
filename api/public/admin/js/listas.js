@@ -17,6 +17,12 @@ let currentExcursaoId = null;
 let currentExcursaoCodigo = '';
 let excursoesData = [];
 let alunosData = [];
+let escolaData = {
+    escola: '',
+    serie: '',
+    turma: '',
+    unidadeColegio: ''
+};
 
 const apiUrl = (window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : window.location.origin + '/api');
 
@@ -315,6 +321,15 @@ async function loadAlunos() {
         const result = await response.json();
         alunosData = result.data.alunos;
 
+        // Guarda os dados de escola do primeiro aluno para pré-preencher o modal
+        // de novo cadastro. Protegido contra lista vazia (lista recém-criada).
+        if (alunosData.length > 0) {
+            escolaData.escola = alunosData[0].escolaAluno || '';
+            escolaData.serie = alunosData[0].serieAluno || '';
+            escolaData.turma = alunosData[0].turma || '';
+            escolaData.unidadeColegio = alunosData[0].unidadeColegio || '';
+        }
+
         console.log('[Listas] Alunos carregados:', alunosData.length);
 
         // Atualiza cabeçalho e código para nome do arquivo de exportação
@@ -329,6 +344,24 @@ async function loadAlunos() {
         showError('Erro ao carregar alunos. Tente novamente.');
     }
 }
+// Helper to set val
+const setVal = (id, newValue) => {
+    const el = document.getElementById(id);
+    return el ?  el.value = newValue : "";
+};
+
+/**
+ * Explicação de função [carregarDadosEscolaNoModalAdicionarAluno]
+ * Carrega dados da escola no modal de adicionar aluno
+ */
+function carregarDadosEscolaNoModalAdicionarAluno() {
+
+    setVal('alunoEscola', escolaData.escola);
+    setVal('alunoSerie', escolaData.serie);
+    setVal('alunoTurma', escolaData.turma);
+    setVal('alunoUnidade', escolaData.unidadeColegio);
+}
+
 
 /**
  * Explicação da função [renderAlunos]
@@ -1127,6 +1160,9 @@ function abrirModalAdicionarAluno() {
     // Reset status do pedido para o padrão CONFIRMADO
     const selectStatus = document.getElementById('pedidoStatus');
     if (selectStatus) selectStatus.value = 'CONFIRMADO';
+
+    // Pré-preenche os campos de escola com os dados da lista atual (após o reset)
+    carregarDadosEscolaNoModalAdicionarAluno();
 
     if (typeof openModal === 'function') {
         openModal('modalAdicionarAluno');
