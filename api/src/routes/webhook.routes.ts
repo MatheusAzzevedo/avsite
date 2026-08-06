@@ -12,6 +12,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
 import { processarWebhookAsaas } from '../config/asaas';
+import { processarRetornoPagHiper } from '../config/paghiper';
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 
 const router = Router();
@@ -180,6 +181,105 @@ router.post('/asaas',
       });
 
       // Retorna 200 mesmo com erro (evita reenvios infinitos do Asaas)
+      res.json({ success: false, error: 'Erro ao processar webhook' });
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/webhooks/paghiper]
+ * 
+ * Webhook do PagHiper - recebe notificações de pagamento PIX.
+ * 
+ * Body: { notification_id, transaction_id }
+ */
+router.post('/paghiper',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { notification_id, transaction_id } = req.body;
+      const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+
+      logger.info('[Webhook PagHiper] Webhook recebido', {
+        context: { notification_id, transaction_id, ip: clientIp }
+      });
+
+      if (!notification_id || !transaction_id) {
+        logger.warn('[Webhook PagHiper] Dados inválidos', { context: req.body });
+        return res.status(400).json({ error: 'Dados inválidos' });
+      }
+
+      // Valida notificação diretamente na API do PagHiper (segurança)
+      const resultado = await processarRetornoPagHiper(notification_id, transaction_id);
+
+      const pedidoId = resultado.order_id;
+      if (!pedidoId) {
+        logger.warn('[Webhook PagHiper] Pedido não encontrado na transação', { context: { transaction_id } });
+        return res.json({ success: true, message: 'Pedido (order_id) ausente' });
+      }
+
+      const pedido = await prisma.pedido.findUnique({
+        where: { id: pedidoId },
+        include: { cliente: true }
+      });
+
+      if (!pedido) {
+        logger.warn('[Webhook PagHiper] Pedido não encontrado no banco', { context: { pedidoId } });
+        return res.json({ success: true, message: 'Pedido não encontrado' });
+      }
+
+      logger.info('[Webhook PagHiper] Notificação validada', {
+        context: { pedidoId, novoStatus: resultado.status }
+      });
+
+      // Mapeamento
+      let novoStatusPedido = pedido.status;
+      let devePagar = false;
+
+      // Se pago ou completo
+      if (resultado.status === 'paid' || resultado.status === 'completed' || resultado.status === 'reserved') {
+        novoStatusPedido = 'PAGO';
+        devePagar = true;
+      } else if (resultado.status === 'canceled') {
+        novoStatusPedido = 'CANCELADO';
+      }
+
+      if (novoStatusPedido !== pedido.status) {
+        const updateData: any = { status: novoStatusPedido };
+        if (devePagar && !pedido.dataPagamento) {
+          updateData.dataPagamento = new Date();
+        }
+
+        await prisma.pedido.update({
+          where: { id: pedido.id },
+          data: updateData
+        });
+
+        // Envia e-mail se foi pago e não era antes
+        if (devePagar && pedido.status !== 'PAGO' && pedido.status !== 'CONFIRMADO') {
+          enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+            logger.error('[Webhook PagHiper] ❌ Erro ao disparar e-mail de confirmação', {
+              context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+            });
+          });
+        }
+
+        await prisma.activityLog.create({
+          data: {
+            action: 'payment_webhook',
+            entity: 'pedido',
+            entityId: pedido.id,
+            description: `Webhook PagHiper: Status atualizado para ${novoStatusPedido}`,
+            userEmail: pedido.cliente.email,
+            ip: clientIp
+          }
+        });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      logger.error('[Webhook PagHiper] Erro ao processar webhook', {
+        context: { error: error instanceof Error ? error.message : 'Unknown', body: req.body }
+      });
       res.json({ success: false, error: 'Erro ao processar webhook' });
     }
   }

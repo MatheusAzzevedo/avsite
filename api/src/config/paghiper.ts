@@ -90,3 +90,76 @@ export const criarCobrancaPixPagHiper = async (params: CriarPixPagHiperParams) =
     throw error;
   }
 };
+
+export const consultarTransacaoPagHiper = async (transactionId: string) => {
+  try {
+    const config = getPagHiperConfig();
+
+    const payload = {
+      apiKey: config.apiKey,
+      token: config.token,
+      transaction_id: transactionId
+    };
+
+    const response = await axios.post(`${PAGHIPER_API_URL}/transaction/status/`, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+
+    const data = response.data;
+
+    if (data.status_request.result === 'reject') {
+      throw new Error(data.status_request.response_message || 'Erro ao consultar transação no PagHiper');
+    }
+
+    return {
+      status: data.status_request.status, // ex: 'pending', 'paid', 'canceled'
+      transaction_id: data.status_request.transaction_id,
+      order_id: data.status_request.order_id
+    };
+  } catch (error) {
+    logger.error('[PagHiper] Erro ao consultar transação', {
+      context: { transactionId, error: error instanceof Error ? error.message : 'Unknown' }
+    });
+    throw error;
+  }
+};
+
+export const processarRetornoPagHiper = async (notificationId: string, transactionId: string) => {
+  try {
+    const config = getPagHiperConfig();
+
+    const payload = {
+      apiKey: config.apiKey,
+      token: config.token,
+      notification_id: notificationId,
+      transaction_id: transactionId
+    };
+
+    const response = await axios.post(`${PAGHIPER_API_URL}/transaction/notification/`, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+
+    const data = response.data;
+
+    if (data.status_request.result === 'reject') {
+      throw new Error(data.status_request.response_message || 'Erro ao processar notificação no PagHiper');
+    }
+
+    return {
+      status: data.status_request.status,
+      transaction_id: data.status_request.transaction_id,
+      order_id: data.status_request.order_id
+    };
+  } catch (error) {
+    logger.error('[PagHiper Webhook] Erro ao validar notificação', {
+      context: { notificationId, transactionId, error: error instanceof Error ? error.message : 'Unknown' }
+    });
+    throw error;
+  }
+};
