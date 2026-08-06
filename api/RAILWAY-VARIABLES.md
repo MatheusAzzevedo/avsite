@@ -42,6 +42,8 @@ Use **"+ New Variable"** ou **"{} Raw Editor"** e configure:
 | **`JWT_EXPIRES_IN`** | `7d` |
 | **`CORS_ORIGINS`** | `https://avoarturismo.up.railway.app` |
 | **`API_BASE_URL`** | `https://avoarturismo.up.railway.app` |
+| **`PAGHIPER_API_KEY`** | *Sua API Key do PagHiper* |
+| **`PAGHIPER_TOKEN`** | *Seu Token do PagHiper* |
 
 **Importante:** gere uma **JWT_SECRET** forte e única (ex.: `openssl rand -base64 48`). Nunca commite o valor real no repositório.
 
@@ -57,6 +59,8 @@ JWT_SECRET=<gere-uma-chave-forte-ex-openssl-rand-base64-48>
 JWT_EXPIRES_IN=7d
 CORS_ORIGINS=https://avoarturismo.up.railway.app
 API_BASE_URL=https://avoarturismo.up.railway.app
+PAGHIPER_API_KEY=<sua-api-key>
+PAGHIPER_TOKEN=<seu-token>
 ```
 
 **Não inclua `DATABASE_URL`** — ela é criada quando você clica em **"Trying to connect a database? Add Variable"** e escolhe o **psql-site**.
@@ -130,6 +134,7 @@ O plano Hobby do Railway **bloqueia SMTP**. Use a API HTTPS do Brevo em vez de S
 - [ ] **`JWT_SECRET`** = a chave acima
 - [ ] **`CORS_ORIGINS`** = `https://avoarturismo.up.railway.app` (com `https://`)
 - [ ] **`API_BASE_URL`** = `https://avoarturismo.up.railway.app`
+- [ ] **PagHiper (PIX):** `PAGHIPER_API_KEY` e `PAGHIPER_TOKEN` adicionados
 - [ ] **Login com Google (opcional):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `FRONTEND_URL` (ver seção 5)
 - [ ] **E-mail Brevo:** `BREVO_API_KEY`, `BREVO_FROM_NAME`, `BREVO_FROM_EMAIL` (ver seção 6)
 - [ ] Novo deploy do **avsite** após salvar as variáveis
