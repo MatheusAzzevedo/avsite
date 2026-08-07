@@ -4,6 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
+### Última atualização (2026-08-06) - feat: ativar webhook de confirmação de pagamento PIX do PagHiper
+- **api/src/config/paghiper.ts** [Envio de `notification_url` na criação da cobrança]
+- **api/src/routes/webhook.routes.ts** [Conferência de apiKey, códigos HTTP por tipo de falha e logs de idempotência]
+- **api/src/server.ts** [Rate limit próprio para `/api/webhooks/`]
+- **api/.env.example**, **api/RAILWAY-VARIABLES.md** [Documentada a variável `PAGHIPER_NOTIFICATION_URL`]
+
+Resumo: O PagHiper só notifica a URL enviada na criação da cobrança — não há cadastro no painel. Como ela nunca era enviada, o webhook jamais era chamado e o pedido só se confirmava enquanto o cliente mantivesse a página aberta. A URL passa a ser derivada de `API_BASE_URL` (com override por `PAGHIPER_NOTIFICATION_URL`) e endereços locais são omitidos com aviso, já que o gateway não alcança `localhost`. O handler passou a responder 500 em falhas transitórias, para que o PagHiper reenvie em vez de dar o pagamento como processado. Os webhooks ganharam rate limit próprio, evitando 429 em lotes de confirmação.
+
+### Atualização anterior (2026-08-06) - fix: corrigir endpoints e parse da integração PIX do PagHiper
+- **api/src/config/paghiper.ts** [Endpoints migrados para o host de PIX, parse da resposta corrigido, timeout de 20s e logs de diagnóstico]
+- **api/src/routes/pagamento.routes.ts** [Comentários atualizados: PIX no PagHiper, cartão no Asaas]
+- **api/tsconfig.json** [Adicionada lib `ES2022.Error`]
+
+Resumo: A integração PIX apontava para a API de boleto (`api.paghiper.com/transaction/*`) e lia a resposta em campos que não existem no PIX (`bank_slip`), o que impedia qualquer cobrança de ser gerada. Endpoints migrados para `pix.paghiper.com/invoice/*` e leitura ajustada para `pix_create_request.pix_code.emv`. Removido o campo `type_bank_slip` (exclusivo de boleto) e adicionados timeout, extração da mensagem de erro real do gateway e log da resposta bruta em caso de formato inesperado. O QR Code passa a vir pronto do PagHiper. Pagamentos por cartão permanecem no Asaas.
+
 ### Última atualização (2026-06-20) - feat: adição manual de alunos via painel administrativo
 - **api/public/admin/listas.html** [Adicionado botão "Adicionar Aluno" e modal de formulário completo]
 - **api/public/admin/js/listas.js** [Implementada lógica de abertura/fechamento do modal, submissão do formulário e recarregamento da tabela]

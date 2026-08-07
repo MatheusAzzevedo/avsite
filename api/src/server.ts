@@ -96,10 +96,22 @@ app.use(cors({
 }));
 
 // Rate Limiting
+// Webhooks de gateway têm limite próprio e mais alto: um lote de confirmações
+// vindo do mesmo IP do gateway estouraria o limite normal e receberia 429,
+// atrasando (ou perdendo) confirmações de pagamento. O limite continua existindo
+// porque a rota é pública e cada chamada gera uma revalidação de saída no gateway.
+const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 500,
+  message: { error: 'Muitas requisições.' }
+});
+app.use('/api/webhooks/', webhookLimiter);
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100, // máximo 100 requests por IP
-  message: { error: 'Muitas requisições. Tente novamente em 15 minutos.' }
+  message: { error: 'Muitas requisições. Tente novamente em 15 minutos.' },
+  skip: (req) => req.path.startsWith('/webhooks/') // já coberto pelo webhookLimiter
 });
 app.use('/api/', limiter);
 

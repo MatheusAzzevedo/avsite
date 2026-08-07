@@ -1,11 +1,12 @@
 /**
  * Explicação do Arquivo [pagamento.routes.ts]
  * 
- * Rotas de pagamento via Asaas.
- * Gerencia criação de cobranças (PIX e Cartão) e webhooks.
- * 
+ * Rotas de pagamento. Dois gateways convivem:
+ * - PIX: PagHiper
+ * - Cartão de crédito: Asaas
+ *
  * Rotas disponíveis:
- * - POST /api/cliente/pagamento/pix - Criar cobrança PIX
+ * - POST /api/cliente/pagamento/pix - Criar cobrança PIX (PagHiper)
  * - POST /api/cliente/pagamento/cartao - Pagar com cartão de crédito
  * - GET /api/cliente/pagamento/:pedidoId/status - Consultar status do pagamento
  * - POST /api/webhooks/asaas - Webhook do Asaas (público)
@@ -47,7 +48,7 @@ const router = Router();
  * 
  * Fluxo:
  * 1. Valida pedido (existe, pertence ao cliente, status PENDENTE)
- * 2. Cria cobrança no Asaas
+ * 2. Cria cobrança no PagHiper
  * 3. Atualiza pedido com código de pagamento
  * 4. Retorna QR Code PIX e dados da cobrança
  * 
@@ -100,7 +101,7 @@ router.post('/pix',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
-      // Extrai dados do PAGADOR para enviar ao Asaas.
+      // Extrai dados do PAGADOR para enviar ao PagHiper.
       // Excursão pedagógica: EXCLUSIVAMENTE dadosResponsavelFinanceiro (NUNCA dados do aluno).
       // Excursão convencional: dados do primeiro passageiro (passageiro = pagador).
       const primeiroItem = pedido.itens?.[0];
@@ -146,7 +147,7 @@ router.post('/pix',
         });
       }
 
-      // Validação: Asaas exige CPF/CNPJ para criar cobrança PIX
+      // Validação: PagHiper exige CPF/CNPJ do pagador para criar cobrança PIX
       if (!cpfResponsavel || cpfResponsavel.length < 11) {
         logger.warn('[Pagamento PIX] Pagador sem CPF válido', {
           context: { pedidoId, isPedagogica, temDadosResp: !!dadosResp?.cpf }

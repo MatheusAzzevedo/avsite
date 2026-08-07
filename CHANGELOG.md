@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-08-06 - feat: ativar webhook de confirmação de pagamento PIX do PagHiper
+
+### Arquivos Modificados
+- `api/src/config/paghiper.ts` [Envio de `notification_url` na criação da cobrança e resolução da URL a partir do ambiente]
+- `api/src/routes/webhook.routes.ts` [Conferência de apiKey, códigos HTTP por tipo de falha, logs de idempotência e de status sem mapeamento]
+- `api/src/server.ts` [Rate limit próprio e mais alto para `/api/webhooks/`]
+- `api/.env.example` e `api/RAILWAY-VARIABLES.md` [Documentada a variável `PAGHIPER_NOTIFICATION_URL`]
+
+### Detalhes das Alterações
+- **Ativação do Webhook**: O PagHiper só notifica a URL informada no corpo da requisição de criação da cobrança — não há cadastro no painel do gateway. Como a URL nunca era enviada, o endpoint `/api/webhooks/paghiper` jamais era chamado e o pedido só se confirmava enquanto o cliente mantivesse a página aberta. A URL passa a ser derivada de `API_BASE_URL`, com `PAGHIPER_NOTIFICATION_URL` como override.
+- **Ambiente Local**: Endereços locais são detectados e omitidos, com aviso no log. O PagHiper não alcança `localhost`, e enviar a URL assim arriscaria a rejeição da cobrança em desenvolvimento.
+- **Retentativas**: O handler respondia HTTP 200 mesmo em erro, o que encerrava as retentativas do gateway e perdia o pagamento. Agora responde 500 em falha transitória (gateway ou banco fora), 400 em payload malformado e 200 apenas quando não há o que reprocessar.
+- **Segurança**: A `apiKey` recebida na notificação é conferida contra a nossa antes de acionar o gateway. A defesa principal continua sendo a revalidação do status na API do PagHiper, que impede confirmações forjadas.
+- **Rate Limiting**: O limite global de 100 req/15min por IP cobria os webhooks e devolveria 429 a um lote de confirmações vindas do mesmo IP do gateway. Os webhooks passam a ter limite próprio de 500.
+
+---
+
+## 2026-08-06 - fix: corrigir endpoints e parse da integração PIX do PagHiper
+
+### Arquivos Modificados
+- `api/src/config/paghiper.ts` [Endpoints corrigidos para o host de PIX, parse da resposta ajustado, timeout e logs de diagnóstico]
+- `api/src/routes/pagamento.routes.ts` [Comentários atualizados: PIX é PagHiper, cartão segue no Asaas]
+- `api/tsconfig.json` [Adicionada lib `ES2022.Error` para suportar `Error` com `cause`]
+
+### Detalhes das Alterações
+- **Endpoints**: A integração apontava para `api.paghiper.com/transaction/*`, que é a API de boleto. O PIX usa host próprio: criação, status e notificação passaram para `pix.paghiper.com/invoice/{create,status,notification}/`.
+- **Parse da Resposta**: A leitura era feita em `create_request.bank_slip.pix_code`, campos que não existem na resposta de PIX. Corrigido para `pix_create_request.pix_code.emv` (copia-e-cola) e `qrcode_base64` (imagem), com `pix_url` como link da fatura.
+- **Payload**: Removido `type_bank_slip`, campo exclusivo de boleto. Valores numéricos passaram a ser enviados como string, conforme a documentação do gateway.
+- **QR Code**: A imagem passa a vir pronta do PagHiper em `qrcode_base64`; a geração local com a lib `qrcode` virou apenas fallback.
+- **Robustez**: Adicionado timeout de 20s nas chamadas HTTP, extração da mensagem de erro real do gateway (em vez de "Request failed with status code 4xx") e log da resposta bruta quando o formato vier fora do previsto.
+
+---
+
 ## 2026-06-20 - feat: adição manual de alunos via painel administrativo
 
 ### Arquivos Modificados
@@ -44,61 +77,4 @@
 - **Frontend Público**: O grid de publicações busca a imagem de perfil e o nome oficial de cada Autor diretamente da API. Caso o autor não tenha foto, ocorre um fallback exibindo as letras iniciais do nome.
 - **Melhorias Visuais**: Inclusão de uma borda customizada ao redor do avatar do autor e aumento da altura da imagem de capa dos cards de 200px para 280px para dar mais destaque visual.
 
----
 
-## 2026-05-29 - fix: refatoracao de uploads e remocao de perfil
-
-### Arquivos Modificados
-- `api/public/admin/js/equipe.js` [Upload de imagem em Base64 usando FileReader]
-- `api/public/admin/autores.html` e `autores.js` [Criacao de CRUD mock para Autores]
-- `api/public/admin/*.html` [Removido link "Meu Perfil" da barra lateral]
-- `api/public/admin/perfil.html` e `perfil.js` [Arquivos excluidos]
-- `api/src/routes/auth.routes.ts` [Removida logica de update de foto]
-- `api/prisma/schema.prisma` [Removida coluna `avatarUrl` do modelo `User`]
-- `api/public/js/blog-public.js` [Ajustado para sempre exibir as iniciais no avatar]
-
-### Detalhes das Alteracoes
-- **Refatoracao de Uploads**: Corrigido bug de imagens quebradas (404) na pagina de Equipe. O sistema passou a salvar as imagens como strings Base64 diretamente no banco de dados, em vez de depender do armazenamento efemero do Docker.
-- **Remocao do Perfil**: A pedido do cliente, a funcionalidade recem-adicionada de "Meu Perfil" foi completamente removida do banco de dados, frontend e rotas da API.
-- **Autores Mock**: Inicio do desenvolvimento de uma area de gestao de Autores na interface administrativa com funcionamento simulado (mock) no localStorage para aprovacao.
-
----
-
-## 2026-05-28 - feat: cards de blog responsivos e pagina de perfil
-
-### Arquivos Modificados
-- `api/prisma/schema.prisma` [Adicionada propriedade `avatarUrl` ao modelo `User`]
-- `api/src/routes/public.routes.ts` [Incluido `avatarUrl` na consulta de autores]
-- `api/public/js/blog-public.js` [Logica dinamica para renderizar avatar ou iniciais no card do post]
-- `api/public/css/style.css` [Novos estilos customizados para os cards de blog]
-- `api/public/admin/perfil.html` [Criada nova tela para edicao de perfil do usuario]
-- `api/public/admin/js/perfil.js` [Logica de upload de foto e integracao com API]
-- `api/src/routes/auth.routes.ts` [Incluido update de `avatarUrl` na rota de perfil]
-- `api/public/admin/*.html` [Link para Meu Perfil adicionado em todas as sidebars]
-
-### Detalhes das Alteracoes
-- **Banco de Dados**: Criacao del campo `avatarUrl` opcional no usuario para armazenar foto do autor.
-- **Frontend Publico**: Redesign total dos cards de post, aplicando bordas arredondadas, posicionamento com sobreposicao para o avatar e estilo responsivo.
-- **Area Administrativa**: Criacao da tela "Meu Perfil" para edicao dos dados do proprio usuario, incluindo funcionalidade de upload ou uso de URL direta para foto. O link foi adicionado uniformemente em toda a navegacao lateral.
-- **Integracao Completa**: A pagina de blog publica consome as imagens direto do banco de dados, preenchendo automaticamente as letras iniciais do autor caso nao possua foto.
-
----
-
-## 2026-05-20 - fix: reverter múltiplas categorias em excursões pedagógicas
-
-### Arquivos Modificados
-- `api/docker-compose.yml` [Renomeado container de banco de dados para `avoar_postgres_db`]
-- `api/prisma/schema.prisma` [Removido relacionamento many-to-many em excursões pedagógicas, mantendo campo categoria como string simples]
-- `api/src/schemas/excursao-pedagogica.schema.ts` [Removido campo `categoriaIds` e tornado `categoria` obrigatório]
-- `api/src/routes/excursao-pedagogica.routes.ts` [Removida manipulação de `categorias` nas rotas do CRUD do admin]
-- `api/src/routes/public.routes.ts` [Removido select/include de `categorias` nas rotas públicas]
-- `api/src/scripts/migrate-categories.ts` [Removida etapa de migração de categorias para pedagógicas]
-- `api/public/admin/excursao-pedagogica-editor.html` [Restaurado dropdown select de categoria única]
-- `api/public/admin/js/excursao-pedagogica-editor.js` [Ajustada a lógica para categoria única e adicionada documentação padrão]
-
-### Detalhes das Alterações
-- **Remoção de Vínculos**: O relacionamento de múltiplas categorias foi restringido exclusivamente às excursões convencionais. As excursões pedagógicas voltaram ao modelo original de categoria única através de uma coluna simples no banco de dados.
-- **Validação de Entrada**: O schema do Zod foi adaptado para validar a categoria como uma string simples e obrigatória na criação/atualização de pedagógicas.
-- **Interface e Backend**: O painel administrativo do editor de excursão pedagógica foi revertido para exibir e submeter o campo select de categoria única, removendo os checkboxes do seletor múltiplo.
-- **Docker**: Container do banco de dados PostgreSQL renomeado para `avoar_postgres_db` para melhor identificação.
-- **Documentação de Código**: Implementada documentação padrão para todas as funções modificadas no JavaScript do editor.

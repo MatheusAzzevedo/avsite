@@ -188,32 +188,63 @@ router.post('/asaas',
 
 /**
  * Explicação da API [POST /api/webhooks/paghiper]
- * 
- * Webhook do PagHiper - recebe notificações de pagamento PIX.
- * 
- * Body: { notification_id, transaction_id }
+ *
+ * Webhook do PagHiper — recebe notificações de mudança de status do PIX.
+ * Rota pública, registrada via `notification_url` no momento da criação da cobrança.
+ *
+ * O PagHiper envia um POST **form-encoded** (não JSON) contendo apenas
+ * identificadores: apiKey, transaction_id, notification_id, notification_date,
+ * source_api. O status real NÃO vem nesse POST — é preciso consultá-lo de volta
+ * na API autenticando com apiKey + token. É esse retorno que impede que um
+ * terceiro forje uma confirmação de pagamento.
+ *
+ * Códigos de resposta (o PagHiper reenvia a cada 2h por 24h quando não recebe
+ * confirmação, então o status HTTP decide se haverá nova tentativa):
+ * - 400: payload malformado — reenviar não resolve.
+ * - 200: processado, ou situação permanente (pedido inexistente).
+ * - 500: falha transitória (gateway fora, banco indisponível) — pede retentativa.
+ *
+ * Body: { notification_id, transaction_id, apiKey, ... }
  */
 router.post('/paghiper',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { notification_id, transaction_id } = req.body;
-      const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+  async (req: Request, res: Response) => {
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+    const { notification_id, transaction_id, apiKey } = req.body ?? {};
 
-      logger.info('[Webhook PagHiper] Webhook recebido', {
-        context: { notification_id, transaction_id, ip: clientIp }
-      });
-
-      if (!notification_id || !transaction_id) {
-        logger.warn('[Webhook PagHiper] Dados inválidos', { context: req.body });
-        return res.status(400).json({ error: 'Dados inválidos' });
+    logger.info('[Webhook PagHiper] Webhook recebido', {
+      context: {
+        notification_id,
+        transaction_id,
+        contentType: req.headers['content-type'],
+        camposRecebidos: req.body ? Object.keys(req.body) : null,
+        ip: clientIp
       }
+    });
 
-      // Valida notificação diretamente na API do PagHiper (segurança)
+    if (!notification_id || !transaction_id) {
+      logger.warn('[Webhook PagHiper] Payload sem notification_id/transaction_id', {
+        context: { camposRecebidos: req.body ? Object.keys(req.body) : null, ip: clientIp }
+      });
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+
+    // Confere a apiKey recebida contra a nossa antes de gastar uma chamada ao gateway.
+    // Não é a defesa principal (essa é a revalidação abaixo), apenas descarte barato.
+    const apiKeyEsperada = process.env.PAGHIPER_API_KEY?.trim();
+    if (apiKey && apiKeyEsperada && apiKey !== apiKeyEsperada) {
+      logger.warn('[Webhook PagHiper] apiKey da notificação não confere — ignorando', {
+        context: { transaction_id, ip: clientIp }
+      });
+      return res.status(401).json({ error: 'Credencial inválida' });
+    }
+
+    try {
+      // Revalida a notificação na API do PagHiper — o status confiável vem daqui.
       const resultado = await processarRetornoPagHiper(notification_id, transaction_id);
 
       const pedidoId = resultado.order_id;
       if (!pedidoId) {
-        logger.warn('[Webhook PagHiper] Pedido não encontrado na transação', { context: { transaction_id } });
+        logger.warn('[Webhook PagHiper] Transação sem order_id', { context: { transaction_id } });
         return res.json({ success: true, message: 'Pedido (order_id) ausente' });
       }
 
@@ -231,16 +262,36 @@ router.post('/paghiper',
         context: { pedidoId, novoStatus: resultado.status }
       });
 
-      // Mapeamento
+      // Mapeamento status PagHiper → status do pedido.
+      // Status possíveis: pending, reserved, paid, completed, processing, canceled, refunded.
       let novoStatusPedido = pedido.status;
       let devePagar = false;
 
-      // Se pago ou completo
       if (resultado.status === 'paid' || resultado.status === 'completed' || resultado.status === 'reserved') {
         novoStatusPedido = 'PAGO';
         devePagar = true;
+
+        // 'reserved' é PRÉ-confirmação bancária, não compensação (≈2% não compensam).
+        // Hoje conta como PAGO e dispara o e-mail ao cliente — log explícito para
+        // tornar essa decisão auditável enquanto a regra não é revista.
+        if (resultado.status === 'reserved') {
+          logger.warn('[Webhook PagHiper] Status "reserved" tratado como PAGO (pré-confirmação, não compensado)', {
+            context: { pedidoId, transaction_id }
+          });
+        }
       } else if (resultado.status === 'canceled') {
         novoStatusPedido = 'CANCELADO';
+      } else {
+        logger.info('[Webhook PagHiper] Status sem mapeamento — pedido mantido como está', {
+          context: { pedidoId, statusGateway: resultado.status, statusPedido: pedido.status }
+        });
+      }
+
+      if (novoStatusPedido === pedido.status) {
+        // Reenvio da mesma notificação, ou mudança que não altera o pedido.
+        logger.info('[Webhook PagHiper] Nenhuma alteração a aplicar (idempotente)', {
+          context: { pedidoId, statusGateway: resultado.status, statusPedido: pedido.status }
+        });
       }
 
       if (novoStatusPedido !== pedido.status) {
@@ -277,10 +328,17 @@ router.post('/paghiper',
 
       res.json({ success: true });
     } catch (error) {
-      logger.error('[Webhook PagHiper] Erro ao processar webhook', {
-        context: { error: error instanceof Error ? error.message : 'Unknown', body: req.body }
+      // 500 (e não 200) para que o PagHiper reenvie: as falhas prováveis aqui são
+      // transitórias — gateway indisponível na revalidação ou banco fora do ar.
+      // Responder 200 encerraria as retentativas e o pagamento ficaria perdido.
+      logger.error('[Webhook PagHiper] Erro ao processar webhook — solicitando retentativa', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown',
+          notification_id,
+          transaction_id
+        }
       });
-      res.json({ success: false, error: 'Erro ao processar webhook' });
+      res.status(500).json({ success: false, error: 'Erro ao processar webhook' });
     }
   }
 );
