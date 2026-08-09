@@ -1,11 +1,12 @@
 /**
  * Explicação do Arquivo [pagamento.routes.ts]
  * 
- * Rotas de pagamento via Asaas.
- * Gerencia criação de cobranças (PIX e Cartão) e webhooks.
- * 
+ * Rotas de pagamento. Dois gateways convivem:
+ * - PIX: PagHiper
+ * - Cartão de crédito: Asaas
+ *
  * Rotas disponíveis:
- * - POST /api/cliente/pagamento/pix - Criar cobrança PIX
+ * - POST /api/cliente/pagamento/pix - Criar cobrança PIX (PagHiper)
  * - POST /api/cliente/pagamento/cartao - Pagar com cartão de crédito
  * - GET /api/cliente/pagamento/:pedidoId/status - Consultar status do pagamento
  * - POST /api/webhooks/asaas - Webhook do Asaas (público)
@@ -29,6 +30,17 @@ import {
   verificarConfigAsaas,
   listarPagamentosPorReferencia
 } from '../config/asaas';
+import {
+  criarCobrancaPixPagHiper,
+  consultarTransacaoPagHiper,
+  cancelarCobrancaPixPagHiper,
+  verificarConfigPagHiper
+} from '../config/paghiper';
+import {
+  calcularExpiracaoPix,
+  expirarPedidoPix,
+  PIX_EXPIRACAO_MINUTOS
+} from '../jobs/expirar-pix.job';
 import { logger } from '../utils/logger';
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 
@@ -42,7 +54,7 @@ const router = Router();
  * 
  * Fluxo:
  * 1. Valida pedido (existe, pertence ao cliente, status PENDENTE)
- * 2. Cria cobrança no Asaas
+ * 2. Cria cobrança no PagHiper
  * 3. Atualiza pedido com código de pagamento
  * 4. Retorna QR Code PIX e dados da cobrança
  * 
@@ -62,9 +74,9 @@ router.post('/pix',
         context: { pedidoId, clienteId, ip: clientIp }
       });
 
-      // Verifica configuração Asaas
-      if (!verificarConfigAsaas()) {
-        throw ApiError.internal('Gateway de pagamento não configurado');
+      // Verifica configuração PagHiper
+      if (!verificarConfigPagHiper()) {
+        throw ApiError.internal('Gateway de pagamento PagHiper não configurado');
       }
 
       // Busca pedido com seus itens para extrair dados do responsável
@@ -95,7 +107,7 @@ router.post('/pix',
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
       }
 
-      // Extrai dados do PAGADOR para enviar ao Asaas.
+      // Extrai dados do PAGADOR para enviar ao PagHiper.
       // Excursão pedagógica: EXCLUSIVAMENTE dadosResponsavelFinanceiro (NUNCA dados do aluno).
       // Excursão convencional: dados do primeiro passageiro (passageiro = pagador).
       const primeiroItem = pedido.itens?.[0];
@@ -141,7 +153,7 @@ router.post('/pix',
         });
       }
 
-      // Validação: Asaas exige CPF/CNPJ para criar cobrança PIX
+      // Validação: PagHiper exige CPF/CNPJ do pagador para criar cobrança PIX
       if (!cpfResponsavel || cpfResponsavel.length < 11) {
         logger.warn('[Pagamento PIX] Pagador sem CPF válido', {
           context: { pedidoId, isPedagogica, temDadosResp: !!dadosResp?.cpf }
@@ -154,25 +166,32 @@ router.post('/pix',
         });
       }
 
-      // Cria cobrança no Asaas com dados do responsável (e-mail do responsável)
-      const cobranca = await criarCobrancaAsaas({
-        clienteEmail: emailResponsavel || pedido.cliente.email, // Email do responsável ou fallback
-        clienteNome: nomeResponsavel,
-        clienteCpf: cpfResponsavel,
-        clienteTelefone: telefoneResponsavel || undefined,
-        valor: Number(pedido.valorTotal),
-        descricao: `Excursão: ${pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão'} - ${pedido.quantidade}x passagens`,
-        metodoPagamento: 'PIX',
-        externalReference: pedido.id
+      const tituloExcursao = pedido.excursaoPedagogica?.titulo ?? pedido.excursao?.titulo ?? 'Excursão';
+      const cobranca = await criarCobrancaPixPagHiper({
+        order_id: pedido.id,
+        payer_email: emailResponsavel || pedido.cliente.email,
+        payer_name: nomeResponsavel,
+        payer_cpf_cnpj: cpfResponsavel,
+        payer_phone: telefoneResponsavel || undefined,
+        items: [{
+          item_id: pedido.excursaoId || pedido.excursaoPedagogicaId || '1',
+          description: `Excursão: ${tituloExcursao} - ${pedido.quantidade}x passagens`,
+          price_cents: Math.round(Number(pedido.valorTotal) * 100),
+          quantity: 1
+        }]
       });
 
-      // Atualiza pedido com código de pagamento
+      // Atualiza pedido com código de pagamento e o prazo de validade do PIX.
+      // `pixExpiraEm` é a fonte de verdade do prazo: a varredura automática e a
+      // contagem regressiva do frontend derivam dele.
+      const pixExpiraEm = calcularExpiracaoPix();
       await prisma.pedido.update({
         where: { id: pedido.id },
         data: {
-          codigoPagamento: cobranca.id,
+          codigoPagamento: cobranca.transaction_id,
           metodoPagamento: 'pix',
-          status: 'AGUARDANDO_PAGAMENTO'
+          status: 'AGUARDANDO_PAGAMENTO',
+          pixExpiraEm
         }
       });
 
@@ -192,8 +211,10 @@ router.post('/pix',
         context: {
           pedidoId,
           clienteId,
-          cobrancaId: cobranca.id,
-          valor: Number(pedido.valorTotal)
+          transaction_id: cobranca.transaction_id,
+          valor: Number(pedido.valorTotal),
+          expiraEm: pixExpiraEm.toISOString(),
+          prazoMinutos: PIX_EXPIRACAO_MINUTOS
         }
       });
 
@@ -202,12 +223,13 @@ router.post('/pix',
         message: 'Cobrança PIX criada com sucesso',
         data: {
           pedidoId: pedido.id,
-          cobrancaId: cobranca.id,
-          valor: cobranca.value,
-          qrCode: cobranca.pixData?.qrCode,
-          qrCodeImage: cobranca.pixData?.qrCodeImage,
-          expirationDate: cobranca.pixData?.expirationDate,
-          invoiceUrl: cobranca.invoiceUrl
+          cobrancaId: cobranca.transaction_id,
+          valor: cobranca.value_cents / 100,
+          qrCode: cobranca.pixData.qrCode,
+          qrCodeImage: cobranca.pixData.qrCodeImage,
+          invoiceUrl: cobranca.invoiceUrl,
+          expiraEm: pixExpiraEm.toISOString(),
+          prazoMinutos: PIX_EXPIRACAO_MINUTOS
         }
       });
     } catch (error) {
@@ -222,69 +244,7 @@ router.post('/pix',
         }
       });
 
-      // Reconciliação: verificar se já existe cobrança PIX confirmada para este pedido
-      if (pedidoIdFromBody && req.cliente?.id && verificarConfigAsaas()) {
-        try {
-          const pagamentos = await listarPagamentosPorReferencia(pedidoIdFromBody);
-          const cobrancaConfirmada = pagamentos.find(
-            (p) =>
-              p.status === 'CONFIRMED' ||
-              p.status === 'RECEIVED' ||
-              p.status === 'RECEIVED_IN_CASH' ||
-              p.status === 'CONFIRMED_BY_CUSTOMER'
-          );
-          if (cobrancaConfirmada) {
-            const pedido = await prisma.pedido.findFirst({
-              where: { id: pedidoIdFromBody, clienteId: req.cliente.id }
-            });
-            if (pedido) {
-              await prisma.pedido.update({
-                where: { id: pedido.id },
-                data: {
-                  codigoPagamento: cobrancaConfirmada.id,
-                  metodoPagamento: 'pix',
-                  status: 'PAGO',
-                  dataPagamento: new Date()
-                }
-              });
-              logger.info('[Pagamento PIX] Cobrança já existente no Asaas; pedido atualizado para PAGO', {
-                context: { pedidoId: pedido.id, cobrancaId: cobrancaConfirmada.id }
-              });
-              // Dispara e-mail de confirmação (reconciliação)
-              enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
-                logger.error('[Pagamento PIX] ❌ Erro ao disparar e-mail na reconciliação', {
-                  context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
-                });
-              });
-              return res.json({
-                success: true,
-                message: 'Pagamento já foi confirmado.',
-                data: {
-                  pedidoId: pedido.id,
-                  cobrancaId: cobrancaConfirmada.id,
-                  status: 'PAGO',
-                  valor: Number(pedido.valorTotal)
-                }
-              });
-            }
-          }
-        } catch (reconcileErr) {
-          logger.warn('[Pagamento PIX] Reconciliação falhou', { context: { error: reconcileErr instanceof Error ? reconcileErr.message : 'Unknown' } });
-        }
-      }
-
-      // Erros de validação do Asaas (valor mínimo, CPF, dueDate, etc.) retornam 400
-      const asaasValidationPattern = /valor mínimo|mínimo|invalid|erro|cpfCnpj|cpf|cnpj|dueDate|required/i;
-      if (error instanceof Error && asaasValidationPattern.test(message)) {
-        return res.status(400).json({ success: false, error: message });
-      }
-      // Se o erro tiver response do axios (Asaas retornou 4xx), repassar como 400 quando fizer sentido
-      const axiosErr = error as { response?: { status: number; data?: { errors?: Array<{ description?: string }> } } };
-      if (axiosErr.response && axiosErr.response.status >= 400 && axiosErr.response.status < 500) {
-        const desc = axiosErr.response.data?.errors?.[0]?.description || message;
-        return res.status(400).json({ success: false, error: desc });
-      }
-      next(error);
+      return res.status(400).json({ success: false, error: message });
     }
   }
 );
@@ -585,6 +545,37 @@ router.post('/:pedidoId/cancelar',
         throw ApiError.badRequest(`Pedido não pode ser cancelado (status: ${pedido.status})`);
       }
 
+      // Antes de cancelar, confirma que o pagamento não entrou nesse meio-tempo:
+      // cancelar um pedido já pago deixaria o cliente sem a vaga que quitou.
+      if (pedido.metodoPagamento === 'pix' && pedido.codigoPagamento && verificarConfigPagHiper()) {
+        try {
+          const statusGateway = await consultarTransacaoPagHiper(pedido.codigoPagamento);
+
+          if (['paid', 'completed', 'reserved'].includes(statusGateway.status)) {
+            logger.warn('[Pagamento] Cancelamento abortado: pagamento já reconhecido no gateway', {
+              context: { pedidoId, statusGateway: statusGateway.status }
+            });
+            return res.status(400).json({
+              success: false,
+              error: 'O pagamento deste pedido já foi identificado. Atualize a página.'
+            });
+          }
+
+          // Invalida a cobrança no PagHiper — sem isto o PIX seguiria pagável
+          // até o vencimento, mesmo com o pedido cancelado aqui.
+          await cancelarCobrancaPixPagHiper(pedido.codigoPagamento);
+        } catch (error) {
+          // Não impede o cancelamento local: a varredura tenta de novo depois.
+          logger.error('[Pagamento] Falha ao cancelar cobrança no PagHiper', {
+            context: {
+              pedidoId,
+              transactionId: pedido.codigoPagamento,
+              error: error instanceof Error ? error.message : 'Unknown'
+            }
+          });
+        }
+      }
+
       await prisma.pedido.update({
         where: { id: pedido.id },
         data: { status: 'CANCELADO' }
@@ -633,7 +624,8 @@ router.get('/:pedidoId/status',
           codigoPagamento: true,
           metodoPagamento: true,
           valorTotal: true,
-          dataPagamento: true
+          dataPagamento: true,
+          pixExpiraEm: true
         }
       });
 
@@ -641,54 +633,116 @@ router.get('/:pedidoId/status',
         throw ApiError.notFound('Pedido não encontrado');
       }
 
-      // Se tem código de pagamento, consulta Asaas e confirma o pagamento
-      let asaasStatus = null;
+      // Se tem código de pagamento, consulta gateway e confirma o pagamento
+      let gatewayStatus = null;
       let statusFinal = pedido.status;
 
-      if (pedido.codigoPagamento && verificarConfigAsaas()) {
-        try {
-          asaasStatus = await consultarPagamentoAsaas(pedido.codigoPagamento);
+      const pixVenceu = !!pedido.pixExpiraEm && pedido.pixExpiraEm.getTime() <= Date.now();
+      const aguardandoPagamento = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
 
-          logger.info('[Pagamento Status] Status consultado no Asaas', {
-            context: {
-              pedidoId,
-              asaasStatus: asaasStatus.status,
-              statusPedido: pedido.status
-            }
-          });
+      // Prazo estourado: aplica a expiração agora, sem esperar a varredura.
+      // `expirarPedidoPix` já consulta o gateway e, se o pagamento tiver entrado
+      // no limite, confirma o pedido em vez de expirá-lo.
+      if (pedido.metodoPagamento === 'pix' && pixVenceu && aguardandoPagamento) {
+        const resultado = await expirarPedidoPix(pedido.id);
 
-          // Confirma pagamento: se Asaas indica PAGO mas nosso pedido ainda aguarda, atualiza
-          const statusAsaasPago = ['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH', 'CONFIRMED_BY_CUSTOMER'];
-          const pedidoAguardando = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
+        logger.info('[Pagamento Status] Prazo do PIX vencido; expiração aplicada', {
+          context: { pedidoId, resultado, expiraEm: pedido.pixExpiraEm?.toISOString() }
+        });
 
-          if (asaasStatus?.status && statusAsaasPago.includes(asaasStatus.status) && pedidoAguardando) {
-            await prisma.pedido.update({
-              where: { id: pedido.id },
-              data: {
-                status: 'PAGO',
-                dataPagamento: pedido.dataPagamento || new Date()
-              }
+        if (resultado === 'pago') statusFinal = 'PAGO';
+        else if (resultado === 'expirado') statusFinal = 'EXPIRADO';
+
+        return res.json({
+          success: true,
+          data: {
+            pedidoId: pedido.id,
+            status: statusFinal,
+            codigoPagamento: pedido.codigoPagamento,
+            metodoPagamento: pedido.metodoPagamento,
+            valorTotal: Number(pedido.valorTotal),
+            dataPagamento: pedido.dataPagamento,
+            expiraEm: pedido.pixExpiraEm,
+            gatewayStatus: null
+          }
+        });
+      }
+
+      if (pedido.codigoPagamento) {
+        if (pedido.metodoPagamento === 'pix' && verificarConfigPagHiper()) {
+          try {
+            const pagHiperStatus = await consultarTransacaoPagHiper(pedido.codigoPagamento);
+            gatewayStatus = pagHiperStatus.status;
+
+            logger.info('[Pagamento Status] Status consultado no PagHiper', {
+              context: { pedidoId, pagHiperStatus: gatewayStatus, statusPedido: pedido.status }
             });
-            statusFinal = 'PAGO';
 
-            logger.info('[Pagamento Status] Pagamento confirmado no Asaas; pedido atualizado para PAGO', {
-              context: { pedidoId, asaasStatus: asaasStatus.status }
-            });
-
-            // Envia e-mail de confirmação (fire-and-forget)
-            logger.info('[Pagamento Status] ✉️ Disparando e-mail de confirmação para pedido', {
-              context: { pedidoId: pedido.id, clienteId }
-            });
-            enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
-              logger.error('[Pagamento Status] ❌ Erro ao disparar e-mail de confirmação (catch externo)', {
-                context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+            const pedidoAguardando = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
+            if ((gatewayStatus === 'paid' || gatewayStatus === 'completed' || gatewayStatus === 'reserved') && pedidoAguardando) {
+              await prisma.pedido.update({
+                where: { id: pedido.id },
+                data: {
+                  status: 'PAGO',
+                  dataPagamento: pedido.dataPagamento || new Date()
+                }
               });
+              statusFinal = 'PAGO';
+
+              logger.info('[Pagamento Status] Pagamento PIX confirmado no PagHiper; pedido atualizado para PAGO', {
+                context: { pedidoId, gatewayStatus }
+              });
+
+              // Envia e-mail de confirmação
+              enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+                logger.error('[Pagamento Status] ❌ Erro ao disparar e-mail de confirmação', {
+                  context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+                });
+              });
+            }
+          } catch (error) {
+            logger.error('[Pagamento Status] Erro ao consultar PagHiper', {
+              context: { error: error instanceof Error ? error.message : 'Unknown' }
             });
           }
-        } catch (error) {
-          logger.error('[Pagamento Status] Erro ao consultar Asaas', {
-            context: { error: error instanceof Error ? error.message : 'Unknown' }
-          });
+        } else if (verificarConfigAsaas()) {
+          try {
+            const asaasStatusObj = await consultarPagamentoAsaas(pedido.codigoPagamento);
+            gatewayStatus = asaasStatusObj.status;
+
+            logger.info('[Pagamento Status] Status consultado no Asaas', {
+              context: { pedidoId, asaasStatus: gatewayStatus, statusPedido: pedido.status }
+            });
+
+            const statusAsaasPago = ['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH', 'CONFIRMED_BY_CUSTOMER'];
+            const pedidoAguardando = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
+
+            if (gatewayStatus && statusAsaasPago.includes(gatewayStatus) && pedidoAguardando) {
+              await prisma.pedido.update({
+                where: { id: pedido.id },
+                data: {
+                  status: 'PAGO',
+                  dataPagamento: pedido.dataPagamento || new Date()
+                }
+              });
+              statusFinal = 'PAGO';
+
+              logger.info('[Pagamento Status] Pagamento confirmado no Asaas; pedido atualizado para PAGO', {
+                context: { pedidoId, asaasStatus: gatewayStatus }
+              });
+
+              // Envia e-mail de confirmação
+              enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+                logger.error('[Pagamento Status] ❌ Erro ao disparar e-mail de confirmação', {
+                  context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+                });
+              });
+            }
+          } catch (error) {
+            logger.error('[Pagamento Status] Erro ao consultar Asaas', {
+              context: { error: error instanceof Error ? error.message : 'Unknown' }
+            });
+          }
         }
       }
 
@@ -701,7 +755,8 @@ router.get('/:pedidoId/status',
           metodoPagamento: pedido.metodoPagamento,
           valorTotal: Number(pedido.valorTotal),
           dataPagamento: pedido.dataPagamento,
-          asaasStatus: asaasStatus?.status
+          expiraEm: pedido.pixExpiraEm,
+          gatewayStatus: gatewayStatus
         }
       });
     } catch (error) {

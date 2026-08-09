@@ -12,6 +12,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
 import { processarWebhookAsaas } from '../config/asaas';
+import { processarRetornoPagHiper } from '../config/paghiper';
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 
 const router = Router();
@@ -181,6 +182,167 @@ router.post('/asaas',
 
       // Retorna 200 mesmo com erro (evita reenvios infinitos do Asaas)
       res.json({ success: false, error: 'Erro ao processar webhook' });
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/webhooks/paghiper]
+ *
+ * Webhook do PagHiper — recebe notificações de mudança de status do PIX.
+ * Rota pública, registrada via `notification_url` no momento da criação da cobrança.
+ *
+ * O PagHiper envia um POST **form-encoded** (não JSON) contendo apenas
+ * identificadores: apiKey, transaction_id, notification_id, notification_date,
+ * source_api. O status real NÃO vem nesse POST — é preciso consultá-lo de volta
+ * na API autenticando com apiKey + token. É esse retorno que impede que um
+ * terceiro forje uma confirmação de pagamento.
+ *
+ * Códigos de resposta (o PagHiper reenvia a cada 2h por 24h quando não recebe
+ * confirmação, então o status HTTP decide se haverá nova tentativa):
+ * - 400: payload malformado — reenviar não resolve.
+ * - 200: processado, ou situação permanente (pedido inexistente).
+ * - 500: falha transitória (gateway fora, banco indisponível) — pede retentativa.
+ *
+ * Body: { notification_id, transaction_id, apiKey, ... }
+ */
+router.post('/paghiper',
+  async (req: Request, res: Response) => {
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+    const { notification_id, transaction_id, apiKey } = req.body ?? {};
+
+    logger.info('[Webhook PagHiper] Webhook recebido', {
+      context: {
+        notification_id,
+        transaction_id,
+        contentType: req.headers['content-type'],
+        camposRecebidos: req.body ? Object.keys(req.body) : null,
+        ip: clientIp
+      }
+    });
+
+    if (!notification_id || !transaction_id) {
+      logger.warn('[Webhook PagHiper] Payload sem notification_id/transaction_id', {
+        context: { camposRecebidos: req.body ? Object.keys(req.body) : null, ip: clientIp }
+      });
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+
+    // Confere a apiKey recebida contra a nossa antes de gastar uma chamada ao gateway.
+    // Não é a defesa principal (essa é a revalidação abaixo), apenas descarte barato.
+    const apiKeyEsperada = process.env.PAGHIPER_API_KEY?.trim();
+    if (apiKey && apiKeyEsperada && apiKey !== apiKeyEsperada) {
+      logger.warn('[Webhook PagHiper] apiKey da notificação não confere — ignorando', {
+        context: { transaction_id, ip: clientIp }
+      });
+      return res.status(401).json({ error: 'Credencial inválida' });
+    }
+
+    try {
+      // Revalida a notificação na API do PagHiper — o status confiável vem daqui.
+      const resultado = await processarRetornoPagHiper(notification_id, transaction_id);
+
+      const pedidoId = resultado.order_id;
+      if (!pedidoId) {
+        logger.warn('[Webhook PagHiper] Transação sem order_id', { context: { transaction_id } });
+        return res.json({ success: true, message: 'Pedido (order_id) ausente' });
+      }
+
+      const pedido = await prisma.pedido.findUnique({
+        where: { id: pedidoId },
+        include: { cliente: true }
+      });
+
+      if (!pedido) {
+        logger.warn('[Webhook PagHiper] Pedido não encontrado no banco', { context: { pedidoId } });
+        return res.json({ success: true, message: 'Pedido não encontrado' });
+      }
+
+      logger.info('[Webhook PagHiper] Notificação validada', {
+        context: { pedidoId, novoStatus: resultado.status }
+      });
+
+      // Mapeamento status PagHiper → status do pedido.
+      // Status possíveis: pending, reserved, paid, completed, processing, canceled, refunded.
+      let novoStatusPedido = pedido.status;
+      let devePagar = false;
+
+      if (resultado.status === 'paid' || resultado.status === 'completed' || resultado.status === 'reserved') {
+        novoStatusPedido = 'PAGO';
+        devePagar = true;
+
+        // 'reserved' é PRÉ-confirmação bancária, não compensação (≈2% não compensam).
+        // Hoje conta como PAGO e dispara o e-mail ao cliente — log explícito para
+        // tornar essa decisão auditável enquanto a regra não é revista.
+        if (resultado.status === 'reserved') {
+          logger.warn('[Webhook PagHiper] Status "reserved" tratado como PAGO (pré-confirmação, não compensado)', {
+            context: { pedidoId, transaction_id }
+          });
+        }
+      } else if (resultado.status === 'canceled') {
+        // Quando a expiração cancela a cobrança no gateway, o PagHiper nos
+        // notifica de volta do nosso próprio cancelamento. Sobrescrever
+        // EXPIRADO com CANCELADO apagaria a distinção entre prazo esgotado e
+        // desistência do cliente — ambos terminais, mas EXPIRADO é mais preciso.
+        novoStatusPedido = pedido.status === 'EXPIRADO' ? 'EXPIRADO' : 'CANCELADO';
+      } else {
+        logger.info('[Webhook PagHiper] Status sem mapeamento — pedido mantido como está', {
+          context: { pedidoId, statusGateway: resultado.status, statusPedido: pedido.status }
+        });
+      }
+
+      if (novoStatusPedido === pedido.status) {
+        // Reenvio da mesma notificação, ou mudança que não altera o pedido.
+        logger.info('[Webhook PagHiper] Nenhuma alteração a aplicar (idempotente)', {
+          context: { pedidoId, statusGateway: resultado.status, statusPedido: pedido.status }
+        });
+      }
+
+      if (novoStatusPedido !== pedido.status) {
+        const updateData: any = { status: novoStatusPedido };
+        if (devePagar && !pedido.dataPagamento) {
+          updateData.dataPagamento = new Date();
+        }
+
+        await prisma.pedido.update({
+          where: { id: pedido.id },
+          data: updateData
+        });
+
+        // Envia e-mail se foi pago e não era antes
+        if (devePagar && pedido.status !== 'PAGO' && pedido.status !== 'CONFIRMADO') {
+          enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+            logger.error('[Webhook PagHiper] ❌ Erro ao disparar e-mail de confirmação', {
+              context: { pedidoId: pedido.id, error: err instanceof Error ? err.message : 'Unknown' }
+            });
+          });
+        }
+
+        await prisma.activityLog.create({
+          data: {
+            action: 'payment_webhook',
+            entity: 'pedido',
+            entityId: pedido.id,
+            description: `Webhook PagHiper: Status atualizado para ${novoStatusPedido}`,
+            userEmail: pedido.cliente.email,
+            ip: clientIp
+          }
+        });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      // 500 (e não 200) para que o PagHiper reenvie: as falhas prováveis aqui são
+      // transitórias — gateway indisponível na revalidação ou banco fora do ar.
+      // Responder 200 encerraria as retentativas e o pagamento ficaria perdido.
+      logger.error('[Webhook PagHiper] Erro ao processar webhook — solicitando retentativa', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown',
+          notification_id,
+          transaction_id
+        }
+      });
+      res.status(500).json({ success: false, error: 'Erro ao processar webhook' });
     }
   }
 );

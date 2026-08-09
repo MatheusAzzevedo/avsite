@@ -352,6 +352,11 @@ model Pedido {
   dataConfirmacao          DateTime?
   emailConfirmacaoEnviado  Boolean   @default(false)
 
+  // Instante em que a cobrança PIX deixa de ser válida.
+  // Gravado ao gerar o PIX; a rotina de expiração cancela a cobrança no gateway
+  // e marca o pedido como EXPIRADO depois desta data.
+  pixExpiraEm              DateTime?
+
   // Snapshot da excursão pedagógica quando esta foi excluída (mantém histórico no cliente)
   excursaoPedagogicaSnapshot Json? // { titulo, codigo, documentoUrl, documentoNome }
 
@@ -367,6 +372,7 @@ model Pedido {
   @@index([status])
   @@index([codigoPagamento])
   @@index([createdAt])
+  @@index([pixExpiraEm]) // usado pela varredura de PIX vencidos
   @@map("pedidos")
 }
 

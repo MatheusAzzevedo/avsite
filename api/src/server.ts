@@ -55,6 +55,7 @@ import { ApiError } from './utils/api-error';
 import requestLoggerMiddleware from './middleware/request-logger.middleware';
 import { healthCheckAsaas } from './config/asaas';
 import { healthCheckEmail } from './config/email';
+import { iniciarVarreduraPixVencidos } from './jobs/expirar-pix.job';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -96,10 +97,22 @@ app.use(cors({
 }));
 
 // Rate Limiting
+// Webhooks de gateway têm limite próprio e mais alto: um lote de confirmações
+// vindo do mesmo IP do gateway estouraria o limite normal e receberia 429,
+// atrasando (ou perdendo) confirmações de pagamento. O limite continua existindo
+// porque a rota é pública e cada chamada gera uma revalidação de saída no gateway.
+const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 500,
+  message: { error: 'Muitas requisições.' }
+});
+app.use('/api/webhooks/', webhookLimiter);
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100, // máximo 100 requests por IP
-  message: { error: 'Muitas requisições. Tente novamente em 15 minutos.' }
+  message: { error: 'Muitas requisições. Tente novamente em 15 minutos.' },
+  skip: (req) => req.path.startsWith('/webhooks/') // já coberto pelo webhookLimiter
 });
 app.use('/api/', limiter);
 
@@ -296,6 +309,10 @@ async function startServer() {
       }).catch((err) => {
         logger.warn(`⚠️ Erro ao executar health check Asaas: ${err instanceof Error ? err.message : err}`);
       });
+
+      // Varredura de PIX vencidos: cancela no gateway cobranças que passaram do
+      // prazo, mesmo que o cliente tenha fechado a página.
+      iniciarVarreduraPixVencidos();
 
       // Health check Email Brevo API (não bloqueia o startup, roda em background)
       healthCheckEmail().then((result) => {
