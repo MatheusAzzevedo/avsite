@@ -49,6 +49,8 @@ Use **"+ New Variable"** ou **"{} Raw Editor"** e configure:
 
 Ela é enviada ao PagHiper **na criação de cada cobrança** — não há cadastro no painel do gateway. Se `API_BASE_URL` estiver errada ou ausente, o webhook nunca é chamado e o pedido só é confirmado enquanto o cliente mantiver a página de pagamento aberta.
 
+**PIX — prazo de pagamento:** opcionalmente defina **`PIX_EXPIRACAO_MINUTOS`** (padrão `120`, ou seja 2h). O PagHiper não aceita vencimento em horas, então a cobrança nasce válida por 1 dia e uma varredura interna da API a cancela no gateway ao fim deste prazo. A varredura roda a cada 10 minutos dentro do próprio processo — depende de `numReplicas: 1` no `railway.json`. **Se um dia o projeto subir para mais de uma réplica, ela precisa virar um job externo com trava**, senão haverá varreduras concorrentes.
+
 **Importante:** gere uma **JWT_SECRET** forte e única (ex.: `openssl rand -base64 48`). Nunca commite o valor real no repositório.
 
 ---

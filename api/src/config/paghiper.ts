@@ -314,6 +314,44 @@ export const consultarTransacaoPagHiper = async (transactionId: string) => {
 };
 
 /**
+ * Explicação da função [cancelarCobrancaPixPagHiper]
+ * Invalida uma cobrança PIX em POST https://pix.paghiper.com/invoice/cancel/,
+ * impedindo que continue pagável antes do vencimento natural.
+ *
+ * O gateway só cancela PIX **não pagos** — se a cobrança já foi quitada, a
+ * requisição é rejeitada. Quem chama deve consultar o status antes, para não
+ * confundir "já pago" com falha de cancelamento.
+ *
+ * Retorna `true` quando o gateway confirma o cancelamento.
+ */
+export const cancelarCobrancaPixPagHiper = async (transactionId: string): Promise<boolean> => {
+  try {
+    const config = getPagHiperConfig();
+
+    const payload = {
+      apiKey: config.apiKey,
+      token: config.token,
+      status: 'canceled',
+      transaction_id: transactionId
+    };
+
+    const data = await postPagHiper('/invoice/cancel/', payload, 'cancelarCobranca');
+    const bloco = extrairBloco(data, 'cancellation_request', 'cancelarCobranca');
+
+    logger.info('[PagHiper] Cobrança PIX cancelada no gateway', {
+      context: { transactionId, mensagem: bloco.response_message }
+    });
+
+    return true;
+  } catch (error) {
+    logger.error('[PagHiper] Erro ao cancelar cobrança PIX', {
+      context: { transactionId, error: error instanceof Error ? error.message : 'Unknown' }
+    });
+    throw error;
+  }
+};
+
+/**
  * Explicação da função [processarRetornoPagHiper]
  * Valida uma notificação (webhook) em POST https://pix.paghiper.com/invoice/notification/.
  *

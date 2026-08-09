@@ -33,8 +33,14 @@ import {
 import {
   criarCobrancaPixPagHiper,
   consultarTransacaoPagHiper,
+  cancelarCobrancaPixPagHiper,
   verificarConfigPagHiper
 } from '../config/paghiper';
+import {
+  calcularExpiracaoPix,
+  expirarPedidoPix,
+  PIX_EXPIRACAO_MINUTOS
+} from '../jobs/expirar-pix.job';
 import { logger } from '../utils/logger';
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 
@@ -175,13 +181,17 @@ router.post('/pix',
         }]
       });
 
-      // Atualiza pedido com código de pagamento
+      // Atualiza pedido com código de pagamento e o prazo de validade do PIX.
+      // `pixExpiraEm` é a fonte de verdade do prazo: a varredura automática e a
+      // contagem regressiva do frontend derivam dele.
+      const pixExpiraEm = calcularExpiracaoPix();
       await prisma.pedido.update({
         where: { id: pedido.id },
         data: {
           codigoPagamento: cobranca.transaction_id,
           metodoPagamento: 'pix',
-          status: 'AGUARDANDO_PAGAMENTO'
+          status: 'AGUARDANDO_PAGAMENTO',
+          pixExpiraEm
         }
       });
 
@@ -202,7 +212,9 @@ router.post('/pix',
           pedidoId,
           clienteId,
           transaction_id: cobranca.transaction_id,
-          valor: Number(pedido.valorTotal)
+          valor: Number(pedido.valorTotal),
+          expiraEm: pixExpiraEm.toISOString(),
+          prazoMinutos: PIX_EXPIRACAO_MINUTOS
         }
       });
 
@@ -215,7 +227,9 @@ router.post('/pix',
           valor: cobranca.value_cents / 100,
           qrCode: cobranca.pixData.qrCode,
           qrCodeImage: cobranca.pixData.qrCodeImage,
-          invoiceUrl: cobranca.invoiceUrl
+          invoiceUrl: cobranca.invoiceUrl,
+          expiraEm: pixExpiraEm.toISOString(),
+          prazoMinutos: PIX_EXPIRACAO_MINUTOS
         }
       });
     } catch (error) {
@@ -531,6 +545,37 @@ router.post('/:pedidoId/cancelar',
         throw ApiError.badRequest(`Pedido não pode ser cancelado (status: ${pedido.status})`);
       }
 
+      // Antes de cancelar, confirma que o pagamento não entrou nesse meio-tempo:
+      // cancelar um pedido já pago deixaria o cliente sem a vaga que quitou.
+      if (pedido.metodoPagamento === 'pix' && pedido.codigoPagamento && verificarConfigPagHiper()) {
+        try {
+          const statusGateway = await consultarTransacaoPagHiper(pedido.codigoPagamento);
+
+          if (['paid', 'completed', 'reserved'].includes(statusGateway.status)) {
+            logger.warn('[Pagamento] Cancelamento abortado: pagamento já reconhecido no gateway', {
+              context: { pedidoId, statusGateway: statusGateway.status }
+            });
+            return res.status(400).json({
+              success: false,
+              error: 'O pagamento deste pedido já foi identificado. Atualize a página.'
+            });
+          }
+
+          // Invalida a cobrança no PagHiper — sem isto o PIX seguiria pagável
+          // até o vencimento, mesmo com o pedido cancelado aqui.
+          await cancelarCobrancaPixPagHiper(pedido.codigoPagamento);
+        } catch (error) {
+          // Não impede o cancelamento local: a varredura tenta de novo depois.
+          logger.error('[Pagamento] Falha ao cancelar cobrança no PagHiper', {
+            context: {
+              pedidoId,
+              transactionId: pedido.codigoPagamento,
+              error: error instanceof Error ? error.message : 'Unknown'
+            }
+          });
+        }
+      }
+
       await prisma.pedido.update({
         where: { id: pedido.id },
         data: { status: 'CANCELADO' }
@@ -579,7 +624,8 @@ router.get('/:pedidoId/status',
           codigoPagamento: true,
           metodoPagamento: true,
           valorTotal: true,
-          dataPagamento: true
+          dataPagamento: true,
+          pixExpiraEm: true
         }
       });
 
@@ -590,6 +636,37 @@ router.get('/:pedidoId/status',
       // Se tem código de pagamento, consulta gateway e confirma o pagamento
       let gatewayStatus = null;
       let statusFinal = pedido.status;
+
+      const pixVenceu = !!pedido.pixExpiraEm && pedido.pixExpiraEm.getTime() <= Date.now();
+      const aguardandoPagamento = pedido.status === 'PENDENTE' || pedido.status === 'AGUARDANDO_PAGAMENTO';
+
+      // Prazo estourado: aplica a expiração agora, sem esperar a varredura.
+      // `expirarPedidoPix` já consulta o gateway e, se o pagamento tiver entrado
+      // no limite, confirma o pedido em vez de expirá-lo.
+      if (pedido.metodoPagamento === 'pix' && pixVenceu && aguardandoPagamento) {
+        const resultado = await expirarPedidoPix(pedido.id);
+
+        logger.info('[Pagamento Status] Prazo do PIX vencido; expiração aplicada', {
+          context: { pedidoId, resultado, expiraEm: pedido.pixExpiraEm?.toISOString() }
+        });
+
+        if (resultado === 'pago') statusFinal = 'PAGO';
+        else if (resultado === 'expirado') statusFinal = 'EXPIRADO';
+
+        return res.json({
+          success: true,
+          data: {
+            pedidoId: pedido.id,
+            status: statusFinal,
+            codigoPagamento: pedido.codigoPagamento,
+            metodoPagamento: pedido.metodoPagamento,
+            valorTotal: Number(pedido.valorTotal),
+            dataPagamento: pedido.dataPagamento,
+            expiraEm: pedido.pixExpiraEm,
+            gatewayStatus: null
+          }
+        });
+      }
 
       if (pedido.codigoPagamento) {
         if (pedido.metodoPagamento === 'pix' && verificarConfigPagHiper()) {
@@ -678,6 +755,7 @@ router.get('/:pedidoId/status',
           metodoPagamento: pedido.metodoPagamento,
           valorTotal: Number(pedido.valorTotal),
           dataPagamento: pedido.dataPagamento,
+          expiraEm: pedido.pixExpiraEm,
           gatewayStatus: gatewayStatus
         }
       });

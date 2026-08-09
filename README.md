@@ -4,7 +4,16 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-06) - feat: ativar webhook de confirmação de pagamento PIX do PagHiper
+### Última atualização (2026-08-06) - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
+- **api/src/jobs/expirar-pix.job.ts** [Novo: regra de expiração e varredura automática]
+- **api/src/config/paghiper.ts** [Nova função de cancelamento da cobrança]
+- **api/src/routes/pagamento.routes.ts** [Gravação do prazo, expiração sob demanda e cancelamento no gateway]
+- **api/prisma/schema.prisma** [Campo `pixExpiraEm` com índice]
+- **api/public/cliente/js/pagamento.js** [Contagem regressiva usa o prazo do servidor]
+
+Resumo: O PIX passa a valer 2 horas. Como o PagHiper só aceita vencimento em dias, a cobrança nasce com 1 dia e é invalidada no gateway pelo nosso servidor ao fim do prazo. Antes o prazo era só um temporizador na página: fechando a aba, nada expirava e o PIX seguia pagável. Agora uma varredura roda a cada 10 minutos, com uma passada no boot. Antes de cancelar, o status é consultado — se o pagamento entrou no limite, o pedido é confirmado em vez de expirado. Validado em teste real ponta a ponta: pagamento confirmado via webhook em 3 minutos e expiração cancelando a cobrança no gateway. O teste revelou que o PagHiper notifica de volta o nosso próprio cancelamento, o que sobrescrevia `EXPIRADO` por `CANCELADO`; o mapeamento foi corrigido.
+
+### Atualização anterior (2026-08-06) - feat: ativar webhook de confirmação de pagamento PIX do PagHiper
 - **api/src/config/paghiper.ts** [Envio de `notification_url` na criação da cobrança]
 - **api/src/routes/webhook.routes.ts** [Conferência de apiKey, códigos HTTP por tipo de falha e logs de idempotência]
 - **api/src/server.ts** [Rate limit próprio para `/api/webhooks/`]

@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-06 - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
+
+### Arquivos Modificados
+- `api/src/jobs/expirar-pix.job.ts` [Novo: regra de expiração e varredura automática de cobranças vencidas]
+- `api/src/config/paghiper.ts` [Nova função `cancelarCobrancaPixPagHiper`]
+- `api/src/routes/pagamento.routes.ts` [Gravação de `pixExpiraEm`, expiração sob demanda na consulta de status e cancelamento no gateway ao cancelar o pedido]
+- `api/src/server.ts` [Início da varredura no boot]
+- `api/prisma/schema.prisma` e `api/prisma/migration-add-pix-expira-em.sql` [Campo `pixExpiraEm` com índice]
+- `api/public/cliente/js/pagamento.js` [Contagem regressiva passa a usar o prazo devolvido pelo servidor]
+- `api/.env.example` e `api/RAILWAY-VARIABLES.md` [Documentada a variável `PIX_EXPIRACAO_MINUTOS`]
+
+### Detalhes das Alterações
+- **Prazo de 2h**: O PagHiper conta vencimento em dias (`days_due_date`), então não é possível emitir um PIX de 2 horas. A cobrança continua nascendo com 1 dia e passa a ser invalidada no gateway pelo nosso servidor ao fim do prazo, via `POST /invoice/cancel/`.
+- **Independência do Navegador**: Antes o prazo existia apenas como temporizador na página — se o cliente fechasse a aba, nada expirava e o PIX seguia pagável. Uma varredura roda a cada 10 minutos no processo da API e trata os vencidos, com uma passada no boot para limpar o que venceu enquanto o serviço esteve fora.
+- **Corrida com o Pagamento**: Antes de cancelar, o status é consultado no gateway. Se o pagamento entrou no limite do prazo, o pedido é confirmado como PAGO em vez de expirado — cancelar às cegas tiraria a vaga de quem já pagou. A mesma checagem foi aplicada ao botão de cancelar do cliente.
+- **Falha Segura**: Se o cancelamento no gateway falhar, o pedido permanece pendente e é reprocessado na varredura seguinte. Marcá-lo como expirado sem confirmar o cancelamento deixaria uma cobrança pagável sem pedido correspondente.
+- **Status EXPIRADO**: Pedidos vencidos passam a usar `EXPIRADO` em vez de `CANCELADO`, distinguindo prazo esgotado de desistência. O status já era suportado pelos painéis e libera a vaga da mesma forma.
+- **Preservação do EXPIRADO** (encontrado em teste real): ao cancelar a cobrança no gateway, o PagHiper notifica de volta o nosso próprio cancelamento com status `canceled`. O webhook sobrescrevia `EXPIRADO` por `CANCELADO` segundos depois, apagando a distinção recém-criada. O mapeamento passa a preservar `EXPIRADO`.
+- **Prazo Único**: `pixExpiraEm` é gravado no pedido e devolvido pela API; a contagem regressiva da tela deriva dele, eliminando a duplicação do prazo no JavaScript.
+
+---
+
 ## 2026-08-06 - feat: ativar webhook de confirmação de pagamento PIX do PagHiper
 
 ### Arquivos Modificados
@@ -58,23 +80,5 @@
 - **Painel Administrativo**: O editor de posts ganhou uma seção de Galeria que aceita no máximo 4 imagens, com prévia em grade e botão de remover, reaproveitando o mesmo padrão de upload das demais áreas do sistema.
 - **Frontend Público**: As imagens da galeria aparecem na sidebar do post; ao clicar, abrem ampliadas em um carrossel (setas e swipe) via Fancybox, funcionando tanto no desktop quanto no mobile.
 
----
-
-## 2026-06-03 - feat: integração de posts do blog com CRUD de Autores e ajuste visual nos cards
-
-### Arquivos Modificados
-- `api/prisma/schema.prisma` [Substituído campo de texto de autor por relacionamento com o modelo `Autor`]
-- `api/src/schemas/post.schema.ts` [Atualizada validação do autor para UUID]
-- `api/src/routes/post.routes.ts` [Atualizadas rotas administrativas de post para salvar `autorId`]
-- `api/src/routes/public.routes.ts` [Inclusão de dados completos do autor nas consultas públicas de posts]
-- `api/public/admin/blog-editor.html` e `js/blog-editor.js` [Modificado campo de autor para um select dinâmico consumindo a API de Autores]
-- `api/public/js/blog-public.js` e `api/public/js/blog-single-public.js` [Refatoração para puxar e exibir foto e nome baseados no relacionamento do banco]
-- `api/public/css/style.css` [Ajustado tamanho da capa e customizada borda do avatar do autor no card do blog]
-
-### Detalhes das Alterações
-- **Banco de Dados**: Migração do campo estático de autor para um relacionamento oficial (`autorId`) com o CRUD de Autores recém-criado. 
-- **Painel Administrativo**: O editor de posts agora lista todos os autores cadastrados em um `<select>`, tornando a seleção obrigatória e baseada em dados reais e dinâmicos da API.
-- **Frontend Público**: O grid de publicações busca a imagem de perfil e o nome oficial de cada Autor diretamente da API. Caso o autor não tenha foto, ocorre um fallback exibindo as letras iniciais do nome.
-- **Melhorias Visuais**: Inclusão de uma borda customizada ao redor do avatar do autor e aumento da altura da imagem de capa dos cards de 200px para 280px para dar mais destaque visual.
 
 

@@ -19,7 +19,10 @@ let pixPollingInterval = null;
 let pixPollingTimeout = null;
 let pixExpiryTimerId = null;
 let pixExpiryIntervalId = null;
-const PIX_EXPIRY_MINUTES = 15;
+// Usado apenas como reserva: o prazo real vem do servidor em `data.expiraEm`,
+// que também governa a varredura que cancela a cobrança no PagHiper. Manter o
+// prazo aqui isolado faria a tela divergir do que vale de fato.
+const PIX_EXPIRY_MINUTES_FALLBACK = 120;
 
 // ============================================================
 // Inicialização
@@ -197,8 +200,8 @@ function setupPixButton() {
             // Inicia polling de status
             startPixPolling();
 
-            // Inicia temporizador de 15 min
-            startPixExpiryTimer();
+            // Temporizador alinhado ao prazo devolvido pelo servidor
+            startPixExpiryTimer(result.data.expiraEm);
 
         } catch (error) {
             console.error('[Pagamento PIX] Erro:', error);
@@ -270,17 +273,57 @@ function stopPixExpiryTimer() {
     if (el) el.textContent = '';
 }
 
-function startPixExpiryTimer() {
+/**
+ * Explicação da função [startPixExpiryTimer]:
+ * Inicia a contagem regressiva até o vencimento do PIX.
+ *
+ * O prazo vem do servidor (`expiraEm`, ISO 8601), que é a mesma referência usada
+ * para cancelar a cobrança no PagHiper. Só cai no valor fixo de reserva se o
+ * campo não vier — assim a tela nunca promete um prazo diferente do real.
+ *
+ * @param {string} [expiraEmISO] Instante de expiração devolvido pela API.
+ */
+function startPixExpiryTimer(expiraEmISO) {
     stopPixExpiryTimer();
     if (!pedidoId) return;
-    let segundosRestantes = PIX_EXPIRY_MINUTES * 60;
+
+    const prazoServidor = expiraEmISO ? new Date(expiraEmISO).getTime() : NaN;
+    let segundosRestantes;
+    let prazoTotalMinutos;
+
+    if (!isNaN(prazoServidor)) {
+        segundosRestantes = Math.max(0, Math.round((prazoServidor - Date.now()) / 1000));
+        prazoTotalMinutos = Math.round(segundosRestantes / 60);
+    } else {
+        console.warn('[Pagamento PIX] Servidor não informou expiraEm; usando prazo de reserva');
+        segundosRestantes = PIX_EXPIRY_MINUTES_FALLBACK * 60;
+        prazoTotalMinutos = PIX_EXPIRY_MINUTES_FALLBACK;
+    }
+
     const countdownEl = document.getElementById('pixCountdown');
 
+    /**
+     * Explicação da função [atualizarExibicao]:
+     * Escreve o tempo restante no formato h:mm:ss quando passa de uma hora,
+     * e m:ss abaixo disso. Com prazo de 24h, o formato antigo em minutos
+     * exibiria "1439:32", que não se lê como tempo.
+     */
     function atualizarExibicao() {
         if (!countdownEl) return;
-        const min = Math.floor(segundosRestantes / 60);
+        const horas = Math.floor(segundosRestantes / 3600);
+        const min = Math.floor((segundosRestantes % 3600) / 60);
         const seg = segundosRestantes % 60;
-        countdownEl.textContent = 'Tempo restante: ' + min + ':' + (seg < 10 ? '0' : '') + seg + ' (pagamento expira em ' + PIX_EXPIRY_MINUTES + ' min)';
+        const doisDigitos = (n) => (n < 10 ? '0' : '') + n;
+
+        const restante = horas > 0
+            ? horas + ':' + doisDigitos(min) + ':' + doisDigitos(seg)
+            : min + ':' + doisDigitos(seg);
+
+        const prazo = prazoTotalMinutos % 60 === 0
+            ? (prazoTotalMinutos / 60) + 'h'
+            : prazoTotalMinutos + ' min';
+
+        countdownEl.textContent = 'Tempo restante: ' + restante + ' (pagamento expira em ' + prazo + ')';
         if (segundosRestantes <= 60) countdownEl.style.color = '#dc2626';
     }
 
@@ -302,7 +345,7 @@ function startPixExpiryTimer() {
             showAlert('error', 'Tempo esgotado. Redirecionando...');
         }
         setTimeout(() => { window.location.href = '/cliente/inicio.html'; }, 2000);
-    }, PIX_EXPIRY_MINUTES * 60 * 1000);
+    }, segundosRestantes * 1000);
 }
 
 /**

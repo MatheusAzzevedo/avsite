@@ -55,6 +55,7 @@ import { ApiError } from './utils/api-error';
 import requestLoggerMiddleware from './middleware/request-logger.middleware';
 import { healthCheckAsaas } from './config/asaas';
 import { healthCheckEmail } from './config/email';
+import { iniciarVarreduraPixVencidos } from './jobs/expirar-pix.job';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -308,6 +309,10 @@ async function startServer() {
       }).catch((err) => {
         logger.warn(`⚠️ Erro ao executar health check Asaas: ${err instanceof Error ? err.message : err}`);
       });
+
+      // Varredura de PIX vencidos: cancela no gateway cobranças que passaram do
+      // prazo, mesmo que o cliente tenha fechado a página.
+      iniciarVarreduraPixVencidos();
 
       // Health check Email Brevo API (não bloqueia o startup, roda em background)
       healthCheckEmail().then((result) => {

@@ -280,7 +280,11 @@ router.post('/paghiper',
           });
         }
       } else if (resultado.status === 'canceled') {
-        novoStatusPedido = 'CANCELADO';
+        // Quando a expiração cancela a cobrança no gateway, o PagHiper nos
+        // notifica de volta do nosso próprio cancelamento. Sobrescrever
+        // EXPIRADO com CANCELADO apagaria a distinção entre prazo esgotado e
+        // desistência do cliente — ambos terminais, mas EXPIRADO é mais preciso.
+        novoStatusPedido = pedido.status === 'EXPIRADO' ? 'EXPIRADO' : 'CANCELADO';
       } else {
         logger.info('[Webhook PagHiper] Status sem mapeamento — pedido mantido como está', {
           context: { pedidoId, statusGateway: resultado.status, statusPedido: pedido.status }
