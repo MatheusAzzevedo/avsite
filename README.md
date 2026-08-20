@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-17) - fix: eliminar perda de qualidade no processamento de imagens
+### Última atualização (2026-08-19) - fix: restaurar o download de documentos após a migração para o R2
+- **api/src/routes/documentos.routes.ts** [Atende disco e R2]
+- **api/src/config/r2.ts** [`Content-Disposition` no objeto e `verificarConfigR2`]
+- **api/src/routes/upload.routes.ts** [Correção da codificação do nome de arquivo]
+
+Resumo: O upload de documento já ia para o R2, mas o download continuava procurando em disco — todo arquivo novo dava 404 para o cliente. A rota passa a servir do disco quando existe e redirecionar para o R2 caso contrário, sem mudança no frontend. Para o PDF continuar baixando em vez de abrir no navegador, o `Content-Disposition` é gravado no próprio objeto. O teste revelou ainda que o multer entrega o nome do arquivo em latin1, corrompendo acentos no cabeçalho e no banco; corrigido nos três pontos de upload.
+
+### Atualização anterior (2026-08-17) - fix: eliminar perda de qualidade no processamento de imagens
 - **api/src/routes/upload.routes.ts** [Redimensionamento, perfil de cor, orientação EXIF e erro legível de tamanho]
 - **api/scripts/optimize-images.js** [Deixou de sobrescrever os originais]
 - **api/.env.example** [`IMAGEM_DIMENSAO_MAXIMA`, `IMAGEM_QUALIDADE` e novo `MAX_FILE_SIZE`]

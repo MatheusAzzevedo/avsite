@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-19 - fix: restaurar o download de documentos após a migração para o R2
+
+### Arquivos Modificados
+- `api/src/routes/documentos.routes.ts` [Atende disco e R2; redireciona quando o arquivo não está local]
+- `api/src/config/r2.ts` [`Content-Disposition` gravado no objeto e `verificarConfigR2`]
+- `api/src/routes/upload.routes.ts` [Correção da codificação do nome de arquivo vindo do multer]
+
+### Detalhes das Alterações
+- **Regressão corrigida**: O upload de documento já gravava no R2, mas o cliente baixava por `/api/documentos/download/<arquivo>`, que procurava em disco. Todo documento enviado após a migração resultava em 404. A rota passa a servir do disco quando o arquivo existe (documentos anteriores) e a redirecionar para o R2 caso contrário. O frontend não precisou mudar, já que continua montando o link a partir do nome do arquivo.
+- **Download forçado preservado**: Um redirect simples faria o PDF abrir no navegador em vez de baixar. O `Content-Disposition` passa a ser gravado no próprio objeto durante o upload, então o comportamento é o mesmo nas duas origens.
+- **Nome de arquivo corrompido**: O multer entrega `originalname` em latin1, então um nome com acento ou travessão chegava com os bytes UTF-8 reinterpretados e era codificado de novo. "Lista de Alunos — Cristo Redentor.pdf" virava `%C3%A2%C2%80%C2%94` no cabeçalho. A correção é aplicada nos três pontos de upload, tanto no cabeçalho quanto no nome gravado no banco.
+- **Validação**: Ciclo completo exercitado — envio com nome acentuado, redirect 302, download com nome íntegro em UTF-8, e path traversal ainda barrado com 400.
+
+---
+
 ## 2026-08-17 - fix: eliminar perda de qualidade no processamento de imagens
 
 ### Arquivos Modificados
@@ -70,21 +85,5 @@
 - **Retentativas**: O handler respondia HTTP 200 mesmo em erro, o que encerrava as retentativas do gateway e perdia o pagamento. Agora responde 500 em falha transitória (gateway ou banco fora), 400 em payload malformado e 200 apenas quando não há o que reprocessar.
 - **Segurança**: A `apiKey` recebida na notificação é conferida contra a nossa antes de acionar o gateway. A defesa principal continua sendo a revalidação do status na API do PagHiper, que impede confirmações forjadas.
 - **Rate Limiting**: O limite global de 100 req/15min por IP cobria os webhooks e devolveria 429 a um lote de confirmações vindas do mesmo IP do gateway. Os webhooks passam a ter limite próprio de 500.
-
----
-
-## 2026-08-06 - fix: corrigir endpoints e parse da integração PIX do PagHiper
-
-### Arquivos Modificados
-- `api/src/config/paghiper.ts` [Endpoints corrigidos para o host de PIX, parse da resposta ajustado, timeout e logs de diagnóstico]
-- `api/src/routes/pagamento.routes.ts` [Comentários atualizados: PIX é PagHiper, cartão segue no Asaas]
-- `api/tsconfig.json` [Adicionada lib `ES2022.Error` para suportar `Error` com `cause`]
-
-### Detalhes das Alterações
-- **Endpoints**: A integração apontava para `api.paghiper.com/transaction/*`, que é a API de boleto. O PIX usa host próprio: criação, status e notificação passaram para `pix.paghiper.com/invoice/{create,status,notification}/`.
-- **Parse da Resposta**: A leitura era feita em `create_request.bank_slip.pix_code`, campos que não existem na resposta de PIX. Corrigido para `pix_create_request.pix_code.emv` (copia-e-cola) e `qrcode_base64` (imagem), com `pix_url` como link da fatura.
-- **Payload**: Removido `type_bank_slip`, campo exclusivo de boleto. Valores numéricos passaram a ser enviados como string, conforme a documentação do gateway.
-- **QR Code**: A imagem passa a vir pronta do PagHiper em `qrcode_base64`; a geração local com a lib `qrcode` virou apenas fallback.
-- **Robustez**: Adicionado timeout de 20s nas chamadas HTTP, extração da mensagem de erro real do gateway (em vez de "Request failed with status code 4xx") e log da resposta bruta quando o formato vier fora do previsto.
 
 ---

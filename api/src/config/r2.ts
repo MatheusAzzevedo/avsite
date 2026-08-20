@@ -28,6 +28,17 @@ export const getBucketName = () => {
   return bucketName;
 };
 
+/**
+ * Explicação da função [verificarConfigR2]
+ * Indica se o R2 está configurado a ponto de ser possível montar uma URL pública.
+ *
+ * Só `R2_PUBLIC_URL` é verificada porque a leitura pública não passa por
+ * credencial — quem serve o objeto é a Cloudflare, não a nossa API.
+ */
+export const verificarConfigR2 = (): boolean => {
+  return !!process.env.R2_PUBLIC_URL?.trim();
+};
+
 export const getPublicUrl = (filename: string) => {
   const publicUrlBase = process.env.R2_PUBLIC_URL;
   if (!publicUrlBase) {
@@ -39,9 +50,37 @@ export const getPublicUrl = (filename: string) => {
 };
 
 /**
- * Faz upload de um buffer de arquivo para o Cloudflare R2
+ * Explicação da função [montarContentDisposition]
+ * Monta o cabeçalho que faz o navegador baixar o arquivo em vez de abri-lo,
+ * com um nome legível para quem recebe.
+ *
+ * O nome vai duas vezes, conforme a RFC 6266: uma versão ASCII simples para
+ * navegadores antigos e a `filename*` codificada em UTF-8 para acentos. Sem a
+ * segunda, "Lista de Alunos — Cristo Redentor.pdf" chega truncado ou ilegível.
  */
-export const uploadBufferToR2 = async (buffer: Buffer, filename: string, mimetype: string): Promise<string> => {
+export const montarContentDisposition = (nomeOriginal: string): string => {
+  const seguro = nomeOriginal
+    .replace(/[\r\n"\\]/g, '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\x20-\x7E]/g, '_')
+    .trim() || 'documento';
+
+  return `attachment; filename="${seguro}"; filename*=UTF-8''${encodeURIComponent(nomeOriginal)}`;
+};
+
+/**
+ * Faz upload de um buffer de arquivo para o Cloudflare R2.
+ *
+ * `contentDisposition` grava o cabeçalho no próprio objeto. Isso é o que
+ * permite entregar um documento por link direto e ainda assim forçar o
+ * download — sem ele o PDF abriria dentro do navegador.
+ */
+export const uploadBufferToR2 = async (
+  buffer: Buffer,
+  filename: string,
+  mimetype: string,
+  contentDisposition?: string
+): Promise<string> => {
   const s3 = getR2Client();
   const bucket = getBucketName();
 
@@ -50,6 +89,7 @@ export const uploadBufferToR2 = async (buffer: Buffer, filename: string, mimetyp
     Key: filename,
     Body: buffer,
     ContentType: mimetype,
+    ...(contentDisposition ? { ContentDisposition: contentDisposition } : {}),
   });
 
   try {

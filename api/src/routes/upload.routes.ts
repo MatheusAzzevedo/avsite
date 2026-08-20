@@ -13,9 +13,22 @@ import { prisma } from '../config/database';
 import { ApiError } from '../utils/api-error';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { logger } from '../utils/logger';
-import { uploadBufferToR2, deleteFileFromR2 } from '../config/r2';
+import { uploadBufferToR2, deleteFileFromR2, montarContentDisposition } from '../config/r2';
 
 const router = Router();
+
+/**
+ * Explicação da função [corrigirNomeArquivo]
+ * Reinterpreta o nome do arquivo recebido do multer como UTF-8.
+ *
+ * O busboy, por baixo do multer, entrega `originalname` em latin1. Um nome com
+ * acento ou travessão chega com os bytes UTF-8 lidos byte a byte — "Lista —
+ * Cristo" vira "Lista â€" Cristo". Se esse texto for codificado de novo, o
+ * resultado é duplamente corrompido e é isso que o cliente vê ao baixar.
+ */
+function corrigirNomeArquivo(nome: string): string {
+  return Buffer.from(nome, 'latin1').toString('utf8');
+}
 
 /**
  * Limite da maior dimensão da imagem, em pixels, e qualidade do WebP.
@@ -167,7 +180,7 @@ router.post('/',
       const uploadRecord = await prisma.upload.create({
         data: {
           filename,
-          originalName: req.file.originalname,
+          originalName: corrigirNomeArquivo(req.file.originalname),
           mimetype: 'image/webp',
           size: webpBuffer.length,
           url: publicUrl,
@@ -214,7 +227,15 @@ router.post('/document',
       const filename = `documentos/${uuidv4()}${ext}`;
 
       // Upload do buffer diretamente pro R2
-      const publicUrl = await uploadBufferToR2(req.file.buffer, filename, req.file.mimetype);
+      // O cabeçalho de download é gravado no próprio objeto: assim o link do R2
+      // baixa o arquivo com nome legível, em vez de abrir o PDF no navegador.
+      const nomeOriginal = corrigirNomeArquivo(req.file.originalname);
+      const publicUrl = await uploadBufferToR2(
+        req.file.buffer,
+        filename,
+        req.file.mimetype,
+        montarContentDisposition(nomeOriginal)
+      );
 
       res.status(201).json({
         success: true,
@@ -222,7 +243,7 @@ router.post('/document',
         data: {
           url: publicUrl, // Como não vamos mais usar download proxy, entregamos a url direta
           fullUrl: publicUrl,
-          originalName: req.file.originalname,
+          originalName: nomeOriginal,
           filename: filename
         }
       });
@@ -262,7 +283,7 @@ router.post('/multiple',
         const uploadRecord = await prisma.upload.create({
           data: {
             filename,
-            originalName: file.originalname,
+            originalName: corrigirNomeArquivo(file.originalname),
             mimetype: 'image/webp',
             size: webpBuffer.length,
             url: publicUrl,
