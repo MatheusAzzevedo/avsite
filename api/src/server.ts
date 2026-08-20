@@ -60,6 +60,26 @@ import { iniciarVarreduraPixVencidos } from './jobs/expirar-pix.job';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+/**
+ * Explicação da função [origensR2]
+ * Devolve a origem da URL pública do R2 para liberar no CSP.
+ *
+ * Sem isto o navegador bloqueia as imagens: o backend responde normalmente,
+ * o log fica limpo e as fotos simplesmente não aparecem — falha difícil de
+ * diagnosticar. Deriva da variável de ambiente para acompanhar o bucket de
+ * cada ambiente, em vez de fixar um domínio no código.
+ */
+function origensR2(): string[] {
+  const url = process.env.R2_PUBLIC_URL?.trim();
+  if (!url) return [];
+  try {
+    return [new URL(url).origin];
+  } catch {
+    logger.warn(`[CSP] R2_PUBLIC_URL inválida; imagens do R2 serão bloqueadas pelo navegador: ${url}`);
+    return [];
+  }
+}
+
 // ===========================================
 // MIDDLEWARES GLOBAIS
 // ===========================================
@@ -80,7 +100,7 @@ app.use(helmet({
       "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.googletagmanager.com", "https://*.googletagmanager.com", "https://www.google-analytics.com", "https://ssl.google-analytics.com", "https://cdnjs.cloudflare.com"],
       "script-src-attr": ["'unsafe-inline'"],
       "connect-src": ["'self'", "https://www.google-analytics.com", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://*.g.doubleclick.net", "https://avoarturismo.com.br", "http://localhost:3001", "http://localhost:3000"],
-      "img-src": ["'self'", "data:", "https://www.googletagmanager.com", "https://www.google-analytics.com", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://*.g.doubleclick.net", "https://*.google.com", "https://*.google.com.br"],
+      "img-src": ["'self'", "data:", "blob:", ...origensR2(), "https://www.googletagmanager.com", "https://www.google-analytics.com", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://*.g.doubleclick.net", "https://*.google.com", "https://*.google.com.br"],
       "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       "font-src": ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
     },

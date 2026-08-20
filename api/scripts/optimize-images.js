@@ -8,10 +8,19 @@
  * - FOTOS AVOAR PREFERIDAS
  *
  * Usa Sharp para: resize (max 1920px), recompressão.
- * Mantém formato e nome do arquivo (substitui no lugar).
  *
- * Uso: node scripts/optimize-images.js
- *      ou: npm run optimize:images
+ * ATENÇÃO — recompressão é destrutiva e cumulativa.
+ * Recomprimir um JPEG já comprimido perde detalhe de novo, e o arquivo
+ * costuma ficar MENOR a cada passada, então uma verificação por tamanho não
+ * impede a segunda execução. Rodar duas vezes degrada duas vezes: blocos,
+ * bordas empastadas e faixas de cor. Foi o que aconteceu com o acervo do site,
+ * cujos originais não existem mais.
+ *
+ * Por isso o script agora escreve em uma pasta paralela e nunca sobrescreve,
+ * a menos que se peça explicitamente com --sobrescrever.
+ *
+ * Uso: node scripts/optimize-images.js              (gera em <pasta>-otimizadas)
+ *      node scripts/optimize-images.js --sobrescrever  (destrutivo, sem volta)
  */
 
 const sharp = require('sharp');
@@ -26,6 +35,9 @@ const TARGET_FOLDERS = [
   'Imagens para o site/Pagina Inicial',
   'FOTOS AVOAR PREFERIDAS'
 ];
+
+const SOBRESCREVER = process.argv.includes('--sobrescrever');
+const SUFIXO_SAIDA = '-otimizadas';
 
 const MAX_DIMENSION = 1920;
 const JPEG_QUALITY = 82;
@@ -53,6 +65,17 @@ function getAllImageFiles(dir, files = []) {
   return files;
 }
 
+/**
+ * Monta o caminho de saída numa pasta paralela, preservando a estrutura interna.
+ * Ex.: "FOTOS AVOAR PREFERIDAS/a/b.jpg" -> "FOTOS AVOAR PREFERIDAS-otimizadas/a/b.jpg"
+ */
+function caminhoDeSaida(filePath) {
+  const relativo = path.relative(IMAGES_BASE, filePath);
+  const partes = relativo.split(path.sep);
+  partes[0] = partes[0] + SUFIXO_SAIDA;
+  return path.join(IMAGES_BASE, ...partes);
+}
+
 async function optimizeImage(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   const relativePath = path.relative(IMAGES_BASE, filePath);
@@ -61,6 +84,7 @@ async function optimizeImage(filePath) {
 
   try {
     let pipeline = sharp(filePath)
+      .rotate()
       .resize(MAX_DIMENSION, MAX_DIMENSION, {
         fit: 'inside',
         withoutEnlargement: true
@@ -82,7 +106,7 @@ async function optimizeImage(filePath) {
         return { skipped: true };
     }
 
-    const buffer = await pipeline.toBuffer();
+    const buffer = await pipeline.keepIccProfile().toBuffer();
     const sizeAfterKB = (buffer.length / 1024).toFixed(1);
     const savings = ((1 - buffer.length / statsBefore.size) * 100).toFixed(1);
 
@@ -91,7 +115,11 @@ async function optimizeImage(filePath) {
       return { skipped: true, sizeBefore: statsBefore.size, sizeAfter: statsBefore.size };
     }
 
-    fs.writeFileSync(filePath, buffer);
+    const destino = SOBRESCREVER ? filePath : caminhoDeSaida(filePath);
+    if (!SOBRESCREVER) {
+      fs.mkdirSync(path.dirname(destino), { recursive: true });
+    }
+    fs.writeFileSync(destino, buffer);
     console.log(`  [OTIMIZADO] ${relativePath} - ${sizeBeforeKB} KB → ${sizeAfterKB} KB (-${savings}%)`);
     return {
       skipped: false,
@@ -111,6 +139,9 @@ async function main() {
   console.log('='.repeat(60));
   console.log(`Pastas: ${TARGET_FOLDERS.join(', ')}`);
   console.log(`Config: max ${MAX_DIMENSION}px, JPEG q=${JPEG_QUALITY}, PNG comp=${PNG_COMPRESSION}`);
+  console.log(SOBRESCREVER
+    ? 'Modo: SOBRESCREVER — os originais serão substituídos e não há como voltar.'
+    : `Modo: seguro — a saída vai para pastas "<nome>${SUFIXO_SAIDA}"; os originais não são tocados.`);
   console.log('='.repeat(60));
 
   const seen = new Set();

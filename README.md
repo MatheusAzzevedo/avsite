@@ -4,7 +4,22 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-06) - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
+### Última atualização (2026-08-17) - fix: eliminar perda de qualidade no processamento de imagens
+- **api/src/routes/upload.routes.ts** [Redimensionamento, perfil de cor, orientação EXIF e erro legível de tamanho]
+- **api/scripts/optimize-images.js** [Deixou de sobrescrever os originais]
+- **api/.env.example** [`IMAGEM_DIMENSAO_MAXIMA`, `IMAGEM_QUALIDADE` e novo `MAX_FILE_SIZE`]
+
+Resumo: A perda de qualidade relatada não vinha do upload — o admin guarda os bytes originais. Vinha do `optimize-images.js`, que substituía os arquivos no lugar e, por só comparar tamanho, regravava a cada execução, degradando de novo. Uma passada de verificação economizou 0,4%, trocando qualidade real por quase nada. O script passou a gravar em pasta paralela. Na rota de upload, o ganho de peso passou a vir do redimensionamento (1920px) e não da compressão: uma foto de 7990x5327 saía com 11,6 MB e agora sai com 299 KB, com qualidade 90. O perfil de cor deixou de ser descartado, a orientação do EXIF é aplicada, e o limite subiu de 10 MB para 25 MB — o limite apertado empurrava o usuário a comprimir por fora, que era outra fonte de degradação.
+
+### Atualização anterior (2026-08-17) - feat: fundação do Cloudflare R2 para armazenamento de imagens
+- **api/src/server.ts** [Origem do R2 liberada no `img-src` da CSP, derivada de `R2_PUBLIC_URL`]
+- **api/src/scripts/test-r2.ts** [Script de diagnóstico movido e reescrito com verificação de leitura pública]
+- **api/src/routes/upload.routes.ts** [Log da causa real na falha de exclusão no R2]
+- **api/package.json** [Script `npm run test:r2`]
+
+Resumo: Primeira etapa da migração de imagens para o Cloudflare R2. A CSP não liberava o domínio do R2, o que faria o navegador bloquear toda imagem vinda de lá — sem erro no backend e sem nada nos logs. A origem passa a ser derivada da variável de ambiente. O script de diagnóstico não compilava por estar fora de `rootDir` e foi movido para `src/scripts/`; além disso ele apagava o arquivo antes de conferir a leitura pública, mascarando um bucket fechado. Ciclo completo validado contra o bucket real: upload pela API, conversão para WebP, leitura pública e exclusão.
+
+### Atualização anterior (2026-08-06) - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
 - **api/src/jobs/expirar-pix.job.ts** [Novo: regra de expiração e varredura automática]
 - **api/src/config/paghiper.ts** [Nova função de cancelamento da cobrança]
 - **api/src/routes/pagamento.routes.ts** [Gravação do prazo, expiração sob demanda e cancelamento no gateway]

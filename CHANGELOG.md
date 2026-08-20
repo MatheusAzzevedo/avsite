@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-08-17 - fix: eliminar perda de qualidade no processamento de imagens
+
+### Arquivos Modificados
+- `api/src/routes/upload.routes.ts` [Redimensionamento, preservação de perfil de cor, orientação EXIF e erro legível de tamanho]
+- `api/scripts/optimize-images.js` [Deixou de sobrescrever originais; passa a gravar em pasta paralela]
+- `api/.env.example` [Variáveis `IMAGEM_DIMENSAO_MAXIMA`, `IMAGEM_QUALIDADE` e novo `MAX_FILE_SIZE`]
+
+### Detalhes das Alterações
+- **Origem da perda identificada**: O caminho do admin não degradava nada — `readAsDataURL` guarda os bytes originais. A perda vinha do `optimize-images.js`, que substituía os arquivos no lugar e tinha como única proteção uma comparação de tamanho. Como um JPEG recomprimido costuma ficar menor, cada execução regravava e degradava de novo. Uma passada de verificação sobre o acervo atual economizou 0,4% no total, ou seja, trocava qualidade real por praticamente nada.
+- **Script não destrutivo**: A saída passa a ir para `<pasta>-otimizadas`, preservando os originais. Sobrescrever exige `--sobrescrever` explícito, e o modo em uso é anunciado no início da execução.
+- **Redimensionamento em vez de compressão**: A rota de upload não tinha `resize` e guardava a imagem nas dimensões originais. Uma foto de 7990x5327 gerava 11,6 MB. Com teto de 1920px e qualidade 90, a mesma foto sai com 299 KB — o peso vem da dimensão, o que permite manter qualidade alta.
+- **Perfil de cor preservado**: O sharp descarta metadados por padrão, e uma foto em Display P3 interpretada como sRGB sai com as cores deslocadas. `keepIccProfile()` corrige isso. O EXIF restante continua descartado de propósito, porque carrega GPS de fotos de excursões escolares.
+- **Orientação**: `rotate()` aplica a orientação do EXIF antes do descarte, evitando fotos de celular deitadas.
+- **Limite de envio**: Subiu de 10 MB para 25 MB por arquivo. O limite apertado empurrava o usuário a comprimir por fora antes de enviar, que era outra fonte de degradação. Arquivos acima do limite passam a responder 413 com mensagem clara em vez de "Erro interno do servidor".
+
+---
+
+## 2026-08-17 - feat: fundação do Cloudflare R2 para armazenamento de imagens
+
+### Arquivos Modificados
+- `api/src/server.ts` [Origem do R2 liberada no `img-src` da CSP, derivada de `R2_PUBLIC_URL`]
+- `api/src/scripts/test-r2.ts` [Movido de `scripts/` e reescrito: valida upload, leitura pública e exclusão]
+- `api/src/routes/upload.routes.ts` [Log da causa real na falha de exclusão no R2]
+- `api/package.json` [Script `npm run test:r2`]
+
+### Detalhes das Alterações
+- **CSP**: O `img-src` não incluía o domínio do R2, então toda imagem vinda de lá seria bloqueada pelo navegador — com o backend respondendo normalmente e nenhum erro no log. A origem passa a ser derivada de `R2_PUBLIC_URL`, acompanhando o bucket de cada ambiente em vez de fixar domínio no código.
+- **Diagnóstico**: O script de teste ficava fora de `rootDir` (`scripts/` contra `src/`) e não compilava. Movido para `src/scripts/`, seguindo a convenção já usada pelos demais scripts em TypeScript.
+- **Verificação de leitura pública**: O teste anterior apagava o arquivo antes de conferir se a URL pública servia o conteúdo. Como credenciais válidas fazem o upload funcionar mesmo com o bucket fechado, essa falha só apareceria como 404 no navegador do visitante. O teste passou a baixar o arquivo e comparar o conteúdo antes de excluir.
+- **Exclusão**: A falha ao remover do R2 era capturada e descartada sem registrar a causa. Agora o motivo é logado junto da chave, para permitir limpeza de objetos órfãos no bucket.
+- **Validação**: Ciclo completo exercitado contra o bucket real — upload de imagem pela API, conversão para WebP, leitura pública (HTTP 200, `image/webp`) e exclusão confirmada por 404.
+
+---
+
 ## 2026-08-06 - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
 
 ### Arquivos Modificados
@@ -54,31 +88,3 @@
 - **Robustez**: Adicionado timeout de 20s nas chamadas HTTP, extração da mensagem de erro real do gateway (em vez de "Request failed with status code 4xx") e log da resposta bruta quando o formato vier fora do previsto.
 
 ---
-
-## 2026-06-20 - feat: adição manual de alunos via painel administrativo
-
-### Arquivos Modificados
-- `api/public/admin/listas.html` [Adicionado botão "Adicionar Aluno" e modal de formulário completo]
-- `api/public/admin/js/listas.js` [Implementada lógica de gerenciamento da modal e envio dos dados ao backend]
-
-### Detalhes das Alterações
-- **Botão e Modal Admin**: Adicionado o botão "Adicionar Aluno" na interface de gestão de alunos e o modal de formulário completo contendo os dados do aluno, dados do responsável financeiro (obrigatórios), informações médicas (opcionais) e o status desejado para o pedido.
-- **Integração Backend**: Implementada a chamada assíncrona ao novo endpoint `POST /api/admin/listas/excursao/:id/aluno` em `listas.js`, manipulando e validando as entradas do formulário e recarregando os dados das tabelas de alunos e excursões automaticamente após o cadastro bem-sucedido.
-## 2026-06-08 - feat: galeria de imagens nas postagens do blog
-
-### Arquivos Modificados
-- `api/prisma/schema.prisma` [Novo modelo `PostImagem` (url, ordem, FK cascade) e relação `galeria` no modelo `Post`]
-- `api/prisma/migrations/20260608000000_add_post_galeria/` [Migration que cria a tabela `post_imagens`]
-- `api/src/schemas/post.schema.ts` [Campo `galeria` (array de até 4 imagens) na validação de criação e atualização]
-- `api/src/routes/post.routes.ts` [Criação/atualização da galeria aninhada e inclusão da galeria no GET por id]
-- `api/src/routes/public.routes.ts` [Inclusão da galeria ordenada na consulta pública de post por slug]
-- `api/public/admin/blog-editor.html` e `js/blog-editor.js` [Seção "Galeria de Imagens (até 4)" com upload múltiplo, preview, remoção e carregamento na edição]
-- `blog-single.html` e `js/blog-single-public.js` [Widget "Galeria" na sidebar abaixo de "Posts Recentes", com lightbox/carrossel via Fancybox]
-
-### Detalhes das Alterações
-- **Banco de Dados**: Galeria armazenada em tabela própria (`post_imagens`) com `ordem` para sequência e exclusão em cascata ao remover o post, seguindo o padrão já usado nas Excursões.
-- **Painel Administrativo**: O editor de posts ganhou uma seção de Galeria que aceita no máximo 4 imagens, com prévia em grade e botão de remover, reaproveitando o mesmo padrão de upload das demais áreas do sistema.
-- **Frontend Público**: As imagens da galeria aparecem na sidebar do post; ao clicar, abrem ampliadas em um carrossel (setas e swipe) via Fancybox, funcionando tanto no desktop quanto no mobile.
-
-
-
