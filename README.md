@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-19) - feat: helper compartilhado de upload no painel administrativo
+### Última atualização (2026-08-19) - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
+- **api/public/admin/js/equipe.js** [Foto enviada ao R2 em vez de Base64]
+- **api/src/scripts/migrar-imagens-r2.ts** [Novo: migração do acervo com simulação e verificação]
+- **api/package.json** [Script `npm run migrar:imagens`]
+
+Resumo: Primeiro domínio migrado. A tela de Equipe passa a enviar a foto ao R2 e gravar só a URL; o salvamento não mudou, pois já lia o mesmo campo. O teto local de 5 MB foi removido — era mais apertado que o do servidor e levava o usuário a comprimir a foto por fora. O script de migração é idempotente e verifica cada imagem lendo-a de volta pela URL pública antes de atualizar o banco; falhas mantêm o Base64 intacto para nova tentativa, e sem `--aplicar` ele apenas simula. Resultado: foto de 286 KB virou 32 KB, e a resposta de `/api/public/equipe` caiu de ~292 KB para 235 bytes.
+
+### Atualização anterior (2026-08-19) - feat: helper compartilhado de upload no painel administrativo
 - **api/public/admin/js/admin-main.js** [Novo objeto `UploadArquivo`: envio, validação, progresso e preenchimento de campo]
 
 Resumo: Base para migrar as telas do admin do Base64 para o R2. Centraliza envio, validação e tratamento de erro, que hoje estariam repetidos em cinco telas. Usa XMLHttpRequest porque `fetch` não reporta progresso, e fotos originais passam de 20 MB. O `preencherCampo` reproduz a interface do padrão antigo, gravando a URL no lugar do Base64, com prévia local imediata e limpeza em caso de falha. Mora no `admin-main.js`, já carregado por todas as telas, então nenhum HTML mudou. Validado em navegador real: PNG de 2.606 KB virou 22 KB, com progresso, nome acentuado íntegro, erros claros para arquivo grande e formato inválido, e a imagem do R2 carregando sob a CSP.

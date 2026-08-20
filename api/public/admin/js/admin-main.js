@@ -537,7 +537,10 @@ const UploadArquivo = {
     async preencherCampo(file, campos) {
         const inputDados = document.getElementById(campos.dataInputId);
         const previa = document.getElementById(campos.previewId);
-        const container = campos.containerId ? document.getElementById(campos.containerId) : null;
+        // Sem container informado, o próprio elemento de prévia é exibido/ocultado —
+        // é assim que a tela de Equipe funciona. Telas com um wrapper separado
+        // (como o editor de excursão) passam `containerId` explicitamente.
+        const container = document.getElementById(campos.containerId || campos.previewId);
 
         // Mostra a imagem local imediatamente: o envio pode levar segundos e a
         // tela não deve ficar parada sem resposta.

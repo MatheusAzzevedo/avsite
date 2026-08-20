@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-19 - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
+
+### Arquivos Modificados
+- `api/public/admin/js/equipe.js` [Foto enviada ao R2 em vez de convertida para Base64]
+- `api/src/scripts/migrar-imagens-r2.ts` [Novo: migração do acervo, com simulação e verificação]
+- `api/public/admin/js/admin-main.js` [Container do `preencherCampo` passa a cair no próprio elemento de prévia]
+- `api/package.json` [Script `npm run migrar:imagens`]
+
+### Detalhes das Alterações
+- **Primeiro domínio migrado**: A tela de Equipe passa a enviar a foto para o R2 e gravar apenas a URL. O salvamento não mudou, porque já lia o valor do mesmo campo escondido.
+- **Limite local removido**: A tela rejeitava acima de 5 MB, sendo que o servidor aceita 25 MB. O teto mais apertado no navegador levava o usuário a comprimir a foto por fora antes de enviar, degradando-a antes de o sistema ver o arquivo.
+- **Script de migração idempotente**: Registros cujo campo já é URL são ignorados, então a execução pode ser interrompida e repetida sem duplicar objetos no bucket.
+- **Verificação antes de descartar o original**: Cada imagem é enviada, lida de volta pela URL pública e conferida antes de o banco ser atualizado. Sem isso, uma falha silenciosa deixaria o registro apontando para uma imagem inexistente, com o Base64 já perdido. Uma falha mantém o registro intacto para nova tentativa.
+- **Simulação por padrão**: Sem `--aplicar`, o script apenas relata o que faria.
+- **Resultado medido**: A foto de 286 KB em Base64 virou 32 KB no R2. A resposta de `/api/public/equipe` caiu de cerca de 292 KB para 235 bytes, e o campo do banco de ~292 mil caracteres para 100.
+- **Validação em navegador real**: A página "Sobre Nós" renderiza a foto vinda do R2, sem nenhum Base64 restante. Pela tela do admin, um PNG de 2400x1600 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
+
+---
+
 ## 2026-08-19 - feat: helper compartilhado de upload no painel administrativo
 
 ### Arquivos Modificados
@@ -62,27 +81,5 @@
 - **Verificação de leitura pública**: O teste anterior apagava o arquivo antes de conferir se a URL pública servia o conteúdo. Como credenciais válidas fazem o upload funcionar mesmo com o bucket fechado, essa falha só apareceria como 404 no navegador do visitante. O teste passou a baixar o arquivo e comparar o conteúdo antes de excluir.
 - **Exclusão**: A falha ao remover do R2 era capturada e descartada sem registrar a causa. Agora o motivo é logado junto da chave, para permitir limpeza de objetos órfãos no bucket.
 - **Validação**: Ciclo completo exercitado contra o bucket real — upload de imagem pela API, conversão para WebP, leitura pública (HTTP 200, `image/webp`) e exclusão confirmada por 404.
-
----
-
-## 2026-08-06 - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
-
-### Arquivos Modificados
-- `api/src/jobs/expirar-pix.job.ts` [Novo: regra de expiração e varredura automática de cobranças vencidas]
-- `api/src/config/paghiper.ts` [Nova função `cancelarCobrancaPixPagHiper`]
-- `api/src/routes/pagamento.routes.ts` [Gravação de `pixExpiraEm`, expiração sob demanda na consulta de status e cancelamento no gateway ao cancelar o pedido]
-- `api/src/server.ts` [Início da varredura no boot]
-- `api/prisma/schema.prisma` e `api/prisma/migration-add-pix-expira-em.sql` [Campo `pixExpiraEm` com índice]
-- `api/public/cliente/js/pagamento.js` [Contagem regressiva passa a usar o prazo devolvido pelo servidor]
-- `api/.env.example` e `api/RAILWAY-VARIABLES.md` [Documentada a variável `PIX_EXPIRACAO_MINUTOS`]
-
-### Detalhes das Alterações
-- **Prazo de 2h**: O PagHiper conta vencimento em dias (`days_due_date`), então não é possível emitir um PIX de 2 horas. A cobrança continua nascendo com 1 dia e passa a ser invalidada no gateway pelo nosso servidor ao fim do prazo, via `POST /invoice/cancel/`.
-- **Independência do Navegador**: Antes o prazo existia apenas como temporizador na página — se o cliente fechasse a aba, nada expirava e o PIX seguia pagável. Uma varredura roda a cada 10 minutos no processo da API e trata os vencidos, com uma passada no boot para limpar o que venceu enquanto o serviço esteve fora.
-- **Corrida com o Pagamento**: Antes de cancelar, o status é consultado no gateway. Se o pagamento entrou no limite do prazo, o pedido é confirmado como PAGO em vez de expirado — cancelar às cegas tiraria a vaga de quem já pagou. A mesma checagem foi aplicada ao botão de cancelar do cliente.
-- **Falha Segura**: Se o cancelamento no gateway falhar, o pedido permanece pendente e é reprocessado na varredura seguinte. Marcá-lo como expirado sem confirmar o cancelamento deixaria uma cobrança pagável sem pedido correspondente.
-- **Status EXPIRADO**: Pedidos vencidos passam a usar `EXPIRADO` em vez de `CANCELADO`, distinguindo prazo esgotado de desistência. O status já era suportado pelos painéis e libera a vaga da mesma forma.
-- **Preservação do EXPIRADO** (encontrado em teste real): ao cancelar a cobrança no gateway, o PagHiper notifica de volta o nosso próprio cancelamento com status `canceled`. O webhook sobrescrevia `EXPIRADO` por `CANCELADO` segundos depois, apagando a distinção recém-criada. O mapeamento passa a preservar `EXPIRADO`.
-- **Prazo Único**: `pixExpiraEm` é gravado no pedido e devolvido pela API; a contagem regressiva da tela deriva dele, eliminando a duplicação do prazo no JavaScript.
 
 ---

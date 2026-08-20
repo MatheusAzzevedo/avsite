@@ -16,6 +16,7 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "seed": "ts-node prisma/seed.ts",
+    "migrar:imagens": "ts-node src/scripts/migrar-imagens-r2.ts",
     "test:r2": "ts-node src/scripts/test-r2.ts",
     "optimize:images": "node scripts/optimize-images.js"
   },
