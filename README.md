@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-19) - fix: restaurar o download de documentos após a migração para o R2
+### Última atualização (2026-08-19) - feat: helper compartilhado de upload no painel administrativo
+- **api/public/admin/js/admin-main.js** [Novo objeto `UploadArquivo`: envio, validação, progresso e preenchimento de campo]
+
+Resumo: Base para migrar as telas do admin do Base64 para o R2. Centraliza envio, validação e tratamento de erro, que hoje estariam repetidos em cinco telas. Usa XMLHttpRequest porque `fetch` não reporta progresso, e fotos originais passam de 20 MB. O `preencherCampo` reproduz a interface do padrão antigo, gravando a URL no lugar do Base64, com prévia local imediata e limpeza em caso de falha. Mora no `admin-main.js`, já carregado por todas as telas, então nenhum HTML mudou. Validado em navegador real: PNG de 2.606 KB virou 22 KB, com progresso, nome acentuado íntegro, erros claros para arquivo grande e formato inválido, e a imagem do R2 carregando sob a CSP.
+
+### Atualização anterior (2026-08-19) - fix: restaurar o download de documentos após a migração para o R2
 - **api/src/routes/documentos.routes.ts** [Atende disco e R2]
 - **api/src/config/r2.ts** [`Content-Disposition` no objeto e `verificarConfigR2`]
 - **api/src/routes/upload.routes.ts** [Correção da codificação do nome de arquivo]

@@ -368,6 +368,213 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+
+// ============================================================
+// Upload de arquivos (Cloudflare R2)
+// ============================================================
+
+/**
+ * Explicação do objeto [UploadArquivo]
+ *
+ * Envia arquivos para a API, que os processa e grava no Cloudflare R2,
+ * devolvendo a URL pública. Substitui o padrão antigo de converter a imagem
+ * para Base64 com FileReader e gravá-la dentro do próprio registro.
+ *
+ * Por que existe: cinco telas do admin repetiam a mesma lógica de arquivo.
+ * Centralizar evita que cada uma trate erro e validação de um jeito — e é o
+ * tratamento de erro que faz diferença aqui, porque uma falha silenciosa de
+ * upload leva o usuário a comprimir a imagem por fora até "funcionar",
+ * degradando-a.
+ *
+ * Usa XMLHttpRequest em vez de fetch por um motivo específico: só ele reporta
+ * progresso de envio, e fotos originais podem passar de 20 MB.
+ */
+const UploadArquivo = {
+    /** Deve espelhar MAX_FILE_SIZE no servidor. */
+    TAMANHO_MAXIMO: 25 * 1024 * 1024,
+
+    TIPOS_IMAGEM: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+
+    TIPOS_DOCUMENTO: [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ],
+
+    /**
+     * Explicação da função [validar]
+     * Confere tipo e tamanho antes de gastar a subida.
+     * @returns {string|null} mensagem de erro, ou null se estiver tudo certo
+     */
+    validar(file, tiposAceitos) {
+        if (!file) return 'Nenhum arquivo selecionado.';
+
+        if (tiposAceitos && !tiposAceitos.includes(file.type)) {
+            return 'Formato não aceito. Envie JPG, PNG, WEBP ou GIF.';
+        }
+
+        if (file.size > this.TAMANHO_MAXIMO) {
+            const mb = (file.size / 1024 / 1024).toFixed(1);
+            const limite = (this.TAMANHO_MAXIMO / 1024 / 1024).toFixed(0);
+            return `Arquivo de ${mb} MB excede o limite de ${limite} MB.`;
+        }
+
+        return null;
+    },
+
+    /**
+     * Explicação da função [enviar]
+     * Envia um arquivo e devolve os dados salvos.
+     *
+     * @param {File} file
+     * @param {Object} [opcoes]
+     * @param {string} [opcoes.endpoint] '/uploads' (padrão) ou '/uploads/document'
+     * @param {Function} [opcoes.aoProgredir] recebe a porcentagem (0-100)
+     * @returns {Promise<{url: string, id: string, size: number, originalName: string}>}
+     */
+    enviar(file, opcoes = {}) {
+        const endpoint = opcoes.endpoint || '/uploads';
+        const tipos = endpoint.includes('document') ? this.TIPOS_DOCUMENTO : this.TIPOS_IMAGEM;
+
+        const erro = this.validar(file, tipos);
+        if (erro) return Promise.reject(new Error(erro));
+
+        return new Promise((resolve, reject) => {
+            const form = new FormData();
+            form.append('file', file);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `${API_CONFIG.BASE_URL}${endpoint}`);
+
+            const token = localStorage.getItem('avorar_token');
+            if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+            if (typeof opcoes.aoProgredir === 'function') {
+                xhr.upload.addEventListener('progress', (evt) => {
+                    if (evt.lengthComputable) {
+                        opcoes.aoProgredir(Math.round((evt.loaded / evt.total) * 100));
+                    }
+                });
+            }
+
+            xhr.addEventListener('load', () => {
+                let corpo = null;
+                try { corpo = JSON.parse(xhr.responseText); } catch (e) { /* resposta não-JSON */ }
+
+                if (xhr.status >= 200 && xhr.status < 300 && corpo && corpo.data) {
+                    console.log('[Upload] Enviado:', corpo.data.url);
+                    return resolve(corpo.data);
+                }
+
+                // A API já devolve mensagem clara em 413 (tamanho) e 400 (formato);
+                // repassá-la é melhor do que inventar um texto genérico aqui.
+                if (xhr.status === 401) {
+                    return reject(new Error('Sua sessão expirou. Entre novamente para continuar.'));
+                }
+                reject(new Error((corpo && (corpo.error || corpo.message)) || `Falha no envio (HTTP ${xhr.status}).`));
+            });
+
+            xhr.addEventListener('error', () => reject(new Error('Não foi possível conectar ao servidor. Verifique a conexão.')));
+            xhr.addEventListener('abort', () => reject(new Error('Envio cancelado.')));
+
+            xhr.send(form);
+        });
+    },
+
+    /** Atalho para documentos (PDF, DOCX, XLS, XLSX). */
+    enviarDocumento(file, opcoes = {}) {
+        return this.enviar(file, Object.assign({}, opcoes, { endpoint: '/uploads/document' }));
+    },
+
+    /**
+     * Explicação da função [enviarVarias]
+     * Envia vários arquivos em sequência, relatando o andamento do conjunto.
+     *
+     * A sequência é proposital: subir 10 fotos de 20 MB em paralelo satura a
+     * conexão e faz todas demorarem mais. Um erro em um arquivo não derruba os
+     * demais — ele volta no resultado marcado com a mensagem.
+     *
+     * @returns {Promise<Array<{ok: boolean, arquivo: string, dados?: Object, erro?: string}>>}
+     */
+    async enviarVarias(files, opcoes = {}) {
+        const lista = Array.from(files);
+        const resultados = [];
+
+        for (let i = 0; i < lista.length; i++) {
+            const file = lista[i];
+            if (typeof opcoes.aoIniciarArquivo === 'function') {
+                opcoes.aoIniciarArquivo(i + 1, lista.length, file.name);
+            }
+            try {
+                const dados = await this.enviar(file, opcoes);
+                resultados.push({ ok: true, arquivo: file.name, dados });
+            } catch (e) {
+                console.error('[Upload] Falhou:', file.name, e.message);
+                resultados.push({ ok: false, arquivo: file.name, erro: e.message });
+            }
+        }
+
+        return resultados;
+    },
+
+    /**
+     * Explicação da função [preencherCampo]
+     * Substitui o padrão antigo de FileReader nas telas do admin.
+     *
+     * Antes: lia o arquivo como Base64 e jogava a string no input escondido e
+     * no `src` da previa — o registro carregava a imagem inteira.
+     * Agora: envia para o R2 e grava apenas a URL, mantendo os mesmos
+     * elementos de tela, para que a troca em cada tela seja mínima.
+     *
+     * @param {File} file
+     * @param {Object} campos
+     * @param {string} campos.dataInputId input escondido que guarda a URL
+     * @param {string} campos.previewId <img> de previa
+     * @param {string} [campos.containerId] elemento a exibir quando houver imagem
+     * @returns {Promise<string|null>} a URL, ou null se falhar
+     */
+    async preencherCampo(file, campos) {
+        const inputDados = document.getElementById(campos.dataInputId);
+        const previa = document.getElementById(campos.previewId);
+        const container = campos.containerId ? document.getElementById(campos.containerId) : null;
+
+        // Mostra a imagem local imediatamente: o envio pode levar segundos e a
+        // tela não deve ficar parada sem resposta.
+        const urlLocal = URL.createObjectURL(file);
+        if (previa) previa.src = urlLocal;
+        if (container) container.style.display = 'block';
+
+        try {
+            const dados = await this.enviar(file, {
+                aoProgredir: (pct) => {
+                    if (previa) previa.style.opacity = String(0.4 + (pct / 100) * 0.6);
+                }
+            });
+
+            if (previa) {
+                previa.src = dados.url;
+                previa.style.opacity = '1';
+            }
+            if (inputDados) inputDados.value = dados.url;
+
+            URL.revokeObjectURL(urlLocal);
+            return dados.url;
+        } catch (e) {
+            // Limpa a previa para não dar a impressão de que a imagem foi salva.
+            if (previa) { previa.src = ''; previa.style.opacity = '1'; }
+            if (container) container.style.display = 'none';
+            if (inputDados) inputDados.value = '';
+            URL.revokeObjectURL(urlLocal);
+
+            if (typeof showToast === 'function') showToast(e.message, 'error');
+            else alert(e.message);
+
+            return null;
+        }
+    }
+};
+
 // Exportar funções para uso global
 window.Modal = Modal;
 window.openModal = openModal;
@@ -381,4 +588,5 @@ window.filterTable = filterTable;
 window.formatDate = formatDate;
 window.logout = logout;
 window.RichTextEditor = RichTextEditor;
+window.UploadArquivo = UploadArquivo;
 // window.Storage = Storage; // Removido: Storage vem de api-client.js

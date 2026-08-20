@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-19 - feat: helper compartilhado de upload no painel administrativo
+
+### Arquivos Modificados
+- `api/public/admin/js/admin-main.js` [Novo objeto `UploadArquivo`: envio, validação, progresso e preenchimento de campo]
+
+### Detalhes das Alterações
+- **Base para migrar as telas**: Cinco telas do admin repetem a mesma lógica de arquivo, hoje convertendo para Base64 com FileReader. Centralizar o envio evita que cada uma trate erro e validação de um jeito próprio — e é o tratamento de erro que importa aqui, porque uma falha silenciosa leva o usuário a comprimir a imagem por fora até "funcionar", que é uma das origens da perda de qualidade.
+- **Escolha do XMLHttpRequest**: `fetch` não reporta progresso de envio, e fotos originais passam de 20 MB. Sem indicação de andamento, a tela parece travada durante o envio.
+- **Validação antes do envio**: Tipo e tamanho são conferidos no navegador, espelhando o limite do servidor, para não gastar uma subida de 30 MB que seria rejeitada no fim.
+- **`preencherCampo`**: Reproduz a interface do padrão antigo (`dataInputId`, `previewId`, container), gravando a URL no lugar do Base64. A prévia local aparece imediatamente via `createObjectURL` e é trocada pela URL definitiva ao terminar; em caso de erro, é limpa, para não dar a impressão de que a imagem foi salva.
+- **Envio múltiplo em sequência**: Subir dez fotos grandes em paralelo satura a conexão. A falha de um arquivo não derruba os demais.
+- **Sem alteração de HTML**: O helper mora em `admin-main.js`, já carregado por todas as telas do painel.
+- **Validação em navegador real**: PNG de 2.606 KB (2000x1400) enviado pela tela de Equipe virou 22 KB em 1920x1344; progresso reportado; nome com acento preservado; arquivo de 30 MB e formato inválido barrados com mensagem clara; e a imagem do R2 carregou na página, confirmando a liberação da CSP.
+
+---
+
 ## 2026-08-19 - fix: restaurar o download de documentos após a migração para o R2
 
 ### Arquivos Modificados
@@ -68,22 +84,5 @@
 - **Status EXPIRADO**: Pedidos vencidos passam a usar `EXPIRADO` em vez de `CANCELADO`, distinguindo prazo esgotado de desistência. O status já era suportado pelos painéis e libera a vaga da mesma forma.
 - **Preservação do EXPIRADO** (encontrado em teste real): ao cancelar a cobrança no gateway, o PagHiper notifica de volta o nosso próprio cancelamento com status `canceled`. O webhook sobrescrevia `EXPIRADO` por `CANCELADO` segundos depois, apagando a distinção recém-criada. O mapeamento passa a preservar `EXPIRADO`.
 - **Prazo Único**: `pixExpiraEm` é gravado no pedido e devolvido pela API; a contagem regressiva da tela deriva dele, eliminando a duplicação do prazo no JavaScript.
-
----
-
-## 2026-08-06 - feat: ativar webhook de confirmação de pagamento PIX do PagHiper
-
-### Arquivos Modificados
-- `api/src/config/paghiper.ts` [Envio de `notification_url` na criação da cobrança e resolução da URL a partir do ambiente]
-- `api/src/routes/webhook.routes.ts` [Conferência de apiKey, códigos HTTP por tipo de falha, logs de idempotência e de status sem mapeamento]
-- `api/src/server.ts` [Rate limit próprio e mais alto para `/api/webhooks/`]
-- `api/.env.example` e `api/RAILWAY-VARIABLES.md` [Documentada a variável `PAGHIPER_NOTIFICATION_URL`]
-
-### Detalhes das Alterações
-- **Ativação do Webhook**: O PagHiper só notifica a URL informada no corpo da requisição de criação da cobrança — não há cadastro no painel do gateway. Como a URL nunca era enviada, o endpoint `/api/webhooks/paghiper` jamais era chamado e o pedido só se confirmava enquanto o cliente mantivesse a página aberta. A URL passa a ser derivada de `API_BASE_URL`, com `PAGHIPER_NOTIFICATION_URL` como override.
-- **Ambiente Local**: Endereços locais são detectados e omitidos, com aviso no log. O PagHiper não alcança `localhost`, e enviar a URL assim arriscaria a rejeição da cobrança em desenvolvimento.
-- **Retentativas**: O handler respondia HTTP 200 mesmo em erro, o que encerrava as retentativas do gateway e perdia o pagamento. Agora responde 500 em falha transitória (gateway ou banco fora), 400 em payload malformado e 200 apenas quando não há o que reprocessar.
-- **Segurança**: A `apiKey` recebida na notificação é conferida contra a nossa antes de acionar o gateway. A defesa principal continua sendo a revalidação do status na API do PagHiper, que impede confirmações forjadas.
-- **Rate Limiting**: O limite global de 100 req/15min por IP cobria os webhooks e devolveria 429 a um lote de confirmações vindas do mesmo IP do gateway. Os webhooks passam a ter limite próprio de 500.
 
 ---
