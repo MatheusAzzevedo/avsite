@@ -62,6 +62,37 @@ const ALVOS: Record<string, Alvo> = {
       return rs.map((r) => ({ id: r.id, rotulo: r.nome, valor: r.foto }));
     },
     gravar: (id, url) => prisma.autor.update({ where: { id }, data: { foto: url } })
+  },
+
+  posts: {
+    nome: 'Posts (capa)',
+    campo: 'imagemCapa',
+    prefixo: 'posts',
+    listar: async () => {
+      const rs = await prisma.post.findMany({ select: { id: true, titulo: true, imagemCapa: true } });
+      return rs.map((r) => ({ id: r.id, rotulo: r.titulo, valor: r.imagemCapa }));
+    },
+    gravar: (id, url) => prisma.post.update({ where: { id }, data: { imagemCapa: url } })
+  },
+
+  // Galeria é uma tabela à parte: cada linha é uma imagem, então o mesmo
+  // formato de alvo serve — o "registro" aqui é a própria imagem.
+  'posts-galeria': {
+    nome: 'Posts (galeria)',
+    campo: 'url',
+    prefixo: 'posts/galeria',
+    listar: async () => {
+      const rs = await prisma.postImagem.findMany({
+        select: { id: true, url: true, ordem: true, post: { select: { titulo: true } } },
+        orderBy: [{ postId: 'asc' }, { ordem: 'asc' }]
+      });
+      return rs.map((r) => ({
+        id: r.id,
+        rotulo: `${r.post?.titulo ?? 'post'} #${r.ordem}`,
+        valor: r.url
+      }));
+    },
+    gravar: (id, url) => prisma.postImagem.update({ where: { id }, data: { url } })
   }
 };
 

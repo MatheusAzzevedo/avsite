@@ -6,7 +6,7 @@
 let isEditing = false;
 let currentPostId = null;
 
-// Imagens da galeria do post (base64 ou URL), máximo de 4
+// URLs das imagens da galeria do post no R2, máximo de 4
 const MAX_GALERIA = 4;
 let galeriaImages = [];
 
@@ -189,28 +189,34 @@ async function loadPostForEdit(postId) {
 
 /**
  * Explicação da função [handleImageUpload]
- * Processa o upload de imagem e converte para base64.
+ * Envia a imagem de capa ao Cloudflare R2 e guarda a URL no campo do post.
+ *
+ * Antes a capa era convertida para Base64 e gravada na própria coluna
+ * `imagemCapa`, o que fazia a listagem pública do blog trafegar a imagem
+ * inteira de cada post — uma delas com 441 KB.
+ *
+ * Tipo e tamanho são validados por `UploadArquivo`, que espelha o limite do
+ * servidor; o teto de 5 MB daqui era mais apertado e levava o usuário a
+ * comprimir a imagem por fora antes de enviar.
+ *
  * @param {HTMLInputElement} input - Input de arquivo
  */
-function handleImageUpload(input) {
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
+async function handleImageUpload(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
 
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('A imagem deve ter no máximo 5MB', 'error');
-            return;
-        }
+    input.disabled = true;
 
-        const reader = new FileReader();
+    const url = await UploadArquivo.preencherCampo(file, {
+        dataInputId: 'postImageData',
+        previewId: 'imagePreview',
+        containerId: 'imagePreviewContainer'
+    });
 
-        reader.onload = function(e) {
-            document.getElementById('postImageData').value = e.target.result;
-            document.getElementById('imagePreview').src = e.target.result;
-            document.getElementById('imagePreviewContainer').style.display = 'block';
-        };
+    input.disabled = false;
 
-        reader.readAsDataURL(file);
-    }
+    // Sem limpar a seleção, escolher o mesmo arquivo de novo não dispara o evento.
+    if (!url) input.value = '';
 }
 
 /**
@@ -228,27 +234,43 @@ function removeImage() {
  * Processa o upload de múltiplas imagens da galeria (base64), respeitando o limite de 4.
  * @param {HTMLInputElement} input - Input de arquivo (multiple)
  */
-function handleGalleryUpload(input) {
+async function handleGalleryUpload(input) {
     if (!input.files || input.files.length === 0) return;
 
-    Array.from(input.files).forEach(function(file) {
-        if (galeriaImages.length >= MAX_GALERIA) {
-            showToast('A galeria aceita no máximo ' + MAX_GALERIA + ' imagens.', 'error');
-            return;
-        }
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('A imagem ' + file.name + ' deve ter no máximo 5MB.', 'error');
-            return;
-        }
+    const vagas = MAX_GALERIA - galeriaImages.length;
+    if (vagas <= 0) {
+        showToast('A galeria aceita no máximo ' + MAX_GALERIA + ' imagens.', 'error');
+        input.value = '';
+        return;
+    }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            if (galeriaImages.length >= MAX_GALERIA) return;
-            galeriaImages.push(e.target.result);
-            renderGalleryPreview();
-        };
-        reader.readAsDataURL(file);
+    const escolhidos = Array.from(input.files);
+    if (escolhidos.length > vagas) {
+        showToast('Só cabem mais ' + vagas + ' imagem(ns); as demais foram ignoradas.', 'error');
+    }
+
+    input.disabled = true;
+
+    // Sequencial de propósito: em paralelo, várias fotos grandes saturam a
+    // conexão e todas demoram mais. O helper reporta qual está sendo enviada.
+    const resultados = await UploadArquivo.enviarVarias(escolhidos.slice(0, vagas), {
+        aoIniciarArquivo: function(indice, total, nome) {
+            showToast('Enviando ' + indice + ' de ' + total + ': ' + nome, 'info');
+        }
     });
+
+    input.disabled = false;
+    input.value = '';
+
+    resultados.filter(function(r) { return r.ok; })
+              .forEach(function(r) { galeriaImages.push(r.dados.url); });
+
+    const falhas = resultados.filter(function(r) { return !r.ok; });
+    falhas.forEach(function(r) {
+        showToast('Falhou: ' + r.arquivo + ' — ' + r.erro, 'error');
+    });
+
+    renderGalleryPreview();
 }
 
 /**

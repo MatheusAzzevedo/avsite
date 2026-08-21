@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-20 - feat: migrar capa e galeria do blog para o Cloudflare R2
+
+### Arquivos Modificados
+- `api/public/admin/js/blog-editor.js` [Capa e galeria enviadas ao R2 em vez de convertidas para Base64]
+- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa do post e tabela de galeria]
+
+### Detalhes das Alterações
+- **Primeira tela com galeria**: Além da capa, o post tem até 4 imagens na tabela `post_imagens`. O envio múltiplo usa `enviarVarias`, que sobe em sequência e informa qual arquivo está indo — em paralelo, várias fotos grandes saturam a conexão e todas demoram mais.
+- **Limite da galeria respeitado antes do envio**: Só as imagens que cabem nas vagas restantes são enviadas. Antes, cada arquivo era lido e descartado depois; agora o excesso nem sobe, e o usuário é avisado de quantas couberam.
+- **Falha isolada**: Um arquivo que falha não derruba os demais do lote, e o erro é mostrado com o nome do arquivo.
+- **Migração de tabela relacionada**: O script passou a cobrir `PostImagem.url`, onde cada linha é uma imagem. O formato de alvo já existente serviu sem alteração — o "registro" passa a ser a própria imagem, rotulada com o título do post e a ordem.
+- **Resultado medido**: A listagem pública do blog caiu de **489.300 para 1.700 bytes**, uma redução de 288 vezes. As 4 imagens de galeria somadas caíram de 251 KB para 118 KB.
+- **Recodificação pode inflar**: Uma capa de 26 KB virou 38 KB. Recodificar uma origem pequena já comprimida custa bytes; em valor absoluto é irrelevante, e o ganho real está no campo do banco, que deixa de carregar a imagem inteira.
+- **Validação em navegador real**: Listagem e post individual renderizam tudo do R2, com zero Base64 e os 4 links de galeria funcionando. No editor, uma capa de 2600x1700 e três imagens de galeria enviadas de uma vez chegaram como URL; com 3 já na galeria, um lote de 3 novas adicionou apenas 1, respeitando o teto de 4 sem desperdiçar envios.
+
+---
+
 ## 2026-08-20 - feat: migrar as fotos de Autores do Base64 para o Cloudflare R2
 
 ### Arquivos Modificados
@@ -62,22 +79,5 @@
 - **Download forçado preservado**: Um redirect simples faria o PDF abrir no navegador em vez de baixar. O `Content-Disposition` passa a ser gravado no próprio objeto durante o upload, então o comportamento é o mesmo nas duas origens.
 - **Nome de arquivo corrompido**: O multer entrega `originalname` em latin1, então um nome com acento ou travessão chegava com os bytes UTF-8 reinterpretados e era codificado de novo. "Lista de Alunos — Cristo Redentor.pdf" virava `%C3%A2%C2%80%C2%94` no cabeçalho. A correção é aplicada nos três pontos de upload, tanto no cabeçalho quanto no nome gravado no banco.
 - **Validação**: Ciclo completo exercitado — envio com nome acentuado, redirect 302, download com nome íntegro em UTF-8, e path traversal ainda barrado com 400.
-
----
-
-## 2026-08-17 - fix: eliminar perda de qualidade no processamento de imagens
-
-### Arquivos Modificados
-- `api/src/routes/upload.routes.ts` [Redimensionamento, preservação de perfil de cor, orientação EXIF e erro legível de tamanho]
-- `api/scripts/optimize-images.js` [Deixou de sobrescrever originais; passa a gravar em pasta paralela]
-- `api/.env.example` [Variáveis `IMAGEM_DIMENSAO_MAXIMA`, `IMAGEM_QUALIDADE` e novo `MAX_FILE_SIZE`]
-
-### Detalhes das Alterações
-- **Origem da perda identificada**: O caminho do admin não degradava nada — `readAsDataURL` guarda os bytes originais. A perda vinha do `optimize-images.js`, que substituía os arquivos no lugar e tinha como única proteção uma comparação de tamanho. Como um JPEG recomprimido costuma ficar menor, cada execução regravava e degradava de novo. Uma passada de verificação sobre o acervo atual economizou 0,4% no total, ou seja, trocava qualidade real por praticamente nada.
-- **Script não destrutivo**: A saída passa a ir para `<pasta>-otimizadas`, preservando os originais. Sobrescrever exige `--sobrescrever` explícito, e o modo em uso é anunciado no início da execução.
-- **Redimensionamento em vez de compressão**: A rota de upload não tinha `resize` e guardava a imagem nas dimensões originais. Uma foto de 7990x5327 gerava 11,6 MB. Com teto de 1920px e qualidade 90, a mesma foto sai com 299 KB — o peso vem da dimensão, o que permite manter qualidade alta.
-- **Perfil de cor preservado**: O sharp descarta metadados por padrão, e uma foto em Display P3 interpretada como sRGB sai com as cores deslocadas. `keepIccProfile()` corrige isso. O EXIF restante continua descartado de propósito, porque carrega GPS de fotos de excursões escolares.
-- **Orientação**: `rotate()` aplica a orientação do EXIF antes do descarte, evitando fotos de celular deitadas.
-- **Limite de envio**: Subiu de 10 MB para 25 MB por arquivo. O limite apertado empurrava o usuário a comprimir por fora antes de enviar, que era outra fonte de degradação. Arquivos acima do limite passam a responder 413 com mensagem clara em vez de "Erro interno do servidor".
 
 ---
