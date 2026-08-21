@@ -93,6 +93,46 @@ const ALVOS: Record<string, Alvo> = {
       }));
     },
     gravar: (id, url) => prisma.postImagem.update({ where: { id }, data: { url } })
+  },
+
+  'pedagogicas-capa': {
+    nome: 'Excursões pedagógicas (capa)',
+    campo: 'imagemCapa',
+    prefixo: 'excursoes-pedagogicas',
+    listar: async () => {
+      const rs = await prisma.excursaoPedagogica.findMany({ select: { id: true, titulo: true, imagemCapa: true } });
+      return rs.map((r) => ({ id: r.id, rotulo: r.titulo, valor: r.imagemCapa }));
+    },
+    gravar: (id, url) => prisma.excursaoPedagogica.update({ where: { id }, data: { imagemCapa: url } })
+  },
+
+  'pedagogicas-principal': {
+    nome: 'Excursões pedagógicas (imagem principal)',
+    campo: 'imagemPrincipal',
+    prefixo: 'excursoes-pedagogicas',
+    listar: async () => {
+      const rs = await prisma.excursaoPedagogica.findMany({ select: { id: true, titulo: true, imagemPrincipal: true } });
+      return rs.map((r) => ({ id: r.id, rotulo: r.titulo, valor: r.imagemPrincipal }));
+    },
+    gravar: (id, url) => prisma.excursaoPedagogica.update({ where: { id }, data: { imagemPrincipal: url } })
+  },
+
+  'pedagogicas-galeria': {
+    nome: 'Excursões pedagógicas (galeria)',
+    campo: 'url',
+    prefixo: 'excursoes-pedagogicas/galeria',
+    listar: async () => {
+      const rs = await prisma.excursaoPedagogicaImagem.findMany({
+        select: { id: true, url: true, ordem: true, excursaoPedagogica: { select: { titulo: true } } },
+        orderBy: [{ excursaoPedagogicaId: 'asc' }, { ordem: 'asc' }]
+      });
+      return rs.map((r) => ({
+        id: r.id,
+        rotulo: `${r.excursaoPedagogica?.titulo ?? 'excursão'} #${r.ordem}`,
+        valor: r.url
+      }));
+    },
+    gravar: (id, url) => prisma.excursaoPedagogicaImagem.update({ where: { id }, data: { url } })
   }
 };
 

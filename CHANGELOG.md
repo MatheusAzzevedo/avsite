@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-20 - feat: migrar imagens das excursões pedagógicas para o Cloudflare R2
+
+### Arquivos Modificados
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Capa, imagem principal e galeria enviadas ao R2]
+- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa, imagem principal e galeria das pedagógicas]
+
+### Detalhes das Alterações
+- **Maior volume até aqui**: 13 registros no banco local somavam **55 MB** apenas nas colunas `imagemCapa` e `imagemPrincipal`. Após a migração, essas colunas somam **2.645 bytes**. A listagem pública dos 13 registros passou a pesar 5,2 KB — em produção, uma amostra de apenas 5 registros pesava 1,5 MB.
+- **Documento já resolvido**: O envio de documento desta tela já usava `UploadManager.uploadDocument` e passou a funcionar na fase 1, quando o download foi corrigido. Não precisou de alteração.
+- **Um handler para dois campos**: `handleImageUploadPedagogica` recebe os ids por parâmetro e serve tanto à capa quanto à imagem principal, então a troca cobriu os dois de uma vez.
+- **Recodificação nem sempre reduz**: Das 12 capas migradas, 5 ficaram maiores — por exemplo 330 KB → 438 KB. São imagens já comprimidas e abaixo do teto de 1920px, onde recodificar em WebP com qualidade 90 custa bytes. O saldo continua muito positivo (as duas rodadas somaram ~34 MB a menos no banco), porque os ganhos vêm dos arquivos grandes: 20.369 KB → 590 KB e 7.264 KB → 390 KB. O ganho principal, de qualquer forma, é o campo do banco deixar de carregar a imagem inteira.
+- **Validação em navegador real**: A página de detalhes da excursão na área do cliente renderiza as imagens do R2, sem Base64. No editor do admin, capa de 2800x1800, imagem principal de 2200x1500 e três imagens de galeria enviadas de uma vez chegaram como URL, com as prévias renderizadas.
+
+---
+
 ## 2026-08-20 - feat: migrar capa e galeria do blog para o Cloudflare R2
 
 ### Arquivos Modificados
@@ -64,20 +79,5 @@
 - **Envio múltiplo em sequência**: Subir dez fotos grandes em paralelo satura a conexão. A falha de um arquivo não derruba os demais.
 - **Sem alteração de HTML**: O helper mora em `admin-main.js`, já carregado por todas as telas do painel.
 - **Validação em navegador real**: PNG de 2.606 KB (2000x1400) enviado pela tela de Equipe virou 22 KB em 1920x1344; progresso reportado; nome com acento preservado; arquivo de 30 MB e formato inválido barrados com mensagem clara; e a imagem do R2 carregou na página, confirmando a liberação da CSP.
-
----
-
-## 2026-08-19 - fix: restaurar o download de documentos após a migração para o R2
-
-### Arquivos Modificados
-- `api/src/routes/documentos.routes.ts` [Atende disco e R2; redireciona quando o arquivo não está local]
-- `api/src/config/r2.ts` [`Content-Disposition` gravado no objeto e `verificarConfigR2`]
-- `api/src/routes/upload.routes.ts` [Correção da codificação do nome de arquivo vindo do multer]
-
-### Detalhes das Alterações
-- **Regressão corrigida**: O upload de documento já gravava no R2, mas o cliente baixava por `/api/documentos/download/<arquivo>`, que procurava em disco. Todo documento enviado após a migração resultava em 404. A rota passa a servir do disco quando o arquivo existe (documentos anteriores) e a redirecionar para o R2 caso contrário. O frontend não precisou mudar, já que continua montando o link a partir do nome do arquivo.
-- **Download forçado preservado**: Um redirect simples faria o PDF abrir no navegador em vez de baixar. O `Content-Disposition` passa a ser gravado no próprio objeto durante o upload, então o comportamento é o mesmo nas duas origens.
-- **Nome de arquivo corrompido**: O multer entrega `originalname` em latin1, então um nome com acento ou travessão chegava com os bytes UTF-8 reinterpretados e era codificado de novo. "Lista de Alunos — Cristo Redentor.pdf" virava `%C3%A2%C2%80%C2%94` no cabeçalho. A correção é aplicada nos três pontos de upload, tanto no cabeçalho quanto no nome gravado no banco.
-- **Validação**: Ciclo completo exercitado — envio com nome acentuado, redirect 302, download com nome íntegro em UTF-8, e path traversal ainda barrado com 400.
 
 ---

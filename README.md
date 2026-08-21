@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-20) - feat: migrar capa e galeria do blog para o Cloudflare R2
+### Última atualização (2026-08-20) - feat: migrar imagens das excursões pedagógicas para o Cloudflare R2
+- **api/public/admin/js/excursao-pedagogica-editor.js** [Capa, imagem principal e galeria enviadas ao R2]
+- **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos das pedagógicas]
+
+Resumo: Maior volume da migração. As colunas `imagemCapa` e `imagemPrincipal` dos 13 registros locais somavam 55 MB e passaram a somar 2.645 bytes; a listagem pública caiu para 5,2 KB. O envio de documento desta tela já estava resolvido desde a fase 1. Vale registrar que recodificar nem sempre reduz: 5 das 12 capas ficaram maiores, por serem imagens já comprimidas abaixo do teto de 1920px — o saldo segue muito positivo porque os ganhos vêm dos arquivos grandes (20.369 KB → 590 KB). Validado em navegador: a página do cliente e o editor do admin funcionam do R2, sem Base64.
+
+### Atualização anterior (2026-08-20) - feat: migrar capa e galeria do blog para o Cloudflare R2
 - **api/public/admin/js/blog-editor.js** [Capa e galeria enviadas ao R2]
 - **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos: capa do post e tabela de galeria]
 
