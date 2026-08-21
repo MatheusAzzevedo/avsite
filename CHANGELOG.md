@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-20 - feat: migrar as fotos de Autores do Base64 para o Cloudflare R2
+
+### Arquivos Modificados
+- `api/public/admin/js/autores.js` [Foto enviada ao R2 em vez de convertida para Base64]
+
+### Detalhes das Alterações
+- **Segundo domínio migrado**: A foto do autor passa a ser enviada ao R2, com o campo guardando apenas a URL. O salvamento não mudou, porque já lia `fotoUrl.value`.
+- **Limite local removido**: A tela rejeitava acima de 5 MB, contra os 25 MB do servidor. O teto mais apertado no navegador levava o usuário a comprimir a imagem por fora antes de enviar.
+- **Onde a tela vive**: Não existe `autores.html`. O `autores.js` é carregado por `blog.html`, e o formulário de autor é um modal dentro dessa página. A verificação inicial falhou por procurar numa página inexistente.
+- **Resultado medido**: Foto de 286 KB em Base64 virou 32 KB no R2. Na resposta pública de posts, o campo do autor caiu para 101 caracteres.
+- **Validação em navegador real**: Os cards do blog renderizam o avatar do autor vindo do R2. Pelo modal em `blog.html`, um PNG de 3000x2000 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
+- **Pendente para a fase 5**: As capas dos posts continuam em Base64 — uma delas com 441 KB —, o que ainda domina o peso da listagem do blog.
+
+---
+
 ## 2026-08-19 - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
 
 ### Arquivos Modificados
@@ -64,22 +79,5 @@
 - **Perfil de cor preservado**: O sharp descarta metadados por padrão, e uma foto em Display P3 interpretada como sRGB sai com as cores deslocadas. `keepIccProfile()` corrige isso. O EXIF restante continua descartado de propósito, porque carrega GPS de fotos de excursões escolares.
 - **Orientação**: `rotate()` aplica a orientação do EXIF antes do descarte, evitando fotos de celular deitadas.
 - **Limite de envio**: Subiu de 10 MB para 25 MB por arquivo. O limite apertado empurrava o usuário a comprimir por fora antes de enviar, que era outra fonte de degradação. Arquivos acima do limite passam a responder 413 com mensagem clara em vez de "Erro interno do servidor".
-
----
-
-## 2026-08-17 - feat: fundação do Cloudflare R2 para armazenamento de imagens
-
-### Arquivos Modificados
-- `api/src/server.ts` [Origem do R2 liberada no `img-src` da CSP, derivada de `R2_PUBLIC_URL`]
-- `api/src/scripts/test-r2.ts` [Movido de `scripts/` e reescrito: valida upload, leitura pública e exclusão]
-- `api/src/routes/upload.routes.ts` [Log da causa real na falha de exclusão no R2]
-- `api/package.json` [Script `npm run test:r2`]
-
-### Detalhes das Alterações
-- **CSP**: O `img-src` não incluía o domínio do R2, então toda imagem vinda de lá seria bloqueada pelo navegador — com o backend respondendo normalmente e nenhum erro no log. A origem passa a ser derivada de `R2_PUBLIC_URL`, acompanhando o bucket de cada ambiente em vez de fixar domínio no código.
-- **Diagnóstico**: O script de teste ficava fora de `rootDir` (`scripts/` contra `src/`) e não compilava. Movido para `src/scripts/`, seguindo a convenção já usada pelos demais scripts em TypeScript.
-- **Verificação de leitura pública**: O teste anterior apagava o arquivo antes de conferir se a URL pública servia o conteúdo. Como credenciais válidas fazem o upload funcionar mesmo com o bucket fechado, essa falha só apareceria como 404 no navegador do visitante. O teste passou a baixar o arquivo e comparar o conteúdo antes de excluir.
-- **Exclusão**: A falha ao remover do R2 era capturada e descartada sem registrar a causa. Agora o motivo é logado junto da chave, para permitir limpeza de objetos órfãos no bucket.
-- **Validação**: Ciclo completo exercitado contra o bucket real — upload de imagem pela API, conversão para WebP, leitura pública (HTTP 200, `image/webp`) e exclusão confirmada por 404.
 
 ---

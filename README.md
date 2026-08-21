@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-19) - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
+### Última atualização (2026-08-20) - feat: migrar as fotos de Autores do Base64 para o Cloudflare R2
+- **api/public/admin/js/autores.js** [Foto enviada ao R2 em vez de Base64]
+
+Resumo: Segundo domínio migrado, com o mesmo padrão da Equipe. A foto do autor vai para o R2 e o campo guarda só a URL; o salvamento não mudou. Removido o teto local de 5 MB, mais apertado que o do servidor. Descoberto no caminho que não existe `autores.html`: o `autores.js` é carregado por `blog.html`, onde o formulário de autor é um modal. Foto de 286 KB virou 32 KB, e os cards do blog renderizam o avatar vindo do R2. As capas dos posts seguem em Base64 e serão tratadas na fase 5.
+
+### Atualização anterior (2026-08-19) - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
 - **api/public/admin/js/equipe.js** [Foto enviada ao R2 em vez de Base64]
 - **api/src/scripts/migrar-imagens-r2.ts** [Novo: migração do acervo com simulação e verificação]
 - **api/package.json** [Script `npm run migrar:imagens`]
