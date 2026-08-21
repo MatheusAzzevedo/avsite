@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-20 - feat: migrar imagens das excursões convencionais para o Cloudflare R2
+
+### Arquivos Modificados
+- `api/public/admin/js/excursao-editor.js` [Capa, imagem principal e galeria enviadas ao R2]
+- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa, imagem principal e galeria das convencionais]
+
+### Detalhes das Alterações
+- **Último domínio de imagem**: Com esta fase, nenhuma tela do painel converte imagem para Base64. As três que ainda faziam isso (blog, pedagógicas e convencionais) passaram a enviar ao R2.
+- **Verificação de completude**: Uma consulta às 10 colunas de imagem do banco confirma **zero registros em Base64** e todos apontando para URL — `posts.imagemCapa`, `post_imagens.url`, `excursoes.imagemCapa`, `excursoes.imagemPrincipal`, `excursao_imagens.url`, `excursoes_pedagogicas.imagemCapa`, `excursoes_pedagogicas.imagemPrincipal`, `excursao_pedagogica_imagens.url`, `equipe.fotoPerfil` e `autores.foto`.
+- **Peso das listagens públicas após a migração completa**: excursões 764 bytes, pedagógicas 5.257 bytes, posts 1.701 bytes e equipe 235 bytes — todas sem nenhum Base64.
+- **Validação em navegador real**: A listagem de excursões e a página individual renderizam tudo do R2. No editor, capa de 2800x1800, imagem principal de 2200x1500 e duas imagens de galeria chegaram como URL, com as prévias renderizadas.
+- **Acervo migrado**: 40 objetos no bucket, somando 10,2 MB — vindos de dezenas de megabytes de Base64 espalhados pelas colunas do PostgreSQL.
+
+---
+
 ## 2026-08-20 - feat: migrar imagens das excursões pedagógicas para o Cloudflare R2
 
 ### Arquivos Modificados
@@ -63,21 +78,5 @@
 - **Simulação por padrão**: Sem `--aplicar`, o script apenas relata o que faria.
 - **Resultado medido**: A foto de 286 KB em Base64 virou 32 KB no R2. A resposta de `/api/public/equipe` caiu de cerca de 292 KB para 235 bytes, e o campo do banco de ~292 mil caracteres para 100.
 - **Validação em navegador real**: A página "Sobre Nós" renderiza a foto vinda do R2, sem nenhum Base64 restante. Pela tela do admin, um PNG de 2400x1600 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
-
----
-
-## 2026-08-19 - feat: helper compartilhado de upload no painel administrativo
-
-### Arquivos Modificados
-- `api/public/admin/js/admin-main.js` [Novo objeto `UploadArquivo`: envio, validação, progresso e preenchimento de campo]
-
-### Detalhes das Alterações
-- **Base para migrar as telas**: Cinco telas do admin repetem a mesma lógica de arquivo, hoje convertendo para Base64 com FileReader. Centralizar o envio evita que cada uma trate erro e validação de um jeito próprio — e é o tratamento de erro que importa aqui, porque uma falha silenciosa leva o usuário a comprimir a imagem por fora até "funcionar", que é uma das origens da perda de qualidade.
-- **Escolha do XMLHttpRequest**: `fetch` não reporta progresso de envio, e fotos originais passam de 20 MB. Sem indicação de andamento, a tela parece travada durante o envio.
-- **Validação antes do envio**: Tipo e tamanho são conferidos no navegador, espelhando o limite do servidor, para não gastar uma subida de 30 MB que seria rejeitada no fim.
-- **`preencherCampo`**: Reproduz a interface do padrão antigo (`dataInputId`, `previewId`, container), gravando a URL no lugar do Base64. A prévia local aparece imediatamente via `createObjectURL` e é trocada pela URL definitiva ao terminar; em caso de erro, é limpa, para não dar a impressão de que a imagem foi salva.
-- **Envio múltiplo em sequência**: Subir dez fotos grandes em paralelo satura a conexão. A falha de um arquivo não derruba os demais.
-- **Sem alteração de HTML**: O helper mora em `admin-main.js`, já carregado por todas as telas do painel.
-- **Validação em navegador real**: PNG de 2.606 KB (2000x1400) enviado pela tela de Equipe virou 22 KB em 1920x1344; progresso reportado; nome com acento preservado; arquivo de 30 MB e formato inválido barrados com mensagem clara; e a imagem do R2 carregou na página, confirmando a liberação da CSP.
 
 ---

@@ -133,6 +133,46 @@ const ALVOS: Record<string, Alvo> = {
       }));
     },
     gravar: (id, url) => prisma.excursaoPedagogicaImagem.update({ where: { id }, data: { url } })
+  },
+
+  'excursoes-capa': {
+    nome: 'Excursões convencionais (capa)',
+    campo: 'imagemCapa',
+    prefixo: 'excursoes',
+    listar: async () => {
+      const rs = await prisma.excursao.findMany({ select: { id: true, titulo: true, imagemCapa: true } });
+      return rs.map((r) => ({ id: r.id, rotulo: r.titulo, valor: r.imagemCapa }));
+    },
+    gravar: (id, url) => prisma.excursao.update({ where: { id }, data: { imagemCapa: url } })
+  },
+
+  'excursoes-principal': {
+    nome: 'Excursões convencionais (imagem principal)',
+    campo: 'imagemPrincipal',
+    prefixo: 'excursoes',
+    listar: async () => {
+      const rs = await prisma.excursao.findMany({ select: { id: true, titulo: true, imagemPrincipal: true } });
+      return rs.map((r) => ({ id: r.id, rotulo: r.titulo, valor: r.imagemPrincipal }));
+    },
+    gravar: (id, url) => prisma.excursao.update({ where: { id }, data: { imagemPrincipal: url } })
+  },
+
+  'excursoes-galeria': {
+    nome: 'Excursões convencionais (galeria)',
+    campo: 'url',
+    prefixo: 'excursoes/galeria',
+    listar: async () => {
+      const rs = await prisma.excursaoImagem.findMany({
+        select: { id: true, url: true, ordem: true, excursao: { select: { titulo: true } } },
+        orderBy: [{ excursaoId: 'asc' }, { ordem: 'asc' }]
+      });
+      return rs.map((r) => ({
+        id: r.id,
+        rotulo: `${r.excursao?.titulo ?? 'excursão'} #${r.ordem}`,
+        valor: r.url
+      }));
+    },
+    gravar: (id, url) => prisma.excursaoImagem.update({ where: { id }, data: { url } })
   }
 };
 

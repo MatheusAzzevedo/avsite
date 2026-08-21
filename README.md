@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-20) - feat: migrar imagens das excursões pedagógicas para o Cloudflare R2
+### Última atualização (2026-08-20) - feat: migrar imagens das excursões convencionais para o Cloudflare R2
+- **api/public/admin/js/excursao-editor.js** [Capa, imagem principal e galeria enviadas ao R2]
+- **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos das convencionais]
+
+Resumo: Último domínio de imagem. Nenhuma tela do painel converte mais para Base64. Uma consulta às 10 colunas de imagem do banco confirma zero registros em Base64 e todos apontando para URL. As listagens públicas ficaram em 764 bytes (excursões), 5.257 (pedagógicas), 1.701 (posts) e 235 (equipe). O acervo migrado soma 40 objetos e 10,2 MB no bucket, vindos de dezenas de megabytes de Base64 nas colunas do PostgreSQL. Validado em navegador: listagem, página individual e editor funcionando do R2.
+
+### Atualização anterior (2026-08-20) - feat: migrar imagens das excursões pedagógicas para o Cloudflare R2
 - **api/public/admin/js/excursao-pedagogica-editor.js** [Capa, imagem principal e galeria enviadas ao R2]
 - **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos das pedagógicas]
 
