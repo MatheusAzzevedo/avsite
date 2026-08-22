@@ -8,25 +8,86 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import sharp from 'sharp';
-import path from 'path';
-import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../config/database';
 import { ApiError } from '../utils/api-error';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { logger } from '../utils/logger';
+import { uploadBufferToR2, deleteFileFromR2, montarContentDisposition } from '../config/r2';
 
 const router = Router();
 
-// Diretório de uploads
-const UPLOAD_DIR = path.join(__dirname, '../../uploads');
-
-// Garante que o diretório existe
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+/**
+ * Explicação da função [corrigirNomeArquivo]
+ * Reinterpreta o nome do arquivo recebido do multer como UTF-8.
+ *
+ * O busboy, por baixo do multer, entrega `originalname` em latin1. Um nome com
+ * acento ou travessão chega com os bytes UTF-8 lidos byte a byte — "Lista —
+ * Cristo" vira "Lista â€" Cristo". Se esse texto for codificado de novo, o
+ * resultado é duplamente corrompido e é isso que o cliente vê ao baixar.
+ */
+function corrigirNomeArquivo(nome: string): string {
+  return Buffer.from(nome, 'latin1').toString('utf8');
 }
 
-// Configuração do Multer
+/**
+ * Limite da maior dimensão da imagem, em pixels, e qualidade do WebP.
+ * Ajustáveis por variável de ambiente sem precisar de deploy de código.
+ *
+ * A escolha do padrão veio de medição sobre uma foto de 7990x5327 (23 MB):
+ * redimensionar para 1920px e codificar a 90 gera 299 KB. A mesma foto sem
+ * redimensionar, a 95, gera 11,6 MB. O peso vem da dimensão, não da
+ * compressão — por isso dá para manter qualidade alta e ainda assim leve.
+ */
+const IMAGEM_DIMENSAO_MAXIMA = Number(process.env.IMAGEM_DIMENSAO_MAXIMA) || 1920;
+const IMAGEM_QUALIDADE = Number(process.env.IMAGEM_QUALIDADE) || 90;
+
+/**
+ * Explicação da função [processarImagem]
+ * Normaliza uma imagem enviada para entrega na web.
+ *
+ * Ordem das operações, cada uma por um motivo:
+ * - `rotate()` sem argumento aplica a orientação do EXIF. Sem isso, fotos de
+ *   celular aparecem deitadas quando os metadados são descartados adiante.
+ * - `resize` com `withoutEnlargement` nunca amplia: imagem menor que o teto
+ *   passa intacta, em vez de ser esticada e perder nitidez.
+ * - `keepIccProfile` preserva o perfil de cor. O sharp descarta metadados por
+ *   padrão, e uma foto em Display P3 lida como sRGB sai com as cores
+ *   deslocadas — o que se percebe como "estranha" antes de se perceber
+ *   qualquer perda de nitidez.
+ *
+ * O EXIF restante é descartado de propósito: essas fotos são de excursões
+ * escolares e carregam coordenadas de GPS que não devem ir para um bucket público.
+ */
+async function processarImagem(buffer: Buffer, origem: string) {
+  const original = await sharp(buffer).metadata();
+
+  const saida = await sharp(buffer)
+    .rotate()
+    .resize(IMAGEM_DIMENSAO_MAXIMA, IMAGEM_DIMENSAO_MAXIMA, {
+      fit: 'inside',
+      withoutEnlargement: true
+    })
+    .webp({ quality: IMAGEM_QUALIDADE })
+    .keepIccProfile()
+    .toBuffer();
+
+  const final = await sharp(saida).metadata();
+
+  logger.info('[Upload] Imagem processada', {
+    context: {
+      origem,
+      entrada: `${original.width}x${original.height} ${original.format} ${(buffer.length / 1024).toFixed(0)} KB`,
+      saida: `${final.width}x${final.height} webp ${(saida.length / 1024).toFixed(0)} KB`,
+      qualidade: IMAGEM_QUALIDADE,
+      redimensionada: original.width !== final.width
+    }
+  });
+
+  return saida;
+}
+
+// Usaremos apenas memória para upload, e de lá enviamos para a nuvem
 const storage = multer.memoryStorage();
 
 const fileFilter = (
@@ -47,15 +108,13 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE || '20971520', 10) // 20MB - tamanho livre
+    // 25 MB por arquivo. O limite pode ser generoso porque o servidor
+    // redimensiona: um original de 24 MB vira ~300 KB no bucket. Apertar aqui
+    // empurraria o usuário a comprimir por fora antes de enviar — que é
+    // exatamente a origem da perda de qualidade que queremos eliminar.
+    fileSize: parseInt(process.env.MAX_FILE_SIZE || '26214400', 10)
   }
 });
-
-// Multer para documentos (PDF, DOCX, XLS, XLSX) - armazena em disco
-const DOCS_DIR = path.join(UPLOAD_DIR, 'documentos');
-if (!fs.existsSync(DOCS_DIR)) {
-  fs.mkdirSync(DOCS_DIR, { recursive: true });
-}
 
 const documentMimeTypes = [
   'application/pdf',
@@ -63,14 +122,6 @@ const documentMimeTypes = [
   'application/vnd.ms-excel', // xls
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // xlsx
 ];
-
-const documentStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, DOCS_DIR),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname) || getExtensionFromMime(file.mimetype);
-    cb(null, `${uuidv4()}${ext}`);
-  }
-});
 
 function getExtensionFromMime(mime: string): string {
   const map: Record<string, string> = {
@@ -95,7 +146,7 @@ const documentFilter = (
 };
 
 const uploadDocument = multer({
-  storage: documentStorage,
+  storage: multer.memoryStorage(),
   fileFilter: documentFilter,
   limits: { fileSize: 20 * 1024 * 1024 } // 20MB
 });
@@ -118,30 +169,26 @@ router.post('/',
       logger.info(`[Upload] Processando: ${req.file.originalname}`);
 
       // Gera nome único
-      const filename = `${uuidv4()}.webp`;
-      const filepath = path.join(UPLOAD_DIR, filename);
+      const filename = `images/${uuidv4()}.webp`;
 
-      // Converte para WebP preservando dimensões originais (qualquer tamanho)
-      await sharp(req.file.buffer)
-        .webp({ quality: 85 })
-        .toFile(filepath);
+      const webpBuffer = await processarImagem(req.file.buffer, req.file.originalname);
 
-      // Obtém info do arquivo processado
-      const stats = fs.statSync(filepath);
+      // Faz o upload direto pro R2
+      const publicUrl = await uploadBufferToR2(webpBuffer, filename, 'image/webp');
 
       // Salva no banco
       const uploadRecord = await prisma.upload.create({
         data: {
           filename,
-          originalName: req.file.originalname,
+          originalName: corrigirNomeArquivo(req.file.originalname),
           mimetype: 'image/webp',
-          size: stats.size,
-          url: `/uploads/${filename}`,
-          path: filepath
+          size: webpBuffer.length,
+          url: publicUrl,
+          path: filename // salva a key do S3 como path para podermos deletar depois
         }
       });
 
-      const baseUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+
 
       logger.info(`[Upload] Sucesso: ${filename}`);
 
@@ -152,7 +199,7 @@ router.post('/',
           id: uploadRecord.id,
           filename: uploadRecord.filename,
           originalName: uploadRecord.originalName,
-          url: `${baseUrl}${uploadRecord.url}`,
+          url: uploadRecord.url,
           size: uploadRecord.size
         }
       });
@@ -176,17 +223,28 @@ router.post('/document',
 
       logger.info(`[Upload] Documento: ${req.file.originalname}`);
 
-      const url = `/uploads/documentos/${req.file.filename}`;
-      const baseUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+      const ext = getExtensionFromMime(req.file.mimetype);
+      const filename = `documentos/${uuidv4()}${ext}`;
+
+      // Upload do buffer diretamente pro R2
+      // O cabeçalho de download é gravado no próprio objeto: assim o link do R2
+      // baixa o arquivo com nome legível, em vez de abrir o PDF no navegador.
+      const nomeOriginal = corrigirNomeArquivo(req.file.originalname);
+      const publicUrl = await uploadBufferToR2(
+        req.file.buffer,
+        filename,
+        req.file.mimetype,
+        montarContentDisposition(nomeOriginal)
+      );
 
       res.status(201).json({
         success: true,
         message: 'Documento enviado com sucesso',
         data: {
-          url,
-          fullUrl: `${baseUrl}${url}`,
-          originalName: req.file.originalname,
-          filename: req.file.filename
+          url: publicUrl, // Como não vamos mais usar download proxy, entregamos a url direta
+          fullUrl: publicUrl,
+          originalName: nomeOriginal,
+          filename: filename
         }
       });
     } catch (error) {
@@ -211,29 +269,25 @@ router.post('/multiple',
 
       logger.info(`[Upload] Processando ${files.length} arquivos`);
 
-      const baseUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
       const results = [];
 
       for (const file of files) {
-        const filename = `${uuidv4()}.webp`;
-        const filepath = path.join(UPLOAD_DIR, filename);
+        const filename = `images/${uuidv4()}.webp`;
 
-        // Converte para WebP preservando dimensões originais (qualquer tamanho)
-        await sharp(file.buffer)
-          .webp({ quality: 85 })
-          .toFile(filepath);
+        const webpBuffer = await processarImagem(file.buffer, file.originalname);
 
-        const stats = fs.statSync(filepath);
+        // Faz o upload direto pro R2
+        const publicUrl = await uploadBufferToR2(webpBuffer, filename, 'image/webp');
 
         // Salva no banco
         const uploadRecord = await prisma.upload.create({
           data: {
             filename,
-            originalName: file.originalname,
+            originalName: corrigirNomeArquivo(file.originalname),
             mimetype: 'image/webp',
-            size: stats.size,
-            url: `/uploads/${filename}`,
-            path: filepath
+            size: webpBuffer.length,
+            url: publicUrl,
+            path: filename // key do R2 para exclusão
           }
         });
 
@@ -241,7 +295,7 @@ router.post('/multiple',
           id: uploadRecord.id,
           filename: uploadRecord.filename,
           originalName: uploadRecord.originalName,
-          url: `${baseUrl}${uploadRecord.url}`,
+          url: uploadRecord.url,
           size: uploadRecord.size
         });
       }
@@ -276,9 +330,21 @@ router.delete('/:id',
         throw ApiError.notFound('Arquivo não encontrado');
       }
 
-      // Remove arquivo físico
-      if (fs.existsSync(upload.path)) {
-        fs.unlinkSync(upload.path);
+      // Remove arquivo do Cloudflare R2
+      if (upload.path) {
+        try {
+          await deleteFileFromR2(upload.path);
+        } catch (r2Error) {
+          // O registro do banco é removido mesmo assim: manter a linha apontando
+          // para um arquivo que talvez ainda exista deixaria a listagem quebrada.
+          // O objeto órfão no bucket fica registrado aqui para limpeza posterior.
+          logger.warn('[Upload] Falha ao deletar do R2; objeto pode ter ficado órfão no bucket', {
+            context: {
+              chave: upload.path,
+              error: r2Error instanceof Error ? r2Error.message : 'Unknown'
+            }
+          });
+        }
       }
 
       // Remove do banco
@@ -318,11 +384,9 @@ router.get('/',
         prisma.upload.count()
       ]);
 
-      const baseUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-
       const data = uploads.map(u => ({
         ...u,
-        url: `${baseUrl}${u.url}`
+        // Já retornamos a URL do cloudflare guardada, não precisa concatenar base url
       }));
 
       res.json({
@@ -340,5 +404,35 @@ router.get('/',
     }
   }
 );
+
+
+/**
+ * Explicação da função [tratarErroDeUpload]
+ * Converte erros do multer em resposta clara para quem está enviando.
+ *
+ * Sem isto, um arquivo acima do limite chega ao handler global e vira
+ * "Erro interno do servidor" — o usuário não descobre que o problema é o
+ * tamanho, e tende a comprimir a imagem por fora até "funcionar", degradando-a.
+ */
+router.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof multer.MulterError) {
+    const limiteMb = (parseInt(process.env.MAX_FILE_SIZE || '26214400', 10) / 1024 / 1024).toFixed(0);
+    const mensagens: Record<string, string> = {
+      LIMIT_FILE_SIZE: `Arquivo muito grande. O limite é ${limiteMb} MB por arquivo.`,
+      LIMIT_FILE_COUNT: 'Foram enviados arquivos demais de uma vez.',
+      LIMIT_UNEXPECTED_FILE: 'Campo de arquivo inesperado no formulário.'
+    };
+
+    logger.warn('[Upload] Envio rejeitado pelo multer', {
+      context: { codigo: err.code, campo: err.field }
+    });
+
+    return res.status(413).json({
+      error: mensagens[err.code] || 'Não foi possível processar o arquivo enviado.',
+      codigo: err.code
+    });
+  }
+  return next(err);
+});
 
 export default router;

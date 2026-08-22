@@ -4,7 +4,64 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-06) - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
+### Última atualização (2026-08-20) - feat: migrar imagens das excursões convencionais para o Cloudflare R2
+- **api/public/admin/js/excursao-editor.js** [Capa, imagem principal e galeria enviadas ao R2]
+- **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos das convencionais]
+
+Resumo: Último domínio de imagem. Nenhuma tela do painel converte mais para Base64. Uma consulta às 10 colunas de imagem do banco confirma zero registros em Base64 e todos apontando para URL. As listagens públicas ficaram em 764 bytes (excursões), 5.257 (pedagógicas), 1.701 (posts) e 235 (equipe). O acervo migrado soma 40 objetos e 10,2 MB no bucket, vindos de dezenas de megabytes de Base64 nas colunas do PostgreSQL. Validado em navegador: listagem, página individual e editor funcionando do R2.
+
+### Atualização anterior (2026-08-20) - feat: migrar imagens das excursões pedagógicas para o Cloudflare R2
+- **api/public/admin/js/excursao-pedagogica-editor.js** [Capa, imagem principal e galeria enviadas ao R2]
+- **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos das pedagógicas]
+
+Resumo: Maior volume da migração. As colunas `imagemCapa` e `imagemPrincipal` dos 13 registros locais somavam 55 MB e passaram a somar 2.645 bytes; a listagem pública caiu para 5,2 KB. O envio de documento desta tela já estava resolvido desde a fase 1. Vale registrar que recodificar nem sempre reduz: 5 das 12 capas ficaram maiores, por serem imagens já comprimidas abaixo do teto de 1920px — o saldo segue muito positivo porque os ganhos vêm dos arquivos grandes (20.369 KB → 590 KB). Validado em navegador: a página do cliente e o editor do admin funcionam do R2, sem Base64.
+
+### Atualização anterior (2026-08-20) - feat: migrar capa e galeria do blog para o Cloudflare R2
+- **api/public/admin/js/blog-editor.js** [Capa e galeria enviadas ao R2]
+- **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos: capa do post e tabela de galeria]
+
+Resumo: Primeira tela com galeria. O envio múltiplo sobe em sequência, avisa qual arquivo está indo, respeita o teto de 4 antes de enviar (o excesso nem sobe) e isola falhas por arquivo. O script de migração passou a cobrir `PostImagem.url`, onde cada linha é uma imagem — o formato de alvo existente serviu sem alteração. A listagem pública do blog caiu de 489.300 para 1.700 bytes, uma redução de 288 vezes. Validado em navegador: listagem e post individual renderizam tudo do R2, com zero Base64 e a galeria ampliando normalmente.
+
+### Atualização anterior (2026-08-20) - feat: migrar as fotos de Autores do Base64 para o Cloudflare R2
+- **api/public/admin/js/autores.js** [Foto enviada ao R2 em vez de Base64]
+
+Resumo: Segundo domínio migrado, com o mesmo padrão da Equipe. A foto do autor vai para o R2 e o campo guarda só a URL; o salvamento não mudou. Removido o teto local de 5 MB, mais apertado que o do servidor. Descoberto no caminho que não existe `autores.html`: o `autores.js` é carregado por `blog.html`, onde o formulário de autor é um modal. Foto de 286 KB virou 32 KB, e os cards do blog renderizam o avatar vindo do R2. As capas dos posts seguem em Base64 e serão tratadas na fase 5.
+
+### Atualização anterior (2026-08-19) - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
+- **api/public/admin/js/equipe.js** [Foto enviada ao R2 em vez de Base64]
+- **api/src/scripts/migrar-imagens-r2.ts** [Novo: migração do acervo com simulação e verificação]
+- **api/package.json** [Script `npm run migrar:imagens`]
+
+Resumo: Primeiro domínio migrado. A tela de Equipe passa a enviar a foto ao R2 e gravar só a URL; o salvamento não mudou, pois já lia o mesmo campo. O teto local de 5 MB foi removido — era mais apertado que o do servidor e levava o usuário a comprimir a foto por fora. O script de migração é idempotente e verifica cada imagem lendo-a de volta pela URL pública antes de atualizar o banco; falhas mantêm o Base64 intacto para nova tentativa, e sem `--aplicar` ele apenas simula. Resultado: foto de 286 KB virou 32 KB, e a resposta de `/api/public/equipe` caiu de ~292 KB para 235 bytes.
+
+### Atualização anterior (2026-08-19) - feat: helper compartilhado de upload no painel administrativo
+- **api/public/admin/js/admin-main.js** [Novo objeto `UploadArquivo`: envio, validação, progresso e preenchimento de campo]
+
+Resumo: Base para migrar as telas do admin do Base64 para o R2. Centraliza envio, validação e tratamento de erro, que hoje estariam repetidos em cinco telas. Usa XMLHttpRequest porque `fetch` não reporta progresso, e fotos originais passam de 20 MB. O `preencherCampo` reproduz a interface do padrão antigo, gravando a URL no lugar do Base64, com prévia local imediata e limpeza em caso de falha. Mora no `admin-main.js`, já carregado por todas as telas, então nenhum HTML mudou. Validado em navegador real: PNG de 2.606 KB virou 22 KB, com progresso, nome acentuado íntegro, erros claros para arquivo grande e formato inválido, e a imagem do R2 carregando sob a CSP.
+
+### Atualização anterior (2026-08-19) - fix: restaurar o download de documentos após a migração para o R2
+- **api/src/routes/documentos.routes.ts** [Atende disco e R2]
+- **api/src/config/r2.ts** [`Content-Disposition` no objeto e `verificarConfigR2`]
+- **api/src/routes/upload.routes.ts** [Correção da codificação do nome de arquivo]
+
+Resumo: O upload de documento já ia para o R2, mas o download continuava procurando em disco — todo arquivo novo dava 404 para o cliente. A rota passa a servir do disco quando existe e redirecionar para o R2 caso contrário, sem mudança no frontend. Para o PDF continuar baixando em vez de abrir no navegador, o `Content-Disposition` é gravado no próprio objeto. O teste revelou ainda que o multer entrega o nome do arquivo em latin1, corrompendo acentos no cabeçalho e no banco; corrigido nos três pontos de upload.
+
+### Atualização anterior (2026-08-17) - fix: eliminar perda de qualidade no processamento de imagens
+- **api/src/routes/upload.routes.ts** [Redimensionamento, perfil de cor, orientação EXIF e erro legível de tamanho]
+- **api/scripts/optimize-images.js** [Deixou de sobrescrever os originais]
+- **api/.env.example** [`IMAGEM_DIMENSAO_MAXIMA`, `IMAGEM_QUALIDADE` e novo `MAX_FILE_SIZE`]
+
+Resumo: A perda de qualidade relatada não vinha do upload — o admin guarda os bytes originais. Vinha do `optimize-images.js`, que substituía os arquivos no lugar e, por só comparar tamanho, regravava a cada execução, degradando de novo. Uma passada de verificação economizou 0,4%, trocando qualidade real por quase nada. O script passou a gravar em pasta paralela. Na rota de upload, o ganho de peso passou a vir do redimensionamento (1920px) e não da compressão: uma foto de 7990x5327 saía com 11,6 MB e agora sai com 299 KB, com qualidade 90. O perfil de cor deixou de ser descartado, a orientação do EXIF é aplicada, e o limite subiu de 10 MB para 25 MB — o limite apertado empurrava o usuário a comprimir por fora, que era outra fonte de degradação.
+
+### Atualização anterior (2026-08-17) - feat: fundação do Cloudflare R2 para armazenamento de imagens
+- **api/src/server.ts** [Origem do R2 liberada no `img-src` da CSP, derivada de `R2_PUBLIC_URL`]
+- **api/src/scripts/test-r2.ts** [Script de diagnóstico movido e reescrito com verificação de leitura pública]
+- **api/src/routes/upload.routes.ts** [Log da causa real na falha de exclusão no R2]
+- **api/package.json** [Script `npm run test:r2`]
+
+Resumo: Primeira etapa da migração de imagens para o Cloudflare R2. A CSP não liberava o domínio do R2, o que faria o navegador bloquear toda imagem vinda de lá — sem erro no backend e sem nada nos logs. A origem passa a ser derivada da variável de ambiente. O script de diagnóstico não compilava por estar fora de `rootDir` e foi movido para `src/scripts/`; além disso ele apagava o arquivo antes de conferir a leitura pública, mascarando um bucket fechado. Ciclo completo validado contra o bucket real: upload pela API, conversão para WebP, leitura pública e exclusão.
+
+### Atualização anterior (2026-08-06) - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
 - **api/src/jobs/expirar-pix.job.ts** [Novo: regra de expiração e varredura automática]
 - **api/src/config/paghiper.ts** [Nova função de cancelamento da cobrança]
 - **api/src/routes/pagamento.routes.ts** [Gravação do prazo, expiração sob demanda e cancelamento no gateway]

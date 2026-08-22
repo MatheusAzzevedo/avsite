@@ -1,84 +1,82 @@
 # Changelog
 
-## 2026-08-06 - feat: expiração de 2h do PIX com cancelamento da cobrança no PagHiper
+## 2026-08-20 - feat: migrar imagens das excursões convencionais para o Cloudflare R2
 
 ### Arquivos Modificados
-- `api/src/jobs/expirar-pix.job.ts` [Novo: regra de expiração e varredura automática de cobranças vencidas]
-- `api/src/config/paghiper.ts` [Nova função `cancelarCobrancaPixPagHiper`]
-- `api/src/routes/pagamento.routes.ts` [Gravação de `pixExpiraEm`, expiração sob demanda na consulta de status e cancelamento no gateway ao cancelar o pedido]
-- `api/src/server.ts` [Início da varredura no boot]
-- `api/prisma/schema.prisma` e `api/prisma/migration-add-pix-expira-em.sql` [Campo `pixExpiraEm` com índice]
-- `api/public/cliente/js/pagamento.js` [Contagem regressiva passa a usar o prazo devolvido pelo servidor]
-- `api/.env.example` e `api/RAILWAY-VARIABLES.md` [Documentada a variável `PIX_EXPIRACAO_MINUTOS`]
+- `api/public/admin/js/excursao-editor.js` [Capa, imagem principal e galeria enviadas ao R2]
+- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa, imagem principal e galeria das convencionais]
 
 ### Detalhes das Alterações
-- **Prazo de 2h**: O PagHiper conta vencimento em dias (`days_due_date`), então não é possível emitir um PIX de 2 horas. A cobrança continua nascendo com 1 dia e passa a ser invalidada no gateway pelo nosso servidor ao fim do prazo, via `POST /invoice/cancel/`.
-- **Independência do Navegador**: Antes o prazo existia apenas como temporizador na página — se o cliente fechasse a aba, nada expirava e o PIX seguia pagável. Uma varredura roda a cada 10 minutos no processo da API e trata os vencidos, com uma passada no boot para limpar o que venceu enquanto o serviço esteve fora.
-- **Corrida com o Pagamento**: Antes de cancelar, o status é consultado no gateway. Se o pagamento entrou no limite do prazo, o pedido é confirmado como PAGO em vez de expirado — cancelar às cegas tiraria a vaga de quem já pagou. A mesma checagem foi aplicada ao botão de cancelar do cliente.
-- **Falha Segura**: Se o cancelamento no gateway falhar, o pedido permanece pendente e é reprocessado na varredura seguinte. Marcá-lo como expirado sem confirmar o cancelamento deixaria uma cobrança pagável sem pedido correspondente.
-- **Status EXPIRADO**: Pedidos vencidos passam a usar `EXPIRADO` em vez de `CANCELADO`, distinguindo prazo esgotado de desistência. O status já era suportado pelos painéis e libera a vaga da mesma forma.
-- **Preservação do EXPIRADO** (encontrado em teste real): ao cancelar a cobrança no gateway, o PagHiper notifica de volta o nosso próprio cancelamento com status `canceled`. O webhook sobrescrevia `EXPIRADO` por `CANCELADO` segundos depois, apagando a distinção recém-criada. O mapeamento passa a preservar `EXPIRADO`.
-- **Prazo Único**: `pixExpiraEm` é gravado no pedido e devolvido pela API; a contagem regressiva da tela deriva dele, eliminando a duplicação do prazo no JavaScript.
+- **Último domínio de imagem**: Com esta fase, nenhuma tela do painel converte imagem para Base64. As três que ainda faziam isso (blog, pedagógicas e convencionais) passaram a enviar ao R2.
+- **Verificação de completude**: Uma consulta às 10 colunas de imagem do banco confirma **zero registros em Base64** e todos apontando para URL — `posts.imagemCapa`, `post_imagens.url`, `excursoes.imagemCapa`, `excursoes.imagemPrincipal`, `excursao_imagens.url`, `excursoes_pedagogicas.imagemCapa`, `excursoes_pedagogicas.imagemPrincipal`, `excursao_pedagogica_imagens.url`, `equipe.fotoPerfil` e `autores.foto`.
+- **Peso das listagens públicas após a migração completa**: excursões 764 bytes, pedagógicas 5.257 bytes, posts 1.701 bytes e equipe 235 bytes — todas sem nenhum Base64.
+- **Validação em navegador real**: A listagem de excursões e a página individual renderizam tudo do R2. No editor, capa de 2800x1800, imagem principal de 2200x1500 e duas imagens de galeria chegaram como URL, com as prévias renderizadas.
+- **Acervo migrado**: 40 objetos no bucket, somando 10,2 MB — vindos de dezenas de megabytes de Base64 espalhados pelas colunas do PostgreSQL.
 
 ---
 
-## 2026-08-06 - feat: ativar webhook de confirmação de pagamento PIX do PagHiper
+## 2026-08-20 - feat: migrar imagens das excursões pedagógicas para o Cloudflare R2
 
 ### Arquivos Modificados
-- `api/src/config/paghiper.ts` [Envio de `notification_url` na criação da cobrança e resolução da URL a partir do ambiente]
-- `api/src/routes/webhook.routes.ts` [Conferência de apiKey, códigos HTTP por tipo de falha, logs de idempotência e de status sem mapeamento]
-- `api/src/server.ts` [Rate limit próprio e mais alto para `/api/webhooks/`]
-- `api/.env.example` e `api/RAILWAY-VARIABLES.md` [Documentada a variável `PAGHIPER_NOTIFICATION_URL`]
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Capa, imagem principal e galeria enviadas ao R2]
+- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa, imagem principal e galeria das pedagógicas]
 
 ### Detalhes das Alterações
-- **Ativação do Webhook**: O PagHiper só notifica a URL informada no corpo da requisição de criação da cobrança — não há cadastro no painel do gateway. Como a URL nunca era enviada, o endpoint `/api/webhooks/paghiper` jamais era chamado e o pedido só se confirmava enquanto o cliente mantivesse a página aberta. A URL passa a ser derivada de `API_BASE_URL`, com `PAGHIPER_NOTIFICATION_URL` como override.
-- **Ambiente Local**: Endereços locais são detectados e omitidos, com aviso no log. O PagHiper não alcança `localhost`, e enviar a URL assim arriscaria a rejeição da cobrança em desenvolvimento.
-- **Retentativas**: O handler respondia HTTP 200 mesmo em erro, o que encerrava as retentativas do gateway e perdia o pagamento. Agora responde 500 em falha transitória (gateway ou banco fora), 400 em payload malformado e 200 apenas quando não há o que reprocessar.
-- **Segurança**: A `apiKey` recebida na notificação é conferida contra a nossa antes de acionar o gateway. A defesa principal continua sendo a revalidação do status na API do PagHiper, que impede confirmações forjadas.
-- **Rate Limiting**: O limite global de 100 req/15min por IP cobria os webhooks e devolveria 429 a um lote de confirmações vindas do mesmo IP do gateway. Os webhooks passam a ter limite próprio de 500.
+- **Maior volume até aqui**: 13 registros no banco local somavam **55 MB** apenas nas colunas `imagemCapa` e `imagemPrincipal`. Após a migração, essas colunas somam **2.645 bytes**. A listagem pública dos 13 registros passou a pesar 5,2 KB — em produção, uma amostra de apenas 5 registros pesava 1,5 MB.
+- **Documento já resolvido**: O envio de documento desta tela já usava `UploadManager.uploadDocument` e passou a funcionar na fase 1, quando o download foi corrigido. Não precisou de alteração.
+- **Um handler para dois campos**: `handleImageUploadPedagogica` recebe os ids por parâmetro e serve tanto à capa quanto à imagem principal, então a troca cobriu os dois de uma vez.
+- **Recodificação nem sempre reduz**: Das 12 capas migradas, 5 ficaram maiores — por exemplo 330 KB → 438 KB. São imagens já comprimidas e abaixo do teto de 1920px, onde recodificar em WebP com qualidade 90 custa bytes. O saldo continua muito positivo (as duas rodadas somaram ~34 MB a menos no banco), porque os ganhos vêm dos arquivos grandes: 20.369 KB → 590 KB e 7.264 KB → 390 KB. O ganho principal, de qualquer forma, é o campo do banco deixar de carregar a imagem inteira.
+- **Validação em navegador real**: A página de detalhes da excursão na área do cliente renderiza as imagens do R2, sem Base64. No editor do admin, capa de 2800x1800, imagem principal de 2200x1500 e três imagens de galeria enviadas de uma vez chegaram como URL, com as prévias renderizadas.
 
 ---
 
-## 2026-08-06 - fix: corrigir endpoints e parse da integração PIX do PagHiper
+## 2026-08-20 - feat: migrar capa e galeria do blog para o Cloudflare R2
 
 ### Arquivos Modificados
-- `api/src/config/paghiper.ts` [Endpoints corrigidos para o host de PIX, parse da resposta ajustado, timeout e logs de diagnóstico]
-- `api/src/routes/pagamento.routes.ts` [Comentários atualizados: PIX é PagHiper, cartão segue no Asaas]
-- `api/tsconfig.json` [Adicionada lib `ES2022.Error` para suportar `Error` com `cause`]
+- `api/public/admin/js/blog-editor.js` [Capa e galeria enviadas ao R2 em vez de convertidas para Base64]
+- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa do post e tabela de galeria]
 
 ### Detalhes das Alterações
-- **Endpoints**: A integração apontava para `api.paghiper.com/transaction/*`, que é a API de boleto. O PIX usa host próprio: criação, status e notificação passaram para `pix.paghiper.com/invoice/{create,status,notification}/`.
-- **Parse da Resposta**: A leitura era feita em `create_request.bank_slip.pix_code`, campos que não existem na resposta de PIX. Corrigido para `pix_create_request.pix_code.emv` (copia-e-cola) e `qrcode_base64` (imagem), com `pix_url` como link da fatura.
-- **Payload**: Removido `type_bank_slip`, campo exclusivo de boleto. Valores numéricos passaram a ser enviados como string, conforme a documentação do gateway.
-- **QR Code**: A imagem passa a vir pronta do PagHiper em `qrcode_base64`; a geração local com a lib `qrcode` virou apenas fallback.
-- **Robustez**: Adicionado timeout de 20s nas chamadas HTTP, extração da mensagem de erro real do gateway (em vez de "Request failed with status code 4xx") e log da resposta bruta quando o formato vier fora do previsto.
+- **Primeira tela com galeria**: Além da capa, o post tem até 4 imagens na tabela `post_imagens`. O envio múltiplo usa `enviarVarias`, que sobe em sequência e informa qual arquivo está indo — em paralelo, várias fotos grandes saturam a conexão e todas demoram mais.
+- **Limite da galeria respeitado antes do envio**: Só as imagens que cabem nas vagas restantes são enviadas. Antes, cada arquivo era lido e descartado depois; agora o excesso nem sobe, e o usuário é avisado de quantas couberam.
+- **Falha isolada**: Um arquivo que falha não derruba os demais do lote, e o erro é mostrado com o nome do arquivo.
+- **Migração de tabela relacionada**: O script passou a cobrir `PostImagem.url`, onde cada linha é uma imagem. O formato de alvo já existente serviu sem alteração — o "registro" passa a ser a própria imagem, rotulada com o título do post e a ordem.
+- **Resultado medido**: A listagem pública do blog caiu de **489.300 para 1.700 bytes**, uma redução de 288 vezes. As 4 imagens de galeria somadas caíram de 251 KB para 118 KB.
+- **Recodificação pode inflar**: Uma capa de 26 KB virou 38 KB. Recodificar uma origem pequena já comprimida custa bytes; em valor absoluto é irrelevante, e o ganho real está no campo do banco, que deixa de carregar a imagem inteira.
+- **Validação em navegador real**: Listagem e post individual renderizam tudo do R2, com zero Base64 e os 4 links de galeria funcionando. No editor, uma capa de 2600x1700 e três imagens de galeria enviadas de uma vez chegaram como URL; com 3 já na galeria, um lote de 3 novas adicionou apenas 1, respeitando o teto de 4 sem desperdiçar envios.
 
 ---
 
-## 2026-06-20 - feat: adição manual de alunos via painel administrativo
+## 2026-08-20 - feat: migrar as fotos de Autores do Base64 para o Cloudflare R2
 
 ### Arquivos Modificados
-- `api/public/admin/listas.html` [Adicionado botão "Adicionar Aluno" e modal de formulário completo]
-- `api/public/admin/js/listas.js` [Implementada lógica de gerenciamento da modal e envio dos dados ao backend]
+- `api/public/admin/js/autores.js` [Foto enviada ao R2 em vez de convertida para Base64]
 
 ### Detalhes das Alterações
-- **Botão e Modal Admin**: Adicionado o botão "Adicionar Aluno" na interface de gestão de alunos e o modal de formulário completo contendo os dados do aluno, dados do responsável financeiro (obrigatórios), informações médicas (opcionais) e o status desejado para o pedido.
-- **Integração Backend**: Implementada a chamada assíncrona ao novo endpoint `POST /api/admin/listas/excursao/:id/aluno` em `listas.js`, manipulando e validando as entradas do formulário e recarregando os dados das tabelas de alunos e excursões automaticamente após o cadastro bem-sucedido.
-## 2026-06-08 - feat: galeria de imagens nas postagens do blog
+- **Segundo domínio migrado**: A foto do autor passa a ser enviada ao R2, com o campo guardando apenas a URL. O salvamento não mudou, porque já lia `fotoUrl.value`.
+- **Limite local removido**: A tela rejeitava acima de 5 MB, contra os 25 MB do servidor. O teto mais apertado no navegador levava o usuário a comprimir a imagem por fora antes de enviar.
+- **Onde a tela vive**: Não existe `autores.html`. O `autores.js` é carregado por `blog.html`, e o formulário de autor é um modal dentro dessa página. A verificação inicial falhou por procurar numa página inexistente.
+- **Resultado medido**: Foto de 286 KB em Base64 virou 32 KB no R2. Na resposta pública de posts, o campo do autor caiu para 101 caracteres.
+- **Validação em navegador real**: Os cards do blog renderizam o avatar do autor vindo do R2. Pelo modal em `blog.html`, um PNG de 3000x2000 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
+- **Pendente para a fase 5**: As capas dos posts continuam em Base64 — uma delas com 441 KB —, o que ainda domina o peso da listagem do blog.
+
+---
+
+## 2026-08-19 - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
 
 ### Arquivos Modificados
-- `api/prisma/schema.prisma` [Novo modelo `PostImagem` (url, ordem, FK cascade) e relação `galeria` no modelo `Post`]
-- `api/prisma/migrations/20260608000000_add_post_galeria/` [Migration que cria a tabela `post_imagens`]
-- `api/src/schemas/post.schema.ts` [Campo `galeria` (array de até 4 imagens) na validação de criação e atualização]
-- `api/src/routes/post.routes.ts` [Criação/atualização da galeria aninhada e inclusão da galeria no GET por id]
-- `api/src/routes/public.routes.ts` [Inclusão da galeria ordenada na consulta pública de post por slug]
-- `api/public/admin/blog-editor.html` e `js/blog-editor.js` [Seção "Galeria de Imagens (até 4)" com upload múltiplo, preview, remoção e carregamento na edição]
-- `blog-single.html` e `js/blog-single-public.js` [Widget "Galeria" na sidebar abaixo de "Posts Recentes", com lightbox/carrossel via Fancybox]
+- `api/public/admin/js/equipe.js` [Foto enviada ao R2 em vez de convertida para Base64]
+- `api/src/scripts/migrar-imagens-r2.ts` [Novo: migração do acervo, com simulação e verificação]
+- `api/public/admin/js/admin-main.js` [Container do `preencherCampo` passa a cair no próprio elemento de prévia]
+- `api/package.json` [Script `npm run migrar:imagens`]
 
 ### Detalhes das Alterações
-- **Banco de Dados**: Galeria armazenada em tabela própria (`post_imagens`) com `ordem` para sequência e exclusão em cascata ao remover o post, seguindo o padrão já usado nas Excursões.
-- **Painel Administrativo**: O editor de posts ganhou uma seção de Galeria que aceita no máximo 4 imagens, com prévia em grade e botão de remover, reaproveitando o mesmo padrão de upload das demais áreas do sistema.
-- **Frontend Público**: As imagens da galeria aparecem na sidebar do post; ao clicar, abrem ampliadas em um carrossel (setas e swipe) via Fancybox, funcionando tanto no desktop quanto no mobile.
+- **Primeiro domínio migrado**: A tela de Equipe passa a enviar a foto para o R2 e gravar apenas a URL. O salvamento não mudou, porque já lia o valor do mesmo campo escondido.
+- **Limite local removido**: A tela rejeitava acima de 5 MB, sendo que o servidor aceita 25 MB. O teto mais apertado no navegador levava o usuário a comprimir a foto por fora antes de enviar, degradando-a antes de o sistema ver o arquivo.
+- **Script de migração idempotente**: Registros cujo campo já é URL são ignorados, então a execução pode ser interrompida e repetida sem duplicar objetos no bucket.
+- **Verificação antes de descartar o original**: Cada imagem é enviada, lida de volta pela URL pública e conferida antes de o banco ser atualizado. Sem isso, uma falha silenciosa deixaria o registro apontando para uma imagem inexistente, com o Base64 já perdido. Uma falha mantém o registro intacto para nova tentativa.
+- **Simulação por padrão**: Sem `--aplicar`, o script apenas relata o que faria.
+- **Resultado medido**: A foto de 286 KB em Base64 virou 32 KB no R2. A resposta de `/api/public/equipe` caiu de cerca de 292 KB para 235 bytes, e o campo do banco de ~292 mil caracteres para 100.
+- **Validação em navegador real**: A página "Sobre Nós" renderiza a foto vinda do R2, sem nenhum Base64 restante. Pela tela do admin, um PNG de 2400x1600 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
 
-
-
+---

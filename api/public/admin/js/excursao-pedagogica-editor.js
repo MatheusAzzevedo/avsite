@@ -117,21 +117,34 @@ async function loadExcursaoPedagogica(excursaoId) {
   }
 }
 
-function handleImageUploadPedagogica(input, previewId, dataInputId) {
-  if (input.files && input.files[0]) {
-    var file = input.files[0];
-    if (file.size > 20 * 1024 * 1024) {
-      showNotificationPedagogica('A imagem deve ter no máximo 20MB', 'error');
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      document.getElementById(dataInputId).value = e.target.result;
-      document.getElementById(previewId).src = e.target.result;
-      document.getElementById(previewId + 'Container').style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-  }
+/**
+ * Explicação da função [handleImageUploadPedagogica]
+ * Envia a imagem ao Cloudflare R2 e guarda a URL no campo escondido.
+ *
+ * Serve tanto para a capa quanto para a imagem principal — os ids dos
+ * elementos vêm por parâmetro. Antes a imagem era convertida para Base64 e
+ * gravada na própria coluna, fazendo cada listagem de excursão trafegar as
+ * imagens inteiras: uma amostra de 5 registros pesava 1,5 MB.
+ *
+ * Validação de tipo e tamanho fica com `UploadArquivo`, que espelha o limite
+ * do servidor.
+ */
+async function handleImageUploadPedagogica(input, previewId, dataInputId) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+
+  input.disabled = true;
+
+  var url = await UploadArquivo.preencherCampo(file, {
+    dataInputId: dataInputId,
+    previewId: previewId,
+    containerId: previewId + 'Container'
+  });
+
+  input.disabled = false;
+
+  // Sem limpar a seleção, escolher o mesmo arquivo de novo não dispara o evento.
+  if (!url) input.value = '';
 }
 
 function removeImagePedagogica(dataInputId, containerId, fileInputId) {
@@ -175,21 +188,39 @@ function removeDocumentoPedagogica() {
   document.getElementById('documentoPreviewContainer').style.display = 'none';
 }
 
-function handleGalleryUploadPedagogica(input) {
-  if (input.files) {
-    Array.from(input.files).forEach(function (file) {
-      if (file.size > 20 * 1024 * 1024) {
-        showNotificationPedagogica('Imagem ' + file.name + ' muito grande (máx 20MB)', 'warning');
-        return;
-      }
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        galeriaImagesPedagogica.push(e.target.result);
-        renderGalleryPreviewPedagogica();
-      };
-      reader.readAsDataURL(file);
+/**
+ * Explicação da função [handleGalleryUploadPedagogica]
+ * Envia as imagens da galeria ao R2, uma de cada vez.
+ *
+ * A sequência é proposital: em paralelo, várias fotos grandes saturam a
+ * conexão e todas demoram mais. A falha de um arquivo não derruba o lote —
+ * ela é relatada com o nome do arquivo e as demais seguem.
+ */
+async function handleGalleryUploadPedagogica(input) {
+  if (!input.files || input.files.length === 0) return;
+
+  input.disabled = true;
+
+  var resultados = await UploadArquivo.enviarVarias(Array.from(input.files), {
+    aoIniciarArquivo: function (indice, total, nome) {
+      showNotificationPedagogica('Enviando ' + indice + ' de ' + total + ': ' + nome, 'info');
+    }
+  });
+
+  input.disabled = false;
+  input.value = '';
+
+  resultados
+    .filter(function (r) { return r.ok; })
+    .forEach(function (r) { galeriaImagesPedagogica.push(r.dados.url); });
+
+  resultados
+    .filter(function (r) { return !r.ok; })
+    .forEach(function (r) {
+      showNotificationPedagogica('Falhou: ' + r.arquivo + ' — ' + r.erro, 'error');
     });
-  }
+
+  renderGalleryPreviewPedagogica();
 }
 
 function renderGalleryPreviewPedagogica() {

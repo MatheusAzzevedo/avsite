@@ -2,16 +2,25 @@
  * Explicação do Arquivo [documentos.routes.ts]
  *
  * Rotas públicas para download de documentos (PDF, DOCX, XLS, XLSX) de excursões pedagógicas.
- * Serve arquivos da pasta uploads/documentos/ com mensagem amigável quando o arquivo não existe.
  *
- * Motivo: Em ambientes como Railway, o filesystem é efêmero — arquivos podem ser perdidos
- * após deploy. Esta rota permite retornar mensagem clara ao usuário nesses casos.
+ * Atende duas origens, nesta ordem:
+ * 1. Disco (`uploads/documentos/`) — documentos anteriores à migração, que ainda
+ *    possam existir no container.
+ * 2. Cloudflare R2 — para onde vão todos os envios novos.
+ *
+ * O frontend monta o link a partir do nome do arquivo
+ * (`documentoUrl.split('/').pop()`), então esta rota continua sendo o ponto de
+ * entrada nos dois casos e nenhuma tela precisou mudar.
+ *
+ * O download é forçado nas duas origens: em disco pelo cabeçalho escrito aqui,
+ * e no R2 pelo `Content-Disposition` gravado no objeto durante o upload.
  */
 
 import { Router, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import { logger } from '../utils/logger';
+import { getPublicUrl, verificarConfigR2 } from '../config/r2';
 
 const router = Router();
 
@@ -41,12 +50,21 @@ router.get('/download/:filename', (req: Request, res: Response) => {
   const filePath = path.join(DOCS_DIR, filename);
 
   if (!fs.existsSync(filePath)) {
-    logger.warn('[Documentos] Arquivo não encontrado:', { filename });
+    // Não está em disco: é um documento no R2 (todos os envios novos vão para lá).
+    if (verificarConfigR2()) {
+      const urlR2 = getPublicUrl(`documentos/${filename}`);
+      logger.info('[Documentos] Redirecionando para o R2', { context: { filename } });
+      return res.redirect(302, urlR2);
+    }
+
+    logger.warn('[Documentos] Arquivo não encontrado e R2 não configurado:', { filename });
     return res.status(404).json({
       error: 'Documento não disponível',
       message: 'O arquivo não foi encontrado. Ele pode ter sido removido ou estar temporariamente indisponível após atualização do servidor. Entre em contato com a equipe Avoar Turismo.'
     });
   }
+
+  logger.info('[Documentos] Servindo documento legado do disco', { context: { filename } });
 
   const ext = path.extname(filename).toLowerCase();
   const mimeTypes: Record<string, string> = {

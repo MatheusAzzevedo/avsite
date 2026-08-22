@@ -43,26 +43,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modalAutor) closeModal();
     });
 
-    // Leitura da Imagem
-    fileFoto.addEventListener('change', function() {
+    /**
+     * Explicação da função [upload da foto do autor]
+     *
+     * A foto vai para o Cloudflare R2 e o campo guarda a URL. Antes era
+     * convertida para Base64 e gravada na coluna `foto` (@db.Text), o que
+     * fazia cada listagem de post carregar a imagem inteira do autor junto.
+     *
+     * Tipo e tamanho ficam a cargo de `UploadArquivo`, que espelha o limite do
+     * servidor — o teto de 5 MB que existia aqui era mais apertado que o do
+     * backend e levava o usuário a comprimir a imagem por fora antes de enviar.
+     */
+    fileFoto.addEventListener('change', async function() {
         const file = this.files[0];
-        if (file) {
-            // Validar tamanho (5MB)
-            const maxSize = 5 * 1024 * 1024;
-            if (file.size > maxSize) {
-                alert('A imagem deve ter no máximo 5MB.');
-                fileFoto.value = '';
-                return;
-            }
+        if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imgPreview.src = e.target.result;
-                imgPreview.style.display = 'block';
-                fotoUrlInput.value = e.target.result; // Salva o base64
-            }
-            reader.readAsDataURL(file);
-        }
+        fileFoto.disabled = true;
+
+        const url = await UploadArquivo.preencherCampo(file, {
+            dataInputId: 'fotoUrl',
+            previewId: 'imgPreview'
+        });
+
+        fileFoto.disabled = false;
+
+        // Limpa a seleção quando falha, para permitir tentar de novo com o
+        // mesmo arquivo — sem isso o evento `change` não dispara na segunda vez.
+        if (!url) fileFoto.value = '';
     });
 
     // Logout

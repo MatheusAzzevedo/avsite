@@ -67,6 +67,11 @@ CORS_ORIGINS=https://avoarturismo.up.railway.app
 API_BASE_URL=https://avoarturismo.up.railway.app
 PAGHIPER_API_KEY=<sua-api-key>
 PAGHIPER_TOKEN=<seu-token>
+R2_ACCOUNT_ID=<seu-account-id>
+R2_ACCESS_KEY_ID=<sua-access-key>
+R2_SECRET_ACCESS_KEY=<seu-secret>
+R2_BUCKET_NAME=<nome-do-bucket>
+R2_PUBLIC_URL=https://pub-xxxx.r2.dev
 ```
 
 **Não inclua `DATABASE_URL`** — ela é criada quando você clica em **"Trying to connect a database? Add Variable"** e escolhe o **psql-site**.
@@ -144,4 +149,5 @@ O plano Hobby do Railway **bloqueia SMTP**. Use a API HTTPS do Brevo em vez de S
 - [ ] **PagHiper (webhook):** `API_BASE_URL` correta (ou `PAGHIPER_NOTIFICATION_URL` definida) — sem isso o pagamento não é confirmado automaticamente
 - [ ] **Login com Google (opcional):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `FRONTEND_URL` (ver seção 5)
 - [ ] **E-mail Brevo:** `BREVO_API_KEY`, `BREVO_FROM_NAME`, `BREVO_FROM_EMAIL` (ver seção 6)
+- [ ] **Cloudflare R2:** `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL`
 - [ ] Novo deploy do **avsite** após salvar as variáveis

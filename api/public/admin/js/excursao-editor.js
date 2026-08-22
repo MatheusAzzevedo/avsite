@@ -148,27 +148,32 @@ async function loadExcursao(excursaoId) {
 }
 
 /**
- * Processa o upload de uma imagem individual
+ * Explicação da função [handleImageUpload]
+ * Envia a imagem ao Cloudflare R2 e guarda a URL no campo escondido.
+ *
+ * Serve à capa e à imagem principal — os ids vêm por parâmetro. Antes a
+ * imagem era convertida para Base64 e gravada na própria coluna, fazendo a
+ * listagem pública trafegar as imagens inteiras.
+ *
+ * Tipo e tamanho são validados por `UploadArquivo`, que espelha o limite do
+ * servidor, no lugar do teto local que divergia dele.
  */
-function handleImageUpload(input, previewId, dataInputId) {
-  if (input.files && input.files[0]) {
-    const file = input.files[0];
+async function handleImageUpload(input, previewId, dataInputId) {
+  const file = input.files && input.files[0];
+  if (!file) return;
 
-    if (file.size > 20 * 1024 * 1024) {
-      showNotification('A imagem deve ter no máximo 20MB', 'error');
-      return;
-    }
+  input.disabled = true;
 
-    const reader = new FileReader();
+  const url = await UploadArquivo.preencherCampo(file, {
+    dataInputId,
+    previewId,
+    containerId: previewId + 'Container'
+  });
 
-    reader.onload = function (e) {
-      document.getElementById(dataInputId).value = e.target.result;
-      document.getElementById(previewId).src = e.target.result;
-      document.getElementById(previewId + 'Container').style.display = 'block';
-    };
+  input.disabled = false;
 
-    reader.readAsDataURL(file);
-  }
+  // Sem limpar a seleção, escolher o mesmo arquivo de novo não dispara o evento.
+  if (!url) input.value = '';
 }
 
 /**
@@ -181,24 +186,31 @@ function removeImage(dataInputId, containerId, fileInputId) {
 }
 
 /**
- * Processa o upload de múltiplas imagens para a galeria
+ * Explicação da função [handleGalleryUpload]
+ * Envia as imagens da galeria ao R2, uma de cada vez.
+ *
+ * A sequência é proposital: em paralelo, várias fotos grandes saturam a
+ * conexão e todas demoram mais. A falha de um arquivo não derruba o lote.
  */
-function handleGalleryUpload(input) {
-  if (input.files) {
-    Array.from(input.files).forEach((file) => {
-      if (file.size > 20 * 1024 * 1024) {
-        showNotification(`Imagem ${file.name} muito grande (máx 20MB)`, 'warning');
-        return;
-      }
+async function handleGalleryUpload(input) {
+  if (!input.files || input.files.length === 0) return;
 
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        galeriaImages.push(e.target.result);
-        renderGalleryPreview();
-      };
-      reader.readAsDataURL(file);
-    });
-  }
+  input.disabled = true;
+
+  const resultados = await UploadArquivo.enviarVarias(Array.from(input.files), {
+    aoIniciarArquivo: (indice, total, nome) =>
+      showNotification(`Enviando ${indice} de ${total}: ${nome}`, 'info')
+  });
+
+  input.disabled = false;
+  input.value = '';
+
+  resultados.filter((r) => r.ok).forEach((r) => galeriaImages.push(r.dados.url));
+  resultados.filter((r) => !r.ok).forEach((r) =>
+    showNotification(`Falhou: ${r.arquivo} — ${r.erro}`, 'error')
+  );
+
+  renderGalleryPreview();
 }
 
 /**

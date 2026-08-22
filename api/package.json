@@ -16,9 +16,12 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "seed": "ts-node prisma/seed.ts",
+    "migrar:imagens": "ts-node src/scripts/migrar-imagens-r2.ts",
+    "test:r2": "ts-node src/scripts/test-r2.ts",
     "optimize:images": "node scripts/optimize-images.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1111.0",
     "@prisma/client": "^5.8.0",
     "asaas": "^1.1.0",
     "bcryptjs": "^2.4.3",
