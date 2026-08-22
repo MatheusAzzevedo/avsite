@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-22 - fix: exibir a data das excursões pedagógicas na área do cliente
+
+### Arquivos Modificados
+- `api/public/cliente/js/excursao.js` [Passa a ler `dataDestino`, campo usado pelas pedagógicas]
+
+### Detalhes das Alterações
+- **Causa**: Os dois tipos de excursão guardam a data em campos diferentes — a convencional em `dataExcursao`, a pedagógica em `dataDestino`. A tela de detalhes do cliente lia apenas `dataExcursao`, campo inexistente no modelo pedagógico. Sem valor, o código caía no texto padrão e exibia "A combinar".
+- **Alcance real**: Não eram "algumas" excursões — **43 das 44 em produção têm data definida** e todas exibiam "A combinar". A inconsistência aparecia porque o painel administrativo lê `dataDestino` corretamente, então a mesma excursão mostrava data no admin e "A combinar" no site.
+- **Correção contida**: A rota que alimenta a tela (`/api/cliente/pedidos/excursao/:codigo`) já devolvia `dataDestino` — o dado chegava à página. Bastou ler o campo certo. Os dois são aceitos, porque a tela pode receber os dois tipos conforme a origem do link.
+- **Escopo verificado**: As demais telas que formatam data (`portfolio-excursoes.js`, `portfolio-single.js`, `pacotes-viagens.js`) consultam `/public/excursoes`, que retorna apenas convencionais, e já liam o campo correto. Nenhuma tela consome a listagem pública de pedagógicas.
+- **Validação em navegador real**: Excursão com data passou a exibir 11/06/2026 no cabeçalho e na aba de informações; excursão sem data segue exibindo "A combinar".
+
+---
+
 ## 2026-08-20 - feat: migrar imagens das excursões convencionais para o Cloudflare R2
 
 ### Arquivos Modificados
@@ -59,24 +73,5 @@
 - **Resultado medido**: Foto de 286 KB em Base64 virou 32 KB no R2. Na resposta pública de posts, o campo do autor caiu para 101 caracteres.
 - **Validação em navegador real**: Os cards do blog renderizam o avatar do autor vindo do R2. Pelo modal em `blog.html`, um PNG de 3000x2000 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
 - **Pendente para a fase 5**: As capas dos posts continuam em Base64 — uma delas com 441 KB —, o que ainda domina o peso da listagem do blog.
-
----
-
-## 2026-08-19 - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
-
-### Arquivos Modificados
-- `api/public/admin/js/equipe.js` [Foto enviada ao R2 em vez de convertida para Base64]
-- `api/src/scripts/migrar-imagens-r2.ts` [Novo: migração do acervo, com simulação e verificação]
-- `api/public/admin/js/admin-main.js` [Container do `preencherCampo` passa a cair no próprio elemento de prévia]
-- `api/package.json` [Script `npm run migrar:imagens`]
-
-### Detalhes das Alterações
-- **Primeiro domínio migrado**: A tela de Equipe passa a enviar a foto para o R2 e gravar apenas a URL. O salvamento não mudou, porque já lia o valor do mesmo campo escondido.
-- **Limite local removido**: A tela rejeitava acima de 5 MB, sendo que o servidor aceita 25 MB. O teto mais apertado no navegador levava o usuário a comprimir a foto por fora antes de enviar, degradando-a antes de o sistema ver o arquivo.
-- **Script de migração idempotente**: Registros cujo campo já é URL são ignorados, então a execução pode ser interrompida e repetida sem duplicar objetos no bucket.
-- **Verificação antes de descartar o original**: Cada imagem é enviada, lida de volta pela URL pública e conferida antes de o banco ser atualizado. Sem isso, uma falha silenciosa deixaria o registro apontando para uma imagem inexistente, com o Base64 já perdido. Uma falha mantém o registro intacto para nova tentativa.
-- **Simulação por padrão**: Sem `--aplicar`, o script apenas relata o que faria.
-- **Resultado medido**: A foto de 286 KB em Base64 virou 32 KB no R2. A resposta de `/api/public/equipe` caiu de cerca de 292 KB para 235 bytes, e o campo do banco de ~292 mil caracteres para 100.
-- **Validação em navegador real**: A página "Sobre Nós" renderiza a foto vinda do R2, sem nenhum Base64 restante. Pela tela do admin, um PNG de 2400x1600 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
 
 ---
