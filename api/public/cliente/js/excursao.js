@@ -58,10 +58,18 @@
         if (duracao) duracao.textContent = exc.duracao || 'Não informado';
         if (local) local.textContent = exc.local || 'Não informado';
         
-        // Formata e exibe a data da excursão
+        // Formata e exibe a data da excursão.
+        //
+        // Excursão pedagógica guarda a data em `dataDestino`; é a convencional
+        // que usa `dataExcursao`. Esta tela lia apenas o segundo campo, então
+        // toda pedagógica caía no texto padrão e exibia "A combinar" mesmo com
+        // data definida no painel — 43 das 44 excursões em produção.
+        // Os dois campos são aceitos porque a mesma tela pode receber os dois
+        // tipos conforme a origem do link.
+        const dataBruta = exc.dataDestino || exc.dataExcursao;
         let dataStr = 'A combinar';
-        if (exc.dataExcursao) {
-            const d = new Date(exc.dataExcursao);
+        if (dataBruta) {
+            const d = new Date(dataBruta);
             if (!isNaN(d.getTime())) {
                 dataStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             }

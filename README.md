@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-20) - feat: migrar imagens das excursões convencionais para o Cloudflare R2
+### Última atualização (2026-08-22) - fix: exibir a data das excursões pedagógicas na área do cliente
+- **api/public/cliente/js/excursao.js** [Passa a ler `dataDestino`]
+
+Resumo: A excursão convencional guarda a data em `dataExcursao` e a pedagógica em `dataDestino`, mas a tela do cliente lia apenas o primeiro campo. Sem valor, exibia "A combinar" — em 43 das 44 excursões de produção, todas com data definida. Como o painel lê o campo certo, a mesma excursão mostrava data no admin e "A combinar" no site. A rota já entregava o dado; bastou ler o campo correto. Validado em navegador: data aparece quando existe, e o rótulo permanece quando não há.
+
+### Atualização anterior (2026-08-20) - feat: migrar imagens das excursões convencionais para o Cloudflare R2
 - **api/public/admin/js/excursao-editor.js** [Capa, imagem principal e galeria enviadas ao R2]
 - **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos das convencionais]
 
