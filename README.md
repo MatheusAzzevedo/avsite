@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-20) - feat: migrar imagens das excursões convencionais para o Cloudflare R2
+### Última atualização (2026-08-22) - chore: migração de produção para o R2 e limpeza pós-migração
+- **api/src/server.ts** [Limite do corpo de 50 MB para 2 MB; removido o `/uploads` estático]
+- **api/src/routes/documentos.routes.ts** [Confere existência no R2 antes de redirecionar]
+- **api/docs/MIGRACAO-IMAGENS-R2.md** [Novo: registro do procedimento]
+
+Resumo: 125 imagens migradas em produção sem falhas, e o banco caiu de 248 MB para 22 MB — a migração levou a 234 MB, e o `VACUUM FULL` por tabela recuperou o restante, com o site no ar o tempo todo. O limite do corpo da requisição voltou a 2 MB, já que só URLs trafegam agora, e a pasta `/uploads` foi removida por não ter mais nenhuma referência. A limpeza revelou 7 excursões com documento perdido no disco efêmero: a rota passa a conferir a existência no R2 antes de redirecionar, devolvendo mensagem explicativa em vez do erro cru da Cloudflare.
+
+### Atualização anterior (2026-08-20) - feat: migrar imagens das excursões convencionais para o Cloudflare R2
 - **api/public/admin/js/excursao-editor.js** [Capa, imagem principal e galeria enviadas ao R2]
 - **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos das convencionais]
 

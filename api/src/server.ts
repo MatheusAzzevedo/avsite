@@ -136,12 +136,22 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Parser JSON (limite maior para excursões com imagens em base64)
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+// Parser JSON
+// O limite era de 50 MB porque o painel enviava a imagem inteira em Base64
+// dentro do corpo da requisição. Com as imagens no R2, o painel envia apenas a
+// URL, e o corpo voltou a ser pequeno. Manter 50 MB deixaria aberta a
+// possibilidade de uma requisição enorme consumir a memória do processo.
+// Uploads de arquivo não passam por aqui: usam multipart, com limite próprio
+// em upload.routes.ts.
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 // Serve arquivos estáticos
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// A pasta /uploads foi removida: era o armazenamento em disco anterior ao R2.
+// O disco do Railway é recriado a cada deploy, então esses arquivos já não
+// existiam — as URLs respondiam 404 mesmo com o serviço ativo. Nenhum campo de
+// conteúdo aponta mais para lá; restam apenas 4 linhas na tabela `uploads`,
+// que é histórico e não é usada para exibir nada.
 app.use('/css', express.static(path.join(__dirname, '../public/css')));
 app.use('/js', express.static(path.join(__dirname, '../public/js')));
 app.use('/images', express.static(path.join(__dirname, '../public/images')));

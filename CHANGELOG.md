@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-22 - chore: migração de produção para o R2 e limpeza pós-migração
+
+### Arquivos Modificados
+- `api/src/server.ts` [Limite do corpo reduzido de 50 MB para 2 MB; removido o `express.static('/uploads')`]
+- `api/src/routes/documentos.routes.ts` [Confere a existência no R2 antes de redirecionar]
+- `api/docs/MIGRACAO-IMAGENS-R2.md` [Novo: registro do procedimento completo]
+
+### Detalhes das Alterações
+- **Migração de produção**: 125 imagens migradas do Base64 para o bucket do cliente, sem nenhuma falha — 90 das excursões pedagógicas, 31 do blog, 2 da equipe e 2 de autores. Varredura final nos 10 alvos confirma zero Base64 restante.
+- **Espaço recuperado**: O banco caiu de **248 MB para 22 MB**. A migração sozinha levou a 234 MB, porque o PostgreSQL não devolve o espaço das linhas antigas; o `VACUUM FULL` por tabela recuperou o restante, travando cada uma por 2 a 3 segundos, com o site respondendo normalmente durante todo o processo. A `excursoes_pedagogicas` ocupava 188 MB com 44 linhas.
+- **Limite do corpo da requisição**: Os 50 MB existiam porque o painel enviava a imagem inteira em Base64. Com apenas URLs trafegando, o corpo voltou a ser pequeno, e manter o limite alto deixava aberta a possibilidade de uma requisição enorme consumir a memória do processo. Uploads de arquivo não são afetados: usam multipart, com limite próprio.
+- **Pasta `/uploads` removida**: Era o armazenamento anterior ao R2. Como o disco do Railway é recriado a cada deploy, os arquivos já não existiam — as URLs respondiam 404 mesmo com o serviço ativo. Confirmado que nenhum campo de conteúdo aponta para lá.
+- **Regressão corrigida na rota de documentos**: A limpeza revelou 7 excursões cujo documento aponta para o disco efêmero, com os arquivos perdidos. A mudança da fase 1 redirecionava esses casos para o R2, onde também não existem, entregando ao cliente o XML de erro da Cloudflare. A rota passa a conferir a existência antes de redirecionar e devolve a mensagem explicativa quando o arquivo não está em lugar nenhum.
+- **Documentação**: Registrado o procedimento completo, incluindo a ordem que importa (código antes dos dados, senão a CSP bloqueia tudo), as garantias do script e as armadilhas encontradas.
+
+---
+
 ## 2026-08-20 - feat: migrar imagens das excursões convencionais para o Cloudflare R2
 
 ### Arquivos Modificados
@@ -59,24 +76,5 @@
 - **Resultado medido**: Foto de 286 KB em Base64 virou 32 KB no R2. Na resposta pública de posts, o campo do autor caiu para 101 caracteres.
 - **Validação em navegador real**: Os cards do blog renderizam o avatar do autor vindo do R2. Pelo modal em `blog.html`, um PNG de 3000x2000 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
 - **Pendente para a fase 5**: As capas dos posts continuam em Base64 — uma delas com 441 KB —, o que ainda domina o peso da listagem do blog.
-
----
-
-## 2026-08-19 - feat: migrar as fotos da Equipe do Base64 para o Cloudflare R2
-
-### Arquivos Modificados
-- `api/public/admin/js/equipe.js` [Foto enviada ao R2 em vez de convertida para Base64]
-- `api/src/scripts/migrar-imagens-r2.ts` [Novo: migração do acervo, com simulação e verificação]
-- `api/public/admin/js/admin-main.js` [Container do `preencherCampo` passa a cair no próprio elemento de prévia]
-- `api/package.json` [Script `npm run migrar:imagens`]
-
-### Detalhes das Alterações
-- **Primeiro domínio migrado**: A tela de Equipe passa a enviar a foto para o R2 e gravar apenas a URL. O salvamento não mudou, porque já lia o valor do mesmo campo escondido.
-- **Limite local removido**: A tela rejeitava acima de 5 MB, sendo que o servidor aceita 25 MB. O teto mais apertado no navegador levava o usuário a comprimir a foto por fora antes de enviar, degradando-a antes de o sistema ver o arquivo.
-- **Script de migração idempotente**: Registros cujo campo já é URL são ignorados, então a execução pode ser interrompida e repetida sem duplicar objetos no bucket.
-- **Verificação antes de descartar o original**: Cada imagem é enviada, lida de volta pela URL pública e conferida antes de o banco ser atualizado. Sem isso, uma falha silenciosa deixaria o registro apontando para uma imagem inexistente, com o Base64 já perdido. Uma falha mantém o registro intacto para nova tentativa.
-- **Simulação por padrão**: Sem `--aplicar`, o script apenas relata o que faria.
-- **Resultado medido**: A foto de 286 KB em Base64 virou 32 KB no R2. A resposta de `/api/public/equipe` caiu de cerca de 292 KB para 235 bytes, e o campo do banco de ~292 mil caracteres para 100.
-- **Validação em navegador real**: A página "Sobre Nós" renderiza a foto vinda do R2, sem nenhum Base64 restante. Pela tela do admin, um PNG de 2400x1600 enviado pelo seletor de arquivo real chegou ao campo como URL e a prévia carregou em 1920x1280.
 
 ---

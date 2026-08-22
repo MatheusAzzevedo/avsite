@@ -36,7 +36,7 @@ function isValidFilename(filename: string): boolean {
  * Faz download de documento por nome de arquivo (ex: 27c37ec9-7426-45f8-b8fd-39dee953166d.pdf)
  * Público - não requer autenticação. O link é compartilhado apenas com clientes que têm pedido.
  */
-router.get('/download/:filename', (req: Request, res: Response) => {
+router.get('/download/:filename', async (req: Request, res: Response) => {
   const { filename } = req.params;
 
   if (!isValidFilename(filename)) {
@@ -49,19 +49,43 @@ router.get('/download/:filename', (req: Request, res: Response) => {
 
   const filePath = path.join(DOCS_DIR, filename);
 
+  const indisponivel = {
+    error: 'Documento não disponível',
+    message: 'O arquivo não foi encontrado. Ele pode ter sido removido ou estar temporariamente indisponível após atualização do servidor. Entre em contato com a equipe Avoar Turismo.'
+  };
+
   if (!fs.existsSync(filePath)) {
-    // Não está em disco: é um documento no R2 (todos os envios novos vão para lá).
-    if (verificarConfigR2()) {
-      const urlR2 = getPublicUrl(`documentos/${filename}`);
-      logger.info('[Documentos] Redirecionando para o R2', { context: { filename } });
-      return res.redirect(302, urlR2);
+    if (!verificarConfigR2()) {
+      logger.warn('[Documentos] Arquivo fora do disco e R2 não configurado', { context: { filename } });
+      return res.status(404).json(indisponivel);
     }
 
-    logger.warn('[Documentos] Arquivo não encontrado e R2 não configurado:', { filename });
-    return res.status(404).json({
-      error: 'Documento não disponível',
-      message: 'O arquivo não foi encontrado. Ele pode ter sido removido ou estar temporariamente indisponível após atualização do servidor. Entre em contato com a equipe Avoar Turismo.'
-    });
+    const urlR2 = getPublicUrl(`documentos/${filename}`);
+
+    // Confere a existência antes de redirecionar. Documentos anteriores à
+    // migração apontam para o disco efêmero e não existem em lugar nenhum —
+    // redirecionar às cegas entregaria ao cliente o XML de erro da Cloudflare
+    // em vez desta mensagem, que ao menos diz o que fazer.
+    try {
+      const head = await fetch(urlR2, { method: 'HEAD' });
+      if (!head.ok) {
+        logger.warn('[Documentos] Documento ausente também no R2', {
+          context: { filename, status: head.status }
+        });
+        return res.status(404).json(indisponivel);
+      }
+    } catch (err) {
+      logger.error('[Documentos] Falha ao verificar o documento no R2', {
+        context: { filename, error: err instanceof Error ? err.message : 'Unknown' }
+      });
+      return res.status(502).json({
+        error: 'Documento temporariamente indisponível',
+        message: 'Não foi possível acessar o arquivo agora. Tente novamente em alguns minutos.'
+      });
+    }
+
+    logger.info('[Documentos] Redirecionando para o R2', { context: { filename } });
+    return res.redirect(302, urlR2);
   }
 
   logger.info('[Documentos] Servindo documento legado do disco', { context: { filename } });
