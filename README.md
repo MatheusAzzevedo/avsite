@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-22) - chore: migração de produção para o R2 e limpeza pós-migração
+### Última atualização (2026-08-22) - feat: remover do R2 as imagens que deixam de ser usadas
+- **api/src/utils/limpeza-r2.ts** [Novo: verificação de reuso e remoção de órfãs]
+- **5 rotas** [Limpeza ligada na exclusão e na atualização]
+
+Resumo: Excluir um registro ou trocar uma foto deixava o objeto antigo no bucket para sempre. A remoção passa a ser automática junto da alteração — escolha feita para não depender de alguém lembrar de rodar uma faxina periódica. Antes de apagar, o sistema conta as ocorrências da URL nos 11 campos e só remove o que ninguém mais usa, porque a mesma foto costuma servir de capa, imagem principal e galeria ao mesmo tempo. A troca de imagem também é coberta, por ser mais frequente que a exclusão. A limpeza roda depois da alteração no banco e nunca lança exceção. Validado em quatro cenários contra o bucket real.
+
+### Atualização anterior (2026-08-22) - chore: migração de produção para o R2 e limpeza pós-migração
 - **api/src/server.ts** [Limite do corpo de 50 MB para 2 MB; removido o `/uploads` estático]
 - **api/src/routes/documentos.routes.ts** [Confere existência no R2 antes de redirecionar]
 - **api/docs/MIGRACAO-IMAGENS-R2.md** [Novo: registro do procedimento]

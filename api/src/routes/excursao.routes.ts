@@ -18,6 +18,7 @@ import {
 } from '../schemas/excursao.schema';
 import { slugify, generateUniqueSlug } from '../utils/slug';
 import { logger } from '../utils/logger';
+import { removerSeOrfas, urlsQueSairam } from '../utils/limpeza-r2';
 
 const router = Router();
 
@@ -335,9 +336,11 @@ router.put('/:id',
         }
       });
 
-      // Verifica se excursão existe
+      // Verifica se excursão existe. A galeria vem junto para comparar, ao
+      // final, quais imagens deixaram de ser usadas.
       const existing = await prisma.excursao.findUnique({
-        where: { id }
+        where: { id },
+        include: { galeria: true }
       });
 
       if (!existing) {
@@ -421,6 +424,24 @@ router.put('/:id',
         }
       });
 
+      // Comparação entre o antes e o depois: o que saiu e não é usado em
+      // nenhum outro lugar sai também do bucket. Feito aqui, e não junto ao
+      // update, porque a galeria é substituída depois dele — antes disso o
+      // estado final ainda não existe.
+      if (excursaoAtualizada) {
+        await removerSeOrfas(
+          urlsQueSairam(
+            [existing.imagemCapa, existing.imagemPrincipal, ...existing.galeria.map((g) => g.url)],
+            [
+              excursaoAtualizada.imagemCapa,
+              excursaoAtualizada.imagemPrincipal,
+              ...excursaoAtualizada.galeria.map((g) => g.url)
+            ]
+          ),
+          `excursao:${id}`
+        );
+      }
+
       // Registra atividade
       await prisma.activityLog.create({
         data: {
@@ -503,6 +524,14 @@ router.delete('/:id',
       await prisma.excursao.delete({
         where: { id }
       });
+
+      // Depois da exclusão no banco: as imagens que ninguém mais referencia
+      // são removidas do bucket. A ordem importa — se fosse antes e o delete
+      // falhasse, o registro ficaria apontando para uma imagem já apagada.
+      await removerSeOrfas(
+        [existing.imagemCapa, existing.imagemPrincipal, ...existing.galeria.map((g) => g.url)],
+        `excursao:${id}`
+      );
 
       // Registra atividade
       await prisma.activityLog.create({

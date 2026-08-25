@@ -12,6 +12,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 import { createEquipeSchema, updateEquipeSchema } from '../schemas/equipe.schema';
 import { logger } from '../utils/logger';
+import { removerSeOrfas, urlsQueSairam } from '../utils/limpeza-r2';
 
 const router = Router();
 
@@ -102,6 +103,14 @@ router.put('/:id', validateBody(updateEquipeSchema), async (req: Request, res: R
       data
     });
 
+    // Se a foto foi trocada, a anterior deixa de ser usada neste registro.
+    // Trocar imagem é mais frequente que excluir o cadastro, então é aqui que
+    // o lixo se acumularia mais rápido no bucket.
+    await removerSeOrfas(
+      urlsQueSairam([existing.fotoPerfil], [membro.fotoPerfil]),
+      `equipe:${id}`
+    );
+
     // Registra atividade
     await prisma.activityLog.create({
       data: {
@@ -140,6 +149,8 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
     }
 
     await prisma.equipe.delete({ where: { id } });
+
+    await removerSeOrfas([existing.fotoPerfil], `equipe:${id}`);
 
     // Registra atividade
     await prisma.activityLog.create({
