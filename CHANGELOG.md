@@ -33,6 +33,18 @@
 - **Regressão corrigida na rota de documentos**: A limpeza revelou 7 excursões cujo documento aponta para o disco efêmero, com os arquivos perdidos. A mudança da fase 1 redirecionava esses casos para o R2, onde também não existem, entregando ao cliente o XML de erro da Cloudflare. A rota passa a conferir a existência antes de redirecionar e devolve a mensagem explicativa quando o arquivo não está em lugar nenhum.
 - **Documentação**: Registrado o procedimento completo, incluindo a ordem que importa (código antes dos dados, senão a CSP bloqueia tudo), as garantias do script e as armadilhas encontradas.
 
+## 2026-08-22 - fix: exibir a data das excursões pedagógicas na área do cliente
+
+### Arquivos Modificados
+- `api/public/cliente/js/excursao.js` [Passa a ler `dataDestino`, campo usado pelas pedagógicas]
+
+### Detalhes das Alterações
+- **Causa**: Os dois tipos de excursão guardam a data em campos diferentes — a convencional em `dataExcursao`, a pedagógica em `dataDestino`. A tela de detalhes do cliente lia apenas `dataExcursao`, campo inexistente no modelo pedagógico. Sem valor, o código caía no texto padrão e exibia "A combinar".
+- **Alcance real**: Não eram "algumas" excursões — **43 das 44 em produção têm data definida** e todas exibiam "A combinar". A inconsistência aparecia porque o painel administrativo lê `dataDestino` corretamente, então a mesma excursão mostrava data no admin e "A combinar" no site.
+- **Correção contida**: A rota que alimenta a tela (`/api/cliente/pedidos/excursao/:codigo`) já devolvia `dataDestino` — o dado chegava à página. Bastou ler o campo certo. Os dois são aceitos, porque a tela pode receber os dois tipos conforme a origem do link.
+- **Escopo verificado**: As demais telas que formatam data (`portfolio-excursoes.js`, `portfolio-single.js`, `pacotes-viagens.js`) consultam `/public/excursoes`, que retorna apenas convencionais, e já liam o campo correto. Nenhuma tela consome a listagem pública de pedagógicas.
+- **Validação em navegador real**: Excursão com data passou a exibir 11/06/2026 no cabeçalho e na aba de informações; excursão sem data segue exibindo "A combinar".
+
 ---
 
 ## 2026-08-20 - feat: migrar imagens das excursões convencionais para o Cloudflare R2
@@ -62,22 +74,5 @@
 - **Um handler para dois campos**: `handleImageUploadPedagogica` recebe os ids por parâmetro e serve tanto à capa quanto à imagem principal, então a troca cobriu os dois de uma vez.
 - **Recodificação nem sempre reduz**: Das 12 capas migradas, 5 ficaram maiores — por exemplo 330 KB → 438 KB. São imagens já comprimidas e abaixo do teto de 1920px, onde recodificar em WebP com qualidade 90 custa bytes. O saldo continua muito positivo (as duas rodadas somaram ~34 MB a menos no banco), porque os ganhos vêm dos arquivos grandes: 20.369 KB → 590 KB e 7.264 KB → 390 KB. O ganho principal, de qualquer forma, é o campo do banco deixar de carregar a imagem inteira.
 - **Validação em navegador real**: A página de detalhes da excursão na área do cliente renderiza as imagens do R2, sem Base64. No editor do admin, capa de 2800x1800, imagem principal de 2200x1500 e três imagens de galeria enviadas de uma vez chegaram como URL, com as prévias renderizadas.
-
----
-
-## 2026-08-20 - feat: migrar capa e galeria do blog para o Cloudflare R2
-
-### Arquivos Modificados
-- `api/public/admin/js/blog-editor.js` [Capa e galeria enviadas ao R2 em vez de convertidas para Base64]
-- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa do post e tabela de galeria]
-
-### Detalhes das Alterações
-- **Primeira tela com galeria**: Além da capa, o post tem até 4 imagens na tabela `post_imagens`. O envio múltiplo usa `enviarVarias`, que sobe em sequência e informa qual arquivo está indo — em paralelo, várias fotos grandes saturam a conexão e todas demoram mais.
-- **Limite da galeria respeitado antes do envio**: Só as imagens que cabem nas vagas restantes são enviadas. Antes, cada arquivo era lido e descartado depois; agora o excesso nem sobe, e o usuário é avisado de quantas couberam.
-- **Falha isolada**: Um arquivo que falha não derruba os demais do lote, e o erro é mostrado com o nome do arquivo.
-- **Migração de tabela relacionada**: O script passou a cobrir `PostImagem.url`, onde cada linha é uma imagem. O formato de alvo já existente serviu sem alteração — o "registro" passa a ser a própria imagem, rotulada com o título do post e a ordem.
-- **Resultado medido**: A listagem pública do blog caiu de **489.300 para 1.700 bytes**, uma redução de 288 vezes. As 4 imagens de galeria somadas caíram de 251 KB para 118 KB.
-- **Recodificação pode inflar**: Uma capa de 26 KB virou 38 KB. Recodificar uma origem pequena já comprimida custa bytes; em valor absoluto é irrelevante, e o ganho real está no campo do banco, que deixa de carregar a imagem inteira.
-- **Validação em navegador real**: Listagem e post individual renderizam tudo do R2, com zero Base64 e os 4 links de galeria funcionando. No editor, uma capa de 2600x1700 e três imagens de galeria enviadas de uma vez chegaram como URL; com 3 já na galeria, um lote de 3 novas adicionou apenas 1, respeitando o teto de 4 sem desperdiçar envios.
 
 ---

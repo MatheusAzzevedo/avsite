@@ -17,6 +17,11 @@ Resumo: Excluir um registro ou trocar uma foto deixava o objeto antigo no bucket
 
 Resumo: 125 imagens migradas em produção sem falhas, e o banco caiu de 248 MB para 22 MB — a migração levou a 234 MB, e o `VACUUM FULL` por tabela recuperou o restante, com o site no ar o tempo todo. O limite do corpo da requisição voltou a 2 MB, já que só URLs trafegam agora, e a pasta `/uploads` foi removida por não ter mais nenhuma referência. A limpeza revelou 7 excursões com documento perdido no disco efêmero: a rota passa a conferir a existência no R2 antes de redirecionar, devolvendo mensagem explicativa em vez do erro cru da Cloudflare.
 
+### Atualização anterior (2026-08-22) - fix: exibir a data das excursões pedagógicas na área do cliente
+- **api/public/cliente/js/excursao.js** [Passa a ler `dataDestino`]
+
+Resumo: A excursão convencional guarda a data em `dataExcursao` e a pedagógica em `dataDestino`, mas a tela do cliente lia apenas o primeiro campo. Sem valor, exibia "A combinar" — em 43 das 44 excursões de produção, todas com data definida. Como o painel lê o campo certo, a mesma excursão mostrava data no admin e "A combinar" no site. A rota já entregava o dado; bastou ler o campo correto. Validado em navegador: data aparece quando existe, e o rótulo permanece quando não há.
+
 ### Atualização anterior (2026-08-20) - feat: migrar imagens das excursões convencionais para o Cloudflare R2
 - **api/public/admin/js/excursao-editor.js** [Capa, imagem principal e galeria enviadas ao R2]
 - **api/src/scripts/migrar-imagens-r2.ts** [Novos alvos das convencionais]
