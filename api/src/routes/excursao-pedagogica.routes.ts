@@ -19,6 +19,7 @@ import {
 } from '../schemas/excursao-pedagogica.schema';
 import { slugify, generateUniqueSlug, generateCodigoFromDestino } from '../utils/slug';
 import { logger } from '../utils/logger';
+import { removerSeOrfas, urlsQueSairam } from '../utils/limpeza-r2';
 
 const router = Router();
 
@@ -409,9 +410,11 @@ router.put('/:id',
         }
       });
 
-      // Verifica se excursão existe
+      // Verifica se excursão existe. A galeria vem junto para comparar, ao
+      // final, quais imagens deixaram de ser usadas.
       const existing = await prisma.excursaoPedagogica.findUnique({
-        where: { id }
+        where: { id },
+        include: { galeria: true }
       });
 
       if (!existing) {
@@ -504,6 +507,28 @@ router.put('/:id',
           }
         }
       });
+
+      // Compara o antes e o depois; o que saiu e não é usado em outro lugar
+      // sai também do bucket. O documento entra na conta junto das imagens.
+      if (excursaoAtualizada) {
+        await removerSeOrfas(
+          urlsQueSairam(
+            [
+              existing.imagemCapa,
+              existing.imagemPrincipal,
+              existing.documentoUrl,
+              ...existing.galeria.map((g) => g.url)
+            ],
+            [
+              excursaoAtualizada.imagemCapa,
+              excursaoAtualizada.imagemPrincipal,
+              excursaoAtualizada.documentoUrl,
+              ...excursaoAtualizada.galeria.map((g) => g.url)
+            ]
+          ),
+          `excursao-pedagogica:${id}`
+        );
+      }
 
       // Registra atividade
       await prisma.activityLog.create({
@@ -614,6 +639,17 @@ router.delete('/:id',
       await prisma.excursaoPedagogica.delete({
         where: { id }
       });
+
+      // O documento entra na lista: também vive no bucket e fica órfão junto.
+      await removerSeOrfas(
+        [
+          existing.imagemCapa,
+          existing.imagemPrincipal,
+          existing.documentoUrl,
+          ...existing.galeria.map((g) => g.url)
+        ],
+        `excursao-pedagogica:${id}`
+      );
 
       // Registra atividade
       await prisma.activityLog.create({

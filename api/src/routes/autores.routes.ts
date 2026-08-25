@@ -5,6 +5,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 import { createAutorSchema, updateAutorSchema } from '../schemas/autor.schema';
 import { logger } from '../utils/logger';
+import { removerSeOrfas, urlsQueSairam } from '../utils/limpeza-r2';
 
 const router = Router();
 
@@ -93,6 +94,9 @@ router.put('/:id', validateBody(updateAutorSchema), async (req: Request, res: Re
       data
     });
 
+    // Se a foto foi trocada, a anterior deixa de ser usada neste registro.
+    await removerSeOrfas(urlsQueSairam([existing.foto], [autor.foto]), `autor:${id}`);
+
     // Registra atividade
     await prisma.activityLog.create({
       data: {
@@ -129,6 +133,8 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
     }
 
     await prisma.autor.delete({ where: { id } });
+
+    await removerSeOrfas([existing.foto], `autor:${id}`);
 
     // Registra atividade
     await prisma.activityLog.create({

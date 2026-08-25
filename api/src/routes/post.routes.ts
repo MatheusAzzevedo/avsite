@@ -18,6 +18,7 @@ import {
 } from '../schemas/post.schema';
 import { slugify, generateUniqueSlug } from '../utils/slug';
 import { logger } from '../utils/logger';
+import { removerSeOrfas, urlsQueSairam } from '../utils/limpeza-r2';
 
 const router = Router();
 
@@ -252,9 +253,11 @@ router.put('/:id',
         }
       });
 
-      // Verifica se post existe
+        // Verifica se post existe. A galeria vem junto para comparar, depois
+        // da atualização, quais imagens deixaram de ser usadas.
       const existing = await prisma.post.findUnique({
-        where: { id }
+        where: { id },
+        include: { galeria: true }
       });
 
       if (!existing) {
@@ -304,6 +307,22 @@ router.put('/:id',
           });
         }
       }
+
+      // Imagens que saíram do post e não são usadas em outro lugar saem também
+      // do bucket. Quando `galeria` não vem no payload, ela não foi alterada —
+      // por isso o estado final reaproveita a lista anterior, evitando uma
+      // consulta extra só para descobrir o que já sabemos.
+      const galeriaDepois: string[] = galeria !== undefined
+        ? (galeria as string[])
+        : existing.galeria.map((g) => g.url);
+
+      await removerSeOrfas(
+        urlsQueSairam(
+          [existing.imagemCapa, ...existing.galeria.map((g) => g.url)],
+          [post.imagemCapa, ...galeriaDepois]
+        ),
+        `post:${id}`
+      );
 
       // Registra atividade
       await prisma.activityLog.create({
@@ -369,9 +388,11 @@ router.delete('/:id',
         }
       });
 
-      // Verifica se post existe
+      // Verifica se post existe. A galeria vem junto porque, após a exclusão,
+      // precisamos saber quais imagens deixaram de ser usadas.
       const existing = await prisma.post.findUnique({
-        where: { id }
+        where: { id },
+        include: { galeria: true }
       });
 
       if (!existing) {
@@ -385,6 +406,11 @@ router.delete('/:id',
       await prisma.post.delete({
         where: { id }
       });
+
+      await removerSeOrfas(
+        [existing.imagemCapa, ...existing.galeria.map((g) => g.url)],
+        `post:${id}`
+      );
 
       // Registra atividade
       await prisma.activityLog.create({
