@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-22) - feat: remover do R2 as imagens que deixam de ser usadas
+### Última atualização (2026-08-26) - feat: implementar o envio do formulário de contato do site
+- **api/src/routes/contato.routes.ts**, **schemas/contato.schema.ts**, **templates/email-contato.ts** [Novos]
+- **api/public/js/contato-form.js** e **contact.html** [Envio por fetch com feedback na página]
+
+Resumo: O formulário de contato existia só visualmente. Com `action="#"` e nenhum JavaScript, o navegador fazia um POST nativo para uma rota inexistente e o visitante caía numa tela de erro em JSON — nenhuma mensagem chegava à Avoar. Agora os dados são validados com Zod e encaminhados por e-mail via Brevo, com destino configurável por variável de ambiente e limite de 5 mensagens por IP a cada 15 minutos, já que cada requisição custa um e-mail. O teste revelou que o campo de destinatário do Brevo recusa o formato de cabeçalho devolvido por `getFromAddress()`; corrigido para `getSender().email`. Validado em navegador: envio sem sair da página, aviso de sucesso e bloqueio nativo para campos vazios.
+
+### Atualização anterior (2026-08-22) - feat: remover do R2 as imagens que deixam de ser usadas
 - **api/src/utils/limpeza-r2.ts** [Novo: verificação de reuso e remoção de órfãs]
 - **5 rotas** [Limpeza ligada na exclusão e na atualização]
 

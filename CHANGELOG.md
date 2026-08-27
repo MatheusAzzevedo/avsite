@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-08-26 - feat: implementar o envio do formulário de contato do site
+
+### Arquivos Modificados
+- `api/src/routes/contato.routes.ts` [Novo: recebe a mensagem e encaminha por e-mail]
+- `api/src/schemas/contato.schema.ts` [Novo: validação Zod dos campos]
+- `api/src/templates/email-contato.ts` [Novo: template HTML e texto da mensagem]
+- `api/public/js/contato-form.js` [Novo: envio por fetch com feedback na página]
+- `api/public/contact.html` [Removido `action="#"`; script do formulário carregado]
+- `api/src/server.ts` e `api/.env.example` [Rota registrada e `CONTATO_EMAIL_DESTINO` documentada]
+
+### Detalhes das Alterações
+- **O formulário nunca funcionou**: Com `action="#"` e `method="post"` e nenhum JavaScript tratando o envio, o navegador fazia um POST nativo para a própria URL. Como não existia rota para isso, o visitante era levado a uma tela com `{"error":"Rota não encontrada"}`. Toda pessoa que preencheu o formulário acreditou ter falado com a Avoar, e a mensagem não chegava a lugar nenhum.
+- **Destino configurável**: `CONTATO_EMAIL_DESTINO` define quem recebe; sem ela, cai no remetente já verificado no Brevo. Assim, trocar o endereço é mudança de variável, não de código.
+- **Limite dedicado**: 5 mensagens por IP a cada 15 minutos. O limite global de 100 req/15min não serve aqui, porque cada requisição desta rota custa um e-mail — sem restrição própria, o endereço da Avoar viraria destino de spam.
+- **Erro encontrado no teste**: O primeiro envio real falhou com `email is not valid in to`. A causa era usar `getFromAddress()`, que devolve o formato de cabeçalho `"Avoar Turismo" <contato@...>`, no campo de destinatário da API. Corrigido para `getSender().email`.
+- **Validação em duas camadas**: Os atributos `required` do HTML barram o envio incompleto sem ida ao servidor; o Zod valida no backend, devolvendo erro por campo.
+- **Sem armazenamento em banco**: A decisão foi entregar por e-mail, que é onde a equipe já trabalha. O ponto de extensão para histórico fica na rota, antes do envio.
+- **Validação em navegador real**: Formulário preenchido e enviado sem sair da página, com aviso de sucesso, campos limpos e botão reabilitado; envio vazio bloqueado pelo navegador antes de chegar à API; e o limite respondendo 429 com mensagem clara na sexta tentativa.
+
+---
+
 ## 2026-08-22 - feat: remover do R2 as imagens que deixam de ser usadas
 
 ### Arquivos Modificados
@@ -59,20 +80,5 @@
 - **Peso das listagens públicas após a migração completa**: excursões 764 bytes, pedagógicas 5.257 bytes, posts 1.701 bytes e equipe 235 bytes — todas sem nenhum Base64.
 - **Validação em navegador real**: A listagem de excursões e a página individual renderizam tudo do R2. No editor, capa de 2800x1800, imagem principal de 2200x1500 e duas imagens de galeria chegaram como URL, com as prévias renderizadas.
 - **Acervo migrado**: 40 objetos no bucket, somando 10,2 MB — vindos de dezenas de megabytes de Base64 espalhados pelas colunas do PostgreSQL.
-
----
-
-## 2026-08-20 - feat: migrar imagens das excursões pedagógicas para o Cloudflare R2
-
-### Arquivos Modificados
-- `api/public/admin/js/excursao-pedagogica-editor.js` [Capa, imagem principal e galeria enviadas ao R2]
-- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa, imagem principal e galeria das pedagógicas]
-
-### Detalhes das Alterações
-- **Maior volume até aqui**: 13 registros no banco local somavam **55 MB** apenas nas colunas `imagemCapa` e `imagemPrincipal`. Após a migração, essas colunas somam **2.645 bytes**. A listagem pública dos 13 registros passou a pesar 5,2 KB — em produção, uma amostra de apenas 5 registros pesava 1,5 MB.
-- **Documento já resolvido**: O envio de documento desta tela já usava `UploadManager.uploadDocument` e passou a funcionar na fase 1, quando o download foi corrigido. Não precisou de alteração.
-- **Um handler para dois campos**: `handleImageUploadPedagogica` recebe os ids por parâmetro e serve tanto à capa quanto à imagem principal, então a troca cobriu os dois de uma vez.
-- **Recodificação nem sempre reduz**: Das 12 capas migradas, 5 ficaram maiores — por exemplo 330 KB → 438 KB. São imagens já comprimidas e abaixo do teto de 1920px, onde recodificar em WebP com qualidade 90 custa bytes. O saldo continua muito positivo (as duas rodadas somaram ~34 MB a menos no banco), porque os ganhos vêm dos arquivos grandes: 20.369 KB → 590 KB e 7.264 KB → 390 KB. O ganho principal, de qualquer forma, é o campo do banco deixar de carregar a imagem inteira.
-- **Validação em navegador real**: A página de detalhes da excursão na área do cliente renderiza as imagens do R2, sem Base64. No editor do admin, capa de 2800x1800, imagem principal de 2200x1500 e três imagens de galeria enviadas de uma vez chegaram como URL, com as prévias renderizadas.
 
 ---
