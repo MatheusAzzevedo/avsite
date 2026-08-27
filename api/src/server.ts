@@ -47,6 +47,7 @@ import dashboardRoutes from './routes/dashboard.routes';
 import adminEmailRoutes from './routes/admin-email.routes';
 import documentosRoutes from './routes/documentos.routes';
 import autoresRoutes from './routes/autores.routes';
+import contatoRoutes from './routes/contato.routes';
 
 // Importa utilitários
 import { prisma } from './config/database';
@@ -227,6 +228,11 @@ app.get('/api/health', (_req: Request, res: Response) => {
 
 // Rotas públicas (para site e integrações externas)
 app.use('/api/public', publicRoutes);
+
+// Formulário de contato do site. Fica sob /api/public por ser acessível sem
+// autenticação, mas em arquivo próprio porque tem limite de envio dedicado —
+// é a única rota pública que dispara e-mail.
+app.use('/api/public', contatoRoutes);
 app.use('/api/documentos', documentosRoutes);
 
 // Webhooks (públicos - gateways de pagamento)
