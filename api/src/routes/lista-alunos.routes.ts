@@ -24,7 +24,7 @@ import { logger } from '../utils/logger';
 import ExcelJS from 'exceljs';
 import { consultarPagamentoAsaas, verificarConfigAsaas } from '../config/asaas';
 import { validateBody } from '../middleware/validate.middleware';
-import { adminAddAlunoSchema } from '../schemas/pedido.schema';
+import { adminAddAlunoSchema, editarAlunoSchema } from '../schemas/pedido.schema';
 
 const router = Router();
 
@@ -1177,6 +1177,115 @@ router.get('/excursao/:id/exportar-escola',
  * Se for o único aluno do pedido, remove o pedido inteiro.
  * Caso contrário, atualiza quantidade e valor total do pedido.
  */
+/**
+ * Explicação da API [PUT /api/admin/listas/aluno/:id]
+ *
+ * Corrige os dados de um aluno já inscrito — nome digitado errado, turma
+ * trocada, telefone desatualizado, informação médica que faltou.
+ *
+ * Restringe-se a pedidos ativos. Aluno de pedido cancelado ou expirado não é
+ * editável: aquele registro virou histórico, e alterá-lo mudaria o retrato de
+ * algo que já se encerrou.
+ *
+ * Altera apenas os dados do aluno. Os dados de quem pagou ficam no pedido e
+ * não são tocados aqui: eles foram enviados ao gateway e constam do comprovante
+ * que o cliente recebeu; reescrevê-los criaria divergência entre o sistema e o
+ * documento que está com o cliente.
+ *
+ * Body: os mesmos campos do cadastro manual de aluno.
+ * Response: { success, message, data }
+ */
+router.put('/aluno/:id',
+  adminMiddleware,
+  validateBody(editarAlunoSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const dados = req.body;
+      const adminId = req.user!.id;
+      const adminEmail = req.user!.email;
+
+      const item = await prisma.itemPedido.findUnique({
+        where: { id },
+        include: { pedido: { select: { id: true, status: true } } }
+      });
+
+      if (!item) {
+        throw ApiError.notFound('Aluno não encontrado');
+      }
+
+      const STATUS_BLOQUEADOS = ['CANCELADO', 'EXPIRADO'];
+      if (STATUS_BLOQUEADOS.includes(item.pedido.status)) {
+        logger.warn('[Listas] Edição recusada: pedido não está ativo', {
+          context: { alunoId: id, status: item.pedido.status, adminEmail }
+        });
+        throw ApiError.badRequest(
+          `Este aluno pertence a um pedido ${item.pedido.status.toLowerCase()} e não pode ser editado.`
+        );
+      }
+
+      // Cada campo é escrito explicitamente, inclusive os ausentes: o formulário
+      // envia a ficha completa, então campo que não veio é campo que o
+      // administrador esvaziou de propósito. Um update parcial faria a limpeza
+      // ser silenciosamente ignorada.
+      const atualizado = await prisma.itemPedido.update({
+        where: { id },
+        data: {
+          nomeAluno: dados.nomeAluno,
+          idadeAluno: dados.idadeAluno ?? null,
+          dataNascimento: dados.dataNascimento ? new Date(dados.dataNascimento) : null,
+          escolaAluno: dados.escolaAluno ?? null,
+          serieAluno: dados.serieAluno ?? null,
+          turma: dados.turma ?? null,
+          unidadeColegio: dados.unidadeColegio ?? null,
+          cpfAluno: dados.cpfAluno ?? null,
+          rgAluno: dados.rgAluno ?? null,
+          responsavel: dados.responsavel ?? null,
+          telefoneResponsavel: dados.telefoneResponsavel ?? null,
+          emailResponsavel: dados.emailResponsavel ?? null,
+          alergiasCuidados: dados.alergiasCuidados ?? null,
+          planoSaude: dados.planoSaude ?? null,
+          medicamentosFebre: dados.medicamentosFebre ?? null,
+          medicamentosAlergia: dados.medicamentosAlergia ?? null,
+          observacoes: dados.observacoes ?? null
+        }
+      });
+
+      // O valor anterior do nome vai para o histórico: é o campo que aparece
+      // nas listas enviadas à escola, e o único jeito de rastrear a correção
+      // depois, já que a alteração não guarda versão.
+      await prisma.activityLog.create({
+        data: {
+          action: 'update',
+          entity: 'aluno_lista',
+          entityId: id,
+          description: `Dados do aluno atualizados: "${item.nomeAluno}" → "${atualizado.nomeAluno}"`,
+          userId: adminId,
+          userEmail: adminEmail
+        }
+      });
+
+      logger.info('[Listas] Dados do aluno atualizados', {
+        context: {
+          alunoId: id,
+          pedidoId: item.pedido.id,
+          nomeAnterior: item.nomeAluno,
+          nomeNovo: atualizado.nomeAluno,
+          adminEmail
+        }
+      });
+
+      res.json({
+        success: true,
+        message: 'Dados do aluno atualizados com sucesso',
+        data: atualizado
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 router.delete('/aluno/:id', adminMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;

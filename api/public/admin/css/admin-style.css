@@ -411,6 +411,18 @@ a[href="config-pagamento.html"] {
     gap: 0.5rem;
 }
 
+/* Botão de edição de aluno na coluna de ações.
+   Não usa .btn-primary porque aquela classe é `width: 100%` — pensada para
+   botões de formulário —, o que esticaria o ícone sobre a coluna inteira. */
+.btn-editar-aluno {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-editar-aluno:hover {
+    background-color: var(--primary-dark);
+}
+
 /* ============================================
    EDITOR DE TEXTO RICO
    ============================================ */

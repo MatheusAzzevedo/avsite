@@ -674,6 +674,130 @@
         </div>
     </div>
 
+    <!-- Modal: Editar Aluno -->
+    <div id="modalEditarAluno" class="modal-overlay hidden" role="dialog" aria-labelledby="modalEditarAlunoTitulo" aria-modal="true">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="modalEditarAlunoTitulo"><i class="fas fa-user-edit"></i> Editar Aluno</h3>
+                <button type="button" class="modal-close" id="btnFecharModalEditarAluno" aria-label="Fechar modal de editar aluno">
+                    &times;
+                </button>
+            </div>
+            <form id="formEditarAluno">
+                <div class="modal-body" style="padding-top: 1rem; max-height: 70vh; overflow-y: auto;">
+                    <p style="margin: 0 0 1rem 0; padding: 0.75rem; background: var(--light-bg, #f8f9fa); border-left: 3px solid var(--primary-color); font-size: 0.9rem;">
+                        A correção altera apenas a ficha do aluno e passa a valer nas listas exportadas para a escola.
+                        Os dados de quem pagou e o status do pedido não são alterados aqui.
+                    </p>
+                    <h4 style="margin: 0 0 1rem 0; border-bottom: 2px solid var(--light-border); padding-bottom: 0.3rem; color: var(--primary-color);">
+                        <i class="fas fa-user-graduate"></i> Dados do Aluno
+                    </h4>
+                    <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="editAlunoNome">Nome Completo <span class="required" style="color: var(--danger-color);">*</span></label>
+                            <input type="text" id="editAlunoNome" class="form-control" placeholder="Nome completo do aluno" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoDataNascimento">Data de Nascimento</label>
+                            <input type="date" id="editAlunoDataNascimento" class="form-control" placeholder="">
+                        </div>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="editAlunoEscola">Escola</label>
+                            <input type="text" id="editAlunoEscola" class="form-control" placeholder="Nome da escola">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoIdade">Idade</label>
+                            <input type="number" id="editAlunoIdade" class="form-control" placeholder="10" min="1" max="120">
+                        </div>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="editAlunoSerie">Série</label>
+                            <input type="text" id="editAlunoSerie" class="form-control" placeholder="5º Ano">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoTurma">Turma</label>
+                            <input type="text" id="editAlunoTurma" class="form-control" placeholder="A">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoUnidade">Unidade do Colégio</label>
+                            <input type="text" id="editAlunoUnidade" class="form-control" placeholder="Unidade Centro">
+                        </div>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="editAlunoCpf">CPF do Aluno</label>
+                            <input type="text" id="editAlunoCpf" class="form-control" placeholder="000.000.000-00">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoRg">RG do Aluno</label>
+                            <input type="text" id="editAlunoRg" class="form-control" placeholder="RG do aluno">
+                        </div>
+                    </div>
+                    <h4 style="margin: 1.5rem 0 1rem 0; border-bottom: 2px solid var(--light-border); padding-bottom: 0.3rem; color: var(--primary-color);">
+                        <i class="fas fa-user-shield"></i> Responsável pelo Aluno
+                    </h4>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="editAlunoResponsavel">Nome do Responsável</label>
+                            <input type="text" id="editAlunoResponsavel" class="form-control" placeholder="Nome do responsável">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoTelefoneResponsavel">Telefone</label>
+                            <input type="text" id="editAlunoTelefoneResponsavel" class="form-control" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoEmailResponsavel">E-mail</label>
+                            <input type="email" id="editAlunoEmailResponsavel" class="form-control" placeholder="exemplo@email.com">
+                        </div>
+                    </div>
+                    <h4 style="margin: 1.5rem 0 1rem 0; border-bottom: 2px solid var(--light-border); padding-bottom: 0.3rem; color: var(--primary-color);">
+                        <i class="fas fa-notes-medical"></i> Informações Médicas
+                    </h4>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="editAlunoAlergias">Alergias / Cuidados</label>
+                            <input type="text" id="editAlunoAlergias" class="form-control" placeholder="Alergia a glúten">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoPlanoSaude">Plano de Saúde</label>
+                            <input type="text" id="editAlunoPlanoSaude" class="form-control" placeholder="Nome do plano">
+                        </div>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="editAlunoMedicamentosFebre">Medicamentos para Febre</label>
+                            <input type="text" id="editAlunoMedicamentosFebre" class="form-control" placeholder="Paracetamol">
+                        </div>
+                        <div class="form-group">
+                            <label for="editAlunoMedicamentosAlergia">Medicamentos para Alergia</label>
+                            <input type="text" id="editAlunoMedicamentosAlergia" class="form-control" placeholder="Loratadina">
+                        </div>
+                    </div>
+                    <h4 style="margin: 1.5rem 0 1rem 0; border-bottom: 2px solid var(--light-border); padding-bottom: 0.3rem; color: var(--primary-color);">
+                        <i class="fas fa-clipboard"></i> Observações
+                    </h4>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="editAlunoObservacoes">Observações (Interno)</label>
+                            <input type="text" id="editAlunoObservacoes" class="form-control" placeholder="Observações gerais">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnCancelarEditarAluno">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" id="btnConfirmarEditarAluno">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="../js/api-client.js"></script>
     <script src="js/admin-main.js"></script>

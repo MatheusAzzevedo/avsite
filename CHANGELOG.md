@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-08-29 - feat: permitir a edição dos dados de um aluno já inscrito
+
+### Arquivos Modificados
+- `api/src/routes/lista-alunos.routes.ts` [Nova rota `PUT /aluno/:id`]
+- `api/src/schemas/pedido.schema.ts` [Novo `editarAlunoSchema`]
+- `api/public/admin/js/listas.js` [Botão de edição e modal preenchido com a ficha atual]
+- `api/public/admin/listas.html` [Novo modal de edição com os 17 campos do aluno]
+- `api/public/admin/css/admin-style.css` [Estilo do botão de edição na coluna de ações]
+
+### Detalhes das Alterações
+- **O que faltava**: A tela de listas permitia adicionar e excluir aluno, mas não corrigir. Um nome digitado errado, uma turma trocada ou uma informação médica que faltou só se resolviam excluindo a inscrição e recadastrando — o que apaga a ligação com o pedido pago e o histórico do cliente.
+- **Todos os 17 campos**: Nome, dados escolares, documentos, responsável pelo aluno, informações médicas e observações. A escolha foi do usuário: qualquer um deles pode ter sido preenchido errado no ato da compra.
+- **Só pedidos ativos**: Aluno de pedido cancelado ou expirado não é editável — o botão não aparece na tabela e a rota recusa a alteração. Aquele registro virou histórico encerrado; alterá-lo mudaria o retrato de algo que já terminou. A verificação existe nas duas pontas, porque esconder o botão não impede uma chamada direta à API.
+- **Dados de quem pagou ficam intactos**: A edição toca apenas o `ItemPedido`. O `dadosResponsavelFinanceiro` do pedido foi enviado ao gateway e consta do comprovante que o cliente recebeu; reescrevê-lo criaria divergência entre o sistema e o documento que está com o cliente. Confirmado no teste: após a edição, o bloco do pagador seguiu inalterado.
+- **Campo vazio apaga o dado**: O formulário envia a ficha inteira, então ausência de valor é decisão do administrador, não omissão. Um update parcial faria a limpeza ser silenciosamente ignorada — o campo continuaria com o valor antigo e ninguém saberia.
+- **Erro encontrado no teste**: O primeiro salvamento falhou com 400. A causa era o telefone gravado como `11988887777`, sem máscara, recusado pela regra do cadastro, que exige `(11) 98888-8888`. Corrigir o nome de um aluno era impossível enquanto o telefone dele estivesse num formato que o próprio sistema aceitou ao gravar. Na edição a máscara passou a ser aplicada, não exigida.
+- **Rastro da alteração**: Cada edição grava um `activity_log` com o nome anterior e o novo, além do administrador responsável. É o único jeito de rastrear a correção depois, já que a alteração não guarda versão.
+- **Validação em navegador real**: Botão presente apenas na linha do pedido ativo entre quatro alunos; edição de nome, turma, limpeza de escola e preenchimento de plano de saúde persistidos; telefone normalizado; alteração refletida na exportação da Lista para Escola; e as rotas recusando pedido cancelado (400), expirado (400) e requisição sem token (401).
+
+---
+
 ## 2026-08-26 - feat: implementar o envio do formulário de contato do site
 
 ### Arquivos Modificados
@@ -65,20 +86,5 @@
 - **Correção contida**: A rota que alimenta a tela (`/api/cliente/pedidos/excursao/:codigo`) já devolvia `dataDestino` — o dado chegava à página. Bastou ler o campo certo. Os dois são aceitos, porque a tela pode receber os dois tipos conforme a origem do link.
 - **Escopo verificado**: As demais telas que formatam data (`portfolio-excursoes.js`, `portfolio-single.js`, `pacotes-viagens.js`) consultam `/public/excursoes`, que retorna apenas convencionais, e já liam o campo correto. Nenhuma tela consome a listagem pública de pedagógicas.
 - **Validação em navegador real**: Excursão com data passou a exibir 11/06/2026 no cabeçalho e na aba de informações; excursão sem data segue exibindo "A combinar".
-
----
-
-## 2026-08-20 - feat: migrar imagens das excursões convencionais para o Cloudflare R2
-
-### Arquivos Modificados
-- `api/public/admin/js/excursao-editor.js` [Capa, imagem principal e galeria enviadas ao R2]
-- `api/src/scripts/migrar-imagens-r2.ts` [Novos alvos: capa, imagem principal e galeria das convencionais]
-
-### Detalhes das Alterações
-- **Último domínio de imagem**: Com esta fase, nenhuma tela do painel converte imagem para Base64. As três que ainda faziam isso (blog, pedagógicas e convencionais) passaram a enviar ao R2.
-- **Verificação de completude**: Uma consulta às 10 colunas de imagem do banco confirma **zero registros em Base64** e todos apontando para URL — `posts.imagemCapa`, `post_imagens.url`, `excursoes.imagemCapa`, `excursoes.imagemPrincipal`, `excursao_imagens.url`, `excursoes_pedagogicas.imagemCapa`, `excursoes_pedagogicas.imagemPrincipal`, `excursao_pedagogica_imagens.url`, `equipe.fotoPerfil` e `autores.foto`.
-- **Peso das listagens públicas após a migração completa**: excursões 764 bytes, pedagógicas 5.257 bytes, posts 1.701 bytes e equipe 235 bytes — todas sem nenhum Base64.
-- **Validação em navegador real**: A listagem de excursões e a página individual renderizam tudo do R2. No editor, capa de 2800x1800, imagem principal de 2200x1500 e duas imagens de galeria chegaram como URL, com as prévias renderizadas.
-- **Acervo migrado**: 40 objetos no bucket, somando 10,2 MB — vindos de dezenas de megabytes de Base64 espalhados pelas colunas do PostgreSQL.
 
 ---
