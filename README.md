@@ -4,7 +4,20 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-26) - feat: implementar o envio do formulário de contato do site
+### Última atualização (2026-08-29) - feat: converter para caixa alta o código único da excursão pedagógica
+- **api/public/admin/js/excursao-pedagogica-editor.js** [Nova função `ativarCaixaAltaNoCodigo`]
+- **api/public/admin/excursao-pedagogica-editor.html** [Texto de ajuda do campo]
+
+Resumo: Tudo que for digitado ou colado no campo "Código único" vira caixa alta na hora, com a posição do cursor preservada. A conversão acontece ao digitar e não ao salvar, e a diferença importa: o código é o que o cliente usa para localizar a excursão e a busca no banco é exata, sensível a maiúsculas. Se fosse aplicada ao salvar, abrir uma excursão antiga só para corrigir o título renomearia o código dela em silêncio e os códigos em circulação parariam de encontrá-la — há uma excursão gravada como `BiologiaM2` nessa situação, e ela segue intacta. Também não foi usado `text-transform` no CSS, que mudaria só a aparência e faria a tela mostrar uma coisa enquanto o banco guarda outra.
+
+### Atualização anterior (2026-08-29) - feat: permitir a edição dos dados de um aluno já inscrito
+- **api/src/routes/lista-alunos.routes.ts** [Nova rota `PUT /aluno/:id`]
+- **api/src/schemas/pedido.schema.ts** [Novo `editarAlunoSchema`]
+- **api/public/admin/** [Botão na coluna de ações e modal de edição com os 17 campos]
+
+Resumo: A tela de listas permitia adicionar e excluir aluno, mas não corrigir — um nome errado só se resolvia excluindo a inscrição e recadastrando, o que apaga a ligação com o pedido pago. Agora todos os campos da ficha são editáveis, apenas em pedidos ativos: em cancelado ou expirado o botão não aparece e a rota recusa, porque esconder o botão não impede uma chamada direta à API. A edição toca só o aluno; os dados de quem pagou constam do comprovante já enviado e não são reescritos. Campo deixado em branco apaga o dado, já que o formulário envia a ficha inteira. Cada alteração grava um log com o nome anterior, o novo e o administrador. O teste revelou que telefones gravados sem máscara eram recusados pela regra do cadastro, travando a edição de fichas antigas; na edição a máscara passou a ser aplicada, não exigida.
+
+### Atualização anterior (2026-08-26) - feat: implementar o envio do formulário de contato do site
 - **api/src/routes/contato.routes.ts**, **schemas/contato.schema.ts**, **templates/email-contato.ts** [Novos]
 - **api/public/js/contato-form.js** e **contact.html** [Envio por fetch com feedback na página]
 

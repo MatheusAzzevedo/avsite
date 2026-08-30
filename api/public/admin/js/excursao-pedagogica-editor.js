@@ -415,8 +415,39 @@ function saveAsInactivePedagogica() {
   form.dispatchEvent(event);
 }
 
+/**
+ * Explicação da função [ativarCaixaAltaNoCodigo]
+ * Converte para caixa alta tudo o que for digitado ou colado no campo de código
+ * único, preservando a posição do cursor.
+ *
+ * A conversão acontece no que o usuário digita, e não no momento de salvar, de
+ * propósito: o código é o que o cliente usa para localizar a excursão, e a busca
+ * é exata. Converter um código já existente só porque a excursão foi reaberta
+ * para editar outro campo quebraria silenciosamente os códigos em circulação.
+ */
+function ativarCaixaAltaNoCodigo() {
+  var campoCodigo = document.getElementById('excursaoCodigo');
+  if (!campoCodigo) {
+    console.warn('[Editor Pedagógica] Campo de código único não encontrado.');
+    return;
+  }
+
+  campoCodigo.addEventListener('input', function () {
+    var textoEmCaixaAlta = this.value.toUpperCase();
+    if (textoEmCaixaAlta === this.value) return;
+
+    var posicaoCursor = this.selectionStart;
+    this.value = textoEmCaixaAlta;
+    this.setSelectionRange(posicaoCursor, posicaoCursor);
+  });
+
+  console.log('[Editor Pedagógica] Caixa alta automática ativada no código único.');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   initEditorPedagogica();
+
+  ativarCaixaAltaNoCodigo();
 
   var form = document.getElementById('excursaoPedagogicaForm');
   if (form) {

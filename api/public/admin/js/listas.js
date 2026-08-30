@@ -17,6 +17,9 @@ let currentExcursaoId = null;
 let currentExcursaoCodigo = '';
 let excursoesData = [];
 let alunosData = [];
+// Aluno cuja ficha está aberta no modal de edição. Guardamos o id, e não o
+// índice, porque a lista pode ser recarregada com o modal aberto.
+let alunoEmEdicaoId = null;
 let escolaData = {
     escola: '',
     serie: '',
@@ -387,6 +390,11 @@ function renderAlunos() {
         const statusClass = getStatusBadgeClass(aluno.statusPedido);
         const dataPedido = aluno.dataPedido ? formatDateBR(aluno.dataPedido) : '-';
 
+        // Pedido cancelado ou expirado é histórico encerrado: a ficha continua
+        // visível, mas sem botão de edição, para não reescrever o retrato de algo
+        // que já terminou. O backend recusa a alteração de qualquer forma.
+        const podeEditar = !['CANCELADO', 'EXPIRADO'].includes(aluno.statusPedido);
+
         return `
             <tr>
                 <td><strong>${escapeHtml(aluno.nomeAluno)}</strong></td>
@@ -407,6 +415,10 @@ function renderAlunos() {
                         <button type="button" class="btn btn-sm btn-secondary btn-detalhes-aluno" data-aluno-index="${index}" title="Ver detalhes completos do aluno">
                             <i class="fas fa-user"></i>
                         </button>
+                        ${podeEditar ? `
+                        <button type="button" class="btn btn-sm btn-editar-aluno" data-aluno-index="${index}" title="Editar dados do aluno">
+                            <i class="fas fa-pen"></i>
+                        </button>` : ''}
                         <button type="button" class="btn btn-sm btn-danger btn-deletar-aluno" data-aluno-id="${aluno.id}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Excluir aluno da lista">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -419,6 +431,7 @@ function renderAlunos() {
     // Anexar event listeners aos botões
     attachEmailButtonListeners();
     attachDetalhesButtonListeners();
+    attachEditarButtonListeners();
     attachDeletarButtonListeners();
 }
 
@@ -441,6 +454,197 @@ function attachDetalhesButtonListeners() {
             abrirDetalhesAluno(index);
         });
     });
+}
+
+/**
+ * Explicação da função [attachEditarButtonListeners]
+ * Liga cada botão de edição da tabela ao aluno correspondente da lista carregada.
+ */
+function attachEditarButtonListeners() {
+    console.log('[Listas] Anexando listeners de edição de aluno...');
+    const btnsEditar = document.querySelectorAll('.btn-editar-aluno');
+    btnsEditar.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const indexStr = this.getAttribute('data-aluno-index');
+            const index = typeof indexStr === 'string' ? parseInt(indexStr, 10) : NaN;
+            if (Number.isNaN(index) || !alunosData[index]) {
+                showError('Não foi possível localizar os dados deste aluno.');
+                console.error('[Listas] Índice de aluno inválido ao editar:', indexStr);
+                return;
+            }
+            abrirModalEditarAluno(index);
+        });
+    });
+    console.log(`[Listas] ${btnsEditar.length} listeners de edição anexados`);
+}
+
+/**
+ * Explicação da função [abrirModalEditarAluno]
+ * Preenche o formulário de edição com os dados atuais do aluno e exibe o modal.
+ */
+function abrirModalEditarAluno(alunoIndex) {
+    const aluno = alunosData[alunoIndex];
+    if (!aluno) {
+        showError('Dados do aluno não encontrados.');
+        return;
+    }
+
+    console.log('[Listas] Abrindo edição do aluno:', { index: alunoIndex, id: aluno.id, nome: aluno.nomeAluno });
+
+    alunoEmEdicaoId = aluno.id;
+
+    const preencher = (id, valor) => {
+        const el = document.getElementById(id);
+        if (el) el.value = valor === null || valor === undefined ? '' : String(valor);
+    };
+
+    // O campo de data espera YYYY-MM-DD; a API devolve ISO completo.
+    const dataISO = aluno.dataNascimento ? String(aluno.dataNascimento).substring(0, 10) : '';
+
+    preencher('editAlunoNome', aluno.nomeAluno);
+    preencher('editAlunoDataNascimento', dataISO);
+    preencher('editAlunoEscola', aluno.escolaAluno);
+    preencher('editAlunoIdade', aluno.idadeAluno);
+    preencher('editAlunoSerie', aluno.serieAluno);
+    preencher('editAlunoTurma', aluno.turma);
+    preencher('editAlunoUnidade', aluno.unidadeColegio);
+    preencher('editAlunoCpf', aluno.cpfAluno);
+    preencher('editAlunoRg', aluno.rgAluno);
+    preencher('editAlunoResponsavel', aluno.responsavel);
+    preencher('editAlunoTelefoneResponsavel', aluno.telefoneResponsavel);
+    preencher('editAlunoEmailResponsavel', aluno.emailResponsavel);
+    preencher('editAlunoAlergias', aluno.alergiasCuidados);
+    preencher('editAlunoPlanoSaude', aluno.planoSaude);
+    preencher('editAlunoMedicamentosFebre', aluno.medicamentosFebre);
+    preencher('editAlunoMedicamentosAlergia', aluno.medicamentosAlergia);
+    preencher('editAlunoObservacoes', aluno.observacoes);
+
+    const titulo = document.getElementById('modalEditarAlunoTitulo');
+    if (titulo) {
+        titulo.innerHTML = `<i class="fas fa-user-edit"></i> Editar ${escapeHtml(aluno.nomeAluno || 'Aluno')}`;
+    }
+
+    if (typeof openModal === 'function') {
+        openModal('modalEditarAluno');
+    } else {
+        const overlay = document.getElementById('modalEditarAluno');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+}
+
+/**
+ * Explicação da função [fecharModalEditarAluno]
+ * Oculta o modal de edição e descarta a referência do aluno em edição.
+ */
+function fecharModalEditarAluno() {
+    console.log('[Listas] Fechando modal Editar Aluno');
+    alunoEmEdicaoId = null;
+
+    if (typeof closeModal === 'function') {
+        closeModal('modalEditarAluno');
+    } else {
+        const overlay = document.getElementById('modalEditarAluno');
+        if (overlay) {
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+/**
+ * Explicação da função [salvarEdicaoAluno]
+ * Envia a ficha completa do aluno ao backend (PUT) e recarrega a lista em caso de sucesso.
+ * Campo deixado em branco é enviado vazio de propósito: significa apagar o dado.
+ */
+async function salvarEdicaoAluno(event) {
+    if (event) event.preventDefault();
+
+    if (!alunoEmEdicaoId) {
+        showError('Nenhum aluno selecionado para edição.');
+        return;
+    }
+
+    const btnSalvar = document.getElementById('btnConfirmarEditarAluno');
+    const textoOriginal = btnSalvar ? btnSalvar.innerHTML : 'Salvar Alterações';
+
+    if (btnSalvar) {
+        btnSalvar.disabled = true;
+        btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+    }
+
+    try {
+        const token = typeof AuthManager !== 'undefined' ? AuthManager.getToken() : localStorage.getItem('avorar_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const val = (id) => {
+            const el = document.getElementById(id);
+            return el ? el.value.trim() : '';
+        };
+
+        const idade = val('editAlunoIdade');
+        const idadeNum = idade ? parseInt(idade, 10) : undefined;
+
+        const payload = {
+            nomeAluno: val('editAlunoNome'),
+            idadeAluno: Number.isNaN(idadeNum) ? undefined : idadeNum,
+            dataNascimento: val('editAlunoDataNascimento'),
+            escolaAluno: val('editAlunoEscola'),
+            serieAluno: val('editAlunoSerie'),
+            turma: val('editAlunoTurma'),
+            unidadeColegio: val('editAlunoUnidade'),
+            cpfAluno: val('editAlunoCpf'),
+            rgAluno: val('editAlunoRg'),
+            responsavel: val('editAlunoResponsavel'),
+            telefoneResponsavel: val('editAlunoTelefoneResponsavel'),
+            emailResponsavel: val('editAlunoEmailResponsavel'),
+            alergiasCuidados: val('editAlunoAlergias'),
+            planoSaude: val('editAlunoPlanoSaude'),
+            medicamentosFebre: val('editAlunoMedicamentosFebre'),
+            medicamentosAlergia: val('editAlunoMedicamentosAlergia'),
+            observacoes: val('editAlunoObservacoes')
+        };
+
+        console.log('[Listas] Enviando edição do aluno:', { alunoId: alunoEmEdicaoId, nome: payload.nomeAluno });
+
+        const response = await fetch(`${apiUrl}/admin/listas/aluno/${alunoEmEdicaoId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            const detalhes = Array.isArray(result.errors) && result.errors.length
+                ? ': ' + result.errors.map(e => e.message).join('; ')
+                : '';
+            throw new Error((result.message || result.error || 'Erro ao editar aluno') + detalhes);
+        }
+
+        console.log('[Listas] Aluno atualizado com sucesso:', result);
+        showSuccess('Dados do aluno atualizados com sucesso!');
+
+        fecharModalEditarAluno();
+        await loadAlunos();
+
+    } catch (error) {
+        console.error('[Listas] Erro ao editar aluno:', error);
+        showError(error.message || 'Erro ao editar aluno');
+    } finally {
+        if (btnSalvar) {
+            btnSalvar.disabled = false;
+            btnSalvar.innerHTML = textoOriginal;
+        }
+    }
 }
 
 /**
@@ -1443,6 +1647,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const formAdicionarAluno = document.getElementById('formAdicionarAluno');
     if (formAdicionarAluno) {
         formAdicionarAluno.addEventListener('submit', salvarNovoAluno);
+    }
+
+    const btnFecharModalEditarAluno = document.getElementById('btnFecharModalEditarAluno');
+    if (btnFecharModalEditarAluno) {
+        btnFecharModalEditarAluno.addEventListener('click', fecharModalEditarAluno);
+    }
+
+    const btnCancelarEditarAluno = document.getElementById('btnCancelarEditarAluno');
+    if (btnCancelarEditarAluno) {
+        btnCancelarEditarAluno.addEventListener('click', fecharModalEditarAluno);
+    }
+
+    const formEditarAluno = document.getElementById('formEditarAluno');
+    if (formEditarAluno) {
+        formEditarAluno.addEventListener('submit', salvarEdicaoAluno);
     }
 
     loadExcursoes().then(() => {

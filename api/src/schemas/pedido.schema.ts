@@ -110,6 +110,54 @@ export const dadosAlunoSchema = z.object({
 });
 
 /**
+ * Schema para edição dos dados de um aluno já inscrito
+ *
+ * Reaproveita as mesmas regras do cadastro, com uma diferença: campo vazio
+ * significa "apagar este dado", não "não mexer". O formulário de edição envia
+ * sempre a ficha inteira, então a ausência de valor é uma decisão do
+ * administrador — se `escolaAluno` chegasse como string vazia, a validação de
+ * tamanho mínimo recusaria a limpeza de um campo que é opcional.
+ */
+export const editarAlunoSchema = z.preprocess(
+  (valor) => {
+    if (typeof valor !== 'object' || valor === null) return valor;
+
+    const limpo: Record<string, unknown> = {};
+    for (const [campo, conteudo] of Object.entries(valor as Record<string, unknown>)) {
+      limpo[campo] =
+        typeof conteudo === 'string' && conteudo.trim() === '' ? undefined : conteudo;
+    }
+    return limpo;
+  },
+  dadosAlunoSchema.extend({
+    // O telefone do cadastro exige a máscara `(11) 98888-8888`, mas há fichas
+    // antigas gravadas só com dígitos. Se a edição herdasse a regra estrita,
+    // corrigir o nome de um aluno seria impossível enquanto o telefone dele
+    // estivesse fora do formato — um dado que o próprio sistema aceitou.
+    // Aqui a máscara é aplicada, não exigida.
+    telefoneResponsavel: z
+      .string()
+      .transform((valor) => {
+        const digitos = valor.replace(/\D/g, '');
+        if (digitos.length === 11) {
+          return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+        }
+        if (digitos.length === 10) {
+          return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
+        }
+        return valor;
+      })
+      .refine(
+        (valor) => /^\(\d{2}\)\s\d{4,5}-\d{4}$/.test(valor),
+        'Telefone inválido. Use DDD + número, ex.: (11) 98888-8888'
+      )
+      .optional()
+  })
+);
+
+export type EditarAlunoInput = z.infer<typeof editarAlunoSchema>;
+
+/**
  * Schema para criar pedido de excursão pedagógica (com código)
  * Cliente informa código da excursão, quantidade e dados dos alunos
  */
