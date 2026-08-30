@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-29 - feat: converter para caixa alta o código único da excursão pedagógica
+
+### Arquivos Modificados
+- `api/public/admin/js/excursao-pedagogica-editor.js` [Nova função `ativarCaixaAltaNoCodigo`]
+- `api/public/admin/excursao-pedagogica-editor.html` [Texto de ajuda do campo]
+
+### Detalhes das Alterações
+- **Comportamento**: Tudo que for digitado ou colado no campo "Código único" passa a virar caixa alta na hora, com a posição do cursor preservada — digitar no meio do texto não joga o cursor para o fim.
+- **A conversão acontece ao digitar, não ao salvar**: A diferença importa. O código é o que o cliente usa para localizar a excursão, e a busca no banco é exata, sensível a maiúsculas. Se a conversão fosse aplicada no momento de salvar, abrir uma excursão antiga só para corrigir o título renomearia o código dela em silêncio, e todo código já em circulação deixaria de encontrar a excursão. Do jeito que ficou, um código existente só muda se o administrador realmente mexer naquele campo.
+- **Situação encontrada**: Há uma excursão gravada como `BiologiaM2`, em caixa mista. Ela continua intacta ao ser aberta e salva. Verificado no navegador: o campo exibe `BiologiaM2` ao carregar e o banco segue com o mesmo valor depois de sair da tela.
+- **Sem `text-transform` no CSS**: A propriedade só muda a aparência, não o valor enviado. Usá-la exibiria em caixa alta um código que continuaria gravado em caixa mista — a tela mostraria uma coisa e o banco guardaria outra.
+- **Validação em navegador real**: `biologia-marinha_2026` digitado virou `BIOLOGIA-MARINHA_2026`; inserção no início do texto manteve o cursor no lugar; e um cadastro completo feito com o código digitado em minúsculas foi gravado no banco como `TESTE-CAIXA-ALTA_01`.
+
+---
+
 ## 2026-08-29 - feat: permitir a edição dos dados de um aluno já inscrito
 
 ### Arquivos Modificados
@@ -74,17 +89,3 @@
 - **Pasta `/uploads` removida**: Era o armazenamento anterior ao R2. Como o disco do Railway é recriado a cada deploy, os arquivos já não existiam — as URLs respondiam 404 mesmo com o serviço ativo. Confirmado que nenhum campo de conteúdo aponta para lá.
 - **Regressão corrigida na rota de documentos**: A limpeza revelou 7 excursões cujo documento aponta para o disco efêmero, com os arquivos perdidos. A mudança da fase 1 redirecionava esses casos para o R2, onde também não existem, entregando ao cliente o XML de erro da Cloudflare. A rota passa a conferir a existência antes de redirecionar e devolve a mensagem explicativa quando o arquivo não está em lugar nenhum.
 - **Documentação**: Registrado o procedimento completo, incluindo a ordem que importa (código antes dos dados, senão a CSP bloqueia tudo), as garantias do script e as armadilhas encontradas.
-
-## 2026-08-22 - fix: exibir a data das excursões pedagógicas na área do cliente
-
-### Arquivos Modificados
-- `api/public/cliente/js/excursao.js` [Passa a ler `dataDestino`, campo usado pelas pedagógicas]
-
-### Detalhes das Alterações
-- **Causa**: Os dois tipos de excursão guardam a data em campos diferentes — a convencional em `dataExcursao`, a pedagógica em `dataDestino`. A tela de detalhes do cliente lia apenas `dataExcursao`, campo inexistente no modelo pedagógico. Sem valor, o código caía no texto padrão e exibia "A combinar".
-- **Alcance real**: Não eram "algumas" excursões — **43 das 44 em produção têm data definida** e todas exibiam "A combinar". A inconsistência aparecia porque o painel administrativo lê `dataDestino` corretamente, então a mesma excursão mostrava data no admin e "A combinar" no site.
-- **Correção contida**: A rota que alimenta a tela (`/api/cliente/pedidos/excursao/:codigo`) já devolvia `dataDestino` — o dado chegava à página. Bastou ler o campo certo. Os dois são aceitos, porque a tela pode receber os dois tipos conforme a origem do link.
-- **Escopo verificado**: As demais telas que formatam data (`portfolio-excursoes.js`, `portfolio-single.js`, `pacotes-viagens.js`) consultam `/public/excursoes`, que retorna apenas convencionais, e já liam o campo correto. Nenhuma tela consome a listagem pública de pedagógicas.
-- **Validação em navegador real**: Excursão com data passou a exibir 11/06/2026 no cabeçalho e na aba de informações; excursão sem data segue exibindo "A combinar".
-
----

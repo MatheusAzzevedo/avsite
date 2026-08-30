@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-29) - feat: permitir a edição dos dados de um aluno já inscrito
+### Última atualização (2026-08-29) - feat: converter para caixa alta o código único da excursão pedagógica
+- **api/public/admin/js/excursao-pedagogica-editor.js** [Nova função `ativarCaixaAltaNoCodigo`]
+- **api/public/admin/excursao-pedagogica-editor.html** [Texto de ajuda do campo]
+
+Resumo: Tudo que for digitado ou colado no campo "Código único" vira caixa alta na hora, com a posição do cursor preservada. A conversão acontece ao digitar e não ao salvar, e a diferença importa: o código é o que o cliente usa para localizar a excursão e a busca no banco é exata, sensível a maiúsculas. Se fosse aplicada ao salvar, abrir uma excursão antiga só para corrigir o título renomearia o código dela em silêncio e os códigos em circulação parariam de encontrá-la — há uma excursão gravada como `BiologiaM2` nessa situação, e ela segue intacta. Também não foi usado `text-transform` no CSS, que mudaria só a aparência e faria a tela mostrar uma coisa enquanto o banco guarda outra.
+
+### Atualização anterior (2026-08-29) - feat: permitir a edição dos dados de um aluno já inscrito
 - **api/src/routes/lista-alunos.routes.ts** [Nova rota `PUT /aluno/:id`]
 - **api/src/schemas/pedido.schema.ts** [Novo `editarAlunoSchema`]
 - **api/public/admin/** [Botão na coluna de ações e modal de edição com os 17 campos]
