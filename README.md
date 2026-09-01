@@ -4,7 +4,21 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-29) - feat: converter para caixa alta o código único da excursão pedagógica
+### Última atualização (2026-09-01) - feat: alterar o status do pedido mostrando as consequências de cada opção
+- **api/src/utils/transicoes-pedido.ts** [Novo: regras que avaliam cada transição]
+- **api/src/routes/pedido.routes.ts** [Nova rota `GET /:id/opcoes-status`; `PATCH /:id/status` reforçado]
+- **api/public/admin/js/status-pedido-modal.js** [Novo: modal compartilhado pelas duas telas de pedidos]
+
+Resumo: Status não é um campo comum — decide se a vaga está reservada, define quem entra na lista da escola e convive com dinheiro já recebido. O botão na coluna de ações abre um modal com os seis status já avaliados para aquele pedido: o que é permitido, o que exige confirmação, o que está bloqueado e o motivo de cada um, calculados a partir das vagas reais da excursão e do que o gateway responde. As opções de risco só gravam com a consequência confirmada, e a rota reavalia tudo na gravação, porque regra que só existe na tela não é regra. Falta de vaga bloqueia mas pode ser forçada pelo dono do sistema, com registro no log. Encerrar um pedido invalida a cobrança viva no gateway, e as datas de pagamento passam a ser limpas quando o status deixa de indicar pagamento.
+
+### Atualização anterior (2026-08-31) - fix: impedir que a cobrança PIX abandonada cancele o pedido pago no cartão
+- **api/src/routes/webhook.routes.ts** [Notificação só vale para a cobrança atual do pedido]
+- **api/public/cliente/js/checkout.js** [PIX não é mais gerado na abertura da tela]
+- **api/src/routes/pagamento.routes.ts** [Cartão invalida a cobrança PIX pendente]
+
+Resumo: 41 pedidos pagos no cartão, somando R$ 13.550,00, foram cancelados indevidamente em produção. O checkout abria com PIX pré-selecionado e criava uma cobrança PagHiper em todo pedido, inclusive nos de cartão. Paga a compra no cartão, essa cobrança ficava órfã, vencia dias depois e a notificação `canceled` do gateway derrubava o pedido já pago, porque o webhook só protegia o status `EXPIRADO`. A correção age em três camadas: nenhuma cobrança nasce antes de o cliente escolher o meio de pagamento; o cartão invalida no gateway o PIX que ficou para trás, evitando pagamento em duplicidade; e o webhook ignora notificação que não seja da cobrança atual, sem nunca rebaixar pedido pago. No caminho apareceu outro defeito: a contagem do checkout usava 15 minutos enquanto o servidor concede 120, cancelando o pedido 105 minutos antes da hora.
+
+### Atualização anterior (2026-08-29) - feat: converter para caixa alta o código único da excursão pedagógica
 - **api/public/admin/js/excursao-pedagogica-editor.js** [Nova função `ativarCaixaAltaNoCodigo`]
 - **api/public/admin/excursao-pedagogica-editor.html** [Texto de ajuda do campo]
 

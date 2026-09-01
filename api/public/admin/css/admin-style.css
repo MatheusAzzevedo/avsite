@@ -1097,3 +1097,229 @@ a[href="config-pagamento.html"] {
     font-size: 0.9rem;
     font-weight: 500;
 }
+
+
+/* ============================================
+   MODAL DE STATUS DO PEDIDO
+   ============================================ */
+
+/* Cada opção carrega a própria explicação, por isso é lista e não select:
+   a consequência precisa estar visível ANTES da escolha. */
+.status-pedido-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.status-pedido-overlay.oculto {
+    display: none;
+}
+
+.status-pedido-caixa {
+    background: white;
+    border-radius: var(--radius-md, 8px);
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.status-pedido-cabecalho {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--light-border, #e5e7eb);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-pedido-cabecalho h3 {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.status-pedido-fechar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--text-light);
+    padding: 0.25rem;
+}
+
+.status-pedido-fechar:hover {
+    color: var(--text-primary, #111);
+}
+
+.status-pedido-corpo {
+    padding: 1.25rem 1.5rem;
+    overflow-y: auto;
+}
+
+/* Botão desabilitado precisa parecer desabilitado: sem isso, "Salvar status"
+   ficava com aparência de clicável enquanto ainda faltava marcar a confirmação,
+   e o clique sem efeito parece defeito. */
+.status-pedido-rodape .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.status-pedido-rodape {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--light-border, #e5e7eb);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* Botão de ação em tabela nunca ocupa a linha inteira. `.btn-primary` é
+   `width: 100%` por ser pensada para formulário; dentro da célula de ações isso
+   empurrava os demais botões para baixo, e piorava a cada botão novo. */
+.action-buttons-cell .btn,
+.table-actions .btn {
+    width: auto;
+}
+
+/* O botão de status na coluna de ações. Não usa .btn-primary porque aquela
+   classe é `width: 100%`, pensada para botões de formulário. */
+.btn-status-pedido {
+    background-color: #0ea5e9;
+    color: white;
+}
+
+.btn-status-pedido:hover {
+    background-color: #0284c7;
+}
+
+.status-pedido-resumo {
+    background: var(--light-bg, #f8f9fa);
+    border-left: 3px solid var(--primary-color);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.status-pedido-resumo p {
+    margin: 0 0 0.35rem 0;
+}
+
+.status-pedido-resumo p:last-child {
+    margin-bottom: 0;
+}
+
+.status-pedido-gateway {
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+
+.status-pedido-gateway-indisponivel {
+    color: var(--danger-color);
+}
+
+.status-pedido-opcao {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.75rem;
+    border: 1px solid var(--light-border, #e5e7eb);
+    border-radius: var(--radius-md, 6px);
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.status-pedido-opcao:hover:not(.bloqueado):not(.atual) {
+    border-color: var(--primary-color);
+}
+
+/* Bloqueado e atual continuam legíveis: o motivo importa mais que a opção. */
+.status-pedido-opcao.bloqueado,
+.status-pedido-opcao.atual {
+    cursor: not-allowed;
+    background: var(--light-bg, #f8f9fa);
+}
+
+.status-pedido-opcao.exige_confirmacao {
+    border-color: #f59e0b;
+    background: #fffbeb;
+}
+
+.status-pedido-opcao.bloqueado {
+    border-color: var(--danger-color);
+}
+
+.status-pedido-opcao input[type="radio"] {
+    margin-top: 0.25rem;
+}
+
+.status-pedido-opcao-titulo {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.status-pedido-etiqueta {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    background: var(--secondary-color, #6b7280);
+    color: white;
+    font-weight: 600;
+}
+
+.status-pedido-etiqueta.atencao {
+    background: #f59e0b;
+}
+
+.status-pedido-etiqueta.bloqueado {
+    background: var(--danger-color);
+}
+
+.status-pedido-motivos {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.status-pedido-motivos li {
+    margin-bottom: 0.2rem;
+}
+
+.status-pedido-confirmacoes-caixa {
+    border: 1px solid #f59e0b;
+    background: #fffbeb;
+    border-radius: var(--radius-md, 6px);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+}
+
+.status-pedido-confirmacao {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.status-pedido-confirmacao:last-child {
+    margin-bottom: 0;
+}
+
+.status-pedido-aviso-cliente {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    cursor: pointer;
+}

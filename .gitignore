@@ -13,3 +13,10 @@ node_modules/
 dev.Dockerfile
 docker-compose.yml
 .agent/
+
+# Editor
+# O .sublime-workspace guarda estado local (arquivos abertos, histórico de
+# busca) e nunca deve ser versionado; o .sublime-project acompanha, por ser
+# gerado junto e específico de quem edita.
+*.sublime-workspace
+*.sublime-project

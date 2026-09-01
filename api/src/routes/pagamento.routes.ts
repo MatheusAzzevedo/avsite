@@ -407,15 +407,42 @@ router.post('/cartao',
         ? 'PAGO'
         : 'AGUARDANDO_PAGAMENTO';
 
+      // Guarda a cobrança PIX que o pedido tinha antes: ao gravar o id do Asaas
+      // em `codigoPagamento`, a referência dela se perde.
+      const cobrancaPixAnterior =
+        pedido.metodoPagamento === 'pix' ? pedido.codigoPagamento : null;
+
       await prisma.pedido.update({
         where: { id: pedido.id },
         data: {
           codigoPagamento: cobranca.id,
           metodoPagamento: 'cartao',
           status: statusPedido,
+          pixExpiraEm: null,
           ...(statusPedido === 'PAGO' && { dataPagamento: new Date() })
         }
       });
+
+      // Invalida no gateway o PIX que ficou para trás. Sem isso ele segue
+      // pagável até o vencimento, e o cliente que já pagou no cartão pode pagar
+      // de novo. Falha aqui não derruba o pagamento: o cartão já foi processado
+      // e o pedido já está gravado.
+      if (cobrancaPixAnterior && verificarConfigPagHiper()) {
+        try {
+          await cancelarCobrancaPixPagHiper(cobrancaPixAnterior);
+          logger.info('[Pagamento Cartão] Cobrança PIX anterior cancelada no PagHiper', {
+            context: { pedidoId, transactionIdPix: cobrancaPixAnterior }
+          });
+        } catch (error) {
+          logger.error('[Pagamento Cartão] Falha ao cancelar a cobrança PIX anterior', {
+            context: {
+              pedidoId,
+              transactionIdPix: cobrancaPixAnterior,
+              error: error instanceof Error ? error.message : 'Unknown'
+            }
+          });
+        }
+      }
 
       logger.info('[Pagamento Cartão] Cobrança processada', {
         context: { pedidoId, cobrancaId: cobranca.id, status: cobranca.status }
