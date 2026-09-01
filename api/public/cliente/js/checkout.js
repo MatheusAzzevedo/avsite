@@ -173,12 +173,19 @@
     var pedidoIdPagamento = null;
     var valorPagamento = 0;
     var pixQrCode = null;
+// Prazo real da cobrança, como o servidor informou. É ele que a varredura do
+// backend usa para expirar o PIX, então a contagem na tela precisa derivar daqui
+// e não de um valor fixo, que sairia do lugar se o cliente trocasse de aba.
+var pixExpiraEmISO = null;
     var pollStatusInterval = null;
     var pollStatusTimeout = null;
     var pagamentoListenersAdded = false;
     var pixExpiryTimerId = null;
     var pixExpiryIntervalId = null;
-    var PIX_EXPIRY_MINUTES = 15;
+    // Reserva, usada só se o servidor não informar o prazo. O valor real vem de
+// `expiraEm` na resposta da API — este número ficou em 15 enquanto o servidor
+// concedia 120, e a tela cancelava o pedido 105 minutos antes da hora.
+var PIX_EXPIRY_MINUTES = 120;
 
     function mostrarEtapaPagamento(pedidoId, valorTotal) {
         pedidoIdPagamento = pedidoId;
@@ -264,21 +271,35 @@
             }
         }
 
-        // Seleção inicial: PIX em destaque e exibir QR Code
+        // Nenhum meio vem pré-selecionado, e nenhuma cobrança é criada antes da
+        // escolha do cliente.
+        //
+        // Antes o PIX vinha marcado e o QR Code era gerado aqui, na abertura da
+        // tela. Isso criava uma cobrança PagHiper em todo checkout, inclusive nos
+        // de quem ia pagar no cartão. A cobrança abandonada vencia dias depois e o
+        // aviso de cancelamento do gateway derrubava o pedido já pago.
         document.querySelectorAll('.payment-option').forEach(function (o) { o.classList.remove('selected'); });
-        var opcaoPixEl = document.getElementById('opcaoPix');
         var pixBoxEl = document.getElementById('pixBox');
         var cartaoBoxEl = document.getElementById('cartaoBox');
-        if (opcaoPixEl) opcaoPixEl.classList.add('selected');
-        if (pixBoxEl) pixBoxEl.classList.add('show');
+        if (pixBoxEl) pixBoxEl.classList.remove('show');
         if (cartaoBoxEl) cartaoBoxEl.classList.remove('show');
-        gerarPix();
     }
 
     function gerarPix() {
         var container = document.getElementById('pixQrContainer');
         var btn = document.getElementById('btnCopiarPix');
         if (!pedidoIdPagamento || !container) return;
+
+        // Cada chamada cria uma cobrança nova no gateway e abandona a anterior.
+        // Se o cliente já tem um QR Code na tela, voltar para a aba do PIX apenas
+        // reexibe o que existe.
+        if (pixQrCode) {
+            console.log('[Checkout] PIX já gerado para este pedido; reexibindo o código atual.');
+            if (btn) btn.style.display = 'inline-block';
+            iniciarPollStatus();
+            iniciarTemporizadorPix();
+            return;
+        }
         container.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Gerando cobrança PIX...</p>';
         if (btn) btn.style.display = 'none';
         clienteAuth.fetchAuth('/cliente/pagamento/pix', {
@@ -299,6 +320,7 @@
                     return;
                 }
                 pixQrCode = data.data.qrCode || '';
+                pixExpiraEmISO = data.data.expiraEm || null;
                 var html = '';
                 if (data.data.qrCodeImage) {
                     var imgBase64 = String(data.data.qrCodeImage).trim();
@@ -332,14 +354,31 @@
     function iniciarTemporizadorPix() {
         pararTemporizadorPix();
         if (!pedidoIdPagamento) return;
-        var segundosRestantes = PIX_EXPIRY_MINUTES * 60;
+
+        var prazoServidor = pixExpiraEmISO ? new Date(pixExpiraEmISO).getTime() : NaN;
+        var segundosRestantes;
+        if (!isNaN(prazoServidor)) {
+            segundosRestantes = Math.max(0, Math.round((prazoServidor - Date.now()) / 1000));
+        } else {
+            console.warn('[Checkout] Servidor não informou expiraEm; usando prazo de reserva');
+            segundosRestantes = PIX_EXPIRY_MINUTES * 60;
+        }
+        if (segundosRestantes <= 0) return;
+
         var countdownEl = document.getElementById('pixCountdown');
+
+        // Com prazo de 2h, "min:seg" exibiria "119:59", que não se lê como tempo.
+        function formatarRestante(total) {
+            var h = Math.floor(total / 3600);
+            var m = Math.floor((total % 3600) / 60);
+            var sg = total % 60;
+            var doisDigitos = function (n) { return (n < 10 ? '0' : '') + n; };
+            return h > 0 ? (h + ':' + doisDigitos(m) + ':' + doisDigitos(sg)) : (m + ':' + doisDigitos(sg));
+        }
 
         function atualizarExibicao() {
             if (!countdownEl) return;
-            var min = Math.floor(segundosRestantes / 60);
-            var seg = segundosRestantes % 60;
-            countdownEl.textContent = 'Tempo restante: ' + min + ':' + (seg < 10 ? '0' : '') + seg + ' (pagamento expira em ' + PIX_EXPIRY_MINUTES + ' min)';
+            countdownEl.textContent = 'Tempo restante para pagar: ' + formatarRestante(segundosRestantes);
             if (segundosRestantes <= 60) countdownEl.style.color = '#dc2626';
         }
 
@@ -366,7 +405,7 @@
                     showToast('Tempo esgotado. Redirecionando...', 'error');
                     setTimeout(function () { window.location.href = 'inicio.html'; }, 1500);
                 });
-        }, PIX_EXPIRY_MINUTES * 60 * 1000);
+        }, segundosRestantes * 1000);
     }
 
     function iniciarPollStatus() {

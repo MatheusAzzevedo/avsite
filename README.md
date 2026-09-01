@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-29) - feat: converter para caixa alta o código único da excursão pedagógica
+### Última atualização (2026-08-31) - fix: impedir que a cobrança PIX abandonada cancele o pedido pago no cartão
+- **api/src/routes/webhook.routes.ts** [Notificação só vale para a cobrança atual do pedido]
+- **api/public/cliente/js/checkout.js** [PIX não é mais gerado na abertura da tela]
+- **api/src/routes/pagamento.routes.ts** [Cartão invalida a cobrança PIX pendente]
+
+Resumo: 41 pedidos pagos no cartão, somando R$ 13.550,00, foram cancelados indevidamente em produção. O checkout abria com PIX pré-selecionado e criava uma cobrança PagHiper em todo pedido, inclusive nos de cartão. Paga a compra no cartão, essa cobrança ficava órfã, vencia dias depois e a notificação `canceled` do gateway derrubava o pedido já pago, porque o webhook só protegia o status `EXPIRADO`. A correção age em três camadas: nenhuma cobrança nasce antes de o cliente escolher o meio de pagamento; o cartão invalida no gateway o PIX que ficou para trás, evitando pagamento em duplicidade; e o webhook ignora notificação que não seja da cobrança atual, sem nunca rebaixar pedido pago. No caminho apareceu outro defeito: a contagem do checkout usava 15 minutos enquanto o servidor concede 120, cancelando o pedido 105 minutos antes da hora.
+
+### Atualização anterior (2026-08-29) - feat: converter para caixa alta o código único da excursão pedagógica
 - **api/public/admin/js/excursao-pedagogica-editor.js** [Nova função `ativarCaixaAltaNoCodigo`]
 - **api/public/admin/excursao-pedagogica-editor.html** [Texto de ajuda do campo]
 

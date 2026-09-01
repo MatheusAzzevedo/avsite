@@ -262,6 +262,26 @@ router.post('/paghiper',
         context: { pedidoId, novoStatus: resultado.status }
       });
 
+      // A notificação só vale para a cobrança que o pedido está usando agora.
+      //
+      // Um mesmo pedido pode ter gerado uma cobrança PIX e, depois, ser pago no
+      // cartão pelo Asaas — nesse caso `codigoPagamento` passa a ser o id do
+      // Asaas e a cobrança PIX fica órfã no PagHiper. Um a dois dias depois ela
+      // vence e o gateway avisa `canceled`. Sem esta checagem, o aviso de uma
+      // cobrança abandonada derruba um pedido que foi pago no cartão.
+      if (pedido.codigoPagamento && pedido.codigoPagamento !== transaction_id) {
+        logger.warn('[Webhook PagHiper] Notificação de cobrança que não é a atual do pedido — ignorada', {
+          context: {
+            pedidoId,
+            transactionIdNotificado: transaction_id,
+            codigoPagamentoAtual: pedido.codigoPagamento,
+            statusGateway: resultado.status,
+            statusPedido: pedido.status
+          }
+        });
+        return res.json({ success: true, message: 'Notificação não corresponde à cobrança atual do pedido' });
+      }
+
       // Mapeamento status PagHiper → status do pedido.
       // Status possíveis: pending, reserved, paid, completed, processing, canceled, refunded.
       let novoStatusPedido = pedido.status;
@@ -284,7 +304,17 @@ router.post('/paghiper',
         // notifica de volta do nosso próprio cancelamento. Sobrescrever
         // EXPIRADO com CANCELADO apagaria a distinção entre prazo esgotado e
         // desistência do cliente — ambos terminais, mas EXPIRADO é mais preciso.
-        novoStatusPedido = pedido.status === 'EXPIRADO' ? 'EXPIRADO' : 'CANCELADO';
+        // Segunda barreira: dinheiro reconhecido não volta atrás por aviso de
+        // cancelamento. A checagem acima já barra a cobrança órfã, mas o custo de
+        // errar aqui é o cliente pagar e perder a vaga.
+        const STATUS_INTOCAVEIS: string[] = ['PAGO', 'CONFIRMADO'];
+        if (STATUS_INTOCAVEIS.includes(pedido.status)) {
+          logger.warn('[Webhook PagHiper] Cancelamento ignorado: pedido já está pago', {
+            context: { pedidoId, statusPedido: pedido.status, transaction_id }
+          });
+        } else {
+          novoStatusPedido = pedido.status === 'EXPIRADO' ? 'EXPIRADO' : 'CANCELADO';
+        }
       } else {
         logger.info('[Webhook PagHiper] Status sem mapeamento — pedido mantido como está', {
           context: { pedidoId, statusGateway: resultado.status, statusPedido: pedido.status }
