@@ -226,6 +226,19 @@ export const createPedidoExcursaoSchema = z.object({
  * Usado pelo admin para alterar status
  */
 export const updatePedidoStatusSchema = z.object({
+  /**
+   * Consequências que o operador declarou ter lido.
+   *
+   * A rota recusa a gravação se faltar algum token que a avaliação exigiu. Não
+   * é burocracia: é o que diferencia "cancelei sem saber que havia R$ 250,00
+   * recebidos" de uma decisão tomada com a informação na tela.
+   */
+  confirmacoes: z
+    .array(z.enum(['sem_vaga', 'dinheiro_reconhecido', 'sem_confirmacao_gateway']))
+    .optional()
+    .default([]),
+  /** Envia ao cliente o e-mail de confirmação do pedido após a mudança. */
+  avisarCliente: z.boolean().optional().default(false),
   status: z.enum([
     'PENDENTE',
     'AGUARDANDO_PAGAMENTO',

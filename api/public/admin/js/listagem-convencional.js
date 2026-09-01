@@ -177,6 +177,7 @@ function renderTable() {
       '<td>' + formatDate(p.dataPedido) + '</td>' +
       '<td><div class="action-buttons-cell">' +
         '<button type="button" class="btn btn-sm btn-primary btn-view" data-id="' + escapeHtml(p.id) + '" title="Visualizar"><i class="fas fa-eye"></i></button>' +
+        '<button type="button" class="btn btn-sm btn-status-pedido" data-id="' + escapeHtml(p.id) + '" title="Alterar status do pedido"><i class="fas fa-exchange-alt"></i></button>' +
         '<button type="button" class="btn btn-sm btn-danger btn-delete" data-id="' + escapeHtml(p.id) + '" data-titulo="' + escapeHtml(p.excursaoTitulo) + '" title="Excluir"><i class="fas fa-trash"></i></button>' +
       '</div></td>' +
     '</tr>';
@@ -185,6 +186,11 @@ function renderTable() {
   // Bind events
   tbody.querySelectorAll('.btn-view').forEach(btn => {
     btn.addEventListener('click', () => openDetalhes(btn.getAttribute('data-id')));
+  });
+  tbody.querySelectorAll('.btn-status-pedido').forEach(btn => {
+    btn.addEventListener('click', () => {
+      StatusPedidoModal.abrir(btn.getAttribute('data-id'), { aoConcluir: loadPedidos });
+    });
   });
   tbody.querySelectorAll('.btn-delete').forEach(btn => {
     btn.addEventListener('click', () => deletePedido(btn.getAttribute('data-id'), btn.getAttribute('data-titulo') || ''));

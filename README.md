@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-08-31) - fix: impedir que a cobrança PIX abandonada cancele o pedido pago no cartão
+### Última atualização (2026-09-01) - feat: alterar o status do pedido mostrando as consequências de cada opção
+- **api/src/utils/transicoes-pedido.ts** [Novo: regras que avaliam cada transição]
+- **api/src/routes/pedido.routes.ts** [Nova rota `GET /:id/opcoes-status`; `PATCH /:id/status` reforçado]
+- **api/public/admin/js/status-pedido-modal.js** [Novo: modal compartilhado pelas duas telas de pedidos]
+
+Resumo: Status não é um campo comum — decide se a vaga está reservada, define quem entra na lista da escola e convive com dinheiro já recebido. O botão na coluna de ações abre um modal com os seis status já avaliados para aquele pedido: o que é permitido, o que exige confirmação, o que está bloqueado e o motivo de cada um, calculados a partir das vagas reais da excursão e do que o gateway responde. As opções de risco só gravam com a consequência confirmada, e a rota reavalia tudo na gravação, porque regra que só existe na tela não é regra. Falta de vaga bloqueia mas pode ser forçada pelo dono do sistema, com registro no log. Encerrar um pedido invalida a cobrança viva no gateway, e as datas de pagamento passam a ser limpas quando o status deixa de indicar pagamento.
+
+### Atualização anterior (2026-08-31) - fix: impedir que a cobrança PIX abandonada cancele o pedido pago no cartão
 - **api/src/routes/webhook.routes.ts** [Notificação só vale para a cobrança atual do pedido]
 - **api/public/cliente/js/checkout.js** [PIX não é mais gerado na abertura da tela]
 - **api/src/routes/pagamento.routes.ts** [Cartão invalida a cobrança PIX pendente]

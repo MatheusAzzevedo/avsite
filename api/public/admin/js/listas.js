@@ -419,6 +419,9 @@ function renderAlunos() {
                         <button type="button" class="btn btn-sm btn-editar-aluno" data-aluno-index="${index}" title="Editar dados do aluno">
                             <i class="fas fa-pen"></i>
                         </button>` : ''}
+                        <button type="button" class="btn btn-sm btn-status-pedido" data-pedido-id="${aluno.pedidoId}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Alterar status do pedido">
+                            <i class="fas fa-exchange-alt"></i>
+                        </button>
                         <button type="button" class="btn btn-sm btn-danger btn-deletar-aluno" data-aluno-id="${aluno.id}" data-aluno-nome="${escapeHtml(aluno.nomeAluno)}" title="Excluir aluno da lista">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -432,6 +435,7 @@ function renderAlunos() {
     attachEmailButtonListeners();
     attachDetalhesButtonListeners();
     attachEditarButtonListeners();
+    attachStatusPedidoButtonListeners();
     attachDeletarButtonListeners();
 }
 
@@ -454,6 +458,41 @@ function attachDetalhesButtonListeners() {
             abrirDetalhesAluno(index);
         });
     });
+}
+
+/**
+ * Explicação da função [attachStatusPedidoButtonListeners]
+ * Liga os botões de alteração de status ao modal compartilhado.
+ *
+ * A linha da tabela é um aluno, mas o status pertence ao PEDIDO. Quando o mesmo
+ * pedido traz mais de um aluno, a mudança atinge todos eles — por isso o aviso
+ * antes de abrir, e não depois de salvar.
+ */
+function attachStatusPedidoButtonListeners() {
+    console.log('[Listas] Anexando listeners de status do pedido...');
+    const btns = document.querySelectorAll('.btn-status-pedido');
+    btns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const pedidoId = this.getAttribute('data-pedido-id');
+            if (!pedidoId) {
+                showError('Não foi possível identificar o pedido deste aluno.');
+                return;
+            }
+
+            const irmaos = alunosData.filter(a => a.pedidoId === pedidoId);
+            if (irmaos.length > 1) {
+                const nomes = irmaos.map(a => a.nomeAluno).join(', ');
+                const seguir = confirm(
+                    `Este pedido tem ${irmaos.length} alunos: ${nomes}.\n\n` +
+                    'Alterar o status vale para todos eles. Deseja continuar?'
+                );
+                if (!seguir) return;
+            }
+
+            StatusPedidoModal.abrir(pedidoId, { aoConcluir: loadAlunos });
+        });
+    });
+    console.log(`[Listas] ${btns.length} listeners de status anexados`);
 }
 
 /**

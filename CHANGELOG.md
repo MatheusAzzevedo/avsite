@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-01 - feat: alterar o status do pedido mostrando as consequências de cada opção
+
+### Arquivos Modificados
+- `api/src/utils/transicoes-pedido.ts` [Novo: regras que avaliam cada transição]
+- `api/src/routes/pedido.routes.ts` [Nova rota `GET /:id/opcoes-status`; `PATCH /:id/status` reforçado]
+- `api/src/schemas/pedido.schema.ts` [Campos `confirmacoes` e `avisarCliente`]
+- `api/public/admin/js/status-pedido-modal.js` [Novo: componente compartilhado pelas duas telas]
+- `api/public/admin/js/listagem-convencional.js`, `listas.js`, `listas.html`, `listagem-convencional.html` [Botão na coluna de ações]
+- `api/public/admin/css/admin-style.css` [Estilos do modal e correção da largura dos botões de ação]
+
+### Detalhes das Alterações
+- **O problema do seletor simples**: Status não é um campo comum. Ele decide se a vaga está reservada ou de volta no estoque, define quem entra na lista enviada à escola e convive com dinheiro já recebido por um gateway. Um seletor que aceita qualquer valor esconde tudo isso de quem opera — e a rota que existia aceitava qualquer transição sem checar nada.
+- **Quatro portões, cada um disparando só onde faz sentido**: vaga (ao sair de um status terminal para um ativo, único caminho que reocupa vaga); dinheiro reconhecido (ao encerrar um pedido já pago); gateway (ao afirmar pagamento que ele não confirma, ou ao cancelar com cobrança viva); e datas (ao sair de um status de pagamento). Uma matriz de 36 combinações seria ilegível e cheia de célula sem sentido.
+- **A regra mora no backend**: A tela pede a avaliação a `GET /:id/opcoes-status`, que consulta as vagas reais da excursão e o gateway. A gravação reavalia tudo de novo — entre abrir o modal e salvar, outra pessoa pode ter ocupado a última vaga. Sem isso, bastaria uma chamada direta à API para furar toda a proteção.
+- **Confirmação com o texto da consequência**: As opções de risco exigem tokens (`sem_vaga`, `dinheiro_reconhecido`, `sem_confirmacao_gateway`) devolvidos na gravação. A caixa repete a frase específica daquele pedido, não um "tem certeza?" genérico. Sem o token, a rota recusa com 400.
+- **Falta de vaga bloqueia, mas pode ser forçada**: Barreira dura obrigaria a cancelar o pedido de outra pessoa para corrigir um engano — pior que o overbooking consciente. Fica registrado no log de atividade junto com o motivo exibido na tela.
+- **Três situações de gateway, não duas**: Não ter cobrança registrada é normal (venda manual) e a consulta falhar não é. Na primeira versão as duas viravam "não foi possível consultar", o que faria o operador procurar problema onde não há.
+- **Datas passam a ser limpas**: A rota antiga só preenchia `dataPagamento`/`dataConfirmacao`, nunca limpava. Um pedido devolvido de Pago para Pendente ficava com a data de um pagamento que, segundo o próprio status, não existe.
+- **Cobrança viva é invalidada junto**: Encerrar o pedido cancela o PIX no gateway. Sem isso o cliente pagaria uma cobrança de pedido cancelado — o mesmo padrão que derrubou 41 pedidos pagos no cartão.
+- **E-mail desmarcado por padrão**: Avisar o cliente é irreversível e não pode ser efeito colateral de uma correção de status.
+- **Correção de layout encontrada no caminho**: `.btn-primary` é `width: 100%`, pensada para formulário. Na coluna de ações isso fazia o botão de visualizar ocupar a linha inteira e empurrar os demais para baixo — já acontecia antes, e piorava a cada botão novo.
+- **Validação em navegador real**: Bloqueio por vaga com a excursão reduzida a 1 vaga já ocupada; gravação recusada sem confirmação e recusada de novo com só uma das duas exigidas; gravação aceita com ambas, registrando o motivo no log; retorno de Pago para Pendente limpando as duas datas; e as duas telas exibindo o modal com o valor recebido, a excursão e as consequências por opção.
+
+---
+
 ## 2026-08-31 - fix: impedir que a cobrança PIX abandonada cancele o pedido pago no cartão
 
 ### Arquivos Modificados
@@ -72,23 +97,5 @@
 - **Validação em duas camadas**: Os atributos `required` do HTML barram o envio incompleto sem ida ao servidor; o Zod valida no backend, devolvendo erro por campo.
 - **Sem armazenamento em banco**: A decisão foi entregar por e-mail, que é onde a equipe já trabalha. O ponto de extensão para histórico fica na rota, antes do envio.
 - **Validação em navegador real**: Formulário preenchido e enviado sem sair da página, com aviso de sucesso, campos limpos e botão reabilitado; envio vazio bloqueado pelo navegador antes de chegar à API; e o limite respondendo 429 com mensagem clara na sexta tentativa.
-
----
-
-## 2026-08-22 - feat: remover do R2 as imagens que deixam de ser usadas
-
-### Arquivos Modificados
-- `api/src/utils/limpeza-r2.ts` [Novo: verificação de reuso e remoção de órfãs]
-- `api/src/routes/excursao.routes.ts`, `post.routes.ts`, `equipe.routes.ts`, `autores.routes.ts`, `excursao-pedagogica.routes.ts` [Limpeza ligada na exclusão e na atualização]
-
-### Detalhes das Alterações
-- **Problema**: Excluir um registro ou trocar uma foto deixava o objeto antigo no bucket para sempre. Confirmado em produção: após excluir uma excursão de teste, a imagem continuou respondendo 200. Sem tratamento, o bucket acumularia lixo indefinidamente, sem forma de distinguir depois o que é órfão do que está em uso.
-- **Estratégia escolhida**: Remoção automática junto da alteração, em vez de uma faxina periódica manual. O critério foi a continuidade: uma rotina que depende de alguém lembrar de executá-la não sobrevive à troca de responsável pelo projeto.
-- **Verificação de reuso**: A mesma URL pode aparecer em vários campos — é comum a mesma foto servir de capa, imagem principal e item de galeria. Antes de apagar, `removerSeOrfas` conta as ocorrências nos 11 campos do sistema e só remove o que ninguém mais referencia. Sem isso, excluir uma excursão destruiria a imagem de outra que a reaproveitasse, sem recuperação possível.
-- **Cobertura da troca de imagem**: `urlsQueSairam` compara o estado anterior com o novo nas rotas de atualização. Trocar foto é mais frequente que excluir cadastro, então seria a maior fonte de lixo se ficasse de fora.
-- **Ordem das operações**: A limpeza roda sempre depois da alteração no banco. Se fosse antes e a gravação falhasse, o registro apontaria para uma imagem já apagada e a foto sumiria do site sem explicação. Depois, o pior caso é sobrar um órfão, que é reversível.
-- **Falha isolada**: Nunca lança exceção — uma indisponibilidade do R2 não pode impedir alguém de excluir ou editar um registro. As falhas vão ao log com a chave do objeto.
-- **Documentos incluídos**: Nas excursões pedagógicas, o `documentoUrl` entra junto das imagens, porque também vive no bucket.
-- **Validação**: Quatro cenários exercitados contra o bucket real — imagem compartilhada entre dois registros preservada ao excluir o primeiro e removida ao excluir o segundo; troca de imagem removendo a antiga e mantendo a nova; e atualização sem alterar imagem preservando o arquivo.
 
 ---

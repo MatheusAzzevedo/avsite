@@ -29,6 +29,16 @@ import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao'
 import { logger } from '../utils/logger';
 import { ExcursaoStatus, PedidoStatus } from '@prisma/client';
 import { gerarTemplateComprovante } from '../templates/comprovante-template';
+import {
+  avaliarTodasAsTransicoes,
+  avaliarTransicao,
+  STATUS_QUE_OCUPAM_VAGA,
+  STATUS_DE_PAGAMENTO,
+  ContextoTransicao,
+  TokenConfirmacao
+} from '../utils/transicoes-pedido';
+import { consultarTransacaoPagHiper, cancelarCobrancaPixPagHiper, verificarConfigPagHiper } from '../config/paghiper';
+import { consultarPagamentoAsaas, verificarConfigAsaas } from '../config/asaas';
 
 const router = Router();
 
@@ -698,6 +708,184 @@ router.get('/:id/comprovante',
 );
 
 /**
+ * Explicação da função [consultarGateway]
+ * Pergunta ao gateway o que ele sabe sobre a cobrança atual do pedido.
+ *
+ * Devolve `null` quando não há cobrança ou a consulta falha. É de propósito que
+ * a falha não derrube nada: o operador ainda pode decidir, só perde uma
+ * informação — e a tela avisa que ela faltou, em vez de fingir que consultou.
+ */
+async function consultarGateway(
+  metodoPagamento: string | null,
+  codigoPagamento: string | null
+): Promise<ContextoTransicao['gateway']> {
+  // Sem cobrança registrada é situação normal — venda manual, por exemplo — e
+  // não uma falha. As duas produzem frases diferentes na tela.
+  if (!codigoPagamento || !metodoPagamento) return { situacao: 'sem_cobranca' };
+
+  try {
+    if (metodoPagamento === 'pix') {
+      if (!verificarConfigPagHiper()) return { situacao: 'indisponivel' };
+      const resultado = await consultarTransacaoPagHiper(codigoPagamento);
+      const pagos = ['paid', 'completed', 'reserved'];
+      const vivos = ['pending', 'processing'];
+      return {
+        situacao: 'consultado',
+        reconheceuPagamento: pagos.includes(resultado.status),
+        cobrancaAtiva: vivos.includes(resultado.status),
+        statusBruto: resultado.status
+      };
+    }
+
+    if (metodoPagamento === 'cartao') {
+      if (!verificarConfigAsaas()) return { situacao: 'indisponivel' };
+      const resultado = await consultarPagamentoAsaas(codigoPagamento);
+      const pagos = ['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH', 'CONFIRMED_BY_CUSTOMER'];
+      const vivos = ['PENDING', 'AWAITING_RISK_ANALYSIS'];
+      const status = String(resultado?.status || 'DESCONHECIDO');
+      return {
+        situacao: 'consultado',
+        reconheceuPagamento: pagos.includes(status),
+        cobrancaAtiva: vivos.includes(status),
+        statusBruto: status
+      };
+    }
+
+    return { situacao: 'sem_cobranca' };
+  } catch (error) {
+    logger.warn('[Pedidos Admin] Não foi possível consultar o gateway', {
+      context: {
+        metodoPagamento,
+        codigoPagamento,
+        error: error instanceof Error ? error.message : 'Unknown'
+      }
+    });
+    return { situacao: 'indisponivel' };
+  }
+}
+
+/**
+ * Explicação da função [montarContextoTransicao]
+ * Reúne o retrato do pedido e da excursão que as regras de transição consultam.
+ *
+ * As vagas são contadas SEM este pedido. É o que permite responder "cabe se eu
+ * reativar?" sem que o próprio pedido apareça nos dois lados da conta.
+ */
+async function montarContextoTransicao(pedidoId: string) {
+  const pedido = await prisma.pedido.findUnique({
+    where: { id: pedidoId },
+    include: {
+      cliente: { select: { id: true, email: true, nome: true } },
+      excursao: { select: { id: true, titulo: true, vagas: true } },
+      excursaoPedagogica: { select: { id: true, titulo: true, vagas: true } }
+    }
+  });
+
+  if (!pedido) return null;
+
+  const excursao = pedido.excursaoPedagogica ?? pedido.excursao;
+
+  let vagasOcupadasPorOutros = 0;
+  if (excursao) {
+    const filtroExcursao = pedido.excursaoPedagogicaId
+      ? { excursaoPedagogicaId: pedido.excursaoPedagogicaId }
+      : { excursaoId: pedido.excursaoId };
+
+    const soma = await prisma.pedido.aggregate({
+      where: {
+        ...filtroExcursao,
+        id: { not: pedido.id },
+        status: { in: STATUS_QUE_OCUPAM_VAGA }
+      },
+      _sum: { quantidade: true }
+    });
+    vagasOcupadasPorOutros = soma._sum.quantidade || 0;
+  }
+
+  const gateway = await consultarGateway(pedido.metodoPagamento, pedido.codigoPagamento);
+
+  const contexto: ContextoTransicao = {
+    statusAtual: pedido.status,
+    quantidade: pedido.quantidade,
+    valorTotal: Number(pedido.valorTotal),
+    dataPagamento: pedido.dataPagamento,
+    dataConfirmacao: pedido.dataConfirmacao,
+    vagasTotais: excursao?.vagas ?? null,
+    vagasOcupadasPorOutros,
+    gateway
+  };
+
+  return { pedido, excursao, contexto };
+}
+
+/**
+ * Explicação da API [GET /api/admin/pedidos/:id/opcoes-status]
+ *
+ * Devolve os seis status já avaliados para ESTE pedido: o que é permitido, o
+ * que exige confirmação, o que está bloqueado, e o motivo de cada um.
+ *
+ * Existe para que a tela mostre a consequência antes da escolha, em vez de
+ * aceitar qualquer valor e devolver erro depois. Consulta as vagas da excursão
+ * e o gateway no momento da abertura.
+ *
+ * Response: { success, data: { pedido, excursao, gateway, opcoes[] } }
+ */
+router.get('/:id/opcoes-status',
+  authMiddleware,
+  adminMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const montado = await montarContextoTransicao(id);
+
+      if (!montado) {
+        throw ApiError.notFound('Pedido não encontrado');
+      }
+
+      const { pedido, excursao, contexto } = montado;
+      const opcoes = avaliarTodasAsTransicoes(contexto);
+
+      logger.info('[Pedidos Admin] Opções de status avaliadas', {
+        context: {
+          pedidoId: id,
+          statusAtual: pedido.status,
+          gateway: contexto.gateway.situacao,
+          bloqueadas: opcoes.filter((o) => o.veredito === 'bloqueado').map((o) => o.status)
+        }
+      });
+
+      res.json({
+        success: true,
+        data: {
+          pedido: {
+            id: pedido.id,
+            status: pedido.status,
+            quantidade: pedido.quantidade,
+            valorTotal: Number(pedido.valorTotal),
+            dataPagamento: pedido.dataPagamento,
+            dataConfirmacao: pedido.dataConfirmacao,
+            metodoPagamento: pedido.metodoPagamento,
+            clienteNome: pedido.cliente?.nome ?? null,
+            clienteEmail: pedido.cliente?.email ?? null
+          },
+          excursao: excursao
+            ? {
+                titulo: excursao.titulo,
+                vagasTotais: excursao.vagas,
+                vagasOcupadasPorOutros: contexto.vagasOcupadasPorOutros
+              }
+            : null,
+          gateway: contexto.gateway,
+          opcoes
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
  * Explicação da API [PATCH /api/cliente/pedidos/:id/status]
  * 
  * Atualiza status de um pedido.
@@ -714,42 +902,71 @@ router.patch('/:id/status',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const { status, observacoes } = req.body;
+      const { status, observacoes, confirmacoes, avisarCliente } = req.body;
+      const confirmacoesRecebidas: TokenConfirmacao[] = confirmacoes || [];
 
       logger.info('[Pedidos Admin] Atualizando status do pedido', {
         context: { 
           pedidoId: id, 
           novoStatus: status,
+          confirmacoes: confirmacoesRecebidas,
+          avisarCliente: !!avisarCliente,
           adminId: req.user!.id
         }
       });
 
-      // Busca pedido
-      const pedidoExistente = await prisma.pedido.findUnique({
-        where: { id },
-        include: {
-          cliente: { select: { email: true } }
-        }
-      });
+      // Monta o mesmo retrato que a tela usou para exibir as opções, e avalia a
+      // transição de novo aqui. Reavaliar não é redundância: entre abrir o modal
+      // e gravar, outra pessoa pode ter ocupado a última vaga ou o pagamento
+      // pode ter entrado.
+      const montado = await montarContextoTransicao(id);
 
-      if (!pedidoExistente) {
+      if (!montado) {
         logger.warn('[Pedidos Admin] Pedido não encontrado', {
           context: { pedidoId: id }
         });
         throw ApiError.notFound('Pedido não encontrado');
       }
 
-      // Atualiza pedido
+      const { pedido: pedidoExistente, contexto } = montado;
+      const avaliacao = avaliarTransicao(status as PedidoStatus, contexto);
+
+      if (avaliacao.veredito === 'atual') {
+        throw ApiError.badRequest('O pedido já está neste status.');
+      }
+
+      // Bloqueio só cede com o token correspondente. É assim que a falta de vaga
+      // vira decisão consciente do dono do sistema em vez de barreira dura, sem
+      // deixar de ser bloqueio para quem não sabe o que está fazendo.
+      const faltando = avaliacao.confirmacoes.filter((t) => !confirmacoesRecebidas.includes(t));
+      if (faltando.length > 0) {
+        logger.warn('[Pedidos Admin] Transição recusada: consequências não confirmadas', {
+          context: { pedidoId: id, novoStatus: status, faltando, motivos: avaliacao.motivos }
+        });
+        return res.status(400).json({
+          success: false,
+          error: 'Esta mudança exige confirmação das consequências.',
+          data: { veredito: avaliacao.veredito, motivos: avaliacao.motivos, confirmacoesNecessarias: faltando }
+        });
+      }
+
       const dataToUpdate: any = { status };
 
-      // Se status é PAGO e não tinha dataPagamento, registra
+      // Datas de pagamento e confirmação acompanham o status nos dois sentidos.
+      // Antes elas só eram preenchidas, nunca limpas: um pedido devolvido de
+      // PAGO para PENDENTE ficava com data de pagamento de um pagamento que,
+      // segundo o próprio status, não existe.
       if (status === 'PAGO' && !pedidoExistente.dataPagamento) {
         dataToUpdate.dataPagamento = new Date();
       }
 
-      // Se status é CONFIRMADO e não tinha dataConfirmacao, registra
       if (status === 'CONFIRMADO' && !pedidoExistente.dataConfirmacao) {
         dataToUpdate.dataConfirmacao = new Date();
+      }
+
+      if (!STATUS_DE_PAGAMENTO.includes(status as PedidoStatus)) {
+        if (pedidoExistente.dataPagamento) dataToUpdate.dataPagamento = null;
+        if (pedidoExistente.dataConfirmacao) dataToUpdate.dataConfirmacao = null;
       }
 
       // Atualiza observações se fornecidas
@@ -767,17 +984,62 @@ router.patch('/:id/status',
         }
       });
 
-      // Registra atividade
+      // A tela informou que a cobrança viva seria invalidada; aqui isso acontece.
+      // Sem esta parte, um pedido cancelado por dentro continuaria pagável no
+      // gateway — foi exatamente assim que cobranças órfãs derrubaram pedidos
+      // pagos no cartão.
+      if (
+        contexto.gateway.situacao === 'consultado' &&
+        contexto.gateway.cobrancaAtiva &&
+        pedidoExistente.metodoPagamento === 'pix' &&
+        pedidoExistente.codigoPagamento &&
+        !STATUS_QUE_OCUPAM_VAGA.includes(status as PedidoStatus)
+      ) {
+        try {
+          await cancelarCobrancaPixPagHiper(pedidoExistente.codigoPagamento);
+          logger.info('[Pedidos Admin] Cobrança PIX invalidada junto da mudança de status', {
+            context: { pedidoId: id, transactionId: pedidoExistente.codigoPagamento }
+          });
+        } catch (error) {
+          // Não desfaz a mudança de status: a varredura de expiração tenta de novo.
+          logger.error('[Pedidos Admin] Falha ao invalidar a cobrança PIX no gateway', {
+            context: {
+              pedidoId: id,
+              transactionId: pedidoExistente.codigoPagamento,
+              error: error instanceof Error ? error.message : 'Unknown'
+            }
+          });
+        }
+      }
+
+      // Registra atividade — com o motivo, e não só o destino. Meses depois, o
+      // que importa saber é por que a exceção foi aberta.
+      const descricaoLog = [
+        `Status alterado de ${pedidoExistente.status} para ${status}`,
+        confirmacoesRecebidas.length ? `Confirmações: ${confirmacoesRecebidas.join(', ')}` : null,
+        avaliacao.motivos.length ? `Consequências exibidas: ${avaliacao.motivos.join(' | ')}` : null
+      ].filter(Boolean).join('. ');
+
       await prisma.activityLog.create({
         data: {
           action: 'update',
           entity: 'pedido',
           entityId: pedido.id,
-          description: `Status alterado para ${status}`,
+          description: descricaoLog,
           userId: req.user!.id,
           userEmail: req.user!.email
         }
       });
+
+      // E-mail só sai quando pedido explicitamente: avisar o cliente é
+      // irreversível e não pode ser efeito colateral de uma correção de status.
+      if (avisarCliente) {
+        enviarEmailConfirmacaoPedido(pedido.id).catch((err) => {
+          logger.error('[Pedidos Admin] Falha ao enviar e-mail após mudança de status', {
+            context: { pedidoId: id, error: err instanceof Error ? err.message : 'Unknown' }
+          });
+        });
+      }
 
       logger.info('[Pedidos Admin] Status do pedido atualizado', {
         context: {
