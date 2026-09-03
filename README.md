@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-09-02) - fix: preservar a data de pagamento ao cancelar um pedido pago
+### Última atualização (2026-09-02) - fix: liberar o comprovante para pedidos confirmados
+- **api/src/routes/pedido.routes.ts**, **api/public/cliente/js/pedidos.js** [Comprovante aceita `PAGO` e `CONFIRMADO`]
+
+Resumo: A rota e o botão do comprovante exigiam `PAGO`, mas `CONFIRMADO` é o passo seguinte, não um estado inferior. Em produção, 144 pedidos de 139 clientes não conseguiam emitir comprovante. O efeito era quase todo no cartão: é o webhook do Asaas que promove o pedido para `CONFIRMADO` segundos após a aprovação, então o cliente via o botão e o perdia. Pedido cancelado, expirado ou ainda não pago continua sem comprovante.
+
+### Atualização anterior (2026-09-02) - fix: preservar a data de pagamento ao cancelar um pedido pago
 - **api/src/utils/transicoes-pedido.ts**, **api/src/routes/pedido.routes.ts** [Limpeza das datas só ao voltar para antes do pagamento]
 
 Resumo: A correção do dia anterior ia longe demais e apagava `dataPagamento` também ao cancelar. O modal avisava que a mudança não estorna nada e, em seguida, removia o registro de que o dinheiro entrou. Isso destrói justamente a evidência que permitiu achar os 41 pedidos pagos cancelados por engano. Agora a limpeza vale só para `PENDENTE` e `AGUARDANDO_PAGAMENTO`, os status que afirmam que o pagamento ainda não aconteceu.

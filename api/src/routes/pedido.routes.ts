@@ -34,6 +34,7 @@ import {
   avaliarTransicao,
   STATUS_QUE_OCUPAM_VAGA,
   STATUS_ANTES_DO_PAGAMENTO,
+  STATUS_DE_PAGAMENTO,
   ContextoTransicao,
   TokenConfirmacao
 } from '../utils/transicoes-pedido';
@@ -622,11 +623,18 @@ router.get('/:id/comprovante',
         context: { pedidoId: id, clienteId }
       });
 
+      // PAGO e CONFIRMADO, e não só PAGO.
+      //
+      // CONFIRMADO não é um status inferior: é o passo seguinte, o pedido pago e
+      // confirmado pela empresa. É para lá que o webhook do Asaas promove o
+      // pedido logo após aprovar o cartão, então quem pagava no cartão via o
+      // botão por alguns segundos e depois o perdia. Reusa STATUS_DE_PAGAMENTO
+      // para que "o que conta como pago" continue definido num lugar só.
       const pedido = await prisma.pedido.findFirst({
         where: {
           id,
           clienteId,
-          status: 'PAGO' // Somente status PAGO, conforme solicitado
+          status: { in: STATUS_DE_PAGAMENTO }
         },
         include: {
           excursaoPedagogica: true,
@@ -637,7 +645,7 @@ router.get('/:id/comprovante',
       });
 
       if (!pedido) {
-        logger.warn('[Pedidos] Pedido não encontrado ou não está PAGO', {
+        logger.warn('[Pedidos] Pedido não encontrado ou sem pagamento reconhecido', {
           context: { pedidoId: id, clienteId }
         });
         throw ApiError.notFound('Comprovante indisponível. O pedido precisa estar com pagamento confirmado.');

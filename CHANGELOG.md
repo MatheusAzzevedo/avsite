@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-02 - fix: liberar o comprovante para pedidos confirmados, e não só pagos
+
+### Arquivos Modificados
+- `api/src/routes/pedido.routes.ts` [Rota do comprovante aceita `PAGO` e `CONFIRMADO`]
+- `api/public/cliente/js/pedidos.js` [Botão aparece nos dois status]
+
+### Detalhes das Alterações
+- **O problema**: A rota filtrava `status: 'PAGO'` e o botão na tela usava a mesma condição. Só que `CONFIRMADO` não é um status inferior a `PAGO`: é o passo **seguinte**, o pedido pago e confirmado pela empresa. Deixá-lo de fora inverte a intenção da regra.
+- **Alcance em produção**: **144 pedidos em `CONFIRMADO`, de 139 clientes distintos**, nenhum conseguia emitir comprovante. Desses, 119 têm data de pagamento registrada.
+- **Por que aparecia principalmente no cartão**: É o webhook `PAYMENT_CONFIRMED` do Asaas que promove o pedido de `PAGO` para `CONFIRMADO`, e ele chega segundos depois da aprovação. Dos 144 confirmados, 118 são de cartão e apenas 1 de PIX. Na prática, quem pagava no cartão via o botão do comprovante por alguns segundos e depois o perdia, enquanto quem pagava no PIX ficava em `PAGO` e mantinha.
+- **Reuso da constante**: A rota passa a usar `STATUS_DE_PAGAMENTO`, já definida em `transicoes-pedido.ts`, em vez de uma segunda lista. Assim "o que conta como pago" continua definido num lugar só, e o comprovante acompanha se a regra mudar.
+- **Fica de fora de propósito**: `PENDENTE` e `AGUARDANDO_PAGAMENTO` ainda não pagaram; `CANCELADO` e `EXPIRADO` encerraram. Emitir comprovante de inscrição cancelada seria pior que o erro corrigido.
+- **Validação**: Os seis status exercitados contra a rota real com token de cliente — `PAGO` e `CONFIRMADO` devolvem o comprovante (HTTP 200), e os outros quatro devolvem 404 com a mensagem explicativa. A listagem entrega `CONFIRMADO` cru para a tela, que é o valor que a condição do botão avalia.
+
+---
+
 ## 2026-09-02 - fix: preservar a data de pagamento ao cancelar um pedido pago
 
 ### Arquivos Modificados
@@ -70,26 +86,5 @@
 - **Situação encontrada**: Há uma excursão gravada como `BiologiaM2`, em caixa mista. Ela continua intacta ao ser aberta e salva. Verificado no navegador: o campo exibe `BiologiaM2` ao carregar e o banco segue com o mesmo valor depois de sair da tela.
 - **Sem `text-transform` no CSS**: A propriedade só muda a aparência, não o valor enviado. Usá-la exibiria em caixa alta um código que continuaria gravado em caixa mista — a tela mostraria uma coisa e o banco guardaria outra.
 - **Validação em navegador real**: `biologia-marinha_2026` digitado virou `BIOLOGIA-MARINHA_2026`; inserção no início do texto manteve o cursor no lugar; e um cadastro completo feito com o código digitado em minúsculas foi gravado no banco como `TESTE-CAIXA-ALTA_01`.
-
----
-
-## 2026-08-29 - feat: permitir a edição dos dados de um aluno já inscrito
-
-### Arquivos Modificados
-- `api/src/routes/lista-alunos.routes.ts` [Nova rota `PUT /aluno/:id`]
-- `api/src/schemas/pedido.schema.ts` [Novo `editarAlunoSchema`]
-- `api/public/admin/js/listas.js` [Botão de edição e modal preenchido com a ficha atual]
-- `api/public/admin/listas.html` [Novo modal de edição com os 17 campos do aluno]
-- `api/public/admin/css/admin-style.css` [Estilo do botão de edição na coluna de ações]
-
-### Detalhes das Alterações
-- **O que faltava**: A tela de listas permitia adicionar e excluir aluno, mas não corrigir. Um nome digitado errado, uma turma trocada ou uma informação médica que faltou só se resolviam excluindo a inscrição e recadastrando — o que apaga a ligação com o pedido pago e o histórico do cliente.
-- **Todos os 17 campos**: Nome, dados escolares, documentos, responsável pelo aluno, informações médicas e observações. A escolha foi do usuário: qualquer um deles pode ter sido preenchido errado no ato da compra.
-- **Só pedidos ativos**: Aluno de pedido cancelado ou expirado não é editável — o botão não aparece na tabela e a rota recusa a alteração. Aquele registro virou histórico encerrado; alterá-lo mudaria o retrato de algo que já terminou. A verificação existe nas duas pontas, porque esconder o botão não impede uma chamada direta à API.
-- **Dados de quem pagou ficam intactos**: A edição toca apenas o `ItemPedido`. O `dadosResponsavelFinanceiro` do pedido foi enviado ao gateway e consta do comprovante que o cliente recebeu; reescrevê-lo criaria divergência entre o sistema e o documento que está com o cliente. Confirmado no teste: após a edição, o bloco do pagador seguiu inalterado.
-- **Campo vazio apaga o dado**: O formulário envia a ficha inteira, então ausência de valor é decisão do administrador, não omissão. Um update parcial faria a limpeza ser silenciosamente ignorada — o campo continuaria com o valor antigo e ninguém saberia.
-- **Erro encontrado no teste**: O primeiro salvamento falhou com 400. A causa era o telefone gravado como `11988887777`, sem máscara, recusado pela regra do cadastro, que exige `(11) 98888-8888`. Corrigir o nome de um aluno era impossível enquanto o telefone dele estivesse num formato que o próprio sistema aceitou ao gravar. Na edição a máscara passou a ser aplicada, não exigida.
-- **Rastro da alteração**: Cada edição grava um `activity_log` com o nome anterior e o novo, além do administrador responsável. É o único jeito de rastrear a correção depois, já que a alteração não guarda versão.
-- **Validação em navegador real**: Botão presente apenas na linha do pedido ativo entre quatro alunos; edição de nome, turma, limpeza de escola e preenchimento de plano de saúde persistidos; telefone normalizado; alteração refletida na exportação da Lista para Escola; e as rotas recusando pedido cancelado (400), expirado (400) e requisição sem token (401).
 
 ---
