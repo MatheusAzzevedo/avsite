@@ -33,6 +33,7 @@ import {
   avaliarTodasAsTransicoes,
   avaliarTransicao,
   STATUS_QUE_OCUPAM_VAGA,
+  STATUS_ANTES_DO_PAGAMENTO,
   STATUS_DE_PAGAMENTO,
   ContextoTransicao,
   TokenConfirmacao
@@ -622,11 +623,18 @@ router.get('/:id/comprovante',
         context: { pedidoId: id, clienteId }
       });
 
+      // PAGO e CONFIRMADO, e não só PAGO.
+      //
+      // CONFIRMADO não é um status inferior: é o passo seguinte, o pedido pago e
+      // confirmado pela empresa. É para lá que o webhook do Asaas promove o
+      // pedido logo após aprovar o cartão, então quem pagava no cartão via o
+      // botão por alguns segundos e depois o perdia. Reusa STATUS_DE_PAGAMENTO
+      // para que "o que conta como pago" continue definido num lugar só.
       const pedido = await prisma.pedido.findFirst({
         where: {
           id,
           clienteId,
-          status: 'PAGO' // Somente status PAGO, conforme solicitado
+          status: { in: STATUS_DE_PAGAMENTO }
         },
         include: {
           excursaoPedagogica: true,
@@ -637,7 +645,7 @@ router.get('/:id/comprovante',
       });
 
       if (!pedido) {
-        logger.warn('[Pedidos] Pedido não encontrado ou não está PAGO', {
+        logger.warn('[Pedidos] Pedido não encontrado ou sem pagamento reconhecido', {
           context: { pedidoId: id, clienteId }
         });
         throw ApiError.notFound('Comprovante indisponível. O pedido precisa estar com pagamento confirmado.');
@@ -952,10 +960,15 @@ router.patch('/:id/status',
 
       const dataToUpdate: any = { status };
 
-      // Datas de pagamento e confirmação acompanham o status nos dois sentidos.
+      // Datas de pagamento e confirmação acompanham o status nos dois sentidos,
+      // mas a limpeza vale só ao voltar para antes do pagamento.
+      //
       // Antes elas só eram preenchidas, nunca limpas: um pedido devolvido de
-      // PAGO para PENDENTE ficava com data de pagamento de um pagamento que,
-      // segundo o próprio status, não existe.
+      // PAGO para PENDENTE ficava com data de um pagamento que, segundo o
+      // próprio status, não existe. A primeira correção foi longe demais e
+      // limpava também ao CANCELAR — o que contradizia o próprio aviso da tela
+      // ("não estorna nada") e apagava a evidência de que o dinheiro entrou.
+      // Era ela que permitia achar pedido pago cancelado por engano.
       if (status === 'PAGO' && !pedidoExistente.dataPagamento) {
         dataToUpdate.dataPagamento = new Date();
       }
@@ -964,7 +977,7 @@ router.patch('/:id/status',
         dataToUpdate.dataConfirmacao = new Date();
       }
 
-      if (!STATUS_DE_PAGAMENTO.includes(status as PedidoStatus)) {
+      if (STATUS_ANTES_DO_PAGAMENTO.includes(status as PedidoStatus)) {
         if (pedidoExistente.dataPagamento) dataToUpdate.dataPagamento = null;
         if (pedidoExistente.dataConfirmacao) dataToUpdate.dataConfirmacao = null;
       }

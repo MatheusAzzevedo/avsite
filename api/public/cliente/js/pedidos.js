@@ -231,7 +231,11 @@
                         ? '<a href="' + docHref + '" target="_blank" rel="noopener" class="btn-download-doc"><i class="fas fa-download"></i> ' + docNome + '</a>'
                         : '';
                     
-                    var showComprovanteButton = pedido.status === 'PAGO';
+                    // CONFIRMADO é o passo seguinte a PAGO, não um estado
+                    // inferior: é para lá que o pedido vai quando o cartão é
+                    // aprovado. Só com PAGO, o cliente via o botão por alguns
+                    // segundos e depois o perdia.
+                    var showComprovanteButton = pedido.status === 'PAGO' || pedido.status === 'CONFIRMADO';
                     var comprovanteButtonHtml = '';
                     if (showComprovanteButton) {
                         var token = window.clienteAuth ? window.clienteAuth.getToken() : '';
