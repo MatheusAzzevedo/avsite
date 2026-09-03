@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-02 - fix: preservar a data de pagamento ao cancelar um pedido pago
+
+### Arquivos Modificados
+- `api/src/utils/transicoes-pedido.ts` [Nova constante `STATUS_ANTES_DO_PAGAMENTO`; aviso restrito a ela]
+- `api/src/routes/pedido.routes.ts` [Limpeza das datas só ao voltar para antes do pagamento]
+
+### Detalhes das Alterações
+- **O defeito**: A correção do dia 01/09 limpava `dataPagamento` e `dataConfirmacao` em qualquer status que não fosse `PAGO` ou `CONFIRMADO` — inclusive ao **cancelar**. O modal dizia "mudar o status NÃO estorna nada" e, na linha seguinte, apagava o registro de que o dinheiro entrou. As duas frases se contradiziam na mesma tela.
+- **Por que importa além da coerência**: Os 41 pedidos cancelados indevidamente pela cobrança órfã só foram encontrados porque `dataPagamento` sobreviveu ao cancelamento. Com o comportamento anterior, um caso desses passaria a ser invisível na consulta.
+- **A regra certa é mais estreita**: A limpeza vale só ao ir para `PENDENTE` ou `AGUARDANDO_PAGAMENTO`, que são os status que afirmam "ainda não pagou". `CANCELADO` e `EXPIRADO` encerram o pedido, mas não desfazem o fato de o pagamento ter acontecido.
+- **Encontrado em produção**: O pedido `51b57cc4` (R$ 10,00, cartão) foi cancelado pelo modal em 01/09 e ficou sem data de pagamento, como se nunca tivesse sido pago. O valor foi capturado de verdade no Asaas.
+- **Validação**: Cancelar um pedido pago preserva a data; voltar o mesmo pedido para `PENDENTE` limpa as duas datas; e o aviso de remoção passa a aparecer apenas em `Pendente` e `Aguardando pagamento`, não mais nas seis opções.
+
+---
+
 ## 2026-09-01 - feat: alterar o status do pedido mostrando as consequências de cada opção
 
 ### Arquivos Modificados
@@ -76,26 +91,5 @@
 - **Erro encontrado no teste**: O primeiro salvamento falhou com 400. A causa era o telefone gravado como `11988887777`, sem máscara, recusado pela regra do cadastro, que exige `(11) 98888-8888`. Corrigir o nome de um aluno era impossível enquanto o telefone dele estivesse num formato que o próprio sistema aceitou ao gravar. Na edição a máscara passou a ser aplicada, não exigida.
 - **Rastro da alteração**: Cada edição grava um `activity_log` com o nome anterior e o novo, além do administrador responsável. É o único jeito de rastrear a correção depois, já que a alteração não guarda versão.
 - **Validação em navegador real**: Botão presente apenas na linha do pedido ativo entre quatro alunos; edição de nome, turma, limpeza de escola e preenchimento de plano de saúde persistidos; telefone normalizado; alteração refletida na exportação da Lista para Escola; e as rotas recusando pedido cancelado (400), expirado (400) e requisição sem token (401).
-
----
-
-## 2026-08-26 - feat: implementar o envio do formulário de contato do site
-
-### Arquivos Modificados
-- `api/src/routes/contato.routes.ts` [Novo: recebe a mensagem e encaminha por e-mail]
-- `api/src/schemas/contato.schema.ts` [Novo: validação Zod dos campos]
-- `api/src/templates/email-contato.ts` [Novo: template HTML e texto da mensagem]
-- `api/public/js/contato-form.js` [Novo: envio por fetch com feedback na página]
-- `api/public/contact.html` [Removido `action="#"`; script do formulário carregado]
-- `api/src/server.ts` e `api/.env.example` [Rota registrada e `CONTATO_EMAIL_DESTINO` documentada]
-
-### Detalhes das Alterações
-- **O formulário nunca funcionou**: Com `action="#"` e `method="post"` e nenhum JavaScript tratando o envio, o navegador fazia um POST nativo para a própria URL. Como não existia rota para isso, o visitante era levado a uma tela com `{"error":"Rota não encontrada"}`. Toda pessoa que preencheu o formulário acreditou ter falado com a Avoar, e a mensagem não chegava a lugar nenhum.
-- **Destino configurável**: `CONTATO_EMAIL_DESTINO` define quem recebe; sem ela, cai no remetente já verificado no Brevo. Assim, trocar o endereço é mudança de variável, não de código.
-- **Limite dedicado**: 5 mensagens por IP a cada 15 minutos. O limite global de 100 req/15min não serve aqui, porque cada requisição desta rota custa um e-mail — sem restrição própria, o endereço da Avoar viraria destino de spam.
-- **Erro encontrado no teste**: O primeiro envio real falhou com `email is not valid in to`. A causa era usar `getFromAddress()`, que devolve o formato de cabeçalho `"Avoar Turismo" <contato@...>`, no campo de destinatário da API. Corrigido para `getSender().email`.
-- **Validação em duas camadas**: Os atributos `required` do HTML barram o envio incompleto sem ida ao servidor; o Zod valida no backend, devolvendo erro por campo.
-- **Sem armazenamento em banco**: A decisão foi entregar por e-mail, que é onde a equipe já trabalha. O ponto de extensão para histórico fica na rota, antes do envio.
-- **Validação em navegador real**: Formulário preenchido e enviado sem sair da página, com aviso de sucesso, campos limpos e botão reabilitado; envio vazio bloqueado pelo navegador antes de chegar à API; e o limite respondendo 429 com mensagem clara na sexta tentativa.
 
 ---

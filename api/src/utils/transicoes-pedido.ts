@@ -33,6 +33,16 @@ export const STATUS_QUE_LIBERAM_VAGA: PedidoStatus[] = ['CANCELADO', 'EXPIRADO']
 /** Status que representam dinheiro reconhecido. */
 export const STATUS_DE_PAGAMENTO: PedidoStatus[] = ['PAGO', 'CONFIRMADO'];
 
+/**
+ * Status que afirmam que o pagamento ainda não aconteceu.
+ *
+ * Só ao cair num destes as datas de pagamento e confirmação deixam de fazer
+ * sentido. `CANCELADO` e `EXPIRADO` encerram o pedido, mas não desfazem o fato
+ * de o dinheiro ter entrado — e apagar a data ali destrói justamente a evidência
+ * que permite achar depois um pedido pago que foi cancelado por engano.
+ */
+export const STATUS_ANTES_DO_PAGAMENTO: PedidoStatus[] = ['PENDENTE', 'AGUARDANDO_PAGAMENTO'];
+
 export const TODOS_OS_STATUS: PedidoStatus[] = [
   'PENDENTE',
   'AGUARDANDO_PAGAMENTO',
@@ -140,7 +150,7 @@ export function vagasLivres(contexto: ContextoTransicao): number | null {
  * 2. Dinheiro reconhecido — ao mandar para terminal um pedido já pago.
  * 3. Gateway — ao afirmar pagamento que o gateway não confirma, ou ao cancelar
  *    com cobrança ainda viva.
- * 4. Datas — ao sair de um status de pagamento, as datas registradas caem.
+ * 4. Datas — ao voltar para antes do pagamento, as datas registradas caem.
  */
 export function avaliarTransicao(
   destino: PedidoStatus,
@@ -225,8 +235,8 @@ export function avaliarTransicao(
     }
   }
 
-  // 4. Datas que deixam de fazer sentido.
-  if (!STATUS_DE_PAGAMENTO.includes(destino)) {
+  // 4. Datas que deixam de fazer sentido — só ao voltar para antes do pagamento.
+  if (STATUS_ANTES_DO_PAGAMENTO.includes(destino)) {
     if (contexto.dataPagamento) {
       motivos.push(`A data de pagamento registrada (${formatarData(contexto.dataPagamento)}) será removida.`);
     }
