@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-03 - feat: registrar no histórico do pedido as notificações de gateway recusadas
+
+### Arquivos Modificados
+- `api/src/routes/webhook.routes.ts` [Nova `registrarNotificacaoIgnorada`; as duas guardas passam a gravar em `activity_logs`]
+
+### Detalhes das Alterações
+- **O problema**: As duas proteções contra a cobrança PIX órfã recusavam a notificação registrando apenas no log da aplicação. No banco não sobrava rastro nenhum, e proteção silenciosa é indistinguível de proteção ausente.
+- **Como isso apareceu**: Ao investigar um pedido pago no cartão logo após um PIX abandonado, não havia como responder, olhando o histórico, se a guarda tinha agido ou se a notificação nunca havia chegado. A pergunta só se resolveu lendo o código e comparando o formato dos registros — que é justamente o tipo de resposta que deveria estar visível no painel.
+- **O que passa a ser gravado**: Uma linha com `action: 'webhook_ignorado'` dizendo qual cobrança foi notificada, com que status, qual é a cobrança atual do pedido e em que status o pedido foi preservado. Vale para as duas guardas: a que recusa notificação de cobrança que não é mais a do pedido, e a que impede `canceled` de rebaixar pedido já pago.
+- **Nunca derruba o webhook**: A gravação é isolada em try/catch. Falhar o webhook por causa de auditoria faria o gateway reenviar a notificação — e o reenvio é exatamente o que a guarda precisa continuar recusando.
+- **Distinção que o histórico agora torna óbvia**: Webhook grava `action: 'payment_webhook'` e nunca preenche `userId`; alteração manual grava `action: 'update'` com `userId` do admin. Com a nova linha, o terceiro caso — notificação recusada — também fica explícito.
+- **Validação**: Gravação e leitura exercitadas contra o banco, confirmando que `action` aceita o valor novo (o campo é String livre no schema, sem enum).
+
+---
+
 ## 2026-09-02 - fix: liberar o comprovante para pedidos confirmados, e não só pagos
 
 ### Arquivos Modificados
@@ -71,20 +86,5 @@
 - **Segundo defeito encontrado no caminho**: A contagem regressiva do checkout usava uma constante de **15 minutos** enquanto o servidor concede **120**. Passados 15 minutos com a tela aberta, o navegador chamava a rota de cancelamento e derrubava o pedido 105 minutos antes do prazo real. A contagem passou a derivar de `expiraEm`, devolvido pela API, e o formato virou h:mm:ss — em minutos, 2h apareceriam como "119:59".
 - **Clique repetido**: Voltar para a aba do PIX recriava a cobrança e abandonava a anterior. Agora reexibe a que existe e retoma a contagem do prazo original.
 - **Validação em navegador real**: Checkout completo até a etapa de pagamento sem nenhuma chamada a `/pagamento/pix` e pedido gravado com `metodoPagamento` nulo; clique em "Cartão de crédito" também sem gerar cobrança; clique em "PIX" gerando uma única cobrança, com a contagem exibindo 1:59:48; e ida e volta entre as abas mantendo uma só cobrança. A cobrança criada no teste foi cancelada no gateway.
-
----
-
-## 2026-08-29 - feat: converter para caixa alta o código único da excursão pedagógica
-
-### Arquivos Modificados
-- `api/public/admin/js/excursao-pedagogica-editor.js` [Nova função `ativarCaixaAltaNoCodigo`]
-- `api/public/admin/excursao-pedagogica-editor.html` [Texto de ajuda do campo]
-
-### Detalhes das Alterações
-- **Comportamento**: Tudo que for digitado ou colado no campo "Código único" passa a virar caixa alta na hora, com a posição do cursor preservada — digitar no meio do texto não joga o cursor para o fim.
-- **A conversão acontece ao digitar, não ao salvar**: A diferença importa. O código é o que o cliente usa para localizar a excursão, e a busca no banco é exata, sensível a maiúsculas. Se a conversão fosse aplicada no momento de salvar, abrir uma excursão antiga só para corrigir o título renomearia o código dela em silêncio, e todo código já em circulação deixaria de encontrar a excursão. Do jeito que ficou, um código existente só muda se o administrador realmente mexer naquele campo.
-- **Situação encontrada**: Há uma excursão gravada como `BiologiaM2`, em caixa mista. Ela continua intacta ao ser aberta e salva. Verificado no navegador: o campo exibe `BiologiaM2` ao carregar e o banco segue com o mesmo valor depois de sair da tela.
-- **Sem `text-transform` no CSS**: A propriedade só muda a aparência, não o valor enviado. Usá-la exibiria em caixa alta um código que continuaria gravado em caixa mista — a tela mostraria uma coisa e o banco guardaria outra.
-- **Validação em navegador real**: `biologia-marinha_2026` digitado virou `BIOLOGIA-MARINHA_2026`; inserção no início do texto manteve o cursor no lugar; e um cadastro completo feito com o código digitado em minúsculas foi gravado no banco como `TESTE-CAIXA-ALTA_01`.
 
 ---

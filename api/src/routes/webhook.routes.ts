@@ -206,6 +206,41 @@ router.post('/asaas',
  *
  * Body: { notification_id, transaction_id, apiKey, ... }
  */
+/**
+ * Explicação da função [registrarNotificacaoIgnorada]
+ * Grava no histórico do pedido que uma notificação do gateway foi recusada.
+ *
+ * Existe porque proteção silenciosa é indistinguível de proteção ausente. Quando
+ * um pedido pago no cartão deixa de ser cancelado por um PIX abandonado, quem
+ * olha o painel não tem como saber se a guarda agiu ou se o aviso nunca chegou —
+ * e a resposta acaba dependendo de alguém ler o log da aplicação.
+ *
+ * Nunca lança: um webhook não pode falhar por causa do registro de auditoria.
+ * O gateway reenviaria a notificação, e o reenvio é justamente o que a guarda
+ * precisa continuar recusando.
+ */
+async function registrarNotificacaoIgnorada(
+  pedidoId: string,
+  clienteEmail: string,
+  descricao: string
+): Promise<void> {
+  try {
+    await prisma.activityLog.create({
+      data: {
+        action: 'webhook_ignorado',
+        entity: 'pedido',
+        entityId: pedidoId,
+        description: descricao,
+        userEmail: clienteEmail
+      }
+    });
+  } catch (error) {
+    logger.error('[Webhook] Falha ao registrar notificação ignorada no histórico', {
+      context: { pedidoId, error: error instanceof Error ? error.message : 'Unknown' }
+    });
+  }
+}
+
 router.post('/paghiper',
   async (req: Request, res: Response) => {
     const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
@@ -279,6 +314,18 @@ router.post('/paghiper',
             statusPedido: pedido.status
           }
         });
+
+        // Registra a recusa no histórico do pedido, e não apenas no log da
+        // aplicação. Sem esta linha, a proteção é invisível para quem olha o
+        // pedido pelo painel: diante de um pedido que "deveria" ter sido
+        // cancelado e não foi, não há como distinguir a guarda funcionando de
+        // um webhook que nunca chegou — foi exatamente essa dúvida que apareceu
+        // ao investigar um pedido pago no cartão depois de um PIX abandonado.
+        await registrarNotificacaoIgnorada(pedido.id, pedido.cliente.email,
+          `Notificação do PagHiper ignorada: refere-se à cobrança ${transaction_id} ` +
+          `(status "${resultado.status}"), que não é mais a cobrança deste pedido ` +
+          `(${pedido.codigoPagamento}). Pedido preservado em ${pedido.status}.`);
+
         return res.json({ success: true, message: 'Notificação não corresponde à cobrança atual do pedido' });
       }
 
@@ -312,6 +359,9 @@ router.post('/paghiper',
           logger.warn('[Webhook PagHiper] Cancelamento ignorado: pedido já está pago', {
             context: { pedidoId, statusPedido: pedido.status, transaction_id }
           });
+          await registrarNotificacaoIgnorada(pedido.id, pedido.cliente.email,
+            `Notificação de cancelamento do PagHiper ignorada: o pedido já está em ` +
+            `${pedido.status}, com pagamento reconhecido. Cobrança ${transaction_id}.`);
         } else {
           novoStatusPedido = pedido.status === 'EXPIRADO' ? 'EXPIRADO' : 'CANCELADO';
         }

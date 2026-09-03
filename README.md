@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-09-02) - fix: liberar o comprovante para pedidos confirmados
+### Última atualização (2026-09-03) - feat: registrar no histórico as notificações de gateway recusadas
+- **api/src/routes/webhook.routes.ts** [Guardas do PIX órfão passam a gravar em `activity_logs`]
+
+Resumo: As proteções que impedem uma cobrança PIX abandonada de cancelar um pedido pago recusavam a notificação sem deixar rastro no banco. Proteção silenciosa é indistinguível de proteção ausente: diante de um pedido que deixou de ser cancelado, não havia como saber pelo painel se a guarda agiu ou se o aviso nunca chegou. Agora cada recusa grava uma linha dizendo qual cobrança foi notificada, qual é a atual do pedido e em que status ele foi preservado.
+
+### Atualização anterior (2026-09-02) - fix: liberar o comprovante para pedidos confirmados
 - **api/src/routes/pedido.routes.ts**, **api/public/cliente/js/pedidos.js** [Comprovante aceita `PAGO` e `CONFIRMADO`]
 
 Resumo: A rota e o botão do comprovante exigiam `PAGO`, mas `CONFIRMADO` é o passo seguinte, não um estado inferior. Em produção, 144 pedidos de 139 clientes não conseguiam emitir comprovante. O efeito era quase todo no cartão: é o webhook do Asaas que promove o pedido para `CONFIRMADO` segundos após a aprovação, então o cliente via o botão e o perdia. Pedido cancelado, expirado ou ainda não pago continua sem comprovante.
