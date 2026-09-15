@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-15 - fix: corrigir o link do e-mail de recuperação de senha
+
+### Arquivos Modificados
+- `api/src/routes/cliente-auth.routes.ts` [Link de redefinição passa a apontar para `reset-senha.html`]
+
+### Detalhes das Alterações
+- **O problema**: O cliente pedia a recuperação, recebia o e-mail, clicava no link e caía numa tela com `{"error":"Rota não encontrada"}`. Ninguém conseguia redefinir a senha pelo portal.
+- **A causa**: O link era montado como `/cliente/reset-senha?resetToken=...`, sem extensão. O servidor entrega o portal do cliente com `express.static`, que não resolve caminho sem extensão: o arquivo existe como `reset-senha.html`, mas o endereço sem `.html` passava por todos os middlewares e terminava no 404 da API.
+- **Confirmado em produção**: `/cliente/reset-senha?resetToken=...` responde 404 com exatamente a mensagem que o cliente viu; o mesmo endereço com `.html` responde 200 e abre a página. A página já lia o parâmetro `resetToken`, então só o caminho estava errado.
+- **Links já enviados**: O token vale 1 hora. Quem pediu a recuperação antes do deploy e não conseguiu precisa pedir de novo.
+- **Achado no caminho, fora deste commit**: O redirecionamento de falha do login com Google aponta para `/login?error=google_auth_failed`, que também responde 404 em produção.
+
+---
+
 ## 2026-09-03 - feat: registrar no histórico do pedido as notificações de gateway recusadas
 
 ### Arquivos Modificados
@@ -71,20 +85,3 @@
 
 ---
 
-## 2026-08-31 - fix: impedir que a cobrança PIX abandonada cancele o pedido pago no cartão
-
-### Arquivos Modificados
-- `api/src/routes/webhook.routes.ts` [Notificação só vale para a cobrança atual; cancelamento não rebaixa pedido pago]
-- `api/public/cliente/js/checkout.js` [PIX deixa de ser gerado na abertura da tela; contagem alinhada ao prazo do servidor]
-- `api/src/routes/pagamento.routes.ts` [Pagamento no cartão invalida a cobrança PIX pendente e limpa `pixExpiraEm`]
-
-### Detalhes das Alterações
-- **Impacto**: **41 pedidos pagos no cartão, somando R$ 13.550,00, foram cancelados indevidamente** em produção. Outros 5 (R$ 1.245,00) estavam na fila para cair na madrugada seguinte. Todos tinham `dataPagamento` preenchido — o dinheiro entrou e o aluno perdeu a vaga.
-- **A cadeia**: O checkout abria com PIX pré-selecionado e gerava o QR Code na hora, criando uma cobrança PagHiper em **todo** checkout, inclusive nos de quem ia pagar no cartão. Ao pagar no cartão, `codigoPagamento` passava a apontar para o Asaas e a cobrança PIX ficava órfã no gateway, sem nunca ser cancelada. Um a dois dias depois ela vencia, o PagHiper notificava `canceled` no lote da madrugada, e o webhook — que só protegia o status `EXPIRADO` — sobrescrevia o pedido para `CANCELADO`.
-- **Como o diagnóstico fechou**: Todos os cancelamentos aconteciam entre 04:00 e 04:08, cerca de 48h após a criação. Não batia com a varredura interna do PIX, que roda a cada 10 minutos e filtra `metodoPagamento = 'pix'`, nem com o temporizador do navegador. O padrão de horário apontou para um lote externo, e os 46 pedidos de cartão com `pixExpiraEm` preenchido (de 1.062 no total) confirmaram que a cobrança PIX estava sendo criada onde não devia.
-- **Três correções, em camadas**: A raiz é não criar cobrança antes da escolha do cliente — nenhum meio vem pré-selecionado e nenhuma cobrança nasce sozinha. A segunda é o cartão invalidar no gateway o PIX que ficou para trás, senão o cliente que já pagou ainda consegue pagar de novo. A terceira é o webhook ignorar notificação cujo `transaction_id` não é o `codigoPagamento` atual do pedido, com uma barreira adicional que impede `canceled` de rebaixar pedido `PAGO` ou `CONFIRMADO`.
-- **Segundo defeito encontrado no caminho**: A contagem regressiva do checkout usava uma constante de **15 minutos** enquanto o servidor concede **120**. Passados 15 minutos com a tela aberta, o navegador chamava a rota de cancelamento e derrubava o pedido 105 minutos antes do prazo real. A contagem passou a derivar de `expiraEm`, devolvido pela API, e o formato virou h:mm:ss — em minutos, 2h apareceriam como "119:59".
-- **Clique repetido**: Voltar para a aba do PIX recriava a cobrança e abandonava a anterior. Agora reexibe a que existe e retoma a contagem do prazo original.
-- **Validação em navegador real**: Checkout completo até a etapa de pagamento sem nenhuma chamada a `/pagamento/pix` e pedido gravado com `metodoPagamento` nulo; clique em "Cartão de crédito" também sem gerar cobrança; clique em "PIX" gerando uma única cobrança, com a contagem exibindo 1:59:48; e ida e volta entre as abas mantendo uma só cobrança. A cobrança criada no teste foi cancelada no gateway.
-
----
