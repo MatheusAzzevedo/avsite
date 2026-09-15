@@ -29,6 +29,25 @@ function hideMessages() {
     successMessage.classList.remove('show');
 }
 
+/**
+ * Explicação da função [mostrarErroDoGoogle]
+ * Exibe a mensagem quando o login com Google falha e o servidor devolve o
+ * cliente para esta página com ?error=. Sem isso ele voltava para a tela de
+ * login sem explicação nenhuma, como se nada tivesse acontecido.
+ */
+(function mostrarErroDoGoogle() {
+    const codigo = new URLSearchParams(window.location.search).get('error');
+    if (!codigo) return;
+
+    const mensagens = {
+        google_auth_denied: 'O acesso com Google foi cancelado. Tente novamente ou entre com e-mail e senha.',
+        google_auth_failed: 'Não foi possível entrar com Google. Tente novamente ou entre com e-mail e senha.'
+    };
+
+    console.warn('[Login] Retorno de falha do login com Google:', codigo);
+    showError(mensagens[codigo] || 'Não foi possível concluir o login. Tente novamente.');
+})();
+
 function setLoading(isLoading) {
     if (isLoading) {
         loginBtn.classList.add('loading');

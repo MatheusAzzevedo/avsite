@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-15 - fix: corrigir o retorno de falha do login com Google
+
+### Arquivos Modificados
+- `api/src/routes/cliente-auth.routes.ts` [Os dois redirecionamentos de falha passam a apontar para `/cliente/login.html`]
+- `api/public/cliente/js/login.js` [Nova `mostrarErroDoGoogle`, que exibe a mensagem a partir do parâmetro `error`]
+
+### Detalhes das Alterações
+- **O problema**: Quando o cliente cancelava o acesso com Google ou a autenticação falhava, o servidor o mandava para `/login?error=...`. Esse endereço não existe e respondia 404 com "Rota não encontrada". Mesmo defeito do link de recuperação de senha, em outro ponto.
+- **Os dois casos**: `google_auth_denied` (o cliente recusou na tela do Google) e `google_auth_failed` (erro ao concluir a autenticação). Os dois foram corrigidos.
+- **A mensagem que ninguém via**: A página de login não lia o parâmetro `error`. Corrigir só o caminho levaria o cliente de volta à tela de login sem explicação. Agora cada código mostra uma mensagem própria, e código desconhecido cai numa mensagem genérica.
+- **Confirmado em produção**: `/login?error=google_auth_failed` responde 404; `/cliente/login.html?error=google_auth_failed` responde 200.
+
+---
+
 ## 2026-09-15 - fix: corrigir o link do e-mail de recuperação de senha
 
 ### Arquivos Modificados
@@ -60,28 +74,4 @@
 
 ---
 
-## 2026-09-01 - feat: alterar o status do pedido mostrando as consequências de cada opção
-
-### Arquivos Modificados
-- `api/src/utils/transicoes-pedido.ts` [Novo: regras que avaliam cada transição]
-- `api/src/routes/pedido.routes.ts` [Nova rota `GET /:id/opcoes-status`; `PATCH /:id/status` reforçado]
-- `api/src/schemas/pedido.schema.ts` [Campos `confirmacoes` e `avisarCliente`]
-- `api/public/admin/js/status-pedido-modal.js` [Novo: componente compartilhado pelas duas telas]
-- `api/public/admin/js/listagem-convencional.js`, `listas.js`, `listas.html`, `listagem-convencional.html` [Botão na coluna de ações]
-- `api/public/admin/css/admin-style.css` [Estilos do modal e correção da largura dos botões de ação]
-
-### Detalhes das Alterações
-- **O problema do seletor simples**: Status não é um campo comum. Ele decide se a vaga está reservada ou de volta no estoque, define quem entra na lista enviada à escola e convive com dinheiro já recebido por um gateway. Um seletor que aceita qualquer valor esconde tudo isso de quem opera — e a rota que existia aceitava qualquer transição sem checar nada.
-- **Quatro portões, cada um disparando só onde faz sentido**: vaga (ao sair de um status terminal para um ativo, único caminho que reocupa vaga); dinheiro reconhecido (ao encerrar um pedido já pago); gateway (ao afirmar pagamento que ele não confirma, ou ao cancelar com cobrança viva); e datas (ao sair de um status de pagamento). Uma matriz de 36 combinações seria ilegível e cheia de célula sem sentido.
-- **A regra mora no backend**: A tela pede a avaliação a `GET /:id/opcoes-status`, que consulta as vagas reais da excursão e o gateway. A gravação reavalia tudo de novo — entre abrir o modal e salvar, outra pessoa pode ter ocupado a última vaga. Sem isso, bastaria uma chamada direta à API para furar toda a proteção.
-- **Confirmação com o texto da consequência**: As opções de risco exigem tokens (`sem_vaga`, `dinheiro_reconhecido`, `sem_confirmacao_gateway`) devolvidos na gravação. A caixa repete a frase específica daquele pedido, não um "tem certeza?" genérico. Sem o token, a rota recusa com 400.
-- **Falta de vaga bloqueia, mas pode ser forçada**: Barreira dura obrigaria a cancelar o pedido de outra pessoa para corrigir um engano — pior que o overbooking consciente. Fica registrado no log de atividade junto com o motivo exibido na tela.
-- **Três situações de gateway, não duas**: Não ter cobrança registrada é normal (venda manual) e a consulta falhar não é. Na primeira versão as duas viravam "não foi possível consultar", o que faria o operador procurar problema onde não há.
-- **Datas passam a ser limpas**: A rota antiga só preenchia `dataPagamento`/`dataConfirmacao`, nunca limpava. Um pedido devolvido de Pago para Pendente ficava com a data de um pagamento que, segundo o próprio status, não existe.
-- **Cobrança viva é invalidada junto**: Encerrar o pedido cancela o PIX no gateway. Sem isso o cliente pagaria uma cobrança de pedido cancelado — o mesmo padrão que derrubou 41 pedidos pagos no cartão.
-- **E-mail desmarcado por padrão**: Avisar o cliente é irreversível e não pode ser efeito colateral de uma correção de status.
-- **Correção de layout encontrada no caminho**: `.btn-primary` é `width: 100%`, pensada para formulário. Na coluna de ações isso fazia o botão de visualizar ocupar a linha inteira e empurrar os demais para baixo — já acontecia antes, e piorava a cada botão novo.
-- **Validação em navegador real**: Bloqueio por vaga com a excursão reduzida a 1 vaga já ocupada; gravação recusada sem confirmação e recusada de novo com só uma das duas exigidas; gravação aceita com ambas, registrando o motivo no log; retorno de Pago para Pendente limpando as duas datas; e as duas telas exibindo o modal com o valor recebido, a excursão e as consequências por opção.
-
----
 

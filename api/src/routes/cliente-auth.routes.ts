@@ -797,7 +797,7 @@ router.get('/google/callback',
 
         // Redireciona para frontend com erro
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-        return res.redirect(`${frontendUrl}/login?error=google_auth_denied`);
+        return res.redirect(`${frontendUrl}/cliente/login.html?error=google_auth_denied`);
       }
 
       // Valida código de autorização
@@ -949,7 +949,7 @@ router.get('/google/callback',
 
       // Redireciona para frontend com erro
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      res.redirect(`${frontendUrl}/login?error=google_auth_failed`);
+      res.redirect(`${frontendUrl}/cliente/login.html?error=google_auth_failed`);
     }
   }
 );

@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-09-15) - fix: corrigir o link do e-mail de recuperação de senha
+### Última atualização (2026-09-15) - fix: corrigir o retorno de falha do login com Google
+- **api/src/routes/cliente-auth.routes.ts**, **api/public/cliente/js/login.js** [Redirecionamento de falha aponta para `/cliente/login.html` e a página exibe a mensagem]
+
+Resumo: Quando o login com Google era cancelado ou falhava, o servidor mandava o cliente para `/login`, endereço inexistente que respondia 404 com "Rota não encontrada". Os dois casos passam a voltar para `/cliente/login.html`. A página de login também não lia o parâmetro de erro, então mesmo com o caminho certo o cliente voltaria sem explicação; agora ela mostra uma mensagem para cada situação.
+
+### Atualização anterior (2026-09-15) - fix: corrigir o link do e-mail de recuperação de senha
 - **api/src/routes/cliente-auth.routes.ts** [Link de redefinição passa a apontar para `reset-senha.html`]
 
 Resumo: O e-mail de recuperação de senha mandava o cliente para `/cliente/reset-senha`, sem extensão. Como o portal do cliente é servido como arquivos estáticos e o arquivo real é `reset-senha.html`, o link caía no 404 da API, com a mensagem "Rota não encontrada", e ninguém conseguia redefinir a senha. O link passou a incluir o `.html`, confirmado em produção: sem extensão o endereço responde 404, com extensão abre a página. Quem pediu recuperação antes do deploy precisa pedir de novo, porque o token vale 1 hora.
