@@ -602,7 +602,9 @@ router.post('/forgot-password',
 
       // Envia e-mail
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      const linkReset = `${frontendUrl}/cliente/reset-senha?resetToken=${resetToken}`;
+      // O arquivo servido é reset-senha.html: o express.static de /cliente não
+      // resolve caminhos sem extensão, e sem o .html o link caía no 404 da API.
+      const linkReset = `${frontendUrl}/cliente/reset-senha.html?resetToken=${resetToken}`;
 
       logger.info('[Cliente Auth] Enviando e-mail de recuperação', {
         context: { email, clienteId: cliente.id }
@@ -795,7 +797,7 @@ router.get('/google/callback',
 
         // Redireciona para frontend com erro
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-        return res.redirect(`${frontendUrl}/login?error=google_auth_denied`);
+        return res.redirect(`${frontendUrl}/cliente/login.html?error=google_auth_denied`);
       }
 
       // Valida código de autorização
@@ -947,7 +949,7 @@ router.get('/google/callback',
 
       // Redireciona para frontend com erro
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      res.redirect(`${frontendUrl}/login?error=google_auth_failed`);
+      res.redirect(`${frontendUrl}/cliente/login.html?error=google_auth_failed`);
     }
   }
 );
