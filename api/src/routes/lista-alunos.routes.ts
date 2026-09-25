@@ -1042,6 +1042,13 @@ router.get('/excursao/:id/exportar-escola',
       const formatDate = (d: Date | null | undefined) =>
         d ? new Date(d).toLocaleDateString('pt-BR') : '';
 
+      // CPF é gravado no checkout só com dígitos; a planilha escolar exige a máscara
+      const formatCpf = (cpf: string | null | undefined) => {
+        const digitos = (cpf || '').replace(/\D/g, '');
+        if (digitos.length !== 11) return cpf || '';
+        return digitos.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+      };
+
       // Tentar adicionar o logo do cabeçalho
       try {
         const logoPath = path.join(process.cwd(), "api/public/images/header_logo.png");
@@ -1064,7 +1071,7 @@ router.get('/excursao/:id/exportar-escola',
       const row1 = worksheet.getRow(1);
       row1.getCell(2).value = `TRABALHO DE CAMPO ${excursao.titulo.toUpperCase()}`;
       row1.font = { bold: true, size: 14 };
-      worksheet.mergeCells('B1:H1');
+      worksheet.mergeCells('B1:I1');
       row1.getCell(2).alignment = { horizontal: 'center' };
 
       // Metadados (Linha 2)
@@ -1076,7 +1083,7 @@ router.get('/excursao/:id/exportar-escola',
       const row2 = worksheet.getRow(2);
       row2.getCell(2).value = `Colégio: ${escola}  - Destino: ${destino}   - Data: ${dataViagem}  - Inscrições até:  ${dataFim}`;
       row2.font = { size: 10 };
-      worksheet.mergeCells('B2:H2');
+      worksheet.mergeCells('B2:I2');
       row2.getCell(2).alignment = { horizontal: 'center' };
 
       // Cabeçalho da Tabela (Linha 3)
@@ -1087,6 +1094,7 @@ router.get('/excursao/:id/exportar-escola',
         'Série',
         'Turma',
         'Unidade',
+        'CPF',
         'RG',
         'Data de Nascimento'
       ];
@@ -1120,6 +1128,7 @@ router.get('/excursao/:id/exportar-escola',
           item.serieAluno,
           item.turma,
           item.unidadeColegio,
+          formatCpf(item.cpfAluno),
           item.rgAluno,
           formatDate(item.dataNascimento)
         ];
@@ -1143,8 +1152,9 @@ router.get('/excursao/:id/exportar-escola',
       worksheet.getColumn(4).width = 15; // Série
       worksheet.getColumn(5).width = 10; // Turma
       worksheet.getColumn(6).width = 15; // Unidade
-      worksheet.getColumn(7).width = 15; // RG
-      worksheet.getColumn(8).width = 18; // Data Nasc
+      worksheet.getColumn(7).width = 18; // CPF
+      worksheet.getColumn(8).width = 15; // RG
+      worksheet.getColumn(9).width = 18; // Data Nasc
 
       res.setHeader(
         'Content-Type',

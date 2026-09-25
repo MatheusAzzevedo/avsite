@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-09-15) - fix: corrigir o retorno de falha do login com Google
+### Última atualização (2026-09-24) - feat: somar a coluna de CPF à planilha exportada para a escola
+- **api/src/routes/lista-alunos.routes.ts** [Nova `formatCpf`; coluna CPF somada antes do RG na exportação `exportar-escola`]
+
+Resumo: A planilha "Lista para Escola" trazia só o RG dos alunos, que é opcional no cadastro, enquanto a escola pede o CPF. O CPF já é campo do pedido e é obrigatório no checkout, então nada precisou ser recadastrado; a coluna foi somada ao lado do RG, ampliando a tabela de 8 para 9 colunas e estendendo os merges e as larguras do topo. Como o checkout grava o CPF só com dígitos, a nova `formatCpf` aplica a máscara `000.000.000-00`, normaliza valor já mascarado e devolve como está quando o documento estiver incompleto, sem descartar dado. Validação: `eslint` e `tsc` limpos; como o projeto não tem suíte de testes, a conferência do arquivo gerado é manual pelo admin.
+
+### Atualização anterior (2026-09-15) - fix: corrigir o retorno de falha do login com Google
 - **api/src/routes/cliente-auth.routes.ts**, **api/public/cliente/js/login.js** [Redirecionamento de falha aponta para `/cliente/login.html` e a página exibe a mensagem]
 
 Resumo: Quando o login com Google era cancelado ou falhava, o servidor mandava o cliente para `/login`, endereço inexistente que respondia 404 com "Rota não encontrada". Os dois casos passam a voltar para `/cliente/login.html`. A página de login também não lia o parâmetro de erro, então mesmo com o caminho certo o cliente voltaria sem explicação; agora ela mostra uma mensagem para cada situação.

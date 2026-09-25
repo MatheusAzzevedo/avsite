@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-24 - feat: somar a coluna de CPF à planilha exportada para a escola
+
+### Arquivos Modificados
+- `api/src/routes/lista-alunos.routes.ts` [Nova `formatCpf`; coluna CPF somada antes do RG no `exportar-escola`]
+
+### Detalhes das Alterações
+- **O pedido**: A exportação "Lista para Escola" (`GET /api/admin/listas/excursao/:id/exportar-escola`) trazia apenas o RG dos alunos, e a escola precisa do CPF.
+- **Por que era possível sem cadastro novo**: O CPF já é campo do `ItemPedido` (`schema.prisma`) e é **obrigatório** no checkout, enquanto o RG é opcional — ou seja, a coluna nova passa a ser a mais confiável das duas. Fichas antigas ou preenchidas pelo admin sem CPF continuam saindo em branco, como já acontecia com o RG.
+- **A máscara**: O checkout grava o CPF só com dígitos (`onlyDigits`), então a planilha aplicaria `12345678901`. A nova `formatCpf` converte para `123.456.789-01` e normaliza valores que cheguem já mascarados; com menos de 11 dígitos devolve o valor como está, sem descartar dado.
+- **O RG continua**: A coluna foi somada, não substituída. A tabela passa de 8 para 9 colunas (`Nº | Nome | Série | Turma | Unidade | CPF | RG | Data de Nascimento`), os merges do topo foram estendidos de `B1:H1`/`B2:H2` para `B1:I1`/`B2:I2` e as larguras ajustadas (CPF 18, RG 15, Data de Nascimento 18).
+- **Validação**: `npx eslint` e `npx tsc --noEmit` limpos, e a máscara exercitada com CPF só com dígitos, já mascarado, incompleto e vazio. Não há suíte de testes no projeto, então a conferência do arquivo gerado é manual pelo admin.
+
+---
+
 ## 2026-09-15 - fix: corrigir o retorno de falha do login com Google
 
 ### Arquivos Modificados
@@ -58,20 +72,4 @@
 - **Validação**: Os seis status exercitados contra a rota real com token de cliente — `PAGO` e `CONFIRMADO` devolvem o comprovante (HTTP 200), e os outros quatro devolvem 404 com a mensagem explicativa. A listagem entrega `CONFIRMADO` cru para a tela, que é o valor que a condição do botão avalia.
 
 ---
-
-## 2026-09-02 - fix: preservar a data de pagamento ao cancelar um pedido pago
-
-### Arquivos Modificados
-- `api/src/utils/transicoes-pedido.ts` [Nova constante `STATUS_ANTES_DO_PAGAMENTO`; aviso restrito a ela]
-- `api/src/routes/pedido.routes.ts` [Limpeza das datas só ao voltar para antes do pagamento]
-
-### Detalhes das Alterações
-- **O defeito**: A correção do dia 01/09 limpava `dataPagamento` e `dataConfirmacao` em qualquer status que não fosse `PAGO` ou `CONFIRMADO` — inclusive ao **cancelar**. O modal dizia "mudar o status NÃO estorna nada" e, na linha seguinte, apagava o registro de que o dinheiro entrou. As duas frases se contradiziam na mesma tela.
-- **Por que importa além da coerência**: Os 41 pedidos cancelados indevidamente pela cobrança órfã só foram encontrados porque `dataPagamento` sobreviveu ao cancelamento. Com o comportamento anterior, um caso desses passaria a ser invisível na consulta.
-- **A regra certa é mais estreita**: A limpeza vale só ao ir para `PENDENTE` ou `AGUARDANDO_PAGAMENTO`, que são os status que afirmam "ainda não pagou". `CANCELADO` e `EXPIRADO` encerram o pedido, mas não desfazem o fato de o pagamento ter acontecido.
-- **Encontrado em produção**: O pedido `51b57cc4` (R$ 10,00, cartão) foi cancelado pelo modal em 01/09 e ficou sem data de pagamento, como se nunca tivesse sido pago. O valor foi capturado de verdade no Asaas.
-- **Validação**: Cancelar um pedido pago preserva a data; voltar o mesmo pedido para `PENDENTE` limpa as duas datas; e o aviso de remoção passa a aparecer apenas em `Pendente` e `Aguardando pagamento`, não mais nas seis opções.
-
----
-
 
