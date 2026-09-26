@@ -9,7 +9,9 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:${POSTGRES_PORT}/${POSTGRES_DB}
+      # Dentro da rede do compose o Postgres sempre escuta na 5432; a porta
+      # publicada no host (POSTGRES_PORT) não se aplica aqui.
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
       - POSTGRES_HOST=database
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
@@ -29,7 +31,9 @@ services:
     image: postgres:15
     container_name: avoar_postgres_db
     ports:
-      - "5432:5432"
+      # A porta publicada no host vem de POSTGRES_PORT, para conviver com outro
+      # Postgres já ocupando a 5432. Quem não tiver conflito define 5432 no .env.
+      - "${POSTGRES_PORT}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
