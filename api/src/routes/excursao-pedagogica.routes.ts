@@ -517,12 +517,14 @@ router.put('/:id',
               existing.imagemCapa,
               existing.imagemPrincipal,
               existing.documentoUrl,
+              existing.contratoUrl,
               ...existing.galeria.map((g) => g.url)
             ],
             [
               excursaoAtualizada.imagemCapa,
               excursaoAtualizada.imagemPrincipal,
               excursaoAtualizada.documentoUrl,
+              excursaoAtualizada.contratoUrl,
               ...excursaoAtualizada.galeria.map((g) => g.url)
             ]
           ),
@@ -621,7 +623,9 @@ router.delete('/:id',
           titulo: existing.titulo,
           codigo: existing.codigo,
           documentoUrl: existing.documentoUrl ?? null,
-          documentoNome: existing.documentoNome ?? null
+          documentoNome: existing.documentoNome ?? null,
+          contratoUrl: existing.contratoUrl ?? null,
+          contratoNome: existing.contratoNome ?? null
         };
         await prisma.pedido.updateMany({
           where: { excursaoPedagogicaId: id },
@@ -646,6 +650,7 @@ router.delete('/:id',
           existing.imagemCapa,
           existing.imagemPrincipal,
           existing.documentoUrl,
+          existing.contratoUrl,
           ...existing.galeria.map((g) => g.url)
         ],
         `excursao-pedagogica:${id}`

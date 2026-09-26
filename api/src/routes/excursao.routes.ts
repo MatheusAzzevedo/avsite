@@ -431,10 +431,11 @@ router.put('/:id',
       if (excursaoAtualizada) {
         await removerSeOrfas(
           urlsQueSairam(
-            [existing.imagemCapa, existing.imagemPrincipal, ...existing.galeria.map((g) => g.url)],
+            [existing.imagemCapa, existing.imagemPrincipal, existing.contratoUrl, ...existing.galeria.map((g) => g.url)],
             [
               excursaoAtualizada.imagemCapa,
               excursaoAtualizada.imagemPrincipal,
+              excursaoAtualizada.contratoUrl,
               ...excursaoAtualizada.galeria.map((g) => g.url)
             ]
           ),
@@ -529,7 +530,7 @@ router.delete('/:id',
       // são removidas do bucket. A ordem importa — se fosse antes e o delete
       // falhasse, o registro ficaria apontando para uma imagem já apagada.
       await removerSeOrfas(
-        [existing.imagemCapa, existing.imagemPrincipal, ...existing.galeria.map((g) => g.url)],
+        [existing.imagemCapa, existing.imagemPrincipal, existing.contratoUrl, ...existing.galeria.map((g) => g.url)],
         `excursao:${id}`
       );
 

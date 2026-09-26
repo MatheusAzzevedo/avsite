@@ -140,6 +140,13 @@ async function loadExcursao(excursaoId) {
       renderGalleryPreview();
     }
 
+    if (excursao.contratoUrl) {
+      document.getElementById('contratoUrlData').value = excursao.contratoUrl || '';
+      document.getElementById('contratoNomeData').value = excursao.contratoNome || excursao.contratoUrl.split('/').pop() || '';
+      document.getElementById('contratoPreviewNome').textContent = excursao.contratoNome || excursao.contratoUrl.split('/').pop() || 'Contrato anexado';
+      document.getElementById('contratoPreviewContainer').style.display = 'block';
+    }
+
     console.log('[Excursão Editor] Excursão carregada com sucesso');
   } catch (error) {
     console.error('[Excursão Editor] Erro ao carregar:', error);
@@ -183,6 +190,44 @@ function removeImage(dataInputId, containerId, fileInputId) {
   document.getElementById(dataInputId).value = '';
   document.getElementById(fileInputId).value = '';
   document.getElementById(containerId).style.display = 'none';
+}
+
+/**
+ * Explicação da função [handleContratoUpload]
+ * Envia o contrato (PDF) ao Cloudflare R2 e guarda a URL no campo escondido.
+ */
+async function handleContratoUpload(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (file.size > 20 * 1024 * 1024) {
+    showNotification('O contrato deve ter no máximo 20MB', 'error');
+    return;
+  }
+  const ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+  if (ext !== '.pdf') {
+    showNotification('Formato não permitido. O contrato deve ser um PDF.', 'error');
+    return;
+  }
+  try {
+    showNotification('Enviando contrato...', 'info');
+    const res = await UploadManager.uploadDocument(file);
+    document.getElementById('contratoUrlData').value = res.url || res.fullUrl || '';
+    document.getElementById('contratoNomeData').value = res.originalName || file.name || '';
+    document.getElementById('contratoPreviewNome').textContent = res.originalName || file.name || 'Contrato anexado';
+    document.getElementById('contratoPreviewContainer').style.display = 'block';
+    input.value = '';
+    showNotification('Contrato enviado com sucesso!', 'success');
+  } catch (err) {
+    console.error('[Excursão Editor] Erro ao enviar contrato:', err);
+    showNotification(err.message || 'Erro ao enviar contrato.', 'error');
+  }
+}
+
+function removeContrato() {
+  document.getElementById('contratoUrlData').value = '';
+  document.getElementById('contratoNomeData').value = '';
+  document.getElementById('contratoUpload').value = '';
+  document.getElementById('contratoPreviewContainer').style.display = 'none';
 }
 
 /**
@@ -303,6 +348,14 @@ function getExcursaoData() {
       var val = document.getElementById('excursaoVagas').value;
       return val ? parseInt(val, 10) : null;
     })(),
+    contratoUrl: (function () {
+      var el = document.getElementById('contratoUrlData');
+      return el && el.value ? el.value.trim() : null;
+    })(),
+    contratoNome: (function () {
+      var el = document.getElementById('contratoNomeData');
+      return el && el.value ? el.value.trim() : null;
+    })(),
   };
 }
 
@@ -422,6 +475,18 @@ document.addEventListener('DOMContentLoaded', function () {
   const saveInactiveBtn = document.querySelector('.btn-secondary[data-action="save-inactive"]');
   if (saveInactiveBtn) {
     saveInactiveBtn.addEventListener('click', saveAsInactive);
+  }
+
+  // Upload do contrato (PDF)
+  const contratoUploadInput = document.getElementById('contratoUpload');
+  if (contratoUploadInput) {
+    contratoUploadInput.addEventListener('change', function () {
+      handleContratoUpload(this);
+    });
+  }
+  const btnRemoverContrato = document.getElementById('btnRemoverContrato');
+  if (btnRemoverContrato) {
+    btnRemoverContrato.addEventListener('click', removeContrato);
   }
 
   // File uploads - Imagem Capa

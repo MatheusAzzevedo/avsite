@@ -136,6 +136,8 @@ model Excursao {
   tags            String[]
   dataExcursao    DateTime?      // Data da excursão
   vagas           Int?           // Limite de vagas (null = ilimitado)
+  contratoUrl     String?        // URL do contrato (PDF) para assinatura antes do pagamento
+  contratoNome    String?        // Nome amigável do contrato para exibição
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
@@ -219,6 +221,8 @@ model ExcursaoPedagogica {
   dataFimInscricoes DateTime?    // Data final de inscrições (campo oculto no admin)
   documentoUrl     String?       // URL do documento (PDF, DOCX, XLS, XLSX) para download
   documentoNome    String?       // Nome amigável do documento para exibição
+  contratoUrl      String?       // URL do contrato (PDF) para assinatura antes do pagamento
+  contratoNome     String?       // Nome amigável do contrato para exibição
   vagas            Int?          // Limite de vagas (null = ilimitado)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt

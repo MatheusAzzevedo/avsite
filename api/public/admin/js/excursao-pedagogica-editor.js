@@ -110,6 +110,13 @@ async function loadExcursaoPedagogica(excursaoId) {
       document.getElementById('documentoPreviewContainer').style.display = 'block';
     }
 
+    if (excursao.contratoUrl) {
+      document.getElementById('contratoUrlData').value = excursao.contratoUrl || '';
+      document.getElementById('contratoNomeData').value = excursao.contratoNome || excursao.contratoUrl.split('/').pop() || '';
+      document.getElementById('contratoPreviewNome').textContent = excursao.contratoNome || excursao.contratoUrl.split('/').pop() || 'Contrato anexado';
+      document.getElementById('contratoPreviewContainer').style.display = 'block';
+    }
+
     console.log('[Excursão Pedagógica Editor] Carregada com sucesso');
   } catch (error) {
     console.error('[Excursão Pedagógica Editor] Erro ao carregar:', error);
@@ -186,6 +193,40 @@ function removeDocumentoPedagogica() {
   document.getElementById('documentoNomeData').value = '';
   document.getElementById('documentoUpload').value = '';
   document.getElementById('documentoPreviewContainer').style.display = 'none';
+}
+
+async function handleContratoUploadPedagogica(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if (file.size > 20 * 1024 * 1024) {
+    showNotificationPedagogica('O contrato deve ter no máximo 20MB', 'error');
+    return;
+  }
+  var ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+  if (ext !== '.pdf') {
+    showNotificationPedagogica('Formato não permitido. O contrato deve ser um PDF.', 'error');
+    return;
+  }
+  try {
+    showNotificationPedagogica('Enviando contrato...', 'info');
+    var res = await UploadManager.uploadDocument(file);
+    document.getElementById('contratoUrlData').value = res.url || res.fullUrl || '';
+    document.getElementById('contratoNomeData').value = res.originalName || file.name || '';
+    document.getElementById('contratoPreviewNome').textContent = res.originalName || file.name || 'Contrato anexado';
+    document.getElementById('contratoPreviewContainer').style.display = 'block';
+    input.value = '';
+    showNotificationPedagogica('Contrato enviado com sucesso!', 'success');
+  } catch (err) {
+    console.error('[Excursão Pedagógica] Erro ao enviar contrato:', err);
+    showNotificationPedagogica(err.message || 'Erro ao enviar contrato.', 'error');
+  }
+}
+
+function removeContratoPedagogica() {
+  document.getElementById('contratoUrlData').value = '';
+  document.getElementById('contratoNomeData').value = '';
+  document.getElementById('contratoUpload').value = '';
+  document.getElementById('contratoPreviewContainer').style.display = 'none';
 }
 
 /**
@@ -318,6 +359,14 @@ function getExcursaoPedagogicaData() {
     })(),
     documentoNome: (function () {
       var el = document.getElementById('documentoNomeData');
+      return el && el.value ? el.value.trim() : null;
+    })(),
+    contratoUrl: (function () {
+      var el = document.getElementById('contratoUrlData');
+      return el && el.value ? el.value.trim() : null;
+    })(),
+    contratoNome: (function () {
+      var el = document.getElementById('contratoNomeData');
       return el && el.value ? el.value.trim() : null;
     })()
   };
@@ -468,6 +517,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var btnRemoverDocumento = document.getElementById('btnRemoverDocumento');
   if (btnRemoverDocumento) {
     btnRemoverDocumento.addEventListener('click', removeDocumentoPedagogica);
+  }
+
+  var contratoUploadInput = document.getElementById('contratoUpload');
+  if (contratoUploadInput) {
+    contratoUploadInput.addEventListener('change', function () {
+      handleContratoUploadPedagogica(this);
+    });
+  }
+  var btnRemoverContrato = document.getElementById('btnRemoverContrato');
+  if (btnRemoverContrato) {
+    btnRemoverContrato.addEventListener('click', removeContratoPedagogica);
   }
 
   var imagemCapaInput = document.getElementById('imagemCapa');
