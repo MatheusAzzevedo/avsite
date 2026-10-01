@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-10-01 - fix: corrigir falha ao criar excursão convencional nova
+
+### Arquivos Modificados
+- `api/src/routes/excursao.routes.ts` [Deriva o campo legado `categoria` da primeira `categoriaId` marcada, quando ausente]
+
+### Detalhes das Alterações
+- **O problema**: Criar qualquer excursão convencional nova pela tela do admin quebrava com `Argument categoria is missing`. A tela só envia `categoriaIds` (o relacionamento muitos-para-muitos), mas o campo legado `categoria` (string, usado pelo filtro `?categoria=` antigo) continua `NOT NULL` no banco, sem default, e nada preenchia.
+- **Por que não apareceu antes**: Todo teste anterior da integração Clicksign editava excursões já existentes (`Santuário do Caraça`, `Cristo Redentor`), e `update()` não exige os campos que já têm valor — só `create()` falhava. O bug é anterior a este trabalho, só nunca tinha sido exercitado.
+- **A correção**: Quando `categoria` não vem no corpo e `categoriaIds` tem ao menos um item, busca o `slug` da primeira categoria marcada (`CategoriaExcursao.findUnique`) e usa como valor legado — mesmo formato (`cultura`, `natureza`, `marítimo`) que os registros antigos já têm.
+- **Achado em produção**: Apareceu ao criar uma excursão de teste pra validar o webhook da Clicksign em `avoarturismo.up.railway.app`; corrigido e redeployado antes de prosseguir.
+
+---
+
+## 2026-09-30 - feat: integrar assinatura digital de contrato via Clicksign
+
+### Arquivos Modificados
+- `api/src/config/clicksign.ts` [Novo: cliente da API v3 da Clicksign — envelope, documento, signatário, requisitos, verificação HMAC do webhook]
+- `api/src/routes/webhook.routes.ts` [Nova rota `POST /webhooks/clicksign`, valida `Content-Hmac` contra o corpo bruto]
+- `api/src/routes/pedido.routes.ts` [Novas rotas `POST /:id/assinatura` e `/assinatura/confirmar`; trava o contrato após assinar]
+- `api/src/jobs/expirar-assinatura.job.ts` [Novo: varredura que expira assinaturas pendentes vencidas]
+- `api/src/server.ts` [Captura o corpo bruto da requisição (`rawBody`) para o HMAC; CSP libera os domínios da Clicksign]
+- `api/public/cliente/js/pagamento.js`, `api/public/cliente/pagamento.html` [Monta o Widget Embedded no checkout, antes do pagamento]
+- `api/public/admin/js/excursao-editor.js`, `excursao-pedagogica-editor.js` [Trava upload/remoção do contrato após a primeira assinatura]
+- `api/prisma/schema.prisma` [Novos campos `contratoUrl`/`contratoNome`/`contratoTravado` e model `Assinatura`]
+
+### Detalhes das Alterações
+- **O fluxo**: O admin anexa o contrato em PDF na excursão (convencional ou pedagógica). No checkout, antes de liberar o pagamento, o cliente assina pelo Widget Embedded da Clicksign — o backend busca o PDF já publicado no R2 e cria o envelope na hora, nunca recebe upload direto do cliente.
+- **Duas confirmações, não uma**: Síncrona, por polling (`/assinatura/confirmar`, chamada quando o widget dispara o evento `signed`) e assíncrona, pelo webhook (`sign`/`auto_close`) — o que importa primeiro vence. Nos testes, o webhook chegou antes do polling nas duas vezes.
+- **Segurança do webhook**: `Content-Hmac: sha256=<hex>` conferido com `crypto.timingSafeEqual` contra HMAC-SHA256 do corpo bruto (capturado via `verify` do `express.json()`, antes do corpo ser reserializado). Sem `CLICKSIGN_WEBHOOK_SECRET` configurado, falha fechado (401) para toda requisição.
+- **Trava depois de assinado**: `contratoTravado` desabilita upload e remoção do contrato na tela do admin, e o backend recusa a troca de qualquer forma — a defesa real está na API, a tela é só aviso.
+- **Dois ajustes exigidos pela API da Clicksign, descobertos só ao testar de verdade**: `phone_number` precisa vir só com 10 ou 11 dígitos, sem máscara nem DDI (mandar o telefone cru formatado dá 400); e o script do Widget Embedded (`cdn-public-library.clicksign.com`) e o iframe de assinatura (`sandbox.clicksign.com`/`app.clicksign.com`) precisam estar liberados na CSP, senão o navegador bloqueia silenciosamente.
+- **Bug de CSS do widget**: o container usava `min-height`, que não cria contexto de altura pra `height: 100%` do iframe resolver — ele caía pro padrão do navegador (~150px). Trocado para `height` fixo.
+- **Validado em dois ambientes**: sandbox local (Santuário do Caraça e a excursão pedagógica fixture `TESTE-PIX-2026`) e produção real (`app.clicksign.com`, com validade jurídica) — nos dois, envelope criado, assinatura confirmada via webhook com HMAC válido, e contrato travado no admin.
+- **Achado em produção, fora do código**: a conta Clicksign de produção não tinha o "e-mail do usuário da API" configurado (Configurações → API), o que gerava 403 `forbidden` ao criar o envelope. Resolvido direto no painel deles, não é bug desta integração.
+
+---
+
 ## 2026-09-24 - feat: somar a coluna de CPF à planilha exportada para a escola
 
 ### Arquivos Modificados
@@ -39,37 +76,4 @@
 - **Confirmado em produção**: `/cliente/reset-senha?resetToken=...` responde 404 com exatamente a mensagem que o cliente viu; o mesmo endereço com `.html` responde 200 e abre a página. A página já lia o parâmetro `resetToken`, então só o caminho estava errado.
 - **Links já enviados**: O token vale 1 hora. Quem pediu a recuperação antes do deploy e não conseguiu precisa pedir de novo.
 - **Achado no caminho, fora deste commit**: O redirecionamento de falha do login com Google aponta para `/login?error=google_auth_failed`, que também responde 404 em produção.
-
----
-
-## 2026-09-03 - feat: registrar no histórico do pedido as notificações de gateway recusadas
-
-### Arquivos Modificados
-- `api/src/routes/webhook.routes.ts` [Nova `registrarNotificacaoIgnorada`; as duas guardas passam a gravar em `activity_logs`]
-
-### Detalhes das Alterações
-- **O problema**: As duas proteções contra a cobrança PIX órfã recusavam a notificação registrando apenas no log da aplicação. No banco não sobrava rastro nenhum, e proteção silenciosa é indistinguível de proteção ausente.
-- **Como isso apareceu**: Ao investigar um pedido pago no cartão logo após um PIX abandonado, não havia como responder, olhando o histórico, se a guarda tinha agido ou se a notificação nunca havia chegado. A pergunta só se resolveu lendo o código e comparando o formato dos registros — que é justamente o tipo de resposta que deveria estar visível no painel.
-- **O que passa a ser gravado**: Uma linha com `action: 'webhook_ignorado'` dizendo qual cobrança foi notificada, com que status, qual é a cobrança atual do pedido e em que status o pedido foi preservado. Vale para as duas guardas: a que recusa notificação de cobrança que não é mais a do pedido, e a que impede `canceled` de rebaixar pedido já pago.
-- **Nunca derruba o webhook**: A gravação é isolada em try/catch. Falhar o webhook por causa de auditoria faria o gateway reenviar a notificação — e o reenvio é exatamente o que a guarda precisa continuar recusando.
-- **Distinção que o histórico agora torna óbvia**: Webhook grava `action: 'payment_webhook'` e nunca preenche `userId`; alteração manual grava `action: 'update'` com `userId` do admin. Com a nova linha, o terceiro caso — notificação recusada — também fica explícito.
-- **Validação**: Gravação e leitura exercitadas contra o banco, confirmando que `action` aceita o valor novo (o campo é String livre no schema, sem enum).
-
----
-
-## 2026-09-02 - fix: liberar o comprovante para pedidos confirmados, e não só pagos
-
-### Arquivos Modificados
-- `api/src/routes/pedido.routes.ts` [Rota do comprovante aceita `PAGO` e `CONFIRMADO`]
-- `api/public/cliente/js/pedidos.js` [Botão aparece nos dois status]
-
-### Detalhes das Alterações
-- **O problema**: A rota filtrava `status: 'PAGO'` e o botão na tela usava a mesma condição. Só que `CONFIRMADO` não é um status inferior a `PAGO`: é o passo **seguinte**, o pedido pago e confirmado pela empresa. Deixá-lo de fora inverte a intenção da regra.
-- **Alcance em produção**: **144 pedidos em `CONFIRMADO`, de 139 clientes distintos**, nenhum conseguia emitir comprovante. Desses, 119 têm data de pagamento registrada.
-- **Por que aparecia principalmente no cartão**: É o webhook `PAYMENT_CONFIRMED` do Asaas que promove o pedido de `PAGO` para `CONFIRMADO`, e ele chega segundos depois da aprovação. Dos 144 confirmados, 118 são de cartão e apenas 1 de PIX. Na prática, quem pagava no cartão via o botão do comprovante por alguns segundos e depois o perdia, enquanto quem pagava no PIX ficava em `PAGO` e mantinha.
-- **Reuso da constante**: A rota passa a usar `STATUS_DE_PAGAMENTO`, já definida em `transicoes-pedido.ts`, em vez de uma segunda lista. Assim "o que conta como pago" continua definido num lugar só, e o comprovante acompanha se a regra mudar.
-- **Fica de fora de propósito**: `PENDENTE` e `AGUARDANDO_PAGAMENTO` ainda não pagaram; `CANCELADO` e `EXPIRADO` encerraram. Emitir comprovante de inscrição cancelada seria pior que o erro corrigido.
-- **Validação**: Os seis status exercitados contra a rota real com token de cliente — `PAGO` e `CONFIRMADO` devolvem o comprovante (HTTP 200), e os outros quatro devolvem 404 com a mensagem explicativa. A listagem entrega `CONFIRMADO` cru para a tela, que é o valor que a condição do botão avalia.
-
----
 
