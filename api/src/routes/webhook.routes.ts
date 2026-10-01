@@ -6,6 +6,8 @@
  * 
  * Webhooks implementados:
  * - POST /api/webhooks/asaas - Webhook do Asaas
+ * - POST /api/webhooks/paghiper - Webhook do PagHiper
+ * - POST /api/webhooks/clicksign - Webhook da Clicksign (assinatura de contrato)
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
@@ -13,7 +15,18 @@ import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
 import { processarWebhookAsaas } from '../config/asaas';
 import { processarRetornoPagHiper } from '../config/paghiper';
+import { verificarAssinaturaWebhook } from '../config/clicksign';
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
+
+// Corpo bruto da requisição, guardado pelo `verify` do `express.json()` em
+// server.ts — necessário para conferir o HMAC da Clicksign.
+declare global {
+  namespace Express {
+    interface Request {
+      rawBody?: Buffer;
+    }
+  }
+}
 
 const router = Router();
 
@@ -421,6 +434,107 @@ router.post('/paghiper',
           notification_id,
           transaction_id
         }
+      });
+      res.status(500).json({ success: false, error: 'Erro ao processar webhook' });
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/webhooks/clicksign]
+ *
+ * Webhook da Clicksign — confirmação de assinatura de contrato como reforço do
+ * caminho síncrono (`POST /api/cliente/pedidos/:id/assinatura/confirmar`), que
+ * já cobre o caso comum (cliente assina e o próprio frontend confirma na hora).
+ * Este handler cobre quem assina fora dessa janela (ex.: dias depois, sem
+ * reabrir o checkout) — sem ele, esse caso só seria pego se o cliente voltasse
+ * e a tela chamasse o `/confirmar` de novo.
+ *
+ * Rota pública, sem cadastro de webhook feito ainda na Clicksign (falta URL
+ * pública em desenvolvimento) — fica pronta para quando o cadastro acontecer.
+ * Até lá, `CLICKSIGN_WEBHOOK_SECRET` não existe no `.env` e a verificação
+ * abaixo falha fechado (401) para toda requisição, o que é o comportamento
+ * certo: sem secret, não há como confirmar que o payload veio da Clicksign.
+ *
+ * Verificação HMAC: header `Content-Hmac: sha256=<hex>`, conferido em
+ * `verificarAssinaturaWebhook` (config/clicksign.ts) contra o corpo bruto da
+ * requisição (`req.rawBody`, capturado em server.ts). Sem isso, qualquer um
+ * que descobrisse a URL poderia forjar um "documento assinado" e destravar o
+ * contrato sem ninguém ter assinado nada.
+ *
+ * Eventos tratados: `sign` e `auto_close` (documento fecha sozinho com
+ * `auto_close: true` assim que o único signatário assina).
+ * Body: { event: { name }, document: { key, status } }
+ */
+router.post('/clicksign',
+  async (req: Request, res: Response) => {
+    if (!verificarAssinaturaWebhook(req.rawBody ?? Buffer.alloc(0), req.header('content-hmac'))) {
+      logger.warn('[Webhook Clicksign] Assinatura HMAC ausente ou inválida', {
+        context: { ip: req.ip }
+      });
+      return res.status(401).json({ error: 'Assinatura inválida' });
+    }
+
+    const { event, document } = req.body ?? {};
+    const eventName = event?.name;
+    const documentKey = document?.key;
+
+    logger.info('[Webhook Clicksign] Webhook recebido', {
+      context: { eventName, documentKey, statusDocumento: document?.status }
+    });
+
+    if (!eventName || !documentKey) {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+
+    if (eventName !== 'sign' && eventName !== 'auto_close') {
+      return res.json({ success: true, message: 'Evento ignorado' });
+    }
+
+    try {
+      const assinatura = await prisma.assinatura.findFirst({
+        where: { clicksignDocumentId: documentKey },
+        include: { pedido: { select: { id: true, excursaoId: true, excursaoPedagogicaId: true } } }
+      });
+
+      if (!assinatura) {
+        logger.warn('[Webhook Clicksign] Nenhuma assinatura correspondente ao documento', {
+          context: { documentKey }
+        });
+        return res.json({ success: true, message: 'Assinatura não encontrada' });
+      }
+
+      if (assinatura.status === 'ASSINADO') {
+        return res.json({ success: true, message: 'Já confirmada' });
+      }
+
+      await prisma.$transaction(async (tx) => {
+        await tx.assinatura.update({
+          where: { id: assinatura.id },
+          data: { status: 'ASSINADO', assinadoEm: new Date() }
+        });
+
+        if (assinatura.pedido.excursaoPedagogicaId) {
+          await tx.excursaoPedagogica.update({
+            where: { id: assinatura.pedido.excursaoPedagogicaId },
+            data: { contratoTravado: true }
+          });
+        } else if (assinatura.pedido.excursaoId) {
+          await tx.excursao.update({
+            where: { id: assinatura.pedido.excursaoId },
+            data: { contratoTravado: true }
+          });
+        }
+      });
+
+      logger.info('[Webhook Clicksign] Assinatura confirmada via webhook', {
+        context: { pedidoId: assinatura.pedido.id, documentKey, eventName }
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      logger.error('[Webhook Clicksign] Erro ao processar webhook', {
+        context: { error: error instanceof Error ? error.message : 'Unknown', documentKey, eventName }
       });
       res.status(500).json({ success: false, error: 'Erro ao processar webhook' });
     }

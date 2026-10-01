@@ -350,6 +350,12 @@ router.put('/:id',
         throw ApiError.notFound('Excursão não encontrada');
       }
 
+      // Contrato já assinado por algum cliente: trocar o PDF invalidaria uma
+      // assinatura que já aconteceu sobre o arquivo anterior.
+      if (existing.contratoTravado && data.contratoUrl !== undefined && data.contratoUrl !== existing.contratoUrl) {
+        throw ApiError.badRequest('O contrato já foi assinado por um cliente e não pode mais ser alterado');
+      }
+
       // Se título mudou, gera novo slug
       let slug = existing.slug;
       if (data.titulo && data.titulo !== existing.titulo) {

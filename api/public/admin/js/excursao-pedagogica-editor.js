@@ -117,6 +117,8 @@ async function loadExcursaoPedagogica(excursaoId) {
       document.getElementById('contratoPreviewContainer').style.display = 'block';
     }
 
+    aplicarTravaContratoPedagogica(!!excursao.contratoTravado);
+
     console.log('[Excursão Pedagógica Editor] Carregada com sucesso');
   } catch (error) {
     console.error('[Excursão Pedagógica Editor] Erro ao carregar:', error);
@@ -227,6 +229,30 @@ function removeContratoPedagogica() {
   document.getElementById('contratoNomeData').value = '';
   document.getElementById('contratoUpload').value = '';
   document.getElementById('contratoPreviewContainer').style.display = 'none';
+}
+
+/**
+ * Explicação da função [aplicarTravaContratoPedagogica]
+ * Contrato já assinado por um cliente: trocar o PDF invalidaria a assinatura
+ * feita sobre o arquivo anterior. Trava upload e remoção na tela; o backend
+ * recusa a troca de qualquer forma (a defesa real está lá).
+ */
+function aplicarTravaContratoPedagogica(travado) {
+  var upload = document.getElementById('contratoUpload');
+  var btnRemover = document.getElementById('btnRemoverContrato');
+  if (upload) upload.disabled = travado;
+  if (btnRemover) btnRemover.disabled = travado;
+
+  var aviso = document.getElementById('contratoTravadoAviso');
+  if (travado && !aviso) {
+    aviso = document.createElement('p');
+    aviso.id = 'contratoTravadoAviso';
+    aviso.style.cssText = 'color: var(--danger-color); font-size: 0.875rem; margin-top: 0.5rem;';
+    aviso.innerHTML = '<i class="fas fa-lock"></i> Este contrato já foi assinado por um cliente e não pode mais ser alterado.';
+    document.getElementById('contratoPreviewContainer').insertAdjacentElement('afterend', aviso);
+  } else if (!travado && aviso) {
+    aviso.remove();
+  }
 }
 
 /**

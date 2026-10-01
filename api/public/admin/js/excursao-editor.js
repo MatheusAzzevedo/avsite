@@ -147,6 +147,8 @@ async function loadExcursao(excursaoId) {
       document.getElementById('contratoPreviewContainer').style.display = 'block';
     }
 
+    aplicarTravaContrato(!!excursao.contratoTravado);
+
     console.log('[Excursão Editor] Excursão carregada com sucesso');
   } catch (error) {
     console.error('[Excursão Editor] Erro ao carregar:', error);
@@ -228,6 +230,30 @@ function removeContrato() {
   document.getElementById('contratoNomeData').value = '';
   document.getElementById('contratoUpload').value = '';
   document.getElementById('contratoPreviewContainer').style.display = 'none';
+}
+
+/**
+ * Explicação da função [aplicarTravaContrato]
+ * Contrato já assinado por um cliente: trocar o PDF invalidaria a assinatura
+ * feita sobre o arquivo anterior. Trava upload e remoção na tela; o backend
+ * recusa a troca de qualquer forma (a defesa real está lá).
+ */
+function aplicarTravaContrato(travado) {
+  const upload = document.getElementById('contratoUpload');
+  const btnRemover = document.getElementById('btnRemoverContrato');
+  if (upload) upload.disabled = travado;
+  if (btnRemover) btnRemover.disabled = travado;
+
+  let aviso = document.getElementById('contratoTravadoAviso');
+  if (travado && !aviso) {
+    aviso = document.createElement('p');
+    aviso.id = 'contratoTravadoAviso';
+    aviso.style.cssText = 'color: var(--danger-color); font-size: 0.875rem; margin-top: 0.5rem;';
+    aviso.innerHTML = '<i class="fas fa-lock"></i> Este contrato já foi assinado por um cliente e não pode mais ser alterado.';
+    document.getElementById('contratoPreviewContainer').insertAdjacentElement('afterend', aviso);
+  } else if (!travado && aviso) {
+    aviso.remove();
+  }
 }
 
 /**
