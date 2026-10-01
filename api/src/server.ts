@@ -57,6 +57,7 @@ import requestLoggerMiddleware from './middleware/request-logger.middleware';
 import { healthCheckAsaas } from './config/asaas';
 import { healthCheckEmail } from './config/email';
 import { iniciarVarreduraPixVencidos } from './jobs/expirar-pix.job';
+import { iniciarVarreduraAssinaturasVencidas } from './jobs/expirar-assinatura.job';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -96,9 +97,9 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...defaultDirectives,
-      "frame-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
-      "child-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
-      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.googletagmanager.com", "https://*.googletagmanager.com", "https://www.google-analytics.com", "https://ssl.google-analytics.com", "https://cdnjs.cloudflare.com"],
+      "frame-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://sandbox.clicksign.com", "https://app.clicksign.com"],
+      "child-src": ["'self'", "https://heyzine.com", "https://*.heyzine.com", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://sandbox.clicksign.com", "https://app.clicksign.com"],
+      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.googletagmanager.com", "https://*.googletagmanager.com", "https://www.google-analytics.com", "https://ssl.google-analytics.com", "https://cdnjs.cloudflare.com", "https://cdn-public-library.clicksign.com"],
       "script-src-attr": ["'unsafe-inline'"],
       "connect-src": ["'self'", "https://www.google-analytics.com", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://*.g.doubleclick.net", "https://avoarturismo.com.br", "http://localhost:3001", "http://localhost:3000"],
       "img-src": ["'self'", "data:", "blob:", ...origensR2(), "https://www.googletagmanager.com", "https://www.google-analytics.com", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://*.g.doubleclick.net", "https://*.google.com", "https://*.google.com.br"],
@@ -144,7 +145,17 @@ app.use('/api/', limiter);
 // possibilidade de uma requisição enorme consumir a memória do processo.
 // Uploads de arquivo não passam por aqui: usam multipart, com limite próprio
 // em upload.routes.ts.
-app.use(express.json({ limit: '2mb' }));
+//
+// `verify` guarda o corpo bruto em `req.rawBody`: o webhook da Clicksign
+// precisa dos bytes exatos que ela enviou para conferir o HMAC — o JSON já
+// parseado e reserializado por `JSON.stringify` pode ter espaçamento
+// diferente do original e quebrar o hash.
+app.use(express.json({
+  limit: '2mb',
+  verify: (req, _res, buf) => {
+    (req as Request).rawBody = buf;
+  }
+}));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 // Serve arquivos estáticos
@@ -349,6 +360,10 @@ async function startServer() {
       // Varredura de PIX vencidos: cancela no gateway cobranças que passaram do
       // prazo, mesmo que o cliente tenha fechado a página.
       iniciarVarreduraPixVencidos();
+
+      // Varredura de assinaturas de contrato vencidas: expira o pedido e libera
+      // a vaga quando o cliente não conclui a assinatura a tempo.
+      iniciarVarreduraAssinaturasVencidas();
 
       // Health check Email Brevo API (não bloqueia o startup, roda em background)
       healthCheckEmail().then((result) => {

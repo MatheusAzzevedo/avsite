@@ -192,6 +192,28 @@
                             </div>
                         </div>
 
+                        <!-- Contrato para assinatura -->
+                        <div style="background-color: var(--light-bg); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 2rem;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.25rem;"><i class="fas fa-file-signature" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Contrato para Assinatura</h3>
+                            <p style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 1rem;">Se um contrato for anexado, o cliente precisará assiná-lo antes de concluir o pedido.</p>
+                            <div class="form-group">
+                                <label for="contratoUpload"><i class="fas fa-cloud-upload-alt" style="margin-right: 0.25rem;"></i> Enviar arquivo</label>
+                                <input type="file" id="contratoUpload" class="form-control" accept=".pdf,application/pdf">
+                                <small style="color: var(--text-light);">Formato aceito: PDF (máx. 20MB)</small>
+                            </div>
+                            <div id="contratoPreviewContainer" style="display: none; margin-top: 1rem; padding: 1rem; background: white; border-radius: var(--radius-md); border: 1px solid var(--light-border);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                                    <div>
+                                        <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                        <span id="contratoPreviewNome">Contrato anexado</span>
+                                    </div>
+                                    <button type="button" id="btnRemoverContrato" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Remover</button>
+                                </div>
+                            </div>
+                            <input type="hidden" id="contratoUrlData" value="">
+                            <input type="hidden" id="contratoNomeData" value="">
+                        </div>
+
                         <!-- Imagens -->
                         <div style="background-color: var(--light-bg); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 2rem;">
                             <h3 style="margin-bottom: 1rem; font-size: 1.25rem;"><i class="fas fa-images" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Imagens</h3>

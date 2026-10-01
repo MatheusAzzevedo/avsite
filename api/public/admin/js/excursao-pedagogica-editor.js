@@ -110,6 +110,15 @@ async function loadExcursaoPedagogica(excursaoId) {
       document.getElementById('documentoPreviewContainer').style.display = 'block';
     }
 
+    if (excursao.contratoUrl) {
+      document.getElementById('contratoUrlData').value = excursao.contratoUrl || '';
+      document.getElementById('contratoNomeData').value = excursao.contratoNome || excursao.contratoUrl.split('/').pop() || '';
+      document.getElementById('contratoPreviewNome').textContent = excursao.contratoNome || excursao.contratoUrl.split('/').pop() || 'Contrato anexado';
+      document.getElementById('contratoPreviewContainer').style.display = 'block';
+    }
+
+    aplicarTravaContratoPedagogica(!!excursao.contratoTravado);
+
     console.log('[Excursão Pedagógica Editor] Carregada com sucesso');
   } catch (error) {
     console.error('[Excursão Pedagógica Editor] Erro ao carregar:', error);
@@ -186,6 +195,64 @@ function removeDocumentoPedagogica() {
   document.getElementById('documentoNomeData').value = '';
   document.getElementById('documentoUpload').value = '';
   document.getElementById('documentoPreviewContainer').style.display = 'none';
+}
+
+async function handleContratoUploadPedagogica(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if (file.size > 20 * 1024 * 1024) {
+    showNotificationPedagogica('O contrato deve ter no máximo 20MB', 'error');
+    return;
+  }
+  var ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+  if (ext !== '.pdf') {
+    showNotificationPedagogica('Formato não permitido. O contrato deve ser um PDF.', 'error');
+    return;
+  }
+  try {
+    showNotificationPedagogica('Enviando contrato...', 'info');
+    var res = await UploadManager.uploadDocument(file);
+    document.getElementById('contratoUrlData').value = res.url || res.fullUrl || '';
+    document.getElementById('contratoNomeData').value = res.originalName || file.name || '';
+    document.getElementById('contratoPreviewNome').textContent = res.originalName || file.name || 'Contrato anexado';
+    document.getElementById('contratoPreviewContainer').style.display = 'block';
+    input.value = '';
+    showNotificationPedagogica('Contrato enviado com sucesso!', 'success');
+  } catch (err) {
+    console.error('[Excursão Pedagógica] Erro ao enviar contrato:', err);
+    showNotificationPedagogica(err.message || 'Erro ao enviar contrato.', 'error');
+  }
+}
+
+function removeContratoPedagogica() {
+  document.getElementById('contratoUrlData').value = '';
+  document.getElementById('contratoNomeData').value = '';
+  document.getElementById('contratoUpload').value = '';
+  document.getElementById('contratoPreviewContainer').style.display = 'none';
+}
+
+/**
+ * Explicação da função [aplicarTravaContratoPedagogica]
+ * Contrato já assinado por um cliente: trocar o PDF invalidaria a assinatura
+ * feita sobre o arquivo anterior. Trava upload e remoção na tela; o backend
+ * recusa a troca de qualquer forma (a defesa real está lá).
+ */
+function aplicarTravaContratoPedagogica(travado) {
+  var upload = document.getElementById('contratoUpload');
+  var btnRemover = document.getElementById('btnRemoverContrato');
+  if (upload) upload.disabled = travado;
+  if (btnRemover) btnRemover.disabled = travado;
+
+  var aviso = document.getElementById('contratoTravadoAviso');
+  if (travado && !aviso) {
+    aviso = document.createElement('p');
+    aviso.id = 'contratoTravadoAviso';
+    aviso.style.cssText = 'color: var(--danger-color); font-size: 0.875rem; margin-top: 0.5rem;';
+    aviso.innerHTML = '<i class="fas fa-lock"></i> Este contrato já foi assinado por um cliente e não pode mais ser alterado.';
+    document.getElementById('contratoPreviewContainer').insertAdjacentElement('afterend', aviso);
+  } else if (!travado && aviso) {
+    aviso.remove();
+  }
 }
 
 /**
@@ -318,6 +385,14 @@ function getExcursaoPedagogicaData() {
     })(),
     documentoNome: (function () {
       var el = document.getElementById('documentoNomeData');
+      return el && el.value ? el.value.trim() : null;
+    })(),
+    contratoUrl: (function () {
+      var el = document.getElementById('contratoUrlData');
+      return el && el.value ? el.value.trim() : null;
+    })(),
+    contratoNome: (function () {
+      var el = document.getElementById('contratoNomeData');
       return el && el.value ? el.value.trim() : null;
     })()
   };
@@ -468,6 +543,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var btnRemoverDocumento = document.getElementById('btnRemoverDocumento');
   if (btnRemoverDocumento) {
     btnRemoverDocumento.addEventListener('click', removeDocumentoPedagogica);
+  }
+
+  var contratoUploadInput = document.getElementById('contratoUpload');
+  if (contratoUploadInput) {
+    contratoUploadInput.addEventListener('change', function () {
+      handleContratoUploadPedagogica(this);
+    });
+  }
+  var btnRemoverContrato = document.getElementById('btnRemoverContrato');
+  if (btnRemoverContrato) {
+    btnRemoverContrato.addEventListener('click', removeContratoPedagogica);
   }
 
   var imagemCapaInput = document.getElementById('imagemCapa');

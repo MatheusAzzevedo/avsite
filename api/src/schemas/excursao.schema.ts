@@ -46,6 +46,13 @@ const excursaoBaseSchema = {
   horario: z.string().max(100).optional().nullable(),
   tags: z.array(z.string()).optional().default([]),
   galeria: z.array(z.string()).optional().default([]),
+  contratoUrl: z
+    .string()
+    .max(500)
+    .regex(/\.pdf$/i, 'Contrato deve ser um arquivo PDF')
+    .optional()
+    .nullable(),
+  contratoNome: z.string().max(200).optional().nullable(),
   dataExcursao: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'dataExcursao deve estar no formato YYYY-MM-DD')

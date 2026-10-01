@@ -424,6 +424,12 @@ router.put('/:id',
         throw ApiError.notFound('Excursão pedagógica não encontrada');
       }
 
+      // Contrato já assinado por algum cliente: trocar o PDF invalidaria uma
+      // assinatura que já aconteceu sobre o arquivo anterior.
+      if (existing.contratoTravado && data.contratoUrl !== undefined && data.contratoUrl !== existing.contratoUrl) {
+        throw ApiError.badRequest('O contrato já foi assinado por um cliente e não pode mais ser alterado');
+      }
+
       // Se código mudou, verifica se novo código já existe
       if (data.codigo && data.codigo !== existing.codigo) {
         const codigoExists = await prisma.excursaoPedagogica.findUnique({
@@ -517,12 +523,14 @@ router.put('/:id',
               existing.imagemCapa,
               existing.imagemPrincipal,
               existing.documentoUrl,
+              existing.contratoUrl,
               ...existing.galeria.map((g) => g.url)
             ],
             [
               excursaoAtualizada.imagemCapa,
               excursaoAtualizada.imagemPrincipal,
               excursaoAtualizada.documentoUrl,
+              excursaoAtualizada.contratoUrl,
               ...excursaoAtualizada.galeria.map((g) => g.url)
             ]
           ),
@@ -621,7 +629,9 @@ router.delete('/:id',
           titulo: existing.titulo,
           codigo: existing.codigo,
           documentoUrl: existing.documentoUrl ?? null,
-          documentoNome: existing.documentoNome ?? null
+          documentoNome: existing.documentoNome ?? null,
+          contratoUrl: existing.contratoUrl ?? null,
+          contratoNome: existing.contratoNome ?? null
         };
         await prisma.pedido.updateMany({
           where: { excursaoPedagogicaId: id },
@@ -646,6 +656,7 @@ router.delete('/:id',
           existing.imagemCapa,
           existing.imagemPrincipal,
           existing.documentoUrl,
+          existing.contratoUrl,
           ...existing.galeria.map((g) => g.url)
         ],
         `excursao-pedagogica:${id}`

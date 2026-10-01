@@ -89,7 +89,8 @@ router.post('/pix',
           cliente: true,
           itens: true, // Incluir itens para acessar dados do responsável
           excursaoPedagogica: true,
-          excursao: true
+          excursao: true,
+          assinatura: true
         }
       });
 
@@ -105,6 +106,12 @@ router.post('/pix',
           context: { pedidoId, status: pedido.status }
         });
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
+      }
+
+      // Excursão com contrato exige assinatura concluída antes de liberar o pagamento.
+      const exigeContrato = !!(pedido.excursaoPedagogica?.contratoUrl ?? pedido.excursao?.contratoUrl);
+      if (exigeContrato && pedido.assinatura?.status !== 'ASSINADO') {
+        throw ApiError.badRequest('É necessário assinar o contrato antes de prosseguir para o pagamento');
       }
 
       // Extrai dados do PAGADOR para enviar ao PagHiper.
@@ -277,7 +284,7 @@ router.post('/cartao',
       // Busca pedido com itens e dados do responsável
       const pedido = await prisma.pedido.findFirst({
         where: { id: pedidoId, clienteId },
-        include: { cliente: true, excursaoPedagogica: true, excursao: true, itens: true }
+        include: { cliente: true, excursaoPedagogica: true, excursao: true, itens: true, assinatura: true }
       });
 
       if (!pedido) {
@@ -286,6 +293,12 @@ router.post('/cartao',
 
       if (pedido.status !== 'PENDENTE' && pedido.status !== 'AGUARDANDO_PAGAMENTO') {
         throw ApiError.badRequest(`Pedido já está com status: ${pedido.status}`);
+      }
+
+      // Excursão com contrato exige assinatura concluída antes de liberar o pagamento.
+      const exigeContrato = !!(pedido.excursaoPedagogica?.contratoUrl ?? pedido.excursao?.contratoUrl);
+      if (exigeContrato && pedido.assinatura?.status !== 'ASSINADO') {
+        throw ApiError.badRequest('É necessário assinar o contrato antes de prosseguir para o pagamento');
       }
 
       // Excursão pedagógica: TODOS os dados enviados ao Asaas são do RESPONSÁVEL FINANCEIRO (PROIBIDO usar dados do aluno).

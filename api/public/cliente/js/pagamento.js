@@ -15,6 +15,7 @@
 
 let pedidoId = '';
 let pedidoData = null;
+let assinaturaWidget = null;
 let pixPollingInterval = null;
 let pixPollingTimeout = null;
 let pixExpiryTimerId = null;
@@ -66,7 +67,137 @@ async function init() {
     document.getElementById('loadingPage').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
 
+    // Excursão com contrato: trava o pagamento até a assinatura ser confirmada.
+    await gerenciarAssinaturaContrato();
+
     console.log('[Pagamento] Página inicializada com sucesso');
+}
+
+// ============================================================
+// Assinatura de contrato (Clicksign)
+// ============================================================
+
+/**
+ * Explicação da função [gerenciarAssinaturaContrato]:
+ * Se a excursão do pedido exige contrato, mostra o card de assinatura e
+ * mantém o card de pagamento escondido até a assinatura ser confirmada.
+ * Excursão sem contrato: libera o pagamento direto, sem mexer na tela.
+ */
+async function gerenciarAssinaturaContrato() {
+    if (!pedidoData) return;
+
+    // Pedido já pago: a tela de sucesso já assumiu o lugar do card de pagamento.
+    if (pedidoData.status === 'PAGO' || pedidoData.status === 'CONFIRMADO') return;
+
+    const contratoUrl = (pedidoData.excursaoPedagogica && pedidoData.excursaoPedagogica.contratoUrl)
+        || (pedidoData.excursao && pedidoData.excursao.contratoUrl)
+        || null;
+
+    if (!contratoUrl) {
+        document.getElementById('paymentCard').style.display = 'block';
+        return;
+    }
+
+    if (pedidoData.assinatura && pedidoData.assinatura.status === 'ASSINADO') {
+        document.getElementById('paymentCard').style.display = 'block';
+        return;
+    }
+
+    document.getElementById('assinaturaCard').style.display = 'block';
+
+    try {
+        const response = await clienteAuth.fetchAuth(`/cliente/pedidos/${pedidoId}/assinatura`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            const erro = await response.json().catch(() => ({}));
+            throw new Error(erro.error || erro.message || 'Erro ao preparar assinatura');
+        }
+
+        const result = await response.json();
+        const data = result.data || result;
+
+        if (data.jaAssinado) {
+            document.getElementById('assinaturaCard').style.display = 'none';
+            document.getElementById('paymentCard').style.display = 'block';
+            return;
+        }
+
+        mountarWidgetAssinatura(data.signerId, data.widgetEndpoint);
+    } catch (error) {
+        console.error('[Pagamento] Erro ao preparar assinatura do contrato:', error);
+        document.getElementById('assinaturaLoading').innerHTML =
+            '<span style="color: var(--danger-color);">Não foi possível carregar o contrato para assinatura. Recarregue a página.</span>';
+    }
+}
+
+/**
+ * Explicação da função [mountarWidgetAssinatura]:
+ * Monta o Widget Embedded da Clicksign no container da tela e escuta o evento
+ * `signed` para confirmar a assinatura no backend assim que o cliente assina.
+ */
+function mountarWidgetAssinatura(signerId, widgetEndpoint) {
+    assinaturaWidget = new Clicksign(signerId);
+    assinaturaWidget.endpoint = widgetEndpoint;
+    assinaturaWidget.origin = window.location.origin;
+
+    assinaturaWidget.on('loaded', () => {
+        document.getElementById('assinaturaLoading').style.display = 'none';
+        document.getElementById('assinaturaWidgetContainer').style.display = 'block';
+    });
+
+    assinaturaWidget.on('resized', (event) => {
+        const container = document.getElementById('assinaturaWidgetContainer');
+        if (container && event && event.data && event.data.height) {
+            container.style.height = `${event.data.height}px`;
+        }
+    });
+
+    assinaturaWidget.on('signed', () => {
+        confirmarAssinatura();
+    });
+
+    assinaturaWidget.mount('assinaturaWidgetContainer');
+}
+
+/**
+ * Explicação da função [confirmarAssinatura]:
+ * Chama o backend para confirmar (via consulta síncrona à Clicksign) que a
+ * assinatura foi concluída, e libera o card de pagamento quando confirmado.
+ */
+async function confirmarAssinatura() {
+    document.getElementById('assinaturaWidgetContainer').style.display = 'none';
+    document.getElementById('assinaturaConfirmando').style.display = 'flex';
+
+    try {
+        const response = await clienteAuth.fetchAuth(`/cliente/pedidos/${pedidoId}/assinatura/confirmar`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao confirmar assinatura');
+        }
+
+        const result = await response.json();
+        const data = result.data || result;
+
+        if (data.status === 'ASSINADO') {
+            if (assinaturaWidget) {
+                assinaturaWidget.unmount();
+                assinaturaWidget = null;
+            }
+            document.getElementById('assinaturaCard').style.display = 'none';
+            document.getElementById('paymentCard').style.display = 'block';
+        } else {
+            // A Clicksign ainda não fechou o envelope (auto_close é quase
+            // instantâneo, mas não instantâneo) — tenta de novo em breve.
+            setTimeout(confirmarAssinatura, 2000);
+        }
+    } catch (error) {
+        console.error('[Pagamento] Erro ao confirmar assinatura:', error);
+        setTimeout(confirmarAssinatura, 3000);
+    }
 }
 
 // ============================================================

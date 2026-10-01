@@ -40,6 +40,9 @@ import {
 } from '../utils/transicoes-pedido';
 import { consultarTransacaoPagHiper, cancelarCobrancaPixPagHiper, verificarConfigPagHiper } from '../config/paghiper';
 import { consultarPagamentoAsaas, verificarConfigAsaas } from '../config/asaas';
+import axios from 'axios';
+import { criarEnvelopeDeAssinatura, verificarConfigClicksign, obterStatusEnvelope, getClicksignWidgetEndpoint } from '../config/clicksign';
+import { ASSINATURA_EXPIRACAO_MINUTOS } from '../jobs/expirar-assinatura.job';
 
 const router = Router();
 
@@ -104,6 +107,8 @@ router.get('/excursao/:codigo',
           maxInstallments: true,
           documentoUrl: true,
           documentoNome: true,
+          contratoUrl: true,
+          contratoNome: true,
           slug: true,
           dataDestino: true
         }
@@ -540,7 +545,9 @@ router.get('/:id',
               inclusos: true,
               local: true,
               horario: true,
-              duracao: true
+              duracao: true,
+              contratoUrl: true,
+              contratoNome: true
             }
           },
           excursao: {
@@ -556,10 +563,13 @@ router.get('/:id',
               inclusos: true,
               local: true,
               horario: true,
-              duracao: true
+              duracao: true,
+              contratoUrl: true,
+              contratoNome: true
             }
           },
-          itens: true
+          itens: true,
+          assinatura: true
         }
       });
 
@@ -606,8 +616,248 @@ router.get('/:id',
 );
 
 /**
+ * Explicação da função [dadosSignatarioDoPedido]
+ * Extrai nome/e-mail/telefone de quem assina o contrato — mesma regra usada em
+ * `pagamento.routes.ts` para o pagador: responsável financeiro na pedagógica
+ * (nunca dados do aluno), primeiro passageiro na convencional.
+ */
+function dadosSignatarioDoPedido(pedido: {
+  excursaoPedagogicaId: string | null;
+  dadosResponsavelFinanceiro: unknown;
+  cliente: { nome: string; email: string };
+  itens: { nomeAluno: string; emailResponsavel: string | null; telefoneResponsavel: string | null }[];
+}): { nome: string; email: string; telefone?: string } {
+  const isPedagogica = !!pedido.excursaoPedagogicaId;
+  const dadosResp = pedido.dadosResponsavelFinanceiro as
+    | { nome?: string; sobrenome?: string; email?: string; telefone?: string }
+    | null;
+  const primeiroItem = pedido.itens[0];
+
+  if (isPedagogica) {
+    return {
+      nome: [dadosResp?.nome, dadosResp?.sobrenome].filter(Boolean).join(' ').trim() || pedido.cliente.nome,
+      email: dadosResp?.email || pedido.cliente.email,
+      telefone: dadosResp?.telefone
+    };
+  }
+
+  return {
+    nome: primeiroItem?.nomeAluno || pedido.cliente.nome,
+    email: primeiroItem?.emailResponsavel || pedido.cliente.email,
+    telefone: primeiroItem?.telefoneResponsavel || undefined
+  };
+}
+
+/**
+ * Explicação da API [POST /api/cliente/pedidos/:id/assinatura]
+ *
+ * Cria (ou retoma) o envelope de assinatura do contrato da excursão do pedido.
+ * Requer autenticação de cliente.
+ *
+ * O contrato em si já foi escolhido pelo admin no cadastro da excursão
+ * (campo `contratoUrl`, upload feito na Fase 1) — aqui só se busca esse PDF já
+ * publicado no R2 e se envia para a Clicksign, nunca se recebe upload do cliente.
+ *
+ * Idempotente enquanto o envelope anterior não tiver vencido: reaproveita o
+ * mesmo envelope em vez de gerar um novo a cada clique em "assinar".
+ *
+ * Response: { success, data: { jaAssinado, signerId?, envelopeId?, expiraEm? } }
+ */
+router.post('/:id/assinatura',
+  clienteAuthMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const clienteId = req.cliente!.id;
+
+      const pedido = await prisma.pedido.findFirst({
+        where: { id, clienteId },
+        include: { cliente: true, itens: true, excursao: true, excursaoPedagogica: true, assinatura: true }
+      });
+
+      if (!pedido) throw ApiError.notFound('Pedido não encontrado');
+
+      const contratoUrl = pedido.excursaoPedagogica?.contratoUrl ?? pedido.excursao?.contratoUrl ?? null;
+      const contratoNome = pedido.excursaoPedagogica?.contratoNome ?? pedido.excursao?.contratoNome ?? null;
+
+      if (!contratoUrl) {
+        throw ApiError.badRequest('Esta excursão não exige assinatura de contrato');
+      }
+
+      if (pedido.assinatura?.status === 'ASSINADO') {
+        return res.json({ success: true, data: { jaAssinado: true } });
+      }
+
+      // Envelope ainda válido: devolve o mesmo em vez de criar outro.
+      if (
+        pedido.assinatura?.status === 'PENDENTE' &&
+        pedido.assinatura.clicksignSignerId &&
+        pedido.assinatura.expiraEm.getTime() > Date.now()
+      ) {
+        return res.json({
+          success: true,
+          data: {
+            jaAssinado: false,
+            signerId: pedido.assinatura.clicksignSignerId,
+            envelopeId: pedido.assinatura.clicksignEnvelopeId,
+            expiraEm: pedido.assinatura.expiraEm.toISOString(),
+            widgetEndpoint: getClicksignWidgetEndpoint()
+          }
+        });
+      }
+
+      if (!verificarConfigClicksign()) {
+        throw ApiError.internal('Assinatura digital não configurada');
+      }
+
+      logger.info('[Assinatura] Criando envelope de assinatura', {
+        context: { pedidoId: pedido.id, clienteId }
+      });
+
+      // Busca o PDF já publicado no R2 (contratoUrl é pública) e converte para o
+      // formato exigido pela Clicksign.
+      const respostaPdf = await axios.get<ArrayBuffer>(contratoUrl, { responseType: 'arraybuffer' });
+      const contratoBase64 = `data:application/pdf;base64,${Buffer.from(respostaPdf.data).toString('base64')}`;
+
+      const signatario = dadosSignatarioDoPedido(pedido);
+      const { envelopeId, documentId, signerId } = await criarEnvelopeDeAssinatura({
+        nomeEnvelope: `Contrato - Pedido ${pedido.id}`,
+        contratoFilename: contratoNome || 'contrato.pdf',
+        contratoBase64,
+        signatario
+      });
+
+      const expiraEm = new Date(Date.now() + ASSINATURA_EXPIRACAO_MINUTOS * 60 * 1000);
+
+      await prisma.assinatura.upsert({
+        where: { pedidoId: pedido.id },
+        create: {
+          pedidoId: pedido.id,
+          contratoUrl,
+          contratoNome,
+          clicksignEnvelopeId: envelopeId,
+          clicksignDocumentId: documentId,
+          clicksignSignerId: signerId,
+          status: 'PENDENTE',
+          expiraEm
+        },
+        update: {
+          contratoUrl,
+          contratoNome,
+          clicksignEnvelopeId: envelopeId,
+          clicksignDocumentId: documentId,
+          clicksignSignerId: signerId,
+          status: 'PENDENTE',
+          expiraEm,
+          assinadoEm: null
+        }
+      });
+
+      logger.info('[Assinatura] Envelope criado e pronto para o cliente assinar', {
+        context: { pedidoId: pedido.id, envelopeId, signerId, expiraEm: expiraEm.toISOString() }
+      });
+
+      res.status(201).json({
+        success: true,
+        data: { jaAssinado: false, signerId, envelopeId, expiraEm: expiraEm.toISOString(), widgetEndpoint: getClicksignWidgetEndpoint() }
+      });
+    } catch (error) {
+      logger.error('[Assinatura] Erro ao criar envelope de assinatura', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          pedidoId: req.params.id,
+          clienteId: req.cliente?.id
+        }
+      });
+      next(error);
+    }
+  }
+);
+
+/**
+ * Explicação da API [POST /api/cliente/pedidos/:id/assinatura/confirmar]
+ *
+ * Confirma se a assinatura foi concluída, consultando o envelope direto na
+ * Clicksign — não depende do webhook estar cadastrado (a conta ainda não tem
+ * URL pública em desenvolvimento). Chamado pelo frontend quando o Widget
+ * Embedded dispara o evento `signed`.
+ *
+ * ponytail: confirmação síncrona por polling, sem webhook. Teto: só cobre
+ * assinatura acionada pelo próprio cliente, na mesma sessão. Fechar o
+ * envelope por outro canal (ex.: signatário assina dias depois, sem reabrir o
+ * checkout) só é pego pela próxima varredura que chamar este mesmo caminho —
+ * para cobrir isso de verdade, cadastrar o webhook `sign`/`auto_close` na
+ * Clicksign (`POST /webhooks`) e validar o `Content-Hmac` do corpo recebido.
+ */
+router.post('/:id/assinatura/confirmar',
+  clienteAuthMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const clienteId = req.cliente!.id;
+
+      const pedido = await prisma.pedido.findFirst({
+        where: { id, clienteId },
+        include: { assinatura: true, excursao: true, excursaoPedagogica: true }
+      });
+
+      if (!pedido) throw ApiError.notFound('Pedido não encontrado');
+      if (!pedido.assinatura) throw ApiError.badRequest('Nenhuma assinatura em andamento para este pedido');
+
+      if (pedido.assinatura.status === 'ASSINADO') {
+        return res.json({ success: true, data: { status: 'ASSINADO' } });
+      }
+
+      if (!pedido.assinatura.clicksignEnvelopeId) {
+        throw ApiError.internal('Assinatura sem envelope associado');
+      }
+
+      const statusEnvelope = await obterStatusEnvelope(pedido.assinatura.clicksignEnvelopeId);
+
+      if (statusEnvelope !== 'closed') {
+        return res.json({ success: true, data: { status: pedido.assinatura.status, statusEnvelope } });
+      }
+
+      await prisma.$transaction(async (tx) => {
+        await tx.assinatura.update({
+          where: { id: pedido.assinatura!.id },
+          data: { status: 'ASSINADO', assinadoEm: new Date() }
+        });
+
+        if (pedido.excursaoPedagogicaId) {
+          await tx.excursaoPedagogica.update({
+            where: { id: pedido.excursaoPedagogicaId },
+            data: { contratoTravado: true }
+          });
+        } else if (pedido.excursaoId) {
+          await tx.excursao.update({
+            where: { id: pedido.excursaoId },
+            data: { contratoTravado: true }
+          });
+        }
+      });
+
+      logger.info('[Assinatura] Contrato assinado e confirmado', {
+        context: { pedidoId: pedido.id, envelopeId: pedido.assinatura.clicksignEnvelopeId }
+      });
+
+      res.json({ success: true, data: { status: 'ASSINADO' } });
+    } catch (error) {
+      logger.error('[Assinatura] Erro ao confirmar assinatura', {
+        context: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          pedidoId: req.params.id,
+          clienteId: req.cliente?.id
+        }
+      });
+      next(error);
+    }
+  }
+);
+
+/**
  * Explicação da API [GET /api/cliente/pedidos/:id/comprovante]
- * 
+ *
  * Retorna o comprovante de inscrição em HTML (preparado para download PDF).
  * Requer autenticação de cliente.
  * Apenas pedidos com status PAGO podem gerar comprovante.

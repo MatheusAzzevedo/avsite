@@ -350,6 +350,12 @@ router.put('/:id',
         throw ApiError.notFound('Excursão não encontrada');
       }
 
+      // Contrato já assinado por algum cliente: trocar o PDF invalidaria uma
+      // assinatura que já aconteceu sobre o arquivo anterior.
+      if (existing.contratoTravado && data.contratoUrl !== undefined && data.contratoUrl !== existing.contratoUrl) {
+        throw ApiError.badRequest('O contrato já foi assinado por um cliente e não pode mais ser alterado');
+      }
+
       // Se título mudou, gera novo slug
       let slug = existing.slug;
       if (data.titulo && data.titulo !== existing.titulo) {
@@ -431,10 +437,11 @@ router.put('/:id',
       if (excursaoAtualizada) {
         await removerSeOrfas(
           urlsQueSairam(
-            [existing.imagemCapa, existing.imagemPrincipal, ...existing.galeria.map((g) => g.url)],
+            [existing.imagemCapa, existing.imagemPrincipal, existing.contratoUrl, ...existing.galeria.map((g) => g.url)],
             [
               excursaoAtualizada.imagemCapa,
               excursaoAtualizada.imagemPrincipal,
+              excursaoAtualizada.contratoUrl,
               ...excursaoAtualizada.galeria.map((g) => g.url)
             ]
           ),
@@ -529,7 +536,7 @@ router.delete('/:id',
       // são removidas do bucket. A ordem importa — se fosse antes e o delete
       // falhasse, o registro ficaria apontando para uma imagem já apagada.
       await removerSeOrfas(
-        [existing.imagemCapa, existing.imagemPrincipal, ...existing.galeria.map((g) => g.url)],
+        [existing.imagemCapa, existing.imagemPrincipal, existing.contratoUrl, ...existing.galeria.map((g) => g.url)],
         `excursao:${id}`
       );
 
