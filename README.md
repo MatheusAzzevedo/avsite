@@ -4,7 +4,20 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-09-24) - feat: somar a coluna de CPF à planilha exportada para a escola
+### Última atualização (2026-10-01) - fix: corrigir falha ao criar excursão convencional nova
+- **api/src/routes/excursao.routes.ts** [Deriva `categoria` (legado) da primeira `categoriaId` marcada, quando ausente]
+
+Resumo: Criar excursão convencional nova pela tela do admin quebrava com `Argument categoria is missing` — a tela só envia o relacionamento novo (`categoriaIds`), mas o campo antigo continua obrigatório no banco. Passava despercebido porque toda edição (ao contrário da criação) já tinha o valor preenchido. Achado ao testar a integração da Clicksign em produção.
+
+### Atualização anterior (2026-09-30) - feat: integrar assinatura digital de contrato via Clicksign
+- **api/src/config/clicksign.ts** [Novo: cliente da API v3 da Clicksign, incluindo verificação HMAC do webhook]
+- **api/src/routes/webhook.routes.ts**, **pedido.routes.ts** [Rotas de criação/confirmação da assinatura e recebimento do webhook]
+- **api/public/cliente/pagamento.html**, **js/pagamento.js** [Widget Embedded no checkout, antes do pagamento]
+- **api/public/admin/js/excursao-editor.js**, **excursao-pedagogica-editor.js** [Trava o contrato após a primeira assinatura]
+
+Resumo: O admin anexa o contrato em PDF na excursão; no checkout, antes de pagar, o cliente assina pelo Widget Embedded da Clicksign. A confirmação acontece por dois caminhos — polling síncrono e webhook assíncrono (HMAC-SHA256 contra o corpo bruto da requisição) — e o que chegar primeiro vence. Depois de assinado, o contrato fica travado para edição no admin. Dois ajustes só apareceram ao testar de verdade: a Clicksign exige `phone_number` com só 10/11 dígitos sem máscara, e o script/iframe do widget precisavam de domínios liberados na CSP. Validado em sandbox local e em produção real (documento com validade jurídica), nos dois tipos de excursão.
+
+### Atualização anterior (2026-09-24) - feat: somar a coluna de CPF à planilha exportada para a escola
 - **api/src/routes/lista-alunos.routes.ts** [Nova `formatCpf`; coluna CPF somada antes do RG na exportação `exportar-escola`]
 
 Resumo: A planilha "Lista para Escola" trazia só o RG dos alunos, que é opcional no cadastro, enquanto a escola pede o CPF. O CPF já é campo do pedido e é obrigatório no checkout, então nada precisou ser recadastrado; a coluna foi somada ao lado do RG, ampliando a tabela de 8 para 9 colunas e estendendo os merges e as larguras do topo. Como o checkout grava o CPF só com dígitos, a nova `formatCpf` aplica a máscara `000.000.000-00`, normaliza valor já mascarado e devolve como está quando o documento estiver incompleto, sem descartar dado. Validação: `eslint` e `tsc` limpos; como o projeto não tem suíte de testes, a conferência do arquivo gerado é manual pelo admin.
