@@ -243,6 +243,18 @@ router.post('/',
         return /^\d{4}-\d{2}-\d{2}$/.test(str) ? new Date(str + 'T12:00:00.000Z') : undefined;
       };
 
+      // `categoria` (legado) continua NOT NULL no banco, mas a tela só manda
+      // `categoriaIds` (o relacionamento novo) — sem isso o create() falha com
+      // "Argument `categoria` is missing". Deriva da primeira categoria
+      // marcada para manter o filtro antigo (?categoria=) funcionando.
+      if (!excursaoData.categoria && categoriaIds?.length) {
+        const primeiraCategoria = await prisma.categoriaExcursao.findUnique({
+          where: { id: categoriaIds[0] },
+          select: { slug: true }
+        });
+        excursaoData.categoria = primeiraCategoria?.slug;
+      }
+
       // Cria excursão
       const excursao = await prisma.excursao.create({
         data: {
