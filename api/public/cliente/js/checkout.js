@@ -899,13 +899,16 @@ var PIX_EXPIRY_MINUTES = 120;
                 if (response.ok && resData.success) {
                     localStorage.removeItem('checkout_excursao');
                     var pedidoId = resData.data && resData.data.id;
-                    var valorTotal = (resData.data && resData.data.valorTotal != null) ? Number(resData.data.valorTotal) : (excursao.preco * excursao.quantidade);
                     if (!pedidoId) {
                         showToast('Pedido criado, mas não foi possível abrir o pagamento.', 'error');
                         setTimeout(function () { window.location.href = 'pedidos.html'; }, 2500);
                         return;
                     }
-                    mostrarEtapaPagamento(pedidoId, valorTotal);
+                    // Redireciona para pagamento.html, igual ao checkout convencional: é lá
+                    // que mora a verificação de contrato pendente de assinatura — o fluxo
+                    // embutido nesta página (mostrarEtapaPagamento) não a conhece e travava
+                    // em "é necessário assinar o contrato" sem dar nenhum jeito de prosseguir.
+                    window.location.href = 'pagamento.html?pedidoId=' + pedidoId;
                     return;
                 }
 
