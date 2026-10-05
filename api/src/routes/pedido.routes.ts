@@ -547,7 +547,8 @@ router.get('/:id',
               horario: true,
               duracao: true,
               contratoUrl: true,
-              contratoNome: true
+              contratoNome: true,
+              maxInstallments: true
             }
           },
           excursao: {

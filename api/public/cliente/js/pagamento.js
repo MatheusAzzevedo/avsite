@@ -233,6 +233,7 @@ async function loadPedido() {
 
         // Renderiza resumo
         renderOrderSummary();
+        popularParcelas();
     } catch (error) {
         console.error('[Pagamento] Erro ao carregar pedido:', error);
         showPageError('Erro ao carregar dados do pedido. Verifique se o pedido existe.');
@@ -255,6 +256,37 @@ function renderOrderSummary() {
     document.getElementById('tripName').textContent = titulo;
     document.getElementById('orderQty').textContent = `${pedidoData.quantidade} passageiro(s)`;
     document.getElementById('orderTotal').textContent = formatMoney(pedidoData.valorTotal);
+}
+
+/**
+ * Explicação da função [popularParcelas]:
+ * Popula o select de parcelas do cartão com base no maxInstallments da
+ * excursão (só pedagógica permite parcelar — convencional não tem esse
+ * campo). Mesma regra do checkout pedagógico: parcela mínima de R$ 5,00.
+ * Sem parcelamento disponível, o grupo some e a cobrança sai em 1x.
+ */
+function popularParcelas() {
+    const select = document.getElementById('installmentCount');
+    const group = document.getElementById('installmentGroup');
+    if (!select || !group || !pedidoData) return;
+
+    const maxConfigurado = pedidoData.excursaoPedagogica && pedidoData.excursaoPedagogica.maxInstallments
+        ? parseInt(pedidoData.excursaoPedagogica.maxInstallments, 10)
+        : 1;
+    let max = isNaN(maxConfigurado) || maxConfigurado < 1 ? 1 : maxConfigurado;
+    if (max > 12) max = 12;
+
+    select.innerHTML = '';
+    const parcelaMinima = 5;
+    for (let i = 1; i <= max; i++) {
+        const valorParcela = pedidoData.valorTotal / i;
+        if (i > 1 && valorParcela < parcelaMinima) break;
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${i}x de ${formatMoney(valorParcela)}${i === 1 ? ' (à vista)' : ' sem juros'}`;
+        select.appendChild(option);
+    }
+    group.style.display = max > 1 ? '' : 'none';
 }
 
 // ============================================================
@@ -574,8 +606,12 @@ function setupCardForm() {
             const expiryRaw = document.getElementById('cardExpiry').value; // MM/AAAA
             const [expiryMonth, expiryYear] = expiryRaw.split('/');
 
+            const installmentSelect = document.getElementById('installmentCount');
+            const installmentCount = installmentSelect ? parseInt(installmentSelect.value, 10) : 1;
+
             const payload = {
                 pedidoId,
+                installmentCount,
                 creditCard: {
                     holderName: document.getElementById('cardHolderName').value.trim(),
                     number: cardNumberRaw,
