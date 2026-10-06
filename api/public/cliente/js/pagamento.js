@@ -603,8 +603,16 @@ function setupCardForm() {
         try {
             // Coleta dados do cartão
             const cardNumberRaw = document.getElementById('cardNumber').value.replace(/\s/g, '');
-            const expiryRaw = document.getElementById('cardExpiry').value; // MM/AAAA
-            const [expiryMonth, expiryYear] = expiryRaw.split('/');
+            const expiryRaw = document.getElementById('cardExpiry').value; // MM/AAAA ou MM/AA
+            let [expiryMonth, expiryYear] = expiryRaw.split('/');
+            expiryMonth = (expiryMonth || '').replace(/\D/g, '');
+            if (expiryMonth.length === 1) expiryMonth = '0' + expiryMonth;
+            expiryYear = (expiryYear || '').replace(/\D/g, '');
+            // O rótulo pede ano com 4 dígitos, mas nada no campo impedia o
+            // cliente de digitar só 2 (ex: "12/27") — o backend exige
+            // exatamente 4 e recusava com "Dados inválidos" sem indicar o
+            // campo. Normaliza aqui em vez de só confiar na digitação certa.
+            if (expiryYear.length === 2) expiryYear = '20' + expiryYear;
 
             const installmentSelect = document.getElementById('installmentCount');
             const installmentCount = installmentSelect ? parseInt(installmentSelect.value, 10) : 1;
