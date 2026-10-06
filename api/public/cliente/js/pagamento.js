@@ -750,15 +750,28 @@ function prefillHolderData() {
         document.getElementById('holderEmail').value = cliente.email;
     }
     if (cliente.cpf) {
-        // Formata CPF
+        // Formata CPF. Só preenche se o valor salvo na conta realmente bate
+        // com o que a Asaas aceita (mínimo 11 dígitos) — um CPF salvo com
+        // formato antigo ou incompleto, se preenchido do mesmo jeito, manda o
+        // cliente pra um "Dados inválidos" sem ele saber de onde veio, porque
+        // o campo já chegou parecendo preenchido certo.
         let cpf = cliente.cpf.replace(/\D/g, '');
-        if (cpf.length === 11) {
-            cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        if (cpf.length >= 11) {
+            if (cpf.length === 11) {
+                cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+            document.getElementById('holderCpf').value = cpf;
         }
-        document.getElementById('holderCpf').value = cpf;
     }
     if (cliente.telefone) {
-        document.getElementById('holderPhone').value = cliente.telefone;
+        // Mesmo raciocínio do CPF: só preenche se bater com o formato que o
+        // backend exige (10 ou 11 dígitos), senão deixa em branco pro cliente
+        // digitar certo em vez de carregar um valor que vai falhar de qualquer
+        // jeito.
+        const telefoneDigitos = cliente.telefone.replace(/\D/g, '');
+        if (telefoneDigitos.length === 10 || telefoneDigitos.length === 11) {
+            document.getElementById('holderPhone').value = cliente.telefone;
+        }
     }
 }
 

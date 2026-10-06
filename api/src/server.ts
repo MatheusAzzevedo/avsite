@@ -305,14 +305,19 @@ app.use((req: Request, res: Response) => {
 
 // Handler de erros global
 app.use((err: Error & { status?: number; statusCode?: number } | ApiError, _req: Request, res: Response, _next: NextFunction) => {
-  logger.error(`Erro: ${err.message}`);
-
   if (err instanceof ApiError) {
+    // `details` carrega o campo e a mensagem exatos que a validação Zod
+    // recusou (ex.: "creditCardHolderInfo.phone: Telefone inválido"). Sem
+    // logar isso aqui, um 400 de "Dados inválidos" não dá pra depurar depois
+    // — foi o que aconteceu ao investigar a falha de pagamento com cartão.
+    logger.error(`Erro: ${err.message}`, { context: { details: err.details } });
     return res.status(err.statusCode).json({
       error: err.message,
       details: err.details
     });
   }
+
+  logger.error(`Erro: ${err.message}`);
 
   // Request entity too large (body maior que o limite)
   const isTooLarge = err.status === 413 || err.statusCode === 413 ||
