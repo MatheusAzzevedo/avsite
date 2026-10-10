@@ -51,7 +51,7 @@
         }
 
         // Preencher dados
-        if (mainImage) mainImage.src = exc.imagemCapa || '/images/default.jpg';
+        if (mainImage) mainImage.src = exc.imagemCapa || '/images/background/Queda de agua.webp';
         if (breadcrumbTitle) breadcrumbTitle.textContent = exc.titulo;
         if (titulo) titulo.textContent = exc.titulo;
         if (subtitulo) subtitulo.textContent = exc.subtitulo || '';

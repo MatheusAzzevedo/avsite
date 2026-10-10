@@ -597,7 +597,9 @@ router.get('/excursoes-pedagogicas/codigo/:codigo',
 
       const excursao = await prisma.excursaoPedagogica.findFirst({
         where: {
-          codigo,
+          // Insensível a maiúsculas/minúsculas: o portal da família digita em
+          // caixa alta e códigos gerados pelo site são em minúsculas.
+          codigo: { equals: codigo, mode: 'insensitive' },
           status: ExcursaoStatus.ATIVO
         },
         include: {

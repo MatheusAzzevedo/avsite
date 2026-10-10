@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-10-01) - fix: corrigir falha ao criar excursão convencional nova
+### Última atualização (2026-10-09) - fix: busca por código no portal ignora maiúsculas e imagem de reserva deixa de ser 404
+- **api/src/routes/public.routes.ts** [Busca de excursão pedagógica por código no portal passa a ser case-insensitive]
+- **api/public/cliente/js/excursao.js** [Imagem de reserva trocada de `/images/default.jpg` (inexistente) para `Queda de agua.webp`]
+
+Resumo: O portal da família digita o código em caixa alta e o servidor comparava exato, então códigos gerados pelo próprio site (minúsculos) não eram achados. E excursão sem capa mostrava imagem quebrada, porque `/images/default.jpg` não existe no repo. Ajustes pontuais para a fase 1 da integração com a gestão, que passa a publicar as excursões pedagógicas criadas lá automaticamente.
+
+### Atualização anterior (2026-10-01) - fix: corrigir falha ao criar excursão convencional nova
 - **api/src/routes/excursao.routes.ts** [Deriva `categoria` (legado) da primeira `categoriaId` marcada, quando ausente]
 
 Resumo: Criar excursão convencional nova pela tela do admin quebrava com `Argument categoria is missing` — a tela só envia o relacionamento novo (`categoriaIds`), mas o campo antigo continua obrigatório no banco. Passava despercebido porque toda edição (ao contrário da criação) já tinha o valor preenchido. Achado ao testar a integração da Clicksign em produção.

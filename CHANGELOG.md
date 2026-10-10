@@ -37,6 +37,19 @@
 
 ---
 
+## 2026-10-09 - fix: buscar excursão pedagógica por código ignora maiúsculas e imagem de reserva deixou de ser 404
+
+### Arquivos Modificados
+- `api/src/routes/public.routes.ts` [Busca por código no portal passa a ser case-insensitive (`mode: 'insensitive'`)]
+- `api/public/cliente/js/excursao.js` [Imagem de reserva deixa de apontar para `/images/default.jpg` (inexistente) e passa a usar `Queda de agua.webp`]
+
+### Detalhes das Alterações
+- **O problema 1**: o portal da família digita o código em caixa alta (`inicio.js`) e o servidor comparava exato. Códigos gerados pelo próprio site são em minúsculas (slug do título), então a família não achava a excursão que tinha em mãos. A comparação virou insensível a maiúsculas/minúsculas.
+- **O problema 2**: excursão sem capa usava `/images/default.jpg`, arquivo que não existe — a família via imagem quebrada na página da excursão e no checkout. Cai agora numa foto real já usada pelo site.
+- **Contexto**: mudanças pontuais para a fase 1 da integração com a gestão (`avoar`), que passa a publicar automaticamente as excursões pedagógicas criadas lá. Códigos novos chegam em caixa alta e sem capa no primeiro momento.
+
+---
+
 ## 2026-09-24 - feat: somar a coluna de CPF à planilha exportada para a escola
 
 ### Arquivos Modificados
