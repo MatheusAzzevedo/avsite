@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-10-09) - fix: busca por código no portal ignora maiúsculas e imagem de reserva deixa de ser 404
+### Última atualização (2026-10-16) - fix: limpeza de R2 conta o snapshot do pedido
+- **api/src/utils/limpeza-r2.ts** [`contarReferencias` soma o `documentoUrl` guardado em `Pedido.excursaoPedagogicaSnapshot` (12 campos, não 11)]
+
+Resumo: Trocar ou apagar o Documento para Download de uma excursão podia apagar o PDF do bucket com pedidos antigos ainda apontando para ele — o download no histórico do cliente desses pedidos virava 404. A contagem não olhava o snapshot JSON do pedido. Correção vinda do debate de arquitetura da fase 4 da integração com a gestão, que passa a gerenciar esse documento.
+
+### Atualização anterior (2026-10-09) - fix: busca por código no portal ignora maiúsculas e imagem de reserva deixa de ser 404
 - **api/src/routes/public.routes.ts** [Busca de excursão pedagógica por código no portal passa a ser case-insensitive]
 - **api/public/cliente/js/excursao.js** [Imagem de reserva trocada de `/images/default.jpg` (inexistente) para `Queda de agua.webp`]
 

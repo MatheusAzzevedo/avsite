@@ -13,7 +13,7 @@
  * principal e de item da galeria. Apagar sem verificar destruiria a imagem de um
  * registro que ninguém tocou — e, sem o Base64 original no banco, sem volta.
  *
- * Por isso toda remoção passa por `removerSeOrfas`, que confere os 11 campos do
+ * Por isso toda remoção passa por `removerSeOrfas`, que confere os 12 campos do
  * sistema antes de apagar qualquer coisa.
  */
 
@@ -49,16 +49,21 @@ function urlParaChave(url: string): string {
  * Explicação da função [contarReferencias]
  * Conta em quantos lugares do sistema uma URL ainda é usada.
  *
- * Percorre os 11 campos que guardam imagem ou documento. A contagem é feita
+ * Percorre os 12 campos que guardam imagem ou documento. A contagem é feita
  * DEPOIS de o registro já ter sido excluído ou atualizado, então qualquer
  * ocorrência restante significa que outro registro depende desta imagem.
+ *
+ * O snapshot do pedido entra na conta: quando a excursão pedagógica é
+ * excluída, o pedido guarda o `documentoUrl` antigo para sempre mostrar o
+ * link ao cliente — apagar o arquivo deixaria o download do pedido antigo em
+ * 404. O snapshot é JSON, então a contagem usa filtro de caminho no Prisma.
  */
 async function contarReferencias(url: string): Promise<number> {
   const [
     postsCapa, postsGaleria,
     excCapa, excPrincipal, excGaleria,
     pedCapa, pedPrincipal, pedGaleria, pedDoc,
-    equipe, autores
+    equipe, autores, pedidosSnapshotDoc
   ] = await Promise.all([
     prisma.post.count({ where: { imagemCapa: url } }),
     prisma.postImagem.count({ where: { url } }),
@@ -70,11 +75,15 @@ async function contarReferencias(url: string): Promise<number> {
     prisma.excursaoPedagogicaImagem.count({ where: { url } }),
     prisma.excursaoPedagogica.count({ where: { documentoUrl: url } }),
     prisma.equipe.count({ where: { fotoPerfil: url } }),
-    prisma.autor.count({ where: { foto: url } })
+    prisma.autor.count({ where: { foto: url } }),
+    prisma.pedido.count({
+      where: { excursaoPedagogicaSnapshot: { path: ['documentoUrl'], equals: url } }
+    })
   ]);
 
   return postsCapa + postsGaleria + excCapa + excPrincipal + excGaleria +
-         pedCapa + pedPrincipal + pedGaleria + pedDoc + equipe + autores;
+         pedCapa + pedPrincipal + pedGaleria + pedDoc + equipe + autores +
+         pedidosSnapshotDoc;
 }
 
 /**
