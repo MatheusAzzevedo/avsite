@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-10-16 - fix: limpeza de R2 passa a contar o snapshot do pedido
+
+### Arquivos Modificados
+- `api/src/utils/limpeza-r2.ts` [`contarReferencias` soma o `documentoUrl` gravado em `Pedido.excursaoPedagogicaSnapshot`; comentário dos 11 campos vira 12]
+
+### Detalhes das Alterações
+- **O problema**: Trocar ou apagar o "Documento para Download" de uma excursão pedagógica podia apagar o PDF do bucket mesmo com pedidos antigos usando o link — `contarReferencias` não olhava o snapshot do pedido. O download dentro do histórico do cliente desses pedidos virava 404.
+- **Por que importa agora**: A gestão (avoar) passa a gerenciar esse documento e vai trocá-lo com frequência; sem a contagem, cada troca destruiria o histórico de quem já comprou. O snapshot é JSON, então a contagem usa filtro de caminho no Prisma (`path: ['documentoUrl']`).
+- **Também cobre a exclusão**: quando a excursão é excluída, o snapshot nasce com o `documentoUrl` antigo e a limpeza da exclusão agora o respeita.
+
+---
+
 ## 2026-10-01 - fix: corrigir falha ao criar excursão convencional nova
 
 ### Arquivos Modificados
@@ -37,6 +49,19 @@
 
 ---
 
+## 2026-10-09 - fix: buscar excursão pedagógica por código ignora maiúsculas e imagem de reserva deixou de ser 404
+
+### Arquivos Modificados
+- `api/src/routes/public.routes.ts` [Busca por código no portal passa a ser case-insensitive (`mode: 'insensitive'`)]
+- `api/public/cliente/js/excursao.js` [Imagem de reserva deixa de apontar para `/images/default.jpg` (inexistente) e passa a usar `Queda de agua.webp`]
+
+### Detalhes das Alterações
+- **O problema 1**: o portal da família digita o código em caixa alta (`inicio.js`) e o servidor comparava exato. Códigos gerados pelo próprio site são em minúsculas (slug do título), então a família não achava a excursão que tinha em mãos. A comparação virou insensível a maiúsculas/minúsculas.
+- **O problema 2**: excursão sem capa usava `/images/default.jpg`, arquivo que não existe — a família via imagem quebrada na página da excursão e no checkout. Cai agora numa foto real já usada pelo site.
+- **Contexto**: mudanças pontuais para a fase 1 da integração com a gestão (`avoar`), que passa a publicar automaticamente as excursões pedagógicas criadas lá. Códigos novos chegam em caixa alta e sem capa no primeiro momento.
+
+---
+
 ## 2026-09-24 - feat: somar a coluna de CPF à planilha exportada para a escola
 
 ### Arquivos Modificados
@@ -62,18 +87,3 @@
 - **Os dois casos**: `google_auth_denied` (o cliente recusou na tela do Google) e `google_auth_failed` (erro ao concluir a autenticação). Os dois foram corrigidos.
 - **A mensagem que ninguém via**: A página de login não lia o parâmetro `error`. Corrigir só o caminho levaria o cliente de volta à tela de login sem explicação. Agora cada código mostra uma mensagem própria, e código desconhecido cai numa mensagem genérica.
 - **Confirmado em produção**: `/login?error=google_auth_failed` responde 404; `/cliente/login.html?error=google_auth_failed` responde 200.
-
----
-
-## 2026-09-15 - fix: corrigir o link do e-mail de recuperação de senha
-
-### Arquivos Modificados
-- `api/src/routes/cliente-auth.routes.ts` [Link de redefinição passa a apontar para `reset-senha.html`]
-
-### Detalhes das Alterações
-- **O problema**: O cliente pedia a recuperação, recebia o e-mail, clicava no link e caía numa tela com `{"error":"Rota não encontrada"}`. Ninguém conseguia redefinir a senha pelo portal.
-- **A causa**: O link era montado como `/cliente/reset-senha?resetToken=...`, sem extensão. O servidor entrega o portal do cliente com `express.static`, que não resolve caminho sem extensão: o arquivo existe como `reset-senha.html`, mas o endereço sem `.html` passava por todos os middlewares e terminava no 404 da API.
-- **Confirmado em produção**: `/cliente/reset-senha?resetToken=...` responde 404 com exatamente a mensagem que o cliente viu; o mesmo endereço com `.html` responde 200 e abre a página. A página já lia o parâmetro `resetToken`, então só o caminho estava errado.
-- **Links já enviados**: O token vale 1 hora. Quem pediu a recuperação antes do deploy e não conseguiu precisa pedir de novo.
-- **Achado no caminho, fora deste commit**: O redirecionamento de falha do login com Google aponta para `/login?error=google_auth_failed`, que também responde 404 em produção.
-
