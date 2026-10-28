@@ -13,6 +13,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
+import { travarContrato } from '../utils/trava-contrato';
 import { processarWebhookAsaas } from '../config/asaas';
 import { processarRetornoPagHiper } from '../config/paghiper';
 import { verificarAssinaturaWebhook } from '../config/clicksign';
@@ -514,17 +515,7 @@ router.post('/clicksign',
           data: { status: 'ASSINADO', assinadoEm: new Date() }
         });
 
-        if (assinatura.pedido.excursaoPedagogicaId) {
-          await tx.excursaoPedagogica.update({
-            where: { id: assinatura.pedido.excursaoPedagogicaId },
-            data: { contratoTravado: true }
-          });
-        } else if (assinatura.pedido.excursaoId) {
-          await tx.excursao.update({
-            where: { id: assinatura.pedido.excursaoId },
-            data: { contratoTravado: true }
-          });
-        }
+        await travarContrato(tx, assinatura.pedido);
       });
 
       logger.info('[Webhook Clicksign] Assinatura confirmada via webhook', {

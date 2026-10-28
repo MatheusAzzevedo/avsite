@@ -103,7 +103,10 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
     if (!cat) {
       throw ApiError.notFound('Categoria não encontrada.');
     }
-    const count = await prisma.excursao.count({ where: { categoria: cat.slug } });
+    // Conta pelo campo legado e pelo relacionamento: a gestão marca categorias só pelo relacionamento
+    const count = await prisma.excursao.count({
+      where: { OR: [{ categoria: cat.slug }, { categorias: { some: { id } } }] }
+    });
     if (count > 0) {
       throw ApiError.badRequest(`Não é possível excluir: existem ${count} excursão(ões) com esta categoria. Altere-as antes.`);
     }

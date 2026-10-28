@@ -4,7 +4,22 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-10-16) - fix: limpeza de R2 conta o snapshot do pedido
+### Última atualização (2026-10-24) - feat: sincronização com a gestão
+- **api/src/routes/sincronizacao-gestao.routes.ts**, **api/src/server.ts** [Nova rota `GET /api/admin/sincronizacao` com id e data de edição de todas as excursões]
+- **api/src/utils/trava-contrato.ts**, **pedido.routes.ts**, **webhook.routes.ts** [Travar o contrato na 1ª assinatura não muda mais a data de edição da excursão]
+- **api/src/routes/categorias-excursao.routes.ts** [Exclusão de categoria confere também o relacionamento]
+
+Resumo: A gestão compara as datas para pintar o botão de sincronização de cada registro. Assinatura de contrato deixou de contar como edição.
+
+### Atualização anterior (2026-10-24) - feat: parcelamento em até 21x no cartão, limitado pela bandeira
+- **api/src/utils/bandeira-cartao.ts**, **api/public/cliente/js/parcelas-bandeira.js** [Novos: limite por bandeira, 21x Visa/Mastercard e 12x demais]
+- **api/src/routes/pagamento.routes.ts**, **api/src/schemas/** [Máximo sobe para 21 e a rota recusa o que passar do limite da bandeira]
+- **api/public/cliente/checkout.html**, **pagamento.html** e seus JS [Select de parcelas corta pela bandeira e mostra o aviso]
+- **api/public/admin/excursao-pedagogica-editor.html** [Opções até 21x marcadas "só Visa e Mastercard"]
+
+Resumo: O Asaas aceita até 21 parcelas só em Visa e Mastercard; nas outras bandeiras o limite é 12. O site passa a permitir até 21x e corta o select assim que a família digita o cartão, com aviso explicando a regra. A gestão passa a definir as parcelas e permite 21x, então este deploy vai antes do dela.
+
+### Atualização anterior (2026-10-16) - fix: limpeza de R2 conta o snapshot do pedido
 - **api/src/utils/limpeza-r2.ts** [`contarReferencias` soma o `documentoUrl` guardado em `Pedido.excursaoPedagogicaSnapshot` (12 campos, não 11)]
 
 Resumo: Trocar ou apagar o Documento para Download de uma excursão podia apagar o PDF do bucket com pedidos antigos ainda apontando para ele — o download no histórico do cliente desses pedidos virava 404. A contagem não olhava o snapshot JSON do pedido. Correção vinda do debate de arquitetura da fase 4 da integração com a gestão, que passa a gerenciar esse documento.
