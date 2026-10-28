@@ -42,6 +42,7 @@ import {
   PIX_EXPIRACAO_MINUTOS
 } from '../jobs/expirar-pix.job';
 import { logger } from '../utils/logger';
+import { limiteParcelasPorBandeira } from '../utils/bandeira-cartao';
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 
 const router = Router();
@@ -390,6 +391,19 @@ router.post('/cartao',
         return res.status(400).json({
           success: false,
           error: `Esta excursão permite no máximo ${maxPermitido}x. Você selecionou ${installmentCount}x.`
+        });
+      }
+
+      // Asaas: acima de 12x só Visa e Mastercard. Barra aqui com mensagem clara
+      // em vez de deixar o gateway recusar a cobrança.
+      const limiteBandeira = limiteParcelasPorBandeira(creditCard.number);
+      if (installmentCount && installmentCount > limiteBandeira) {
+        logger.warn('[AVSITE-API] 💳 Parcelas acima do limite da bandeira', {
+          context: { pedidoId, installmentCount, limiteBandeira }
+        });
+        return res.status(400).json({
+          success: false,
+          error: `Este cartão permite no máximo ${limiteBandeira}x. Parcelamento acima de 12x só para Visa e Mastercard.`
         });
       }
 

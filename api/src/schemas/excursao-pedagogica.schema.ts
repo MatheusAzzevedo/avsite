@@ -65,7 +65,7 @@ const excursaoPedagogicaBaseSchema = {
     .number()
     .int('Número de parcelas deve ser inteiro')
     .min(1, 'Mínimo 1 parcela')
-    .max(12, 'Máximo 12 parcelas')
+    .max(21, 'Máximo 21 parcelas (acima de 12x só Visa e Mastercard)')
     .optional()
     .nullable(),
   dataFimInscricoes: dataFimInscricoesSchema,

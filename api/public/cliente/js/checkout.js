@@ -252,6 +252,11 @@ var PIX_EXPIRY_MINUTES = 120;
                     popularParcelas(valorTotal);
                 });
             }
+            // A bandeira muda o limite de parcelas (acima de 12x só Visa e Mastercard)
+            var inputCartao = document.getElementById('cardNumber');
+            if (inputCartao) {
+                inputCartao.addEventListener('input', function () { popularParcelas(valorTotal); });
+            }
             var btnCopiarPix = document.getElementById('btnCopiarPix');
             if (btnCopiarPix) {
                 btnCopiarPix.addEventListener('click', function () {
@@ -536,14 +541,29 @@ var PIX_EXPIRY_MINUTES = 120;
      * Explicação da função [popularParcelas]:
      * Popula o select de parcelas baseado no valor total e no maxInstallments da excursão.
      * O admin define o máximo de parcelas por excursão; a parcela mínima é R$ 5,00 (regra Asaas).
+     * Acima de 12x só Visa e Mastercard: com o número do cartão digitado, o máximo é cortado pela bandeira.
      */
     function popularParcelas(valor) {
         var select = document.getElementById('installmentCount');
         if (!select) return;
+        var selecionada = parseInt(select.value, 10);
         select.innerHTML = '';
-        var maxDefinidoAdmin = (excursao && excursao.maxInstallments) ? parseInt(excursao.maxInstallments, 10) : 1;
-        if (isNaN(maxDefinidoAdmin) || maxDefinidoAdmin < 1) maxDefinidoAdmin = 1;
-        if (maxDefinidoAdmin > 12) maxDefinidoAdmin = 12;
+        var maxConfigurado = (excursao && excursao.maxInstallments) ? parseInt(excursao.maxInstallments, 10) : 1;
+        if (isNaN(maxConfigurado) || maxConfigurado < 1) maxConfigurado = 1;
+        var PB = window.ParcelasBandeira;
+        var numeroCartao = onlyDigits((document.getElementById('cardNumber') || {}).value || '');
+        var maxDefinidoAdmin = Math.min(maxConfigurado, PB.limitePorNumero(numeroCartao));
+        var aviso = document.getElementById('installmentBandeiraAviso');
+        if (aviso) {
+            if (maxConfigurado > PB.LIMITE_OUTRAS) {
+                aviso.textContent = numeroCartao.length >= 6 && !PB.ehVisaOuMaster(numeroCartao)
+                    ? 'Este cartão permite até ' + PB.LIMITE_OUTRAS + 'x. Parcelamento acima de ' + PB.LIMITE_OUTRAS + 'x só para Visa e Mastercard.'
+                    : 'Parcelamento acima de ' + PB.LIMITE_OUTRAS + 'x só para Visa e Mastercard; demais bandeiras até ' + PB.LIMITE_OUTRAS + 'x.';
+                aviso.style.display = '';
+            } else {
+                aviso.style.display = 'none';
+            }
+        }
         var parcelaMinima = 5;
         for (var i = 1; i <= maxDefinidoAdmin; i++) {
             var valorParcela = valor / i;
@@ -553,6 +573,8 @@ var PIX_EXPIRY_MINUTES = 120;
             option.textContent = i + 'x de R$ ' + formatBRL(valorParcela) + (i === 1 ? ' (à vista)' : ' sem juros');
             select.appendChild(option);
         }
+        // Mantém a escolha da família se ela continua valendo para a bandeira
+        if (selecionada && selecionada <= select.options.length) select.value = String(selecionada);
         var group = document.getElementById('installmentGroup');
         if (group) {
             group.style.display = maxDefinidoAdmin > 1 ? '' : 'none';

@@ -263,7 +263,9 @@ function renderOrderSummary() {
  * Popula o select de parcelas do cartão com base no maxInstallments da
  * excursão (só pedagógica permite parcelar — convencional não tem esse
  * campo). Mesma regra do checkout pedagógico: parcela mínima de R$ 5,00.
- * Sem parcelamento disponível, o grupo some e a cobrança sai em 1x.
+ * Acima de 12x só Visa e Mastercard (regra do Asaas): com o número do cartão
+ * digitado, o máximo é cortado pela bandeira. Sem parcelamento disponível,
+ * o grupo some e a cobrança sai em 1x.
  */
 function popularParcelas() {
     const select = document.getElementById('installmentCount');
@@ -274,8 +276,11 @@ function popularParcelas() {
         ? parseInt(pedidoData.excursaoPedagogica.maxInstallments, 10)
         : 1;
     let max = isNaN(maxConfigurado) || maxConfigurado < 1 ? 1 : maxConfigurado;
-    if (max > 12) max = 12;
+    const numeroCartao = (document.getElementById('cardNumber') || {}).value || '';
+    max = Math.min(max, window.ParcelasBandeira.limitePorNumero(numeroCartao));
+    atualizarAvisoParcelas(maxConfigurado, numeroCartao);
 
+    const selecionada = parseInt(select.value, 10);
     select.innerHTML = '';
     const parcelaMinima = 5;
     for (let i = 1; i <= max; i++) {
@@ -286,7 +291,29 @@ function popularParcelas() {
         option.textContent = `${i}x de ${formatMoney(valorParcela)}${i === 1 ? ' (à vista)' : ' sem juros'}`;
         select.appendChild(option);
     }
+    // Mantém a escolha da família se ela continua valendo para a bandeira
+    if (selecionada && selecionada <= select.options.length) select.value = String(selecionada);
     group.style.display = max > 1 ? '' : 'none';
+}
+
+/**
+ * Explicação da função [atualizarAvisoParcelas]:
+ * Avisa que acima de 12x só vale Visa e Mastercard, e diz quando o cartão
+ * digitado é de outra bandeira. Só aparece se a excursão permite mais de 12x.
+ */
+function atualizarAvisoParcelas(maxConfigurado, numeroCartao) {
+    const aviso = document.getElementById('installmentBandeiraAviso');
+    if (!aviso) return;
+    const PB = window.ParcelasBandeira;
+    if (!(maxConfigurado > PB.LIMITE_OUTRAS)) {
+        aviso.style.display = 'none';
+        return;
+    }
+    const digitos = numeroCartao.replace(/\D/g, '');
+    aviso.textContent = digitos.length >= 6 && !PB.ehVisaOuMaster(digitos)
+        ? `Este cartão permite até ${PB.LIMITE_OUTRAS}x. Parcelamento acima de ${PB.LIMITE_OUTRAS}x só para Visa e Mastercard.`
+        : `Parcelamento acima de ${PB.LIMITE_OUTRAS}x só para Visa e Mastercard; demais bandeiras até ${PB.LIMITE_OUTRAS}x.`;
+    aviso.style.display = '';
 }
 
 // ============================================================
@@ -686,6 +713,7 @@ function setupCardMasks() {
         let val = e.target.value.replace(/\D/g, '');
         val = val.replace(/(\d{4})(?=\d)/g, '$1 ');
         e.target.value = val.substring(0, 19);
+        popularParcelas(); // bandeira muda o limite de parcelas
     });
 
     // Máscara validade: MM/AAAA

@@ -27,6 +27,7 @@ import {
 } from '../schemas/pedido.schema';
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 import { logger } from '../utils/logger';
+import { travarContrato } from '../utils/trava-contrato';
 import { ExcursaoStatus, PedidoStatus } from '@prisma/client';
 import { gerarTemplateComprovante } from '../templates/comprovante-template';
 import {
@@ -825,17 +826,7 @@ router.post('/:id/assinatura/confirmar',
           data: { status: 'ASSINADO', assinadoEm: new Date() }
         });
 
-        if (pedido.excursaoPedagogicaId) {
-          await tx.excursaoPedagogica.update({
-            where: { id: pedido.excursaoPedagogicaId },
-            data: { contratoTravado: true }
-          });
-        } else if (pedido.excursaoId) {
-          await tx.excursao.update({
-            where: { id: pedido.excursaoId },
-            data: { contratoTravado: true }
-          });
-        }
+        await travarContrato(tx, pedido);
       });
 
       logger.info('[Assinatura] Contrato assinado e confirmado', {
