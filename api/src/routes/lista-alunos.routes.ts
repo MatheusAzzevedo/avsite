@@ -1160,10 +1160,12 @@ router.get('/excursao/:id/exportar-escola',
         'Content-Type',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       );
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename=Lista_Escola_${excursao.titulo.replace(/\s+/g, '_')}.xlsx`
-      );
+      // Cabeçalho HTTP só aceita ASCII seguro: título com "—" derrubava a exportação com 500
+      const tituloArquivo = excursao.titulo
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/[^\w-]+/g, '_');
+      res.setHeader('Content-Disposition', `attachment; filename="Lista_Escola_${tituloArquivo}.xlsx"`);
 
       await workbook.xlsx.write(res);
       res.end();
