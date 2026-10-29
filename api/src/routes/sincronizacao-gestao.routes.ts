@@ -1,15 +1,19 @@
 /**
  * Explicação do Arquivo [sincronizacao-gestao.routes.ts]
  *
- * Rota usada pela gestão (avoar) para o botão de sincronização da listagem de
- * registros: devolve, numa chamada só, o id e a data da última edição de cada
- * excursão do site. A gestão compara com a data que guardou no último envio.
+ * Rotas usadas pela gestão (avoar) para espelhar o site:
+ * - GET /: id e data da última edição de cada excursão (botão de sincronização).
+ * - GET /alunos: alunos pagos de uma excursão (lista de chamada do Registro).
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { logger } from '../utils/logger';
+import { validateQuery } from '../middleware/validate.middleware';
+import { alunosPagosQuerySchema } from '../schemas/sincronizacao.schema';
+import { STATUS_DE_PAGAMENTO } from '../utils/transicoes-pedido';
+import { z } from 'zod';
 
 const router = Router();
 router.use(authMiddleware);
@@ -31,6 +35,59 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     });
 
     res.json({ success: true, data: { pedagogicas, convencionais } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * Explicação da API [GET /api/admin/sincronizacao/alunos?tipo=&excursaoId=]:
+ * alunos (ItemPedido) dos pedidos PAGO/CONFIRMADO de uma excursão, pedagógica
+ * ou convencional. A gestão espelha isso na lista de chamada do Registro: o id
+ * do item é a ligação, então aluno removido ou pedido cancelado some daqui e
+ * sai da lista de lá. Só os campos que a lista de chamada usa.
+ */
+router.get('/alunos', validateQuery(alunosPagosQuerySchema), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { tipo, excursaoId } = req.query as unknown as z.infer<typeof alunosPagosQuerySchema>;
+
+    const itens = await prisma.itemPedido.findMany({
+      where: {
+        pedido: {
+          status: { in: STATUS_DE_PAGAMENTO },
+          ...(tipo === 'PEDAGOGICA' ? { excursaoPedagogicaId: excursaoId } : { excursaoId })
+        }
+      },
+      orderBy: { nomeAluno: 'asc' },
+      select: {
+        id: true,
+        nomeAluno: true,
+        cpfAluno: true,
+        serieAluno: true,
+        turma: true,
+        unidadeColegio: true,
+        telefoneResponsavel: true,
+        pedido: { select: { id: true, status: true } }
+      }
+    });
+
+    const alunos = itens.map((i) => ({
+      id: i.id,
+      nome: i.nomeAluno,
+      cpf: i.cpfAluno,
+      serie: i.serieAluno,
+      turma: i.turma,
+      unidade: i.unidadeColegio,
+      telefone: i.telefoneResponsavel,
+      pedidoId: i.pedido.id,
+      statusPedido: i.pedido.status
+    }));
+
+    logger.info('[AVSITE-API] 🔄 Alunos pagos consultados pela gestão', {
+      context: { userEmail: req.user?.email, tipo, excursaoId, total: alunos.length }
+    });
+
+    res.json({ success: true, data: { alunos } });
   } catch (error) {
     next(error);
   }

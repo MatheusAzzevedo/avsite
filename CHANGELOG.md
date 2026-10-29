@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-10-28 - feat: alunos pagos de cada excursão para a lista de chamada da gestão
+
+### Arquivos Modificados
+- `api/src/routes/sincronizacao-gestao.routes.ts` [Nova rota `GET /api/admin/sincronizacao/alunos?tipo=&excursaoId=`: alunos dos pedidos PAGO/CONFIRMADO de uma excursão pedagógica ou convencional]
+- `api/src/schemas/sincronizacao.schema.ts` [Novo: validação Zod da query (`tipo` PEDAGOGICA/CONVENCIONAL e `excursaoId`)]
+- `api/src/routes/lista-alunos.routes.ts` [fix: "Lista para Escola" dava erro 500 em excursão com "—" ou outro caractere fora do latim no título; o nome do arquivo no cabeçalho agora sai sem acento e sem símbolo]
+
+### Detalhes das Alterações
+- **Para que serve**: quando um pedido é pago no site, a gestão (avoar) coloca o aluno na lista de chamada do Registro, já como pago. Ela lê esta rota ao abrir a lista (no máximo 1x por minuto) e pelo botão "Atualizar".
+- **O que volta**: só os campos da chamada (nome, CPF, série, turma, unidade, telefone do responsável) e o id do item, que é a ligação. Aluno removido no admin ou pedido cancelado deixa de vir, e a gestão o tira da lista.
+- **Convencional**: as rotas de listas do admin só cobrem pedagógica; esta cobre as duas.
+
+---
+
 ## 2026-10-24 - feat: endpoint de sincronização com a gestão e trava de contrato sem mexer na data da excursão
 
 ### Arquivos Modificados
@@ -56,16 +70,3 @@
 - **Por que não apareceu antes**: Todo teste anterior da integração Clicksign editava excursões já existentes (`Santuário do Caraça`, `Cristo Redentor`), e `update()` não exige os campos que já têm valor — só `create()` falhava. O bug é anterior a este trabalho, só nunca tinha sido exercitado.
 - **A correção**: Quando `categoria` não vem no corpo e `categoriaIds` tem ao menos um item, busca o `slug` da primeira categoria marcada (`CategoriaExcursao.findUnique`) e usa como valor legado — mesmo formato (`cultura`, `natureza`, `marítimo`) que os registros antigos já têm.
 - **Achado em produção**: Apareceu ao criar uma excursão de teste pra validar o webhook da Clicksign em `avoarturismo.up.railway.app`; corrigido e redeployado antes de prosseguir.
-
----
-
-## 2026-10-09 - fix: buscar excursão pedagógica por código ignora maiúsculas e imagem de reserva deixou de ser 404
-
-### Arquivos Modificados
-- `api/src/routes/public.routes.ts` [Busca por código no portal passa a ser case-insensitive (`mode: 'insensitive'`)]
-- `api/public/cliente/js/excursao.js` [Imagem de reserva deixa de apontar para `/images/default.jpg` (inexistente) e passa a usar `Queda de agua.webp`]
-
-### Detalhes das Alterações
-- **O problema 1**: o portal da família digita o código em caixa alta (`inicio.js`) e o servidor comparava exato. Códigos gerados pelo próprio site são em minúsculas (slug do título), então a família não achava a excursão que tinha em mãos. A comparação virou insensível a maiúsculas/minúsculas.
-- **O problema 2**: excursão sem capa usava `/images/default.jpg`, arquivo que não existe — a família via imagem quebrada na página da excursão e no checkout. Cai agora numa foto real já usada pelo site.
-- **Contexto**: mudanças pontuais para a fase 1 da integração com a gestão (`avoar`), que passa a publicar automaticamente as excursões pedagógicas criadas lá. Códigos novos chegam em caixa alta e sem capa no primeiro momento.

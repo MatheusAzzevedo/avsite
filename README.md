@@ -4,7 +4,14 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-10-24) - feat: sincronização com a gestão
+### Última atualização (2026-10-28) - feat: alunos pagos para a lista de chamada da gestão
+- **api/src/routes/sincronizacao-gestao.routes.ts**, **api/src/schemas/sincronizacao.schema.ts** [Nova rota `GET /api/admin/sincronizacao/alunos` com os alunos de pedidos pagos de uma excursão, pedagógica ou convencional]
+
+- **api/src/routes/lista-alunos.routes.ts** [fix: "Lista para Escola" não quebra mais com "—" no título]
+
+Resumo: A gestão lê esta rota e mantém a lista "Inscritos pelo site" do Registro igual ao site: quem paga entra como pago, e quem é removido ou cancelado sai.
+
+### Atualização anterior (2026-10-24) - feat: sincronização com a gestão
 - **api/src/routes/sincronizacao-gestao.routes.ts**, **api/src/server.ts** [Nova rota `GET /api/admin/sincronizacao` com id e data de edição de todas as excursões]
 - **api/src/utils/trava-contrato.ts**, **pedido.routes.ts**, **webhook.routes.ts** [Travar o contrato na 1ª assinatura não muda mais a data de edição da excursão]
 - **api/src/routes/categorias-excursao.routes.ts** [Exclusão de categoria confere também o relacionamento]
