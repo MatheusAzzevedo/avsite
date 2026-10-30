@@ -23,7 +23,8 @@ import { authMiddleware, adminMiddleware } from '../middleware/auth.middleware';
 import { logger } from '../utils/logger';
 import ExcelJS from 'exceljs';
 import { consultarPagamentoAsaas, verificarConfigAsaas } from '../config/asaas';
-import { validateBody } from '../middleware/validate.middleware';
+import { validateBody, validateQuery } from '../middleware/validate.middleware';
+import { tipoExcursaoQuerySchema } from '../schemas/sincronizacao.schema';
 import { adminAddAlunoSchema, editarAlunoSchema } from '../schemas/pedido.schema';
 
 const router = Router();
@@ -1380,21 +1381,25 @@ router.delete('/aluno/:id', adminMiddleware, async (req: Request, res: Response,
 /**
  * Explicação da API [POST /api/admin/listas/excursao/:id/aluno]
  *
- * Adiciona um aluno manualmente a uma excursão pedagógica.
+ * Adiciona um aluno manualmente a uma excursão pedagógica ou, com
+ * `?tipo=CONVENCIONAL`, um passageiro a uma excursão convencional (a gestão usa
+ * os dois; o admin do site só a pedagógica).
  * Se o Cliente/Responsável Financeiro não existir (por e-mail), cria-o automaticamente.
  * Cria um Pedido com status especificado (CONFIRMADO, PAGO, etc.) e quantidade = 1.
  * Depois cria o ItemPedido com os dados do aluno.
  *
- * Params: { id: string } - ID da excursão pedagógica
+ * Params: { id: string } - ID da excursão (pedagógica, ou convencional com ?tipo=CONVENCIONAL)
  * Body: { aluno: DadosAlunoInput, responsavel: DadosResponsavelInput, statusPedido: PedidoStatus }
  * Response: { success, message, data: { aluno } }
  */
 router.post('/excursao/:id/aluno',
+  validateQuery(tipoExcursaoQuerySchema),
   validateBody(adminAddAlunoSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const { aluno, responsavel, statusPedido } = req.body;
+      const convencional = (req.query as { tipo?: string }).tipo === 'CONVENCIONAL';
       const adminId = req.user!.id;
       const adminEmail = req.user!.email;
 
@@ -1404,17 +1409,19 @@ router.post('/excursao/:id/aluno',
           excursaoId: id,
           alunoNome: aluno.nomeAluno,
           responsavelEmail: responsavel.email,
-          statusPedido
+          statusPedido,
+          tipo: convencional ? 'CONVENCIONAL' : 'PEDAGOGICA'
         }
       });
 
       // 1. Verifica se excursão existe
-      const excursao = await prisma.excursaoPedagogica.findUnique({
-        where: { id }
-      });
+      const doTipo = { where: { id }, select: { id: true, titulo: true, preco: true } };
+      const excursao = convencional
+        ? await prisma.excursao.findUnique(doTipo)
+        : await prisma.excursaoPedagogica.findUnique(doTipo);
 
       if (!excursao) {
-        throw ApiError.notFound('Excursão pedagógica não encontrada');
+        throw ApiError.notFound(convencional ? 'Excursão convencional não encontrada' : 'Excursão pedagógica não encontrada');
       }
 
       // 2. Busca ou cria Cliente
@@ -1469,12 +1476,12 @@ router.post('/excursao/:id/aluno',
         const pedido = await tx.pedido.create({
           data: {
             clienteId: cliente!.id,
-            excursaoPedagogicaId: excursao.id,
+            ...(convencional ? { excursaoId: excursao.id } : { excursaoPedagogicaId: excursao.id }),
             quantidade: 1,
             valorUnitario,
             valorTotal,
             status: statusPedido as PedidoStatus,
-            tipo: 'PEDAGOGICA',
+            tipo: convencional ? 'CONVENCIONAL' : 'PEDAGOGICA',
             dadosResponsavelFinanceiro,
             observacoes: 'Matrícula inserida manualmente pelo administrador.'
           }
