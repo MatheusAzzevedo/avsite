@@ -8,7 +8,7 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
-import { authMiddleware } from '../middleware/auth.middleware';
+import { authMiddleware, adminMiddleware } from '../middleware/auth.middleware';
 import { logger } from '../utils/logger';
 import { validateQuery } from '../middleware/validate.middleware';
 import { alunosPagosQuerySchema } from '../schemas/sincronizacao.schema';
@@ -41,23 +41,54 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 /**
- * Explicação da API [GET /api/admin/sincronizacao/alunos?tipo=&excursaoId=]:
- * alunos (ItemPedido) dos pedidos PAGO/CONFIRMADO de uma excursão, pedagógica
- * ou convencional. A gestão espelha isso na lista de chamada do Registro: o id
- * do item é a ligação, então aluno removido ou pedido cancelado some daqui e
- * sai da lista de lá. Só os campos que a lista de chamada usa.
+ * Explicação da API [GET /api/admin/sincronizacao/alunos?tipo=&excursaoId=&completo=]:
+ * alunos (ItemPedido) de uma excursão, pedagógica ou convencional. Só ADMIN:
+ * devolve CPF e telefone.
+ * - Sem `completo`: só pedidos PAGO/CONFIRMADO e só os campos da lista de
+ *   chamada. A gestão espelha isso na lista "Inscritos pelo site"; o id do
+ *   item é a ligação, então aluno removido ou pedido cancelado sai de lá.
+ * - Com `completo=1`: todos os pedidos, com a ficha inteira do aluno e o
+ *   resumo do pedido. É o painel "Inscrições no site" da gestão, de onde ela
+ *   corrige, remove e muda status (inclusive dar baixa em quem não pagou).
  */
-router.get('/alunos', validateQuery(alunosPagosQuerySchema), async (req: Request, res: Response, next: NextFunction) => {
+router.get('/alunos', adminMiddleware, validateQuery(alunosPagosQuerySchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { tipo, excursaoId } = req.query as unknown as z.infer<typeof alunosPagosQuerySchema>;
+    const { tipo, excursaoId, completo } = req.query as unknown as z.infer<typeof alunosPagosQuerySchema>;
+    const daExcursao = tipo === 'PEDAGOGICA' ? { excursaoPedagogicaId: excursaoId } : { excursaoId };
+
+    if (completo) {
+      const itens = await prisma.itemPedido.findMany({
+        where: { pedido: daExcursao },
+        orderBy: { nomeAluno: 'asc' },
+        include: {
+          pedido: {
+            select: {
+              id: true,
+              status: true,
+              createdAt: true,
+              valorTotal: true,
+              quantidade: true,
+              cliente: { select: { nome: true, email: true } }
+            }
+          }
+        }
+      });
+
+      const inscricoes = itens.map(({ pedido, ...item }) => ({
+        ...item,
+        pedido: { ...pedido, valorTotal: Number(pedido.valorTotal) }
+      }));
+
+      logger.info('[AVSITE-API] 🔄 Inscrições consultadas pela gestão', {
+        context: { userEmail: req.user?.email, tipo, excursaoId, total: inscricoes.length }
+      });
+
+      res.json({ success: true, data: { inscricoes } });
+      return;
+    }
 
     const itens = await prisma.itemPedido.findMany({
-      where: {
-        pedido: {
-          status: { in: STATUS_DE_PAGAMENTO },
-          ...(tipo === 'PEDAGOGICA' ? { excursaoPedagogicaId: excursaoId } : { excursaoId })
-        }
-      },
+      where: { pedido: { status: { in: STATUS_DE_PAGAMENTO }, ...daExcursao } },
       orderBy: { nomeAluno: 'asc' },
       select: {
         id: true,

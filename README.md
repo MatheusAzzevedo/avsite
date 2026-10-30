@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-10-28) - feat: alunos pagos para a lista de chamada da gestão
+### Última atualização (2026-10-30) - feat: gestão edita a lista de alunos do site
+- **api/src/routes/sincronizacao-gestao.routes.ts**, **api/src/schemas/sincronizacao.schema.ts** [Rota de alunos só para ADMIN e com modo `completo` (todos os status, ficha inteira)]
+- **api/src/routes/lista-alunos.routes.ts** [Adicionar aluno aceita `?tipo=CONVENCIONAL`]
+
+Resumo: A gestão passa a adicionar, corrigir, remover aluno e mudar status de pedido pelo painel "Inscrições no site" do Registro, usando as rotas do admin.
+
+### Atualização anterior (2026-10-28) - feat: alunos pagos para a lista de chamada da gestão
 - **api/src/routes/sincronizacao-gestao.routes.ts**, **api/src/schemas/sincronizacao.schema.ts** [Nova rota `GET /api/admin/sincronizacao/alunos` com os alunos de pedidos pagos de uma excursão, pedagógica ou convencional]
 
 - **api/src/routes/lista-alunos.routes.ts** [fix: "Lista para Escola" não quebra mais com "—" no título]

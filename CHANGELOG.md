@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-30 - feat: gestão edita a lista de alunos do site
+
+### Arquivos Modificados
+- `api/src/routes/sincronizacao-gestao.routes.ts` [`GET /api/admin/sincronizacao/alunos` passa a exigir ADMIN (devolve CPF e telefone) e ganha `completo=1`: todos os pedidos, de qualquer status, com a ficha inteira e o resumo do pedido]
+- `api/src/routes/lista-alunos.routes.ts` [`POST /api/admin/listas/excursao/:id/aluno` aceita `?tipo=CONVENCIONAL` para adicionar passageiro em excursão convencional]
+- `api/src/schemas/sincronizacao.schema.ts` [`completo` na query de alunos e `tipoExcursaoQuerySchema`]
+
+### Detalhes das Alterações
+- **Para que serve**: a gestão (avoar) ganhou o painel "Inscrições no site" no Registro, de onde adiciona, corrige, remove e muda status de pedido usando as rotas que o admin já usa. O modo `completo` é o que alimenta esse painel; a lista de chamada continua lendo só os pagos.
+- **Convencional**: o admin do site não tinha como adicionar passageiro à mão; a mesma rota da pedagógica agora serve aos dois tipos.
+
+---
+
 ## 2026-10-28 - feat: alunos pagos de cada excursão para a lista de chamada da gestão
 
 ### Arquivos Modificados
@@ -57,16 +70,3 @@
 - **O problema**: Trocar ou apagar o "Documento para Download" de uma excursão pedagógica podia apagar o PDF do bucket mesmo com pedidos antigos usando o link — `contarReferencias` não olhava o snapshot do pedido. O download dentro do histórico do cliente desses pedidos virava 404.
 - **Por que importa agora**: A gestão (avoar) passa a gerenciar esse documento e vai trocá-lo com frequência; sem a contagem, cada troca destruiria o histórico de quem já comprou. O snapshot é JSON, então a contagem usa filtro de caminho no Prisma (`path: ['documentoUrl']`).
 - **Também cobre a exclusão**: quando a excursão é excluída, o snapshot nasce com o `documentoUrl` antigo e a limpeza da exclusão agora o respeita.
-
----
-
-## 2026-10-01 - fix: corrigir falha ao criar excursão convencional nova
-
-### Arquivos Modificados
-- `api/src/routes/excursao.routes.ts` [Deriva o campo legado `categoria` da primeira `categoriaId` marcada, quando ausente]
-
-### Detalhes das Alterações
-- **O problema**: Criar qualquer excursão convencional nova pela tela do admin quebrava com `Argument categoria is missing`. A tela só envia `categoriaIds` (o relacionamento muitos-para-muitos), mas o campo legado `categoria` (string, usado pelo filtro `?categoria=` antigo) continua `NOT NULL` no banco, sem default, e nada preenchia.
-- **Por que não apareceu antes**: Todo teste anterior da integração Clicksign editava excursões já existentes (`Santuário do Caraça`, `Cristo Redentor`), e `update()` não exige os campos que já têm valor — só `create()` falhava. O bug é anterior a este trabalho, só nunca tinha sido exercitado.
-- **A correção**: Quando `categoria` não vem no corpo e `categoriaIds` tem ao menos um item, busca o `slug` da primeira categoria marcada (`CategoriaExcursao.findUnique`) e usa como valor legado — mesmo formato (`cultura`, `natureza`, `marítimo`) que os registros antigos já têm.
-- **Achado em produção**: Apareceu ao criar uma excursão de teste pra validar o webhook da Clicksign em `avoarturismo.up.railway.app`; corrigido e redeployado antes de prosseguir.
