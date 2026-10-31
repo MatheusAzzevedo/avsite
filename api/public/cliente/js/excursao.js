@@ -146,7 +146,8 @@
         const quantitySection = document.querySelector('.quantity-section');
         const purchaseCard = document.querySelector('.purchase-card');
         
-        if (exc.vagasDisponiveis !== null && exc.vagasDisponiveis <= 0) {
+        const semVagas = exc.vagasDisponiveis !== null && exc.vagasDisponiveis <= 0;
+        if (exc.inscricoesEncerradas || semVagas) {
             // Esconde o seletor de quantidade conforme solicitado
             if (quantitySection) {
                 quantitySection.style.display = 'none';
@@ -168,7 +169,7 @@
                 soldOutNotice.className = 'sold-out-notice';
                 soldOutNotice.innerHTML = `
                     <div style="background: #fff3f3; color: #d63031; padding: 1rem; border-radius: 8px; border: 1px solid #ff000030; margin-bottom: 1.5rem; text-align: center; font-weight: 700;">
-                        <i class="fas fa-exclamation-triangle"></i> Inscrições Encerradas por limite de vagas
+                        <i class="fas fa-exclamation-triangle"></i> ${exc.inscricoesEncerradas ? 'Inscrições Encerradas: o prazo terminou' : 'Inscrições Encerradas por limite de vagas'}
                     </div>
                 `;
                 // Insere antes do botão de checkout

@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-10-30 - feat: inscrições fecham na data "Inscrições até"
+
+### Arquivos Modificados
+- `api/src/utils/prazo-inscricoes.ts` [Novo: `inscricoesEncerradas` diz se o último dia de inscrição já passou, no horário de Brasília]
+- `api/src/routes/pedido.routes.ts` [`GET /api/cliente/pedidos/excursao/:codigo` devolve `inscricoesEncerradas`; `POST /api/cliente/pedidos` recusa pedido novo depois do prazo]
+- `api/public/cliente/js/excursao.js` [Página da excursão mostra "Inscrições Encerradas: o prazo terminou" e desativa o botão]
+- `api/src/scripts/test-prazo-inscricoes.ts`, `api/package.json` [Autoteste da regra: `npm run test:prazo`]
+
+### Detalhes das Alterações
+- **O problema**: `dataFimInscricoes` da excursão pedagógica só aparecia na planilha da escola; dava para se inscrever depois da data.
+- **A regra**: o dia da data vale inteiro e fecha às 00:00 do dia seguinte (Brasília). Sem data, não fecha. Pedido já criado antes do prazo continua podendo ser pago, e a equipe (admin e gestão) segue adicionando aluno fora do prazo.
+
+---
+
 ## 2026-10-30 - feat: gestão edita a lista de alunos do site
 
 ### Arquivos Modificados
@@ -58,15 +72,3 @@
 - **Como a bandeira é identificada**: pelos primeiros dígitos (Visa começa com 4, Mastercard 51-55 ou 2221-2720). Alguns cartões Elo também começam com 4; os BINs Elo mais comuns estão listados para não serem tratados como Visa. Se aparecer recusa de Elo acima de 12x, a lista precisa crescer.
 - **O backend é quem decide**: o front só ajuda a família a escolher; mesmo que alguém force o select, a rota responde 400 explicando o limite.
 - **Origem**: a gestão (avoar) passa a definir as parcelas da excursão e permite até 21x. Este deploy precisa ir antes do da gestão, senão o site recusa a ficha com mais de 12x.
-
----
-
-## 2026-10-16 - fix: limpeza de R2 passa a contar o snapshot do pedido
-
-### Arquivos Modificados
-- `api/src/utils/limpeza-r2.ts` [`contarReferencias` soma o `documentoUrl` gravado em `Pedido.excursaoPedagogicaSnapshot`; comentário dos 11 campos vira 12]
-
-### Detalhes das Alterações
-- **O problema**: Trocar ou apagar o "Documento para Download" de uma excursão pedagógica podia apagar o PDF do bucket mesmo com pedidos antigos usando o link — `contarReferencias` não olhava o snapshot do pedido. O download dentro do histórico do cliente desses pedidos virava 404.
-- **Por que importa agora**: A gestão (avoar) passa a gerenciar esse documento e vai trocá-lo com frequência; sem a contagem, cada troca destruiria o histórico de quem já comprou. O snapshot é JSON, então a contagem usa filtro de caminho no Prisma (`path: ['documentoUrl']`).
-- **Também cobre a exclusão**: quando a excursão é excluída, o snapshot nasce com o `documentoUrl` antigo e a limpeza da exclusão agora o respeita.

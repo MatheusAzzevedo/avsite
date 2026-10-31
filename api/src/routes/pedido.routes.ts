@@ -28,6 +28,7 @@ import {
 import { enviarEmailConfirmacaoPedido } from '../utils/enviar-email-confirmacao';
 import { logger } from '../utils/logger';
 import { travarContrato } from '../utils/trava-contrato';
+import { inscricoesEncerradas } from '../utils/prazo-inscricoes';
 import { ExcursaoStatus, PedidoStatus } from '@prisma/client';
 import { gerarTemplateComprovante } from '../templates/comprovante-template';
 import {
@@ -111,7 +112,8 @@ router.get('/excursao/:codigo',
           contratoUrl: true,
           contratoNome: true,
           slug: true,
-          dataDestino: true
+          dataDestino: true,
+          dataFimInscricoes: true
         }
       });
 
@@ -141,7 +143,8 @@ router.get('/excursao/:codigo',
         ...excursao,
         preco: Number(excursao.preco),
         galeria: [excursao.imagemCapa].filter(Boolean), // Mock para compatibilidade, sem carregar tabela galeria
-        vagasDisponiveis
+        vagasDisponiveis,
+        inscricoesEncerradas: inscricoesEncerradas(excursao.dataFimInscricoes)
       };
 
       logger.info('[Pedidos] Excursão encontrada', {
@@ -224,6 +227,14 @@ router.post('/',
           vagas: excursao.vagas
         }
       });
+
+      // Prazo de inscrições: depois do último dia, o cliente não abre pedido novo
+      if (inscricoesEncerradas(excursao.dataFimInscricoes)) {
+        logger.warn('[Pedidos] Inscrições encerradas pela data', {
+          context: { excursaoId: excursao.id, dataFimInscricoes: excursao.dataFimInscricoes, clienteId }
+        });
+        throw ApiError.badRequest('As inscrições para esta excursão foram encerradas.');
+      }
 
       // Validação de Vagas
       if (excursao.vagas !== null) {
