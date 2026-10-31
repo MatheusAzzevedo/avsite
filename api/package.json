@@ -18,6 +18,7 @@
     "seed": "ts-node prisma/seed.ts",
     "migrar:imagens": "ts-node src/scripts/migrar-imagens-r2.ts",
     "test:r2": "ts-node src/scripts/test-r2.ts",
+    "test:prazo": "ts-node src/scripts/test-prazo-inscricoes.ts",
     "optimize:images": "node scripts/optimize-images.js"
   },
   "dependencies": {

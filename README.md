@@ -4,7 +4,13 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-10-30) - feat: gestão edita a lista de alunos do site
+### Última atualização (2026-10-30) - feat: inscrições fecham na data "Inscrições até"
+- **api/src/utils/prazo-inscricoes.ts**, **api/src/routes/pedido.routes.ts** [Pedido novo de excursão pedagógica é recusado depois do último dia de inscrição (Brasília)]
+- **api/public/cliente/js/excursao.js** [Página da excursão mostra as inscrições encerradas pelo prazo]
+
+Resumo: A data de encerramento passa a fechar as inscrições do cliente; pedidos já abertos podem ser pagos e a equipe segue adicionando aluno.
+
+### Atualização anterior (2026-10-30) - feat: gestão edita a lista de alunos do site
 - **api/src/routes/sincronizacao-gestao.routes.ts**, **api/src/schemas/sincronizacao.schema.ts** [Rota de alunos só para ADMIN e com modo `completo` (todos os status, ficha inteira)]
 - **api/src/routes/lista-alunos.routes.ts** [Adicionar aluno aceita `?tipo=CONVENCIONAL`]
 
