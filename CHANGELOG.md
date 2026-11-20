@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-20 - feat: página da excursão convencional mostra todas as fotos
+
+### Arquivos Modificados
+- `api/public/js/portfolio-single.js` [As miniaturas embaixo da foto grande deixam de parar em 4: mostram capa, imagem principal e todas as fotos da galeria, quebrando em mais de uma linha]
+
 ## 2026-10-30 - feat: inscrições fecham na data "Inscrições até"
 
 ### Arquivos Modificados
