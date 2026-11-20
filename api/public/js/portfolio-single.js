@@ -144,7 +144,7 @@ function renderExcursao(excursao) {
     if (galleryThumbs) {
         if (images.length > 0) {
             galleryThumbs.style.display = '';
-            galleryThumbs.innerHTML = images.slice(0, 4).map(function(img, index) {
+            galleryThumbs.innerHTML = images.map(function(img, index) {
                 var activeClass = index === 0 ? 'thumb active' : 'thumb';
                 return '<img src="' + img + '" alt="Imagem ' + (index + 1) + '" class="' + activeClass + '" data-thumb="1">';
             }).join('');
