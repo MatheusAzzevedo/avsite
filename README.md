@@ -4,7 +4,12 @@ Sistema de site e administração para Avorar Turismo com backend em Node.js/Exp
 
 ## Arquivos Modificados [Resumo das Atualizações]
 
-### Última atualização (2026-10-30) - feat: inscrições fecham na data "Inscrições até"
+### Última atualização (2026-11-20) - feat: página da excursão convencional mostra todas as fotos
+- **api/public/js/portfolio-single.js** [Miniaturas sem o corte em 4]
+
+Resumo: A página só mostrava 4 miniaturas, contando capa e imagem principal, e por isso só as 2 primeiras fotos da galeria apareciam. Agora aparecem todas; a gestão limita a galeria a 5 fotos (até 7 miniaturas com capa e principal).
+
+### Atualização anterior (2026-10-30) - feat: inscrições fecham na data "Inscrições até"
 - **api/src/utils/prazo-inscricoes.ts**, **api/src/routes/pedido.routes.ts** [Pedido novo de excursão pedagógica é recusado depois do último dia de inscrição (Brasília)]
 - **api/public/cliente/js/excursao.js** [Página da excursão mostra as inscrições encerradas pelo prazo]
 
